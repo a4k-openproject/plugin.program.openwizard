@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+	<category label="Build Options">
+		<setting type="lsep" label="Current Build:"/>
+		<setting id="buildname" type="text" label="Installed Build: " enable="false" default=""/>
+		<setting id="buildversion" type="text" label="Installed Version: " enable="false" default=""/>
+		<setting id="buildtheme" type="text" label="Current Theme: " enable="false" default=""/>
+		<setting id="latestversion" type="text" label="Latest Version: " enable="false" default=""/>
+		<setting id="lastbuildcheck" type="text" label="Next check for build update: " enable="false" default=""/>
+		<setting id="disableupdate" type="bool" label="Disable Update Notification" default="false"/>
+		<setting id="installmethod" type="enum" label="Which method would you like to use after Install?" values="Always Ask|Reload Profile|Force Close" default="2"/>
+		<setting type="lsep" label="Show Builds:"/>
+		<setting id="show15" type="bool" label="Show Isengard(v15.0) and Below Builds" default="true"/>
+		<setting id="show16" type="bool" label="Show Jarvis(v16.0) Builds" default="true"/>
+		<setting id="show17" type="bool" label="Show Krypton(v17.0) Builds" default="true"/>
+		<setting id="show18" type="bool" label="Show Leia(v18.0) Builds" default="true"/>
+		<setting id="seperate" type="bool" label="Do not seperate based off version" default="false"/>
+        
+        <!-- Hidden Settings -->
+		<setting id="installed" type="bool" label="Build Installed" visible="false" default="false" />
+		<setting id="extract" type="text" label="Extract Build %" visible="false" default="100" />
+		<setting id="errors" type="text" label="Extract Error" visible="false" default="" />
+		<setting id="defaultskin" type="text" label="Default Skin: " enable="false" default="" visible="false"/>
+		<setting id="defaultskinname" type="text" label="Default Skin Name: " enable="false" default="" visible="false"/>
+		<setting id="defaultskinignore" type="bool" label="Ignore default skin check:" enable="false" default="false" visible="false"/>
+		<setting id="default.enablerssfeeds" type="text" label="Default lookandfeel.enablerssfeeds:" enable="false" default="" visible="false"/>
+		<setting id="default.font" type="text" label="Default lookandfeel.font:" enable="false" default="" visible="false"/>
+		<setting id="default.rssedit" type="text" label="Default lookandfeel.rssedit:" enable="false" default="" visible="false"/>
+		<setting id="default.skincolors" type="text" label="Default lookandfeel.skincolors:" enable="false" default="" visible="false"/>
+		<setting id="default.skintheme" type="text" label="Default lookandfeel.skintheme:" enable="false" default="" visible="false"/>
+		<setting id="default.skinzoom" type="text" label="Default lookandfeel.skinzoom:" enable="false" default="" visible="false"/>
+		<setting id="default.soundskin" type="text" label="Default lookandfeel.soundskin:" enable="false" default="" visible="false"/>
+		<setting id="default.startupwindow" type="text" label="Default lookandfeel.startupwindow:" enable="false" default="" visible="false"/>
+		<setting id="default.stereostrength" type="text" label="Default lookandfeel.stereostrength:" enable="false" default="" visible="false"/>
+		<setting id="default.addonupdate" type="text" label="Default general.addonupdate:" enable="false" default="" visible="false"/>
+		<setting id="pvrclient" type="text" label="Enabled PVR:" enable="false" default="" visible="false"/>
+	</category>
+
+	<category label="Maintenance">
+		<setting type="lsep" label="Upload Log: "/>
+		<!-- <setting id="email" type="text" label="E-Mail Address" /> -->
+		<setting id="oldlog" type="bool" label="Include Kodi.Old.Log" default="false"/>
+		<setting id="wizlog" type="bool" label="Include Wizard Logs" default="false"/>
+		<setting id="crashlog" type="bool" label="Include Kodi Crash Logs" default="false"/>
+		<setting type="lsep" label="Maintenance Menu: "/>
+		<setting id="showmaint" type="bool" label="Show All Maintenance Sections" default="false"/>
+		<setting id="path" type="folder" label="Choose Backup Storage Location" default=""/>
+		<!--<setting id="rompath" type="folder" label="Choose Roms Extract Location Location" default=""/>-->
+		<setting type="lsep" label="Auto Clean On Startup:"/>
+		<setting id="autoclean" type="bool" label="Enable Auto Clean" default="true"/>
+		<setting id="clearcache" type="bool" label="Clear Cache on Startup" default="true" enable="!eq(-1,false)"/>
+		<setting id="clearpackages" type="bool" label="Clear Packages on Startup" default="true" enable="!eq(-2,false)"/>
+		<setting id="clearthumbs" type="bool" label="Clear Week Old Thumbnails on Startup" default="true" enable="!eq(-3,false)"/>
+		<setting id="autocleanfeq" type="enum" label="How often would you like to Auto Clean on Startup?" values="Always|Daily|3 Days|Weekly" default="3" enable="!eq(-4,false)"/>
+		<setting id="nextautocleanup" type="text" label="Next Auto Clean Up: " enable="false" visible="false" default=""/>
+		<setting type="lsep" label="Clearing Video Cache:"/>
+		<setting id="includevideo" type="bool" label="Include Video Addons in Clear Cache: " default="true"/>
+		<setting id="includeall" type="bool" label="Include All Addons: " default="true" enable="!eq(-1,false)"/>
+        <setting id="include13clowns" type="bool" label="Include 13Clowns DB: " default="true" enable="eq(-1,false)" visible="System.HasAddon(plugin.video.13clowns)"/>
+		<setting id="includeexodusredux" type="bool" label="Include Exodus Redux DB: " default="true" enable="eq(-2,false)" visible="System.HasAddon(plugin.video.exodusredux)"/>
+		<setting id="includegaia" type="bool" label="Include Gaia Cache DB: " default="true" enable="eq(-3,false)" visible="System.HasAddon(plugin.video.gaia)"/>
+		<setting id="includemagicality" type="bool" label="Include Magicality Cache DB: " default="true" enable="eq(-4,false)" visible="System.HasAddon(plugin.video.magicality)"/>
+		<setting id="includeplacenta" type="bool" label="Include Placenta DB: " default="true" enable="eq(-5,false)" visible="System.HasAddon(plugin.video.placenta)"/>
+		<setting id="includeseren" type="bool" label="Include Seren Cache DB: " default="true" enable="eq(-6,false)" visible="System.HasAddon(plugin.video.seren)"/>
+        <setting id="includezanni" type="bool" label="Include Zanni Cache DB: " default="true" enable="eq(-7,false)" visible="System.HasAddon(plugin.video.zanni)"/>
+	</category>
+
+	<category label="Install Settings">
+        <setting type="lsep" label="Save Data When Installing Build:"/>
+        <setting id="keeptrakt" type="bool" label="Keep My Trakt Data" default="false"/>
+        <setting id="traktlastsave" type="text" label="Last Time Trakt Data Saved:" visible="!eq(-1, false)" enable="false"/>
+        <setting id="keepdebrid" type="bool" label="Keep My Debrid Data" default="false"/>
+        <setting id="debridlastsave" type="text" label="Last Time Debrid Data Saved:" visible="!eq(-1, false)" enable="false"/>
+        <setting id="keeplogin" type="bool" label="Keep My Login Data" default="false"/>
+        <setting id="loginlastsave" type="text" label="Last Time Login Data Saved:" visible="!eq(-1, false)" enable="false"/>
+		<setting type="lsep" label="Keep Settings When Installing Build:"/>
+		<setting id="keepfavourites" type="bool" label="Keep My Favourites" default="false"/>
+		<setting id="keepsources" type="bool" label="Keep My Sources" default="false"/>
+		<setting id="keepprofiles" type="bool" label="Keep My Profiles" default="false"/>
+		<setting id="keepadvanced" type="bool" label="Keep My AdvancedSettings.xml" default="false"/>
+		<setting id="keeprepos" type="bool" label="Keep Installed Repositories" default="false"/>
+		<setting id="keepsuper" type="bool" label="Keep Super Favourites" default="false"/>
+		<setting id="keepwhitelist" type="bool" label="Keep My Whitelist Addons" default="false"/>
+		<setting type="lsep" label="Third Party Wizard Support:"/>
+		<setting id="enable3rd" type="bool" label="Enable 3rd Party Wizards" default="false"/>
+		<setting id="wizard1name" type="text" label="Wizard 1 Name: " enable="true" visible="!eq(-1,false)" default=""/>
+		<setting id="wizard1url" type="text" label="Wizard 1 URL: " enable="true" visible="!eq(-2,false)" default=""/>
+		<setting id="wizard2name" type="text" label="Wizard 2 Name: " enable="true" visible="!eq(-3,false)" default=""/>
+		<setting id="wizard2url" type="text" label="Wizard 2 URL: " enable="true" visible="!eq(-4,false)" default=""/>
+		<setting id="wizard3name" type="text" label="Wizard 3 Name: " enable="true" visible="!eq(-5,false)" default=""/>
+		<setting id="wizard3url" type="text" label="Wizard 3 URL: " enable="true" visible="!eq(-6,false)" default=""/>
+	</category>
+
+	<category label="View Settings">
+		<setting id="developer" type="bool" label="Show Developer Menu: " enable="true" default=""/>
+		<setting id="adult" type="bool" label="Show Adult Addons: " enable="true" default="false"/>
+		<setting id="auto-view" type="bool" label="Enable Auto View" default="true"/>
+		<setting id="viewType" type="number" label="View Type" default="50" visible="!eq(-1, false)" enable="!eq(-1,false)"/>
+		<setting type="lsep" label="Notification Window on Startup:"/>
+		<setting id="notify" type="bool" label="Disable Notification on Startup" default="false" />
+		<setting id="noteid" type="text" label="Latest Notification" visible="false" />
+		<setting id="notedismiss" type="bool" label="Dismiss or Remind me later" visible="false" />
+	</category>
+
+	<category label="Logging Settings">
+		<setting type="lsep" label="Event Logging in the Wizard:"/>
+		<setting id="addon_debug" type="bool" label="Enable Wizard Logging:" default="true"/>
+		<setting id="debuglevel" type="enum" label="What level would you like the wizard to log?" enable="!eq(-1,false)" values="No Logging|Normal Logging|Full Logging" default="2"/>
+		<setting id="wizardlog" type="bool" label="Enable Writing to Wizard.Log:" visible="false" default="true"/>
+		<setting id="autocleanwiz" type="bool" label="Automatically Clean up Wizard Log: " enable="!eq(-3,false)" default="true"/>
+		<setting id="wizlogcleanby" type="enum" label="How would you like to clean up wizard.log?" enabled="!eq(-4, false)" values="By Days|By Size|By Lines" default="1"/>
+		<setting id="wizlogcleandays" type="enum" subsetting="true" label="Keep how many days of wizard.log?" enable="!eq(-5,false)" visible="eq(-1,0)+!eq(-2,false)" values="1 Day|2 Days|3 Days|7 Days" default="2"/>
+		<setting id="wizlogcleansize" type="enum" subsetting="true" label="Max file size for wizard.log?" enable="!eq(-6,false)" visible="eq(-2,1)+!eq(-3,false)" values="100 KB|200 KB|300 KB|400 KB|500 KB|1 MB" default="1"/>
+		<setting id="wizlogcleanlines" type="enum" subsetting="true" label="Keep how many lines of wizard.log?" enable="!eq(-7,false)" visible="eq(-3,2)+!eq(-4,false)" values="100|200|300|400|500" default="2"/>
+		<setting id="nextcleandate" type="text" label="Next Time Wizard Log Cleaned:" visible="false" default=""/>
+	</category>
+</settings>

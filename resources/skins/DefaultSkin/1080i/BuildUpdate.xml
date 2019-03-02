@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <coordinates>
+        <left>465</left>
+        <top>265</top>
+    </coordinates>
+    <controls>
+        <control type="group">
+            <control type="image">
+                <left>0</left>
+                <top>0</top>
+                <width>990</width>
+                <height>550</height>
+                <texture border="2">Background/ContentPanel.png</texture>
+            </control>
+            <control type="image" id="101">
+                <left>10</left>
+                <top>10</top>
+                <width>970</width>
+                <height>530</height>
+            </control>
+            <control type="label" id="102">
+                <description>header label</description>
+                <posx>20</posx>
+                <posy>20</posy>
+                <width>970</width>
+                <height>40</height>
+                <font>font13</font>
+                <label></label>
+                <align>center</align>
+                <aligny>center</aligny>
+            </control>
+            <control type="textbox" id="103">
+                <left>20</left>
+                <top>70</top>
+                <width>870</width>
+                <height>380</height>
+                <font>font12</font>
+                <align>left</align>
+                <aligny>top</aligny>
+            </control>
+            <control type="image" id="104">
+                <left>670</left>
+                <top>70</top>
+                <width>300</width>
+                <height>300</height>
+            </control>
+        </control>
+        <control type="group">
+            <control type="button" id="201">
+                <left>20</left>
+                <top>470</top>
+                <width>310</width>
+                <height>60</height>
+                <font>font12</font>
+                <textcolor>FFF0F0F0</textcolor>
+                <label>Fresh Install</label>
+                <align>center</align>
+                <aligny>center</aligny>
+                <texturefocus colordiffuse="FF12B2E7">Button/testbuttonfo.png</texturefocus>
+                <texturenofocus>Button/testbuttonnf.png</texturenofocus>
+                <onleft>203</onleft>
+                <onright>202</onright>
+            </control>
+            <control type="button" id="202">
+                <left>340</left>
+                <top>470</top>
+                <width>310</width>
+                <height>60</height>
+                <font>font12</font>
+                <textcolor>FFF0F0F0</textcolor>
+                <label>Normal Install</label>
+                <align>center</align>
+                <aligny>center</aligny>
+                <texturefocus colordiffuse="FF12B2E7">Button/testbuttonfo.png</texturefocus>
+                <texturenofocus>Button/testbuttonnf.png</texturenofocus>
+                <onleft>201</onleft>
+                <onright>203</onright>
+            </control>
+            <control type="button" id="203">
+                <left>660</left>
+                <top>470</top>
+                <width>310</width>
+                <height>60</height>
+                <font>font12</font>
+                <textcolor>FFF0F0F0</textcolor>
+                <textoffsetx>20</textoffsetx>
+                <label>Delay Update</label>
+                <align>center</align>
+                <aligny>center</aligny>
+                <texturefocus colordiffuse="FF12B2E7">Button/testbuttonfo.png</texturefocus>
+                <texturenofocus>Button/testbuttonnf.png</texturenofocus>
+                <onleft>202</onleft>
+                <onright>201</onright>
+            </control>
+        </control>
+    </controls>
+</window>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="testid" name="tempname" version="testversion" provider-name="tempprovider">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>testprovides</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <description>If you're seeing this message it means the add-on is still updating, please wait for the update process to complete.</description>
+    </extension>
+</addon>
