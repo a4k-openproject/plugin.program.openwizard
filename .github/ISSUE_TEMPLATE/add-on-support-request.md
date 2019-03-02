@@ -1,7 +1,7 @@
 ---
 name: Add-on Support Request
 about: Request support for a new add-on.
-title: "[ADD-ON REQUEST]"
+title: "[Add-on Request]"
 labels: enhancement
 assignees: ''
 
