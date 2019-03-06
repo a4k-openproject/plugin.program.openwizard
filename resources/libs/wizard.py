@@ -105,6 +105,7 @@ INCLUDEPLACENTA  = ADDON.getSetting('includeplacenta')
 INCLUDEEXODUSREDUX  = ADDON.getSetting('includeexodusredux')
 INCLUDEGAIA   = ADDON.getSetting('includegaia')
 INCLUDESEREN   = ADDON.getSetting('includeseren')
+INCLUDEYODA   = ADDON.getSetting('includeyoda')
 INCLUDEMAGICALITY = ADDON.getSetting('includemagicality')
 INCLUDEMASTERANI = ADDON.getSetting('includemasterani')
 INCLUDE13CLOWNS = ADDON.getSetting('include13clowns')
@@ -564,6 +565,10 @@ def getCacheSize():
 				files.append(os.path.join(ADDOND, 'plugin.video.placenta', 'cache.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.placenta', 'meta.5.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.placenta', 'providers.13.db'))
+			if INCLUDEYODA == 'true':
+				files.append(os.path.join(ADDOND, 'plugin.video.yoda', 'cache.db'))
+				files.append(os.path.join(ADDOND, 'plugin.video.yoda', 'meta.5.db'))
+				files.append(os.path.join(ADDOND, 'plugin.video.yoda', 'providers.13.db'))
 			if INCLUDEMAGICALITY == 'true':
 				files.append(os.path.join(ADDOND, 'plugin.video.magicality', 'cache.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.magicality', 'meta.5.db'))

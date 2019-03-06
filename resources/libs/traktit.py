@@ -48,7 +48,7 @@ KEEPTRAKT      = wiz.getS('keeptrakt')
 TRAKTSAVE      = wiz.getS('traktlastsave')
 COLOR1         = uservar.COLOR1
 COLOR2         = uservar.COLOR2
-ORDER          = ['13clowns', 'exodusredux', 'gaia', 'magicality', 'masterani', 'openmeta', 'placenta', 'seren', 'trakt', 'zanni']
+ORDER          = ['13clowns', 'exodusredux', 'gaia', 'magicality', 'masterani', 'openmeta', 'placenta', 'seren', 'trakt', 'yoda', 'zanni']
 
 TRAKTID = {
     'placenta': {
@@ -170,7 +170,19 @@ TRAKTID = {
         'settings' : os.path.join(ADDOND, 'plugin.video.masteraniredux', 'settings.xml'),
         'default'  : 'trakt.user',
         'data'     : ['trakt.token', 'trakt.refresh', 'trakt.user'],
-        'activate' : 'RunPlugin(plugin://plugin.video.masteraniredux/authTrakt)'}
+        'activate' : 'RunPlugin(plugin://plugin.video.masteraniredux/authTrakt)'},
+    'yoda': {
+        'name'     : 'Yoda',
+        'plugin'   : 'plugin.video.yoda',
+        'saved'    : 'yoda',
+        'path'     : os.path.join(ADDONS, 'plugin.video.yoda'),
+        'icon'     : os.path.join(ADDONS, 'plugin.video.yoda', 'icon.jpg'),
+        'fanart'   : os.path.join(ADDONS, 'plugin.video.yoda', 'fanart.jpg'),
+        'file'     : os.path.join(TRAKTFOLD, 'yoda_trakt'),
+        'settings' : os.path.join(ADDOND, 'plugin.video.yoda', 'settings.xml'),
+        'default'  : 'trakt.auth',
+        'data'     : ['trakt.token', 'trakt.refresh', 'trakt.auth'],
+        'activate' : 'RunPlugin(plugin://plugin.video.yoda/?action=authTrakt)'}
 }
 
 def traktUser(who):

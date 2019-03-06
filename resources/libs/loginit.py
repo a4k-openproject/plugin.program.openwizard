@@ -48,7 +48,7 @@ KEEPLOGIN      = wiz.getS('keeplogin')
 LOGINSAVE      = wiz.getS('loginlastsave')
 COLOR1         = uservar.COLOR1
 COLOR2         = uservar.COLOR2
-ORDER          = ['fanart-13clowns', 'fanart-exodusredux', 'fanart-gaia', 'fanart-magicality', 'fanart-metadatautils', 'fanart-placenta', 'fanart-zanni', 'imdb-13clowns', 'imdb-exodusredux', 'imdb-gaia', 'imdb-magicality', 'imdb-placenta', 'imdb-zanni', 'kitsu-masterani', 'kitsu-wonderfulsubs' 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-13clowns', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-magicality' ,'tmdb-metadatautils', 'tmdb-metahandler', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-placenta', 'tmdb-seren', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
+ORDER          = ['fanart-13clowns', 'fanart-exodusredux', 'fanart-gaia', 'fanart-magicality', 'fanart-metadatautils', 'fanart-placenta', 'fanart-zanni', 'fanart-yoda', 'imdb-13clowns', 'imdb-exodusredux', 'imdb-gaia', 'imdb-magicality', 'imdb-placenta', 'imdb-yoda', 'imdb-zanni', 'kitsu-masterani', 'kitsu-wonderfulsubs' 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-13clowns', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-magicality' ,'tmdb-metadatautils', 'tmdb-metahandler', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-placenta', 'tmdb-seren', 'tmdb-yoda', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
 
 LOGINID = {
 	'login-opensubtitles': {
@@ -554,8 +554,43 @@ LOGINID = {
 		'settings' : os.path.join(ADDOND, 'plugin.video.wonderfulsubs', 'settings.xml'),
 		'default'  : 'wonderfulsubs.name',
 		'data'     : ['wonderfulsubs.name', 'wonderfulsubs.password'],
-		'activate' : 'RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/wonderfulsubs)'}
-}
+		'activate' : ''},
+	'fanart-yoda': {
+		'name'     : 'Fanart.tv - Yoda',
+		'plugin'   : 'plugin.video.yoda',
+		'saved'    : 'fanart-yoda',
+		'path'     : os.path.join(ADDONS, 'plugin.video.yoda'),
+		'icon'     : os.path.join(ADDONS, 'plugin.video.yoda', 'icon.jpg'),
+		'fanart'   : os.path.join(ADDONS, 'plugin.video.yoda', 'fanart.jpg'),
+		'file'     : os.path.join(LOGINFOLD, 'yoda_fanart'),
+		'settings' : os.path.join(ADDOND, 'plugin.video.yoda', 'settings.xml'),
+		'default'  : 'fanart.tv.user',
+		'data'     : ['fanart.tv.user'],
+		'activate' : ''},
+	'tmdb-yoda': {
+		'name'     : 'TMDb - Yoda',
+		'plugin'   : 'plugin.video.yoda',
+		'saved'    : 'tmdb-yoda',
+		'path'     : os.path.join(ADDONS, 'plugin.video.yoda'),
+		'icon'     : os.path.join(ADDONS, 'plugin.video.yoda', 'icon.jpg'),
+		'fanart'   : os.path.join(ADDONS, 'plugin.video.yoda', 'fanart.jpg'),
+		'file'     : os.path.join(LOGINFOLD, 'yoda_tmdb'),
+		'settings' : os.path.join(ADDOND, 'plugin.video.yoda', 'settings.xml'),
+		'default'  : 'tm.user',
+		'data'     : ['tm.user'],
+		'activate' : ''},
+	'imdb-yoda': {
+		'name'     : 'IMDb - Yoda',
+		'plugin'   : 'plugin.video.yoda',
+		'saved'    : 'imdb-yoda',
+		'path'     : os.path.join(ADDONS, 'plugin.video.yoda'),
+		'icon'     : os.path.join(ADDONS, 'plugin.video.yoda', 'icon.jpg'),
+		'fanart'   : os.path.join(ADDONS, 'plugin.video.yoda', 'fanart.jpg'),
+		'file'     : os.path.join(LOGINFOLD, 'yoda_imdb'),
+		'settings' : os.path.join(ADDOND, 'plugin.video.yoda', 'settings.xml'),
+		'default'  : 'imdb.user',
+		'data'     : ['imdb.user'],
+		'activate' : ''}
 
 def loginUser(who):
 	user=None
