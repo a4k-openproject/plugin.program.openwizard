@@ -48,7 +48,7 @@ KEEPLOGIN      = wiz.getS('keeplogin')
 LOGINSAVE      = wiz.getS('loginlastsave')
 COLOR1         = uservar.COLOR1
 COLOR2         = uservar.COLOR2
-ORDER          = ['fanart-13clowns', 'fanart-exodusredux', 'fanart-gaia', 'fanart-magicality', 'fanart-metadatautils', 'fanart-placenta', 'fanart-zanni', 'imdb-13clowns', 'imdb-exodusredux', 'imdb-gaia', 'imdb-magicality', 'imdb-placenta', 'imdb-zanni', 'login-iagl', 'login-netflix', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-13clowns', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-magicality' ,'tmdb-metadatautils', 'tmdb-metahandler', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-placenta', 'tmdb-seren', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-seren', 'location-yahoo']
+ORDER          = ['fanart-13clowns', 'fanart-exodusredux', 'fanart-gaia', 'fanart-magicality', 'fanart-metadatautils', 'fanart-placenta', 'fanart-zanni', 'imdb-13clowns', 'imdb-exodusredux', 'imdb-gaia', 'imdb-magicality', 'imdb-placenta', 'imdb-zanni', 'kitsu-masterani', 'login-iagl', 'login-netflix', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-13clowns', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-magicality' ,'tmdb-metadatautils', 'tmdb-metahandler', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-placenta', 'tmdb-seren', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-seren', 'location-yahoo']
 
 LOGINID = {
 	'login-opensubtitles': {
@@ -506,7 +506,19 @@ LOGINID = {
 		'settings' : os.path.join(ADDOND, 'plugin.program.iagl', 'settings.xml'),
 		'default'  : 'iagl_setting_ia_username',
 		'data'     : ['iagl_setting_ia_username', 'iagl_setting_ia_password', 'iagl_setting_enable_login'],
-		'activate' : ''}
+		'activate' : ''},
+	'kitsu-masterani': {
+		'name'     : 'Kitsu - Masterani Redux',
+		'plugin'   : 'plugin.video.masteraniredux',
+		'saved'    : 'kitsu-masterani',
+		'path'     : os.path.join(ADDONS, 'plugin.video.masteraniredux'),
+		'icon'     : os.path.join(ADDONS, 'plugin.video.masteraniredux', 'icon.png'),
+		'fanart'   : os.path.join(ADDONS, 'plugin.video.masteraniredux', 'fanart.jpg'),
+		'file'     : os.path.join(LOGINFOLD, 'masterani_kitsu'),
+		'settings' : os.path.join(ADDOND, 'plugin.video.masteraniredux', 'settings.xml'),
+		'default'  : 'kitsu.email',
+		'data'     : ['kitsu.email', 'kitsu.password', 'track.yesno'],
+		'activate' : 'RunPlugin(plugin://plugin.video.masteraniredux/?action=kitsu_login)'}
 }
 
 def loginUser(who):

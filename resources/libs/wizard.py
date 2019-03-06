@@ -106,6 +106,7 @@ INCLUDEEXODUSREDUX  = ADDON.getSetting('includeexodusredux')
 INCLUDEGAIA   = ADDON.getSetting('includegaia')
 INCLUDESEREN   = ADDON.getSetting('includeseren')
 INCLUDEMAGICALITY = ADDON.getSetting('includemagicality')
+INCLUDEMASTERANI = ADDON.getSetting('includemasterani')
 INCLUDE13CLOWNS = ADDON.getSetting('include13clowns')
 INCLUDEZANNI = ADDON.getSetting('includezanni')
 SHOWADULT      = ADDON.getSetting('adult')
@@ -511,7 +512,8 @@ def getCacheSize():
 		(os.path.join(ADDOND, 'plugin.video.zanni', 'cache.providers.13.db')),
 		(os.path.join(ADDOND, 'plugin.video.seren', 'cache.db')),
 		(os.path.join(ADDOND, 'plugin.video.seren', 'torrentScrape.db')),
-		(os.path.join(ADDOND, 'script.module.simplecache', 'simplecache.db'))]
+		(os.path.join(ADDOND, 'script.module.simplecache', 'simplecache.db')),
+		(os.path.join(ADDOND, 'plugin.video.masteraniredux', 'cache.db'))]
 	cachelist = [
 		(ADDOND),
 		(os.path.join(HOME,'cache')),
@@ -566,6 +568,8 @@ def getCacheSize():
 				files.append(os.path.join(ADDOND, 'plugin.video.magicality', 'cache.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.magicality', 'meta.5.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.magicality', 'providers.13.db'))
+			if INCLUDEMASTERANI == 'true': 
+				files.append(os.path.join(ADDOND, 'plugin.video.masteraniredux', 'cache.db'))
 			if INCLUDEGAIA == 'true':
 				files.append(os.path.join(ADDOND, 'plugin.video.gaia', 'cache.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.gaia', 'meta.db'))
@@ -1414,7 +1418,8 @@ def backUpOptions(type, name=""):
 					(os.path.join(ADDOND, 'plugin.video.gaia', 'meta.db')),
 					(os.path.join(ADDOND, 'plugin.video.seren', 'cache.db')),
 					(os.path.join(ADDOND, 'plugin.video.seren', 'torrentScrape.db')),
-					(os.path.join(ADDOND, 'script.module.simplecache', 'simplecache.db'))]
+					(os.path.join(ADDOND, 'script.module.simplecache', 'simplecache.db')),
+					(os.path.join(ADDOND, 'plugin.video.masteraniredux', 'cache.db'))]
 
 	backup   = xbmc.translatePath(BACKUPLOCATION)
 	mybuilds = xbmc.translatePath(MYBUILDS)
@@ -2329,7 +2334,8 @@ def clearCache(over=None):
 		(os.path.join(ADDOND, 'plugin.video.zanni', 'cache.providers.13.db')),
 		(os.path.join(ADDOND, 'plugin.video.seren', 'cache.db')),
 		(os.path.join(ADDOND, 'plugin.video.seren', 'torrentScrape.db')),
-		(os.path.join(ADDOND, 'script.module.simplecache', 'simplecache.db'))]
+		(os.path.join(ADDOND, 'script.module.simplecache', 'simplecache.db')),
+		(os.path.join(ADDOND, 'plugin.video.masteraniredux', 'cache.db'))]
 
 	cachelist = [
 		(PROFILEADDONDATA),
@@ -2406,6 +2412,8 @@ def clearCache(over=None):
 				files.append(os.path.join(ADDOND, 'plugin.video.magicality', 'cache.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.magicality', 'meta.5.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.magicality', 'providers.13.db'))
+			if INCLUDEMASTERANI == 'true': 
+				files.append(os.path.join(ADDOND, 'plugin.video.masteraniredux', 'cache.db'))
 			if INCLUDESEREN == 'true':
 				files.append(os.path.join(ADDOND, 'plugin.video.seren', 'cache.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.seren', 'torrentScrape.db'))

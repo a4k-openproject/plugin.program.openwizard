@@ -88,6 +88,7 @@ INCLUDEZANNI = wiz.getS('includezanni')
 INCLUDEGAIA     = wiz.getS('includegaia')
 INCLUDESEREN     = wiz.getS('includeseren')
 INCLUDEMAGICALITY   = wiz.getS('includemagicality')
+INCLUDEMASTERANI   = wiz.getS('includemasterani')
 SEPERATE         = wiz.getS('seperate')
 NOTIFY           = wiz.getS('notify')
 NOTEID           = wiz.getS('noteid')
@@ -776,6 +777,7 @@ def maintMenu(view=None):
         includeplacenta = 'true'
         includegaia = 'true'
         includemagicality = 'true'
+        includemasterani = 'true'
         includeexodusredux = 'true'
         includeseren = 'true'
         include13clowns = 'true'
@@ -787,6 +789,7 @@ def maintMenu(view=None):
         includeseren = 'true' if INCLUDESEREN   == 'true' else 'false'
         include13clowns = 'true' if INCLUDE13CLOWNS == 'true' else 'false'
         includezanni = 'true' if INCLUDEZANNI == 'true' else 'false'
+        includemasterani = 'true' if INCLUDEMASTERANI == 'true' else 'false'
         includemagicality = 'true' if INCLUDEMAGICALITY == 'true' else 'false'
     sizepack   = wiz.getSize(PACKAGES)
     sizethumb  = wiz.getSize(THUMBS)
@@ -884,6 +887,7 @@ def maintMenu(view=None):
         if xbmc.getCondVisibility('System.HasAddon(plugin.video.exodusredux)'): addFile('--- Include Exodus Redux: %s' % includeexodusredux.replace('true',on).replace('false',off), 'togglecache', 'includeexodusredux', icon=ICONMAINT, themeit=THEME3)
         if xbmc.getCondVisibility('System.HasAddon(plugin.video.gaia)'): addFile('--- Include Gaia: %s' % includegaia.replace('true',on).replace('false',off), 'togglecache', 'includegaia', icon=ICONMAINT, themeit=THEME3)
         if xbmc.getCondVisibility('System.HasAddon(plugin.video.magicality)'): addFile('--- Include Magicality: %s' % includemagicality.replace('true',on).replace('false',off), 'togglecache', 'includemagicality', icon=ICONMAINT, themeit=THEME3)
+        if xbmc.getCondVisibility('System.HasAddon(plugin.video.masteraniredux)'): addFile('--- Include Masterani Redux: %s' % includemasterani.replace('true',on).replace('false',off), 'togglecache', 'includemasterani', icon=ICONMAINT, themeit=THEME3)
         if xbmc.getCondVisibility('System.HasAddon(plugin.video.placenta)'): addFile('--- Include Placenta: %s' % includeplacenta.replace('true',on).replace('false',off), 'togglecache', 'includeplacenta', icon=ICONMAINT, themeit=THEME3)
         if xbmc.getCondVisibility('System.HasAddon(plugin.video.seren)'): addFile('--- Include Seren: %s' % includeseren.replace('true',on).replace('false',off), 'togglecache', 'includeseren', icon=ICONMAINT, themeit=THEME3)
         if xbmc.getCondVisibility('System.HasAddon(plugin.video.zanni)'): addFile('--- Include Zanni: %s' % includezanni.replace('true',on).replace('false',off), 'togglecache', 'includezanni', icon=ICONMAINT, themeit=THEME3)
@@ -1750,8 +1754,8 @@ def createMenu(type, add, name):
     return menu_items
 
 def toggleCache(state):
-    cachelist = ['includevideo', 'includeall', 'include13clowns', 'includeexodusredux', 'includegaia', 'includemagicality', 'includeplacenta', 'includeseren', 'includezanni' ]
-    titlelist = ['Include Video Addons', 'Include All Addons', 'Include 13Clowns', 'Include Exodus Redux', 'Include Gaia', 'Include Magicality', 'Include Placenta', 'Include Seren', 'Include Zanni']
+    cachelist = ['includevideo', 'includeall', 'include13clowns', 'includeexodusredux', 'includegaia', 'includemagicality', 'includemasterani', 'includeplacenta', 'includeseren', 'includezanni' ]
+    titlelist = ['Include Video Addons', 'Include All Addons', 'Include 13Clowns', 'Include Exodus Redux', 'Include Gaia', 'Include Magicality', 'Include Masterani Redux', 'Include Placenta', 'Include Seren', 'Include Zanni']
     if state in ['true', 'false']:
         for item in cachelist:
             wiz.setS(item, state)
