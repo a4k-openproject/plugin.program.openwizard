@@ -48,7 +48,7 @@ KEEPLOGIN      = wiz.getS('keeplogin')
 LOGINSAVE      = wiz.getS('loginlastsave')
 COLOR1         = uservar.COLOR1
 COLOR2         = uservar.COLOR2
-ORDER          = ['fanart-13clowns', 'fanart-exodusredux', 'fanart-gaia', 'fanart-magicality', 'fanart-metadatautils', 'fanart-placenta', 'fanart-zanni', 'imdb-13clowns', 'imdb-exodusredux', 'imdb-gaia', 'imdb-magicality', 'imdb-placenta', 'imdb-zanni', 'kitsu-masterani', 'login-iagl', 'login-netflix', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-13clowns', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-magicality' ,'tmdb-metadatautils', 'tmdb-metahandler', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-placenta', 'tmdb-seren', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-seren', 'location-yahoo']
+ORDER          = ['fanart-13clowns', 'fanart-exodusredux', 'fanart-gaia', 'fanart-magicality', 'fanart-metadatautils', 'fanart-placenta', 'fanart-zanni', 'imdb-13clowns', 'imdb-exodusredux', 'imdb-gaia', 'imdb-magicality', 'imdb-placenta', 'imdb-zanni', 'kitsu-masterani', 'kitsu-wonderfulsubs' 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-13clowns', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-magicality' ,'tmdb-metadatautils', 'tmdb-metahandler', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-placenta', 'tmdb-seren', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
 
 LOGINID = {
 	'login-opensubtitles': {
@@ -518,7 +518,43 @@ LOGINID = {
 		'settings' : os.path.join(ADDOND, 'plugin.video.masteraniredux', 'settings.xml'),
 		'default'  : 'kitsu.email',
 		'data'     : ['kitsu.email', 'kitsu.password', 'track.yesno'],
-		'activate' : 'RunPlugin(plugin://plugin.video.masteraniredux/?action=kitsu_login)'}
+		'activate' : 'RunPlugin(plugin://plugin.video.masteraniredux/?action=kitsu_login)'},
+	'kitsu-wonderfulsubs': {
+		'name'     : 'Kitsu - WonderfulSubs',
+		'plugin'   : 'plugin.video.wonderfulsubs',
+		'saved'    : 'kitsu-wonderfulsubs',
+		'path'     : os.path.join(ADDONS, 'plugin.video.wonderfulsubs'),
+		'icon'     : os.path.join(ADDONS, 'plugin.video.wonderfulsubs', 'icon.png'),
+		'fanart'   : os.path.join(ADDONS, 'plugin.video.wonderfulsubs', 'fanart.jpg'),
+		'file'     : os.path.join(LOGINFOLD, 'wonderfulsubs-kitsu'),
+		'settings' : os.path.join(ADDOND, 'plugin.video.wonderfulsubs', 'settings.xml'),
+		'default'  : 'kitsu.name',
+		'data'     : ['kitsu.name', 'kitsu.password'],
+		'activate' : 'RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/kitsu)'},
+	'kitsu-masterani': {
+		'name'     : 'MyAnimeList - WonderfulSubs',
+		'plugin'   : 'plugin.video.wonderfulsubs',
+		'saved'    : 'mal-wonderfulsubs',
+		'path'     : os.path.join(ADDONS, 'plugin.video.wonderfulsubs'),
+		'icon'     : os.path.join(ADDONS, 'plugin.video.wonderfulsubs', 'icon.png'),
+		'fanart'   : os.path.join(ADDONS, 'plugin.video.wonderfulsubs', 'fanart.jpg'),
+		'file'     : os.path.join(LOGINFOLD, 'wonderfulsubs-mal'),
+		'settings' : os.path.join(ADDOND, 'plugin.video.wonderfulsubs', 'settings.xml'),
+		'default'  : 'mal.name',
+		'data'     : ['mal.name', 'mal.password'],
+		'activate' : 'RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/mal)'},
+	'kitsu-masterani': {
+		'name'     : 'WonderfulSubs - WonderfulSubs',
+		'plugin'   : 'plugin.video.wonderfulsubs',
+		'saved'    : 'ws-wonderfulsubs',
+		'path'     : os.path.join(ADDONS, 'plugin.video.wonderfulsubs'),
+		'icon'     : os.path.join(ADDONS, 'plugin.video.wonderfulsubs', 'icon.png'),
+		'fanart'   : os.path.join(ADDONS, 'plugin.video.wonderfulsubs', 'fanart.jpg'),
+		'file'     : os.path.join(LOGINFOLD, 'wonderfulsubs-ws'),
+		'settings' : os.path.join(ADDOND, 'plugin.video.wonderfulsubs', 'settings.xml'),
+		'default'  : 'wonderfulsubs.name',
+		'data'     : ['wonderfulsubs.name', 'wonderfulsubs.password'],
+		'activate' : 'RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/wonderfulsubs)'}
 }
 
 def loginUser(who):
