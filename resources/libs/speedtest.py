@@ -5,7 +5,6 @@ import math
 import signal
 import socket
 import timeit
-import platform
 import threading
 import uservar
 import xbmc
@@ -19,7 +18,7 @@ ADDONTITLE = uservar.ADDONTITLE
 COLOR1 = uservar.COLOR1
 COLOR2 = uservar.COLOR2
 __version__ = '0.3.5'
-user_agent = None
+user_agent = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36 SE 2.X MetaSr 1.0'
 source = None
 shutdown_event = None
 scheme = 'http'
@@ -165,16 +164,7 @@ def distance(origin, destination):
     d = radius * c
 
     return d
-def build_user_agent():
-    global user_agent
-    if user_agent:
-        return user_agent
-    ua_tuple = ('Mozilla/5.0', '(%s; U; %s; en-us)'
-                % (platform.system(), platform.architecture()[0]),
-                'Python/%s' % platform.python_version(),
-                '(KHTML, like Gecko)', 'speedtest-cli/%s' % __version__)
-    user_agent = ' '.join(ua_tuple)
-    return user_agent
+
 def build_request(url, data=None, headers={}):
     if url[0] == ':':
         schemed_url = '%s%s' % (scheme, url)
@@ -182,6 +172,7 @@ def build_request(url, data=None, headers={}):
         schemed_url = url
     headers['User-Agent'] = user_agent
     return Request(schemed_url, data=data, headers=headers)
+
 def catch_request(request):
     try:
         uh = urlopen(request)
@@ -189,6 +180,7 @@ def catch_request(request):
     except (HTTPError, URLError, socket.error):
         e = sys.exc_info()[1]
         return (None, e)
+
 class FileGetter(threading.Thread):
 
     def __init__(self, url, start):
@@ -479,7 +471,6 @@ def speedtest(
     dp.create('%s: [COLOR %s]Speed Test[/COLOR]' % (ADDONTITLE,
               COLOR1), line1)
     dp.update(0)
-    build_user_agent()
     print_('Retrieving speedtest.net configuration...')
     line2 = \
         '[COLOR %s]Retrieving speedtest.net configuration...[/COLOR]' \
