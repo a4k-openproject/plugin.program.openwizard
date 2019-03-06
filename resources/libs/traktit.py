@@ -48,7 +48,7 @@ KEEPTRAKT      = wiz.getS('keeptrakt')
 TRAKTSAVE      = wiz.getS('traktlastsave')
 COLOR1         = uservar.COLOR1
 COLOR2         = uservar.COLOR2
-ORDER          = ['13clowns', 'exodusredux', 'gaia', 'magicality', 'openmeta', 'placenta', 'seren', 'trakt', 'zanni']
+ORDER          = ['13clowns', 'exodusredux', 'gaia', 'magicality', 'masterani', 'openmeta', 'overeasy', 'placenta', 'premiumizer', 'realizer', 'seren', 'trakt', 'yoda']
 
 TRAKTID = {
     'placenta': {
@@ -87,6 +87,18 @@ TRAKTID = {
         'default'  : 'trakt.user',
         'data'     : ['trakt.refresh', 'trakt.token', 'trakt.user'],
         'activate' : 'RunPlugin(plugin://plugin.video.magicality/?action=authTrakt)'},
+    'overeasy': {
+        'name'     : 'Overeasy',
+        'plugin'   : 'plugin.video.overeasy',
+        'saved'    : 'overeasy',
+        'path'     : os.path.join(ADDONS, 'plugin.video.overeasy'),
+        'icon'     : os.path.join(ADDONS, 'plugin.video.overeasy', 'icon.png'),
+        'fanart'   : os.path.join(ADDONS, 'plugin.video.overeasy', 'fanart.jpg'),
+        'file'     : os.path.join(TRAKTFOLD, 'overeasy_trakt'),
+        'settings' : os.path.join(ADDOND, 'plugin.video.overeasy', 'settings.xml'),
+        'default'  : 'trakt.user',
+        'data'     : ['trakt.refresh', 'trakt.token', 'trakt.user'],
+        'activate' : 'RunPlugin(plugin://plugin.video.overeasy/?action=authTrakt)'},
     'seren': {
         'name'     : 'Seren',
         'plugin'   : 'plugin.video.seren',
@@ -135,18 +147,6 @@ TRAKTID = {
         'default'  : 'trakt.user',
         'data'     : ['trakt.user', 'trakt.refresh', 'trakt.token'],
         'activate' : 'RunPlugin(plugin://plugin.video.13clowns/?action=authTrakt)'},
-    'zanni': {
-        'name'     : 'Zanni',
-        'plugin'   : 'plugin.video.zanni',
-        'saved'    : 'zanni',
-        'path'     : os.path.join(ADDONS, 'plugin.video.zanni'),
-        'icon'     : os.path.join(ADDONS, 'plugin.video.zanni', 'icon.png'),
-        'fanart'   : os.path.join(ADDONS, 'plugin.video.zanni', 'fanart.jpg'),
-        'file'     : os.path.join(TRAKTFOLD, 'zanni_trakt'),
-        'settings' : os.path.join(ADDOND, 'plugin.video.zanni', 'settings.xml'),
-        'default'  : 'trakt.user',
-        'data'     : ['trakt.user', 'trakt.refresh', 'trakt.token'],
-        'activate' : 'RunPlugin(plugin://plugin.video.zanni/?action=authTrakt)'},
     'openmeta': {
         'name'     : 'OpenMeta',
         'plugin'   : 'plugin.video.openmeta',
@@ -158,7 +158,55 @@ TRAKTID = {
         'settings' : os.path.join(ADDOND, 'plugin.video.openmeta', 'settings.xml'),
         'default'  : 'trakt_access_token',
         'data'     : ['trakt_access_token', 'trakt_refresh_token', 'trakt_expires_at    '],
-        'activate' : 'RunPlugin(plugin://plugin.video.openmeta/authenticate_trakt)'}
+        'activate' : 'RunPlugin(plugin://plugin.video.openmeta/authenticate_trakt)'},
+    'masterani': {
+        'name'     : 'Masterani Redux',
+        'plugin'   : 'plugin.video.masteraniredux',
+        'saved'    : 'masterani',
+        'path'     : os.path.join(ADDONS, 'plugin.video.masteraniredux'),
+        'icon'     : os.path.join(ADDONS, 'plugin.video.masteraniredux', 'icon.png'),
+        'fanart'   : os.path.join(ADDONS, 'plugin.video.masteraniredux', 'fanart.jpg'),
+        'file'     : os.path.join(TRAKTFOLD, 'masterani_trakt'),
+        'settings' : os.path.join(ADDOND, 'plugin.video.masteraniredux', 'settings.xml'),
+        'default'  : 'trakt.user',
+        'data'     : ['trakt.token', 'trakt.refresh', 'trakt.user'],
+        'activate' : 'RunPlugin(plugin://plugin.video.masteraniredux/authTrakt)'},
+    'yoda': {
+        'name'     : 'Yoda',
+        'plugin'   : 'plugin.video.yoda',
+        'saved'    : 'yoda',
+        'path'     : os.path.join(ADDONS, 'plugin.video.yoda'),
+        'icon'     : os.path.join(ADDONS, 'plugin.video.yoda', 'icon.jpg'),
+        'fanart'   : os.path.join(ADDONS, 'plugin.video.yoda', 'fanart.jpg'),
+        'file'     : os.path.join(TRAKTFOLD, 'yoda_trakt'),
+        'settings' : os.path.join(ADDOND, 'plugin.video.yoda', 'settings.xml'),
+        'default'  : 'trakt.auth',
+        'data'     : ['trakt.token', 'trakt.refresh', 'trakt.auth'],
+        'activate' : 'RunPlugin(plugin://plugin.video.yoda/?action=authTrakt)'},
+    'premiumizer': {
+        'name'     : 'Premiumizer',
+        'plugin'   : 'plugin.video.premiumizer',
+        'saved'    : 'premiumizer',
+        'path'     : os.path.join(ADDONS, 'plugin.video.premiumizer'),
+        'icon'     : os.path.join(ADDONS, 'plugin.video.premiumizer', 'icon.png'),
+        'fanart'   : os.path.join(ADDONS, 'plugin.video.premiumizer', 'fanart.jpg'),
+        'file'     : os.path.join(TRAKTFOLD, 'premiumizer_trakt'),
+        'settings' : os.path.join(ADDOND, 'plugin.video.premiumizer', 'settings.xml'),
+        'default'  : 'trakt.auth',
+        'data'     : ['trakt.token', 'trakt.refresh', 'trakt.auth'],
+        'activate' : 'RunPlugin(plugin://plugin.video.premiumizer/?action=authTrakt)'},
+    'realizer': {
+        'name'     : 'Realizer',
+        'plugin'   : 'plugin.video.realizer',
+        'saved'    : 'premiumizer',
+        'path'     : os.path.join(ADDONS, 'plugin.video.realizer'),
+        'icon'     : os.path.join(ADDONS, 'plugin.video.realizer', 'icon.png'),
+        'fanart'   : os.path.join(ADDONS, 'plugin.video.realizer', 'fanart.jpg'),
+        'file'     : os.path.join(TRAKTFOLD, 'realizer_trakt'),
+        'settings' : os.path.join(ADDOND, 'plugin.video.realizer', 'settings.xml'),
+        'default'  : 'trakt.auth',
+        'data'     : ['trakt.token', 'trakt.refresh', 'trakt.auth'],
+        'activate' : 'RunPlugin(plugin://plugin.video.realizer/?action=authTrakt)'}
 }
 
 def traktUser(who):
