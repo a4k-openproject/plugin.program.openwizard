@@ -64,7 +64,6 @@
 		<setting id="includeplacenta" type="bool" label="Include Placenta DB: " default="true" enable="eq(-5,false)" visible="System.HasAddon(plugin.video.placenta)"/>
 		<setting id="includeseren" type="bool" label="Include Seren Cache DB: " default="true" enable="eq(-6,false)" visible="System.HasAddon(plugin.video.seren)"/>
         <setting id="includeyoda" type="bool" label="Include Yoda Cache DB: " default="true" enable="eq(-7,false)" visible="System.HasAddon(plugin.video.yoda)"/>
-        <setting id="includezanni" type="bool" label="Include Zanni Cache DB: " default="true" enable="eq(-8,false)" visible="System.HasAddon(plugin.video.zanni)"/>
 	</category>
 
 	<category label="Install Settings">

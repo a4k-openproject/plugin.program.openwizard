@@ -109,7 +109,6 @@ INCLUDEYODA   = ADDON.getSetting('includeyoda')
 INCLUDEMAGICALITY = ADDON.getSetting('includemagicality')
 INCLUDEMASTERANI = ADDON.getSetting('includemasterani')
 INCLUDE13CLOWNS = ADDON.getSetting('include13clowns')
-INCLUDEZANNI = ADDON.getSetting('includezanni')
 SHOWADULT      = ADDON.getSetting('adult')
 WIZDEBUGGING   = ADDON.getSetting('addon_debug')
 DEBUGLEVEL     = ADDON.getSetting('debuglevel')
@@ -508,9 +507,6 @@ def getCacheSize():
 		(os.path.join(ADDOND, 'plugin.video.13clowns', 'cache.db')),
 		(os.path.join(ADDOND, 'plugin.video.13clowns', 'cache.meta.5.db')),
 		(os.path.join(ADDOND, 'plugin.video.13clowns', 'cache.providers.13.db')),
-		(os.path.join(ADDOND, 'plugin.video.zanni', 'cache.db')),
-		(os.path.join(ADDOND, 'plugin.video.zanni', 'cache.meta.5.db')),
-		(os.path.join(ADDOND, 'plugin.video.zanni', 'cache.providers.13.db')),
 		(os.path.join(ADDOND, 'plugin.video.seren', 'cache.db')),
 		(os.path.join(ADDOND, 'plugin.video.seren', 'torrentScrape.db')),
 		(os.path.join(ADDOND, 'script.module.simplecache', 'simplecache.db')),
@@ -585,10 +581,6 @@ def getCacheSize():
 				files.append(os.path.join(ADDOND, 'plugin.video.13clowns', 'cache.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.13clowns', 'meta.5.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.13clowns', 'providers.13.db'))
-			if INCLUDEZANNI == 'true': 
-				files.append(os.path.join(ADDOND, 'plugin.video.zanni', 'cache.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.zanni', 'meta.5.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.zanni', 'providers.13.db'))
 		if len(files) > 0:
 			for item in files:
 				if not os.path.exists(item): continue
@@ -1416,9 +1408,6 @@ def backUpOptions(type, name=""):
 					(os.path.join(ADDOND, 'plugin.video.13clowns', 'cache.db')),
 					(os.path.join(ADDOND, 'plugin.video.13clowns', 'cache.meta.5.db')),
 					(os.path.join(ADDOND, 'plugin.video.13clowns', 'cache.providers.13.db')),
-					(os.path.join(ADDOND, 'plugin.video.zanni', 'cache.db')),
-					(os.path.join(ADDOND, 'plugin.video.zanni', 'cache.meta.5.db')),
-					(os.path.join(ADDOND, 'plugin.video.zanni', 'cache.providers.13.db')),
 					(os.path.join(ADDOND, 'plugin.video.gaia', 'cache.db')),
 					(os.path.join(ADDOND, 'plugin.video.gaia', 'meta.db')),
 					(os.path.join(ADDOND, 'plugin.video.seren', 'cache.db')),
@@ -2334,9 +2323,6 @@ def clearCache(over=None):
 		(os.path.join(ADDOND, 'plugin.video.13clowns', 'cache.db')),
 		(os.path.join(ADDOND, 'plugin.video.13clowns', 'meta.5.db')),
 		(os.path.join(ADDOND, 'plugin.video.13clowns', 'cache.providers.13.db')),
-		(os.path.join(ADDOND, 'plugin.video.zanni', 'cache.db')),
-		(os.path.join(ADDOND, 'plugin.video.zanni', 'meta.5.db')),
-		(os.path.join(ADDOND, 'plugin.video.zanni', 'cache.providers.13.db')),
 		(os.path.join(ADDOND, 'plugin.video.seren', 'cache.db')),
 		(os.path.join(ADDOND, 'plugin.video.seren', 'torrentScrape.db')),
 		(os.path.join(ADDOND, 'script.module.simplecache', 'simplecache.db')),
@@ -2426,10 +2412,6 @@ def clearCache(over=None):
 				files.append(os.path.join(ADDOND, 'plugin.video.13clowns', 'cache.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.13clowns', 'meta.5.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.13clowns', 'providers.13.db'))
-			if INCLUDEZANNI == 'true':
-				files.append(os.path.join(ADDOND, 'plugin.video.zanni', 'cache.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.zanni', 'meta.5.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.zanni', 'providers.13.db'))
 		if len(files) > 0:
 			for item in files:
 				if os.path.exists(item):

@@ -48,7 +48,7 @@ KEEPLOGIN      = wiz.getS('keeplogin')
 LOGINSAVE      = wiz.getS('loginlastsave')
 COLOR1         = uservar.COLOR1
 COLOR2         = uservar.COLOR2
-ORDER          = ['fanart-13clowns', 'fanart-exodusredux', 'fanart-gaia', 'fanart-magicality', 'fanart-metadatautils', 'fanart-placenta', 'fanart-zanni', 'fanart-yoda', 'imdb-13clowns', 'imdb-exodusredux', 'imdb-gaia', 'imdb-magicality', 'imdb-placenta', 'imdb-yoda', 'imdb-zanni', 'kitsu-masterani', 'kitsu-wonderfulsubs' 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-13clowns', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-magicality' ,'tmdb-metadatautils', 'tmdb-metahandler', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-placenta', 'tmdb-seren', 'tmdb-yoda', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
+ORDER          = ['fanart-13clowns', 'fanart-exodusredux', 'fanart-gaia', 'fanart-magicality', 'fanart-metadatautils', 'fanart-placenta', 'fanart-yoda', 'imdb-13clowns', 'imdb-exodusredux', 'imdb-gaia', 'imdb-magicality', 'imdb-placenta', 'imdb-yoda', 'kitsu-masterani', 'kitsu-wonderfulsubs' 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-13clowns', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-magicality' ,'tmdb-metadatautils', 'tmdb-metahandler', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-placenta', 'tmdb-seren', 'tmdb-yoda', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
 
 LOGINID = {
 	'login-opensubtitles': {
@@ -396,42 +396,6 @@ LOGINID = {
 		'fanart'   : os.path.join(ADDONS, 'plugin.video.13clowns', 'fanart.jpg'),
 		'file'     : os.path.join(LOGINFOLD, '13clowns_imdb'),
 		'settings' : os.path.join(ADDOND, 'plugin.video.13clowns', 'settings.xml'),
-		'default'  : 'imdb.user',
-		'data'     : ['imdb.user'],
-		'activate' : ''},
-	'fanart-zanni': {
-		'name'     : 'Fanart.tv - Zanni',
-		'plugin'   : 'plugin.video.zanni',
-		'saved'    : 'fanart-zanni',
-		'path'     : os.path.join(ADDONS, 'plugin.video.zanni'),
-		'icon'     : os.path.join(ADDONS, 'plugin.video.zanni', 'icon.png'),
-		'fanart'   : os.path.join(ADDONS, 'plugin.video.zanni', 'fanart.jpg'),
-		'file'     : os.path.join(LOGINFOLD, 'zanni_fanart'),
-		'settings' : os.path.join(ADDOND, 'plugin.video.zanni', 'settings.xml'),
-		'default'  : 'fanart.tv.user',
-		'data'     : ['fanart.tv.user', 'tm.user', 'imdb.user'],
-		'activate' : ''},
-	'tmdb-zanni': {
-		'name'     : 'TMDb - Zanni',
-		'plugin'   : 'plugin.video.zanni',
-		'saved'    : 'tmdb-zanni',
-		'path'     : os.path.join(ADDONS, 'plugin.video.zanni'),
-		'icon'     : os.path.join(ADDONS, 'plugin.video.zanni', 'icon.png'),
-		'fanart'   : os.path.join(ADDONS, 'plugin.video.zanni', 'fanart.jpg'),
-		'file'     : os.path.join(LOGINFOLD, 'zanni_tmdb'),
-		'settings' : os.path.join(ADDOND, 'plugin.video.zanni', 'settings.xml'),
-		'default'  : 'tm.user',
-		'data'     : ['tm.user'],
-		'activate' : ''},
-	'imdb-zanni': {
-		'name'     : 'IMDb - Zanni',
-		'plugin'   : 'plugin.video.zanni',
-		'saved'    : 'imdb-zanni',
-		'path'     : os.path.join(ADDONS, 'plugin.video.zanni'),
-		'icon'     : os.path.join(ADDONS, 'plugin.video.zanni', 'icon.png'),
-		'fanart'   : os.path.join(ADDONS, 'plugin.video.zanni', 'fanart.jpg'),
-		'file'     : os.path.join(LOGINFOLD, 'zanni_imdb'),
-		'settings' : os.path.join(ADDOND, 'plugin.video.zanni', 'settings.xml'),
 		'default'  : 'imdb.user',
 		'data'     : ['imdb.user'],
 		'activate' : ''},
