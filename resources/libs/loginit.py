@@ -48,7 +48,7 @@ KEEPLOGIN      = wiz.getS('keeplogin')
 LOGINSAVE      = wiz.getS('loginlastsave')
 COLOR1         = uservar.COLOR1
 COLOR2         = uservar.COLOR2
-ORDER          = ['fanart-13clowns', 'fanart-exodusredux', 'fanart-gaia', 'fanart-magicality', 'fanart-metadatautils', 'fanart-placenta', 'fanart-yoda', 'imdb-13clowns', 'imdb-exodusredux', 'imdb-gaia', 'imdb-magicality', 'imdb-placenta', 'imdb-yoda', 'kitsu-masterani', 'kitsu-wonderfulsubs' 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-13clowns', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-magicality' ,'tmdb-metadatautils', 'tmdb-metahandler', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-placenta', 'tmdb-seren', 'tmdb-yoda', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
+ORDER          = ['fanart-13clowns', 'fanart-exodusredux', 'fanart-gaia', 'fanart-magicality', 'fanart-overeasy', 'fanart-metadatautils', 'fanart-placenta', 'fanart-yoda', 'imdb-13clowns', 'imdb-exodusredux', 'imdb-gaia', 'imdb-magicality', 'imdb-overeasy', 'imdb-placenta', 'imdb-yoda', 'kitsu-masterani', 'kitsu-wonderfulsubs' 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-13clowns', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-magicality' ,'tmdb-metadatautils', 'tmdb-metahandler', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-overeasy', 'tmdb-placenta', 'tmdb-seren', 'tmdb-yoda', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
 
 LOGINID = {
 	'login-opensubtitles': {
@@ -552,6 +552,42 @@ LOGINID = {
 		'fanart'   : os.path.join(ADDONS, 'plugin.video.yoda', 'fanart.jpg'),
 		'file'     : os.path.join(LOGINFOLD, 'yoda_imdb'),
 		'settings' : os.path.join(ADDOND, 'plugin.video.yoda', 'settings.xml'),
+		'default'  : 'imdb.user',
+		'data'     : ['imdb.user'],
+		'activate' : ''},
+	'fanart-overeasy': {
+		'name'     : 'Fanart.tv - Overeasy',
+		'plugin'   : 'plugin.video.overeasy',
+		'saved'    : 'fanart-overeasy',
+		'path'     : os.path.join(ADDONS, 'plugin.video.overeasy'),
+		'icon'     : os.path.join(ADDONS, 'plugin.video.overeasy', 'icon.png'),
+		'fanart'   : os.path.join(ADDONS, 'plugin.video.overeasy', 'fanart.jpg'),
+		'file'     : os.path.join(LOGINFOLD, 'overeasy_fanart'),
+		'settings' : os.path.join(ADDOND, 'plugin.video.overeasy', 'settings.xml'),
+		'default'  : 'fanart.tv.user',
+		'data'     : ['fanart.tv.user'],
+		'activate' : ''},
+	'tmdb-overeasy': {
+		'name'     : 'TMDb - Overeasy',
+		'plugin'   : 'plugin.video.overeasy',
+		'saved'    : 'tmdb-overeasy',
+		'path'     : os.path.join(ADDONS, 'plugin.video.overeasy'),
+		'icon'     : os.path.join(ADDONS, 'plugin.video.overeasy', 'icon.png'),
+		'fanart'   : os.path.join(ADDONS, 'plugin.video.overeasy', 'fanart.jpg'),
+		'file'     : os.path.join(LOGINFOLD, 'overeasy_tmdb'),
+		'settings' : os.path.join(ADDOND, 'plugin.video.overeasy', 'settings.xml'),
+		'default'  : 'tm.user',
+		'data'     : ['tm.user'],
+		'activate' : ''},
+	'imdb-overeasy': {
+		'name'     : 'IMDb - Overeasy',
+		'plugin'   : 'plugin.video.overeasy',
+		'saved'    : 'imdb-overeasy',
+		'path'     : os.path.join(ADDONS, 'plugin.video.overeasy'),
+		'icon'     : os.path.join(ADDONS, 'plugin.video.overeasy', 'icon.png'),
+		'fanart'   : os.path.join(ADDONS, 'plugin.video.overeasy', 'fanart.jpg'),
+		'file'     : os.path.join(LOGINFOLD, 'overeasy_imdb'),
+		'settings' : os.path.join(ADDOND, 'plugin.video.overeasy', 'settings.xml'),
 		'default'  : 'imdb.user',
 		'data'     : ['imdb.user'],
 		'activate' : ''}

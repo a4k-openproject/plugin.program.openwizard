@@ -48,7 +48,7 @@ KEEPTRAKT      = wiz.getS('keeptrakt')
 TRAKTSAVE      = wiz.getS('traktlastsave')
 COLOR1         = uservar.COLOR1
 COLOR2         = uservar.COLOR2
-ORDER          = ['13clowns', 'exodusredux', 'gaia', 'magicality', 'masterani', 'openmeta', 'placenta', 'seren', 'trakt', 'yoda']
+ORDER          = ['13clowns', 'exodusredux', 'gaia', 'magicality', 'masterani', 'openmeta', 'overeasy', 'placenta', 'seren', 'trakt', 'yoda']
 
 TRAKTID = {
     'placenta': {
@@ -87,6 +87,18 @@ TRAKTID = {
         'default'  : 'trakt.user',
         'data'     : ['trakt.refresh', 'trakt.token', 'trakt.user'],
         'activate' : 'RunPlugin(plugin://plugin.video.magicality/?action=authTrakt)'},
+    'overeasy': {
+        'name'     : 'Overeasy',
+        'plugin'   : 'plugin.video.overeasy',
+        'saved'    : 'overeasy',
+        'path'     : os.path.join(ADDONS, 'plugin.video.overeasy'),
+        'icon'     : os.path.join(ADDONS, 'plugin.video.overeasy', 'icon.png'),
+        'fanart'   : os.path.join(ADDONS, 'plugin.video.overeasy', 'fanart.jpg'),
+        'file'     : os.path.join(TRAKTFOLD, 'overeasy_trakt'),
+        'settings' : os.path.join(ADDOND, 'plugin.video.overeasy', 'settings.xml'),
+        'default'  : 'trakt.user',
+        'data'     : ['trakt.refresh', 'trakt.token', 'trakt.user'],
+        'activate' : 'RunPlugin(plugin://plugin.video.overeasy/?action=authTrakt)'},
     'seren': {
         'name'     : 'Seren',
         'plugin'   : 'plugin.video.seren',
