@@ -48,7 +48,7 @@ KEEPTRAKT      = wiz.getS('keepdebrid')
 REALSAVE       = wiz.getS('debridlastsave')
 COLOR1         = uservar.COLOR1
 COLOR2         = uservar.COLOR2
-ORDER          = ['gaia', 'gaiapm', 'serenrd', 'serenpm', 'rurlrd', 'rurlpm', 'urlrd', 'urlpm']
+ORDER          = ['gaia', 'gaiapm', 'premiumizer', 'serenrd', 'serenpm', 'rurlrd', 'rurlpm', 'urlrd', 'urlpm']
 
 DEBRIDID = {
 	'gaia': {
@@ -146,7 +146,32 @@ DEBRIDID = {
 		'settings' : os.path.join(ADDOND, 'script.module.resolveurl', 'settings.xml'),
 		'default'  : 'PremiumizeMeResolver_token',
 		'data'     : ['PremiumizeMeResolver_enabled', 'PremiumizeMeResolver_priority', 'PremiumizeMeResolver_token', 'PremiumizeMeResolver_torrents', 'PremiumizeMeResolver_cached_only'],
-		'activate' : ''}
+		'activate' : ''},
+	'premiumizer': {
+		'name'     : 'Premiumizer',
+		'plugin'   : 'plugin.video.premiumizer',
+		'saved'    : 'premiumizer',
+		'path'     : os.path.join(ADDONS, 'plugin.video.premiumizer'),
+		'icon'     : os.path.join(ADDONS, 'plugin.video.premiumizer', 'icon.png'),
+		'fanart'   : os.path.join(ADDONS, 'plugin.video.premiumizer', 'fanart.jpg'),
+		'file'     : os.path.join(REALFOLD, 'premiumizer_debrid'),
+		'settings' : os.path.join(ADDOND, 'plugin.video.premiumizer', 'settings.xml'),
+		'default'  : 'premiumize.token',
+		'data'     : ['premiumize.status', 'premiumize.token', 'premiumize.refresh'],
+		'activate' : 'RunPlugin(plugin://plugin.video.premiumizer/?action=authPremiumize)'}
+# need to save rdauth.json :(
+#	'realizer': {
+#		'name'     : 'Realizer',
+#		'plugin'   : 'plugin.video.realizer',
+#		'saved'    : 'realizer',
+#		'path'     : os.path.join(ADDONS, 'plugin.video.realizer'),
+#		'icon'     : os.path.join(ADDONS, 'plugin.video.realizer', 'icon.png'),
+#		'fanart'   : os.path.join(ADDONS, 'plugin.video.realizer', 'fanart.jpg'),
+#		'file'     : os.path.join(REALFOLD, 'realizer_debrid'),
+#		'settings' : os.path.join(ADDOND, 'plugin.video.realizer', 'settings.xml'),
+#		'default'  : 'premiumize.token',
+#		'data'     : ['premiumize.status', 'premiumize.token', 'premiumize.refresh'],
+#		'activate' : 'RunPlugin(plugin://plugin.video.realizer/?action=authRealdebrid)'}
 }
 
 def debridUser(who):

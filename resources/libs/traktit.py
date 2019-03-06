@@ -48,7 +48,7 @@ KEEPTRAKT      = wiz.getS('keeptrakt')
 TRAKTSAVE      = wiz.getS('traktlastsave')
 COLOR1         = uservar.COLOR1
 COLOR2         = uservar.COLOR2
-ORDER          = ['13clowns', 'exodusredux', 'gaia', 'magicality', 'masterani', 'openmeta', 'overeasy', 'placenta', 'seren', 'trakt', 'yoda']
+ORDER          = ['13clowns', 'exodusredux', 'gaia', 'magicality', 'masterani', 'openmeta', 'overeasy', 'placenta', 'premiumizer', 'realizer', 'seren', 'trakt', 'yoda']
 
 TRAKTID = {
     'placenta': {
@@ -182,7 +182,31 @@ TRAKTID = {
         'settings' : os.path.join(ADDOND, 'plugin.video.yoda', 'settings.xml'),
         'default'  : 'trakt.auth',
         'data'     : ['trakt.token', 'trakt.refresh', 'trakt.auth'],
-        'activate' : 'RunPlugin(plugin://plugin.video.yoda/?action=authTrakt)'}
+        'activate' : 'RunPlugin(plugin://plugin.video.yoda/?action=authTrakt)'},
+    'premiumizer': {
+        'name'     : 'Premiumizer',
+        'plugin'   : 'plugin.video.premiumizer',
+        'saved'    : 'premiumizer',
+        'path'     : os.path.join(ADDONS, 'plugin.video.premiumizer'),
+        'icon'     : os.path.join(ADDONS, 'plugin.video.premiumizer', 'icon.png'),
+        'fanart'   : os.path.join(ADDONS, 'plugin.video.premiumizer', 'fanart.jpg'),
+        'file'     : os.path.join(TRAKTFOLD, 'premiumizer_trakt'),
+        'settings' : os.path.join(ADDOND, 'plugin.video.premiumizer', 'settings.xml'),
+        'default'  : 'trakt.auth',
+        'data'     : ['trakt.token', 'trakt.refresh', 'trakt.auth'],
+        'activate' : 'RunPlugin(plugin://plugin.video.premiumizer/?action=authTrakt)'},
+    'realizer': {
+        'name'     : 'Realizer',
+        'plugin'   : 'plugin.video.realizer',
+        'saved'    : 'premiumizer',
+        'path'     : os.path.join(ADDONS, 'plugin.video.realizer'),
+        'icon'     : os.path.join(ADDONS, 'plugin.video.realizer', 'icon.png'),
+        'fanart'   : os.path.join(ADDONS, 'plugin.video.realizer', 'fanart.jpg'),
+        'file'     : os.path.join(TRAKTFOLD, 'realizer_trakt'),
+        'settings' : os.path.join(ADDOND, 'plugin.video.realizer', 'settings.xml'),
+        'default'  : 'trakt.auth',
+        'data'     : ['trakt.token', 'trakt.refresh', 'trakt.auth'],
+        'activate' : 'RunPlugin(plugin://plugin.video.realizer/?action=authTrakt)'}
 }
 
 def traktUser(who):

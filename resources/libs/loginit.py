@@ -48,7 +48,7 @@ KEEPLOGIN      = wiz.getS('keeplogin')
 LOGINSAVE      = wiz.getS('loginlastsave')
 COLOR1         = uservar.COLOR1
 COLOR2         = uservar.COLOR2
-ORDER          = ['fanart-13clowns', 'fanart-exodusredux', 'fanart-gaia', 'fanart-magicality', 'fanart-overeasy', 'fanart-metadatautils', 'fanart-placenta', 'fanart-yoda', 'imdb-13clowns', 'imdb-exodusredux', 'imdb-gaia', 'imdb-magicality', 'imdb-overeasy', 'imdb-placenta', 'imdb-yoda', 'kitsu-masterani', 'kitsu-wonderfulsubs' 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-13clowns', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-magicality' ,'tmdb-metadatautils', 'tmdb-metahandler', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-overeasy', 'tmdb-placenta', 'tmdb-seren', 'tmdb-yoda', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
+ORDER          = ['fanart-13clowns', 'fanart-exodusredux', 'fanart-gaia', 'fanart-magicality', 'fanart-overeasy', 'fanart-metadatautils', 'fanart-placenta', 'fanart-premiumizer', 'fanart-realizer', 'fanart-yoda', 'imdb-13clowns', 'imdb-exodusredux', 'imdb-gaia', 'imdb-magicality', 'imdb-overeasy', 'imdb-placenta', 'imdb-premiumizer', 'imdb-realizer', 'imdb-yoda', 'kitsu-masterani', 'kitsu-wonderfulsubs' 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-13clowns', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-magicality' ,'tmdb-metadatautils', 'tmdb-metahandler', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-overeasy', 'tmdb-placenta', 'tmdb-premiumizer', 'tmdb-realizer', 'tmdb-seren', 'tmdb-yoda', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-premiumizer', 'tvdb-realizer', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
 
 LOGINID = {
 	'login-opensubtitles': {
@@ -590,7 +590,103 @@ LOGINID = {
 		'settings' : os.path.join(ADDOND, 'plugin.video.overeasy', 'settings.xml'),
 		'default'  : 'imdb.user',
 		'data'     : ['imdb.user'],
-		'activate' : ''}
+		'activate' : ''},
+	'fanart-premiumizer': {
+		'name'     : 'Fanart.tv - Premiumizer',
+		'plugin'   : 'plugin.video.premiumizer',
+		'saved'    : 'fanart-premiumizer',
+		'path'     : os.path.join(ADDONS, 'plugin.video.premiumizer'),
+		'icon'     : os.path.join(ADDONS, 'plugin.video.premiumizer', 'icon.png'),
+		'fanart'   : os.path.join(ADDONS, 'plugin.video.premiumizer', 'fanart.jpg'),
+		'file'     : os.path.join(LOGINFOLD, 'premiumizer_fanart'),
+		'settings' : os.path.join(ADDOND, 'plugin.video.premiumizer', 'settings.xml'),
+		'default'  : 'fanart.tv.user',
+		'data'     : ['fanart.tv.user', 'fanart.tv.project'],
+		'activate' : ''},
+	'tmdb-premiumizer': {
+		'name'     : 'TMDb - Premiumizer',
+		'plugin'   : 'plugin.video.premiumizer',
+		'saved'    : 'tmdb-premiumizer',
+		'path'     : os.path.join(ADDONS, 'plugin.video.premiumizer'),
+		'icon'     : os.path.join(ADDONS, 'plugin.video.premiumizer', 'icon.png'),
+		'fanart'   : os.path.join(ADDONS, 'plugin.video.premiumizer', 'fanart.jpg'),
+		'file'     : os.path.join(LOGINFOLD, 'premiumizer_tmdb'),
+		'settings' : os.path.join(ADDOND, 'plugin.video.premiumizer', 'settings.xml'),
+		'default'  : 'tmdb.api',
+		'data'     : ['tmdb.api'],
+		'activate' : ''},
+	'imdb-premiumizer': {
+		'name'     : 'IMDb - Premiumizer',
+		'plugin'   : 'plugin.video.premiumizer',
+		'saved'    : 'imdb-premiumizer',
+		'path'     : os.path.join(ADDONS, 'plugin.video.premiumizer'),
+		'icon'     : os.path.join(ADDONS, 'plugin.video.premiumizer', 'icon.png'),
+		'fanart'   : os.path.join(ADDONS, 'plugin.video.premiumizer', 'fanart.jpg'),
+		'file'     : os.path.join(LOGINFOLD, 'premiumizer_imdb'),
+		'settings' : os.path.join(ADDOND, 'plugin.video.premiumizer', 'settings.xml'),
+		'default'  : 'imdb.user',
+		'data'     : ['imdb.user'],
+		'activate' : ''},
+	'tvdb-premiumizer': {
+		'name'     : 'TVDB - Premiumizer',
+		'plugin'   : 'plugin.video.premiumizer',
+		'saved'    : 'tvdb-premiumizer',
+		'path'     : os.path.join(ADDONS, 'plugin.video.premiumizer'),
+		'icon'     : os.path.join(ADDONS, 'plugin.video.premiumizer', 'icon.png'),
+		'fanart'   : os.path.join(ADDONS, 'plugin.video.premiumizer', 'fanart.jpg'),
+		'file'     : os.path.join(LOGINFOLD, 'premiumizer_tvdb'),
+		'settings' : os.path.join(ADDOND, 'plugin.video.premiumizer', 'settings.xml'),
+		'default'  : 'tvdb.api',
+		'data'     : ['tvdb.api', 'tvdb.token', 'tvdb.refresh'],
+		'activate' : 'RunPlugin(plugin://plugin.video.premiumizer/?action=AuthorizeTvdb)'},
+	'fanart-realizer': {
+		'name'     : 'Fanart.tv - Realizer',
+		'plugin'   : 'plugin.video.realizer',
+		'saved'    : 'fanart-realizer',
+		'path'     : os.path.join(ADDONS, 'plugin.video.realizer'),
+		'icon'     : os.path.join(ADDONS, 'plugin.video.realizer', 'icon.png'),
+		'fanart'   : os.path.join(ADDONS, 'plugin.video.realizer', 'fanart.jpg'),
+		'file'     : os.path.join(LOGINFOLD, 'realizer_fanart'),
+		'settings' : os.path.join(ADDOND, 'plugin.video.realizer', 'settings.xml'),
+		'default'  : 'fanart.tv.user',
+		'data'     : ['fanart.tv.user', 'fanart.tv.project'],
+		'activate' : ''},
+	'tmdb-realizer': {
+		'name'     : 'TMDb - Realizer',
+		'plugin'   : 'plugin.video.realizer',
+		'saved'    : 'tmdb-realizer',
+		'path'     : os.path.join(ADDONS, 'plugin.video.realizer'),
+		'icon'     : os.path.join(ADDONS, 'plugin.video.realizer', 'icon.png'),
+		'fanart'   : os.path.join(ADDONS, 'plugin.video.realizer', 'fanart.jpg'),
+		'file'     : os.path.join(LOGINFOLD, 'realizer_tmdb'),
+		'settings' : os.path.join(ADDOND, 'plugin.video.realizer', 'settings.xml'),
+		'default'  : 'tmdb.api',
+		'data'     : ['tmdb.api'],
+		'activate' : ''},
+	'imdb-realizer': {
+		'name'     : 'IMDb - Realizer',
+		'plugin'   : 'plugin.video.realizer',
+		'saved'    : 'imdb-realizer',
+		'path'     : os.path.join(ADDONS, 'plugin.video.realizer'),
+		'icon'     : os.path.join(ADDONS, 'plugin.video.realizer', 'icon.png'),
+		'fanart'   : os.path.join(ADDONS, 'plugin.video.realizer', 'fanart.jpg'),
+		'file'     : os.path.join(LOGINFOLD, 'realizer_imdb'),
+		'settings' : os.path.join(ADDOND, 'plugin.video.realizer', 'settings.xml'),
+		'default'  : 'imdb.user',
+		'data'     : ['imdb.user'],
+		'activate' : ''},
+	'tvdb-realizer': {
+		'name'     : 'TVDB - Realizer',
+		'plugin'   : 'plugin.video.realizer',
+		'saved'    : 'tvdb-realizer',
+		'path'     : os.path.join(ADDONS, 'plugin.video.realizer'),
+		'icon'     : os.path.join(ADDONS, 'plugin.video.realizer', 'icon.png'),
+		'fanart'   : os.path.join(ADDONS, 'plugin.video.realizer', 'fanart.jpg'),
+		'file'     : os.path.join(LOGINFOLD, 'realizer_tvdb'),
+		'settings' : os.path.join(ADDOND, 'plugin.video.realizer', 'settings.xml'),
+		'default'  : 'tvdb.api',
+		'data'     : ['tvdb.api', 'tvdb.token', 'tvdb.refresh'],
+		'activate' : 'RunPlugin(plugin://plugin.video.realizer/?action=AuthorizeTvdb)'}
 
 def loginUser(who):
 	user=None
