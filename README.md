@@ -16,20 +16,26 @@ Currently, this version of the wizard supports:
 | Gaia                               | [x]            | [x]   | [x]         | [x]        |           | [x]  |      |      | [x]  | [x]       |          |                         |
 | IAGL                               |                |       |             |            |           |      |      |      |      |           |          | [x]                     |
 | Magicality                         | [x]            | [x]   |             |            |           | [x]  |      |      | [x]  | [x]       |          |                         |
+| Masterani Redux                    | [x]            | [x]   |             |            |           |      |      |      |      |           |          | [x]                     |
 | Netflix                            |                |       |             |            |           |      |      |      |      |           |          | [x]                     |
 | OpenInfo                           | [x]            |       |             |            |           | [x]  |      |      |      |           |          |                         |
 | OpenMeta                           | [x]            | [x]   |             |            | [x]       | [x]  | [x]  |      |      |           |          |                         |
 | OpenSubtitles.org                  |                |       |             |            |           |      |      |      |      |           |          | [x]                     |
 | OpenSubtitles.org by OpenSubtitles |                |       |             |            |           |      |      |      |      |           |          | [x]                     |
 | Orion                              |                |       |             |            |           |      |      |      |      |           |          | [x]                     |
+| Overeasy                           | [x]            | [x]   |             |            |           | [x]  |      |      | [x]  | [x]       |          |                         |
 | Placenta                           | [x]            | [x]   |             |            |           | [x]  |      |      | [x]  | [x]       |          |                         |
+| Premiumizer                        |                | [x]   |             | [x]        |           | [x]  | [x]  |      | [x]  | [x]       |          |                         |
+| Realizer                           |                | [x]   | [x]         |            |           | [x]  | [x]  |      | [x]  | [x]       |          |                         |
 | metahandler                        |                |       |             |            |           | [x]  | [x]  | [x]  |      |           |          |                         |
-| ResolveURL                         |                |       | [x]         | [x]        |           |      |      |      |      |           |          |                         |
+| ResolveURL                         | [x]            |       | [x]         | [x]        |           |      |      |      |      |           |          |                         |
 | script.module.metadatautils        | [x]            |       |             |            |           | [x]  |      | [x]  |      | [x]       |          |                         |
 | Seren                              | [x]            | [x]   | [x]         | [x]        | [x]       | [x]  | [x]  |      |      |           |          |                         |
+| simplecache                        | [x]            |       |             |            |           |      |      |      |      |           |          |                         |
 | Trakt                              |                | [x]   |             |            |           |      |      |      |      |           |          |                         |
-| URLResolver                        |                |       | [x]         | [x]        |           |      |      |      |      |           |          |                         |
+| URLResolver                        | [x]            |       | [x]         | [x]        |           |      |      |      |      |           |          |                         |
+| WonderfulSubs                      |                |       |             |            |           |      |      |      |      |           |          | [x]                     |
 | Yahoo! Weather                     |                |       |             |            |           |      |      |      |      |           | [x]      |                         |
-| Zanni                              | [x]            | [x]   |             |            |           | [x]  |      |      | [x]  | [x]       |          |                         |
+| Yoda                               | [x]            | [x]   |             |            |           | [x]  |      |      | [x]  | [x]       |          |                         |
 
 If you don't see these in your menus, don't be alarmed... it's just because you dont have them installed. They are supported, however ;)
