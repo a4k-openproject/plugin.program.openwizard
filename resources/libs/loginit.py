@@ -687,6 +687,7 @@ LOGINID = {
 		'default'  : 'tvdb.api',
 		'data'     : ['tvdb.api', 'tvdb.token', 'tvdb.refresh'],
 		'activate' : 'RunPlugin(plugin://plugin.video.realizer/?action=AuthorizeTvdb)'}
+}
 
 def loginUser(who):
 	user=None

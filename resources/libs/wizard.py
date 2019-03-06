@@ -2322,6 +2322,10 @@ def clearArchive():
 	if os.path.exists(ARCHIVE_CACHE):
 		cleanHouse(ARCHIVE_CACHE)
 
+def clearFunctionCache():
+	if xbmc.getCondVisibility('System.HasAddon(script.module.resolveurl)'): xbmc.executebuiltin('RunPlugin(plugin://script.module.resolveurl/?mode=reset_cache)')
+	if xbmc.getCondVisibility('System.HasAddon(script.module.urlresolver)'): xbmc.executebuiltin('RunPlugin(plugin://script.module.urlresolver/?mode=reset_cache)')
+        
 def clearCache(over=None):
 	PROFILEADDONDATA = os.path.join(PROFILE,'addon_data')
 	dbfiles   = [

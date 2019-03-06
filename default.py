@@ -804,6 +804,7 @@ def maintMenu(view=None):
     if view == "clean" or SHOWMAINT == 'true':
         addFile('Total Clean Up: [COLOR springgreen][B]%s[/B][/COLOR]' % wiz.convertSize(totalsize),    'fullclean',       icon=ICONMAINT, themeit=THEME3)
         addFile('Clear Cache: [COLOR springgreen][B]%s[/B][/COLOR]' % wiz.convertSize(sizecache),       'clearcache',      icon=ICONMAINT, themeit=THEME3)
+        if (xbmc.getCondVisibility('System.HasAddon(script.module.urlresolver)') or xbmc.getCondVisibility('System.HasAddon(script.module.resolveurl)')): addFile('Clear Resolver Function Caches',       'clearfunctioncache',      icon=ICONMAINT, themeit=THEME3)
         addFile('Clear Packages: [COLOR springgreen][B]%s[/B][/COLOR]' % wiz.convertSize(sizepack),     'clearpackages',   icon=ICONMAINT, themeit=THEME3)
         addFile('Clear Thumbnails: [COLOR springgreen][B]%s[/B][/COLOR]' % wiz.convertSize(sizethumb),  'clearthumb',      icon=ICONMAINT, themeit=THEME3)
         if os.path.exists(ARCHIVE_CACHE): addFile('Clear Archive_Cache: [COLOR springgreen][B]%s[/B][/COLOR]' % wiz.convertSize(archive), 'cleararchive',    icon=ICONMAINT, themeit=THEME3)
@@ -2338,6 +2339,10 @@ def clearCache():
     if DIALOG.yesno(ADDONTITLE, '[COLOR %s]Would you like to clear cache?[/COLOR]' % COLOR2, nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]', yeslabel='[B][COLOR springgreen]Clear Cache[/COLOR][/B]'):
         wiz.clearCache()
 
+def clearFunctionCache():
+    if DIALOG.yesno(ADDONTITLE, '[COLOR %s]Would you like to clear resolver function caches?[/COLOR]' % COLOR2, nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]', yeslabel='[B][COLOR springgreen]Clear Cache[/COLOR][/B]'):
+        wiz.clearFunctionCache()
+        
 def clearArchive():
     if DIALOG.yesno(ADDONTITLE, '[COLOR %s]Would you like to clear the \'Archive_Cache\' folder?[/COLOR]' % COLOR2, nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]', yeslabel='[B][COLOR springgreen]Yes Clear[/COLOR][/B]'):
         wiz.clearArchive()
@@ -2345,6 +2350,7 @@ def clearArchive():
 def totalClean():
     if DIALOG.yesno(ADDONTITLE, '[COLOR %s]Would you like to clear cache, packages and thumbnails?[/COLOR]' % COLOR2, nolabel='[B][COLOR red]Cancel Process[/COLOR][/B]',yeslabel='[B][COLOR springgreen]Clean All[/COLOR][/B]'):
         wiz.clearCache()
+        wiz.clearFunctionCache()
         wiz.clearPackages('total')
         clearThumb('total')
 
@@ -2523,6 +2529,7 @@ elif mode=='convertpath'    : wiz.convertSpecial(HOME)
 elif mode=='currentsettings': viewAdvanced()
 elif mode=='fullclean'      : totalClean(); wiz.refresh()
 elif mode=='clearcache'     : clearCache(); wiz.refresh()
+elif mode=='clearfunctioncache'     : clearFunctionCache(); wiz.refresh()
 elif mode=='clearpackages'  : wiz.clearPackages(); wiz.refresh()
 elif mode=='clearcrash'     : wiz.clearCrash(); wiz.refresh()
 elif mode=='clearthumb'     : clearThumb(); wiz.refresh()
