@@ -447,7 +447,7 @@ LOGINID = {
 		'default'  : 'kitsu.name',
 		'data'     : ['kitsu.name', 'kitsu.password'],
 		'activate' : 'RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/kitsu)'},
-	'kitsu-masterani': {
+	'mal-wonderfulsubs': {
 		'name'     : 'MyAnimeList - WonderfulSubs',
 		'plugin'   : 'plugin.video.wonderfulsubs',
 		'saved'    : 'mal-wonderfulsubs',
@@ -459,7 +459,7 @@ LOGINID = {
 		'default'  : 'mal.name',
 		'data'     : ['mal.name', 'mal.password'],
 		'activate' : 'RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/mal)'},
-	'kitsu-masterani': {
+	'ws-wonderfulsubs': {
 		'name'     : 'WonderfulSubs - WonderfulSubs',
 		'plugin'   : 'plugin.video.wonderfulsubs',
 		'saved'    : 'ws-wonderfulsubs',
