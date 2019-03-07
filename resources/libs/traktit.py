@@ -48,7 +48,7 @@ KEEPTRAKT      = wiz.getS('keeptrakt')
 TRAKTSAVE      = wiz.getS('traktlastsave')
 COLOR1         = uservar.COLOR1
 COLOR2         = uservar.COLOR2
-ORDER          = ['13clowns', 'exodusredux', 'gaia', 'masterani', 'openmeta', 'overeasy', 'placenta', 'premiumizer', 'realizer', 'seren', 'trakt', 'yoda']
+ORDER          = ['13clowns', 'exodusredux', 'gaia', 'openmeta', 'overeasy', 'placenta', 'premiumizer', 'realizer', 'seren', 'trakt', 'yoda']
 
 TRAKTID = {
     'placenta': {
@@ -147,18 +147,6 @@ TRAKTID = {
         'default'  : 'trakt_access_token',
         'data'     : ['trakt_access_token', 'trakt_refresh_token', 'trakt_expires_at    '],
         'activate' : 'RunPlugin(plugin://plugin.video.openmeta/authenticate_trakt)'},
-    'masterani': {
-        'name'     : 'Masterani Redux',
-        'plugin'   : 'plugin.video.masteraniredux',
-        'saved'    : 'masterani',
-        'path'     : os.path.join(ADDONS, 'plugin.video.masteraniredux'),
-        'icon'     : os.path.join(ADDONS, 'plugin.video.masteraniredux', 'icon.png'),
-        'fanart'   : os.path.join(ADDONS, 'plugin.video.masteraniredux', 'fanart.jpg'),
-        'file'     : os.path.join(TRAKTFOLD, 'masterani_trakt'),
-        'settings' : os.path.join(ADDOND, 'plugin.video.masteraniredux', 'settings.xml'),
-        'default'  : 'trakt.user',
-        'data'     : ['trakt.token', 'trakt.refresh', 'trakt.user'],
-        'activate' : 'RunPlugin(plugin://plugin.video.masteraniredux/authTrakt)'},
     'yoda': {
         'name'     : 'Yoda',
         'plugin'   : 'plugin.video.yoda',

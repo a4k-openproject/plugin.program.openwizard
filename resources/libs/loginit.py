@@ -48,7 +48,7 @@ KEEPLOGIN      = wiz.getS('keeplogin')
 LOGINSAVE      = wiz.getS('loginlastsave')
 COLOR1         = uservar.COLOR1
 COLOR2         = uservar.COLOR2
-ORDER          = ['fanart-13clowns', 'fanart-exodusredux', 'fanart-gaia', 'fanart-overeasy', 'fanart-metadatautils', 'fanart-placenta', 'fanart-premiumizer', 'fanart-realizer', 'fanart-yoda', 'imdb-13clowns', 'imdb-exodusredux', 'imdb-gaia', 'imdb-overeasy', 'imdb-placenta', 'imdb-premiumizer', 'imdb-realizer', 'imdb-yoda', 'kitsu-masterani', 'kitsu-wonderfulsubs', 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-13clowns', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-metadatautils', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-overeasy', 'tmdb-placenta', 'tmdb-premiumizer', 'tmdb-realizer', 'tmdb-seren', 'tmdb-yoda', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-premiumizer', 'tvdb-realizer', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
+ORDER          = ['fanart-13clowns', 'fanart-exodusredux', 'fanart-gaia', 'fanart-overeasy', 'fanart-metadatautils', 'fanart-placenta', 'fanart-premiumizer', 'fanart-realizer', 'fanart-yoda', 'imdb-13clowns', 'imdb-exodusredux', 'imdb-gaia', 'imdb-overeasy', 'imdb-placenta', 'imdb-premiumizer', 'imdb-realizer', 'imdb-yoda', 'kitsu-wonderfulsubs', 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-13clowns', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-metadatautils', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-overeasy', 'tmdb-placenta', 'tmdb-premiumizer', 'tmdb-realizer', 'tmdb-seren', 'tmdb-yoda', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-premiumizer', 'tvdb-realizer', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
 
 LOGINID = {
 	'login-opensubtitles': {
@@ -435,18 +435,6 @@ LOGINID = {
 		'default'  : 'iagl_setting_ia_username',
 		'data'     : ['iagl_setting_ia_username', 'iagl_setting_ia_password', 'iagl_setting_enable_login'],
 		'activate' : ''},
-	'kitsu-masterani': {
-		'name'     : 'Kitsu - Masterani Redux',
-		'plugin'   : 'plugin.video.masteraniredux',
-		'saved'    : 'kitsu-masterani',
-		'path'     : os.path.join(ADDONS, 'plugin.video.masteraniredux'),
-		'icon'     : os.path.join(ADDONS, 'plugin.video.masteraniredux', 'icon.png'),
-		'fanart'   : os.path.join(ADDONS, 'plugin.video.masteraniredux', 'fanart.jpg'),
-		'file'     : os.path.join(LOGINFOLD, 'masterani_kitsu'),
-		'settings' : os.path.join(ADDOND, 'plugin.video.masteraniredux', 'settings.xml'),
-		'default'  : 'kitsu.email',
-		'data'     : ['kitsu.email', 'kitsu.password', 'track.yesno'],
-		'activate' : 'RunPlugin(plugin://plugin.video.masteraniredux/?action=kitsu_login)'},
 	'kitsu-wonderfulsubs': {
 		'name'     : 'Kitsu - WonderfulSubs',
 		'plugin'   : 'plugin.video.wonderfulsubs',
