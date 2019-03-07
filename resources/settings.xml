@@ -59,7 +59,6 @@
         <setting id="include13clowns" type="bool" label="Include 13Clowns DB: " default="true" enable="eq(-1,false)" visible="System.HasAddon(plugin.video.13clowns)"/>
 		<setting id="includeexodusredux" type="bool" label="Include Exodus Redux DB: " default="true" enable="eq(-2,false)" visible="System.HasAddon(plugin.video.exodusredux)"/>
 		<setting id="includegaia" type="bool" label="Include Gaia Cache DB: " default="true" enable="eq(-3,false)" visible="System.HasAddon(plugin.video.gaia)"/>
-		<setting id="includemagicality" type="bool" label="Include Magicality Cache DB: " default="true" enable="eq(-4,false)" visible="System.HasAddon(plugin.video.magicality)"/>
         <setting id="includemasterani" type="bool" label="Include Masterani Redux Cache DB: " default="true" enable="eq(-5,false)" visible="System.HasAddon(plugin.video.masteraniredux)"/>
         <setting id="includeovereasy" type="bool" label="Include Overeasy Cache DB: " default="true" enable="eq(-6,false)" visible="System.HasAddon(plugin.video.overeasy)"/>
 		<setting id="includeplacenta" type="bool" label="Include Placenta DB: " default="true" enable="eq(-7,false)" visible="System.HasAddon(plugin.video.placenta)"/>

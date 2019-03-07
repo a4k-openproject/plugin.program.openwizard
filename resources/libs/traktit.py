@@ -48,7 +48,7 @@ KEEPTRAKT      = wiz.getS('keeptrakt')
 TRAKTSAVE      = wiz.getS('traktlastsave')
 COLOR1         = uservar.COLOR1
 COLOR2         = uservar.COLOR2
-ORDER          = ['13clowns', 'exodusredux', 'gaia', 'magicality', 'masterani', 'openmeta', 'overeasy', 'placenta', 'premiumizer', 'realizer', 'seren', 'trakt', 'yoda']
+ORDER          = ['13clowns', 'exodusredux', 'gaia', 'masterani', 'openmeta', 'overeasy', 'placenta', 'premiumizer', 'realizer', 'seren', 'trakt', 'yoda']
 
 TRAKTID = {
     'placenta': {
@@ -75,18 +75,6 @@ TRAKTID = {
         'default'  : 'accounts.informants.trakt.user',
         'data'     : ['accounts.informants.trakt.user', 'accounts.informants.trakt.refresh', 'accounts.informants.trakt.token'],
         'activate' : 'RunPlugin(plugin://plugin.video.gaia/?action=traktAuthorize)'},
-    'magicality': {
-        'name'     : 'Magicality',
-        'plugin'   : 'plugin.video.magicality',
-        'saved'    : 'magicality',
-        'path'     : os.path.join(ADDONS, 'plugin.video.magicality'),
-        'icon'     : os.path.join(ADDONS, 'plugin.video.magicality', 'icon.png'),
-        'fanart'   : os.path.join(ADDONS, 'plugin.video.magicality', 'fanart.jpg'),
-        'file'     : os.path.join(TRAKTFOLD, 'magicality_trakt'),
-        'settings' : os.path.join(ADDOND, 'plugin.video.magicality', 'settings.xml'),
-        'default'  : 'trakt.user',
-        'data'     : ['trakt.refresh', 'trakt.token', 'trakt.user'],
-        'activate' : 'RunPlugin(plugin://plugin.video.magicality/?action=authTrakt)'},
     'overeasy': {
         'name'     : 'Overeasy',
         'plugin'   : 'plugin.video.overeasy',

@@ -15,7 +15,6 @@ Currently, this version of the wizard supports:
 | ExtendedInfo Script                | [x]            |       |             |            |           | [x]  |      |      |      |           |          |                         |
 | Gaia                               | [x]            | [x]   | [x]         | [x]        |           | [x]  |      |      | [x]  | [x]       |          |                         |
 | IAGL                               |                |       |             |            |           |      |      |      |      |           |          | [x]                     |
-| Magicality                         | [x]            | [x]   |             |            |           | [x]  |      |      | [x]  | [x]       |          |                         |
 | Masterani Redux                    | [x]            | [x]   |             |            |           |      |      |      |      |           |          | [x]                     |
 | Netflix                            |                |       |             |            |           |      |      |      |      |           |          | [x]                     |
 | OpenInfo                           | [x]            |       |             |            |           | [x]  |      |      |      |           |          |                         |
