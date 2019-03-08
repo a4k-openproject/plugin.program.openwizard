@@ -48,7 +48,7 @@ KEEPLOGIN      = wiz.getS('keeplogin')
 LOGINSAVE      = wiz.getS('loginlastsave')
 COLOR1         = uservar.COLOR1
 COLOR2         = uservar.COLOR2
-ORDER          = ['fanart-13clowns', 'fanart-exodusredux', 'fanart-gaia', 'fanart-magicality', 'fanart-overeasy', 'fanart-metadatautils', 'fanart-placenta', 'fanart-premiumizer', 'fanart-realizer', 'fanart-yoda', 'imdb-13clowns', 'imdb-exodusredux', 'imdb-gaia', 'imdb-magicality', 'imdb-overeasy', 'imdb-placenta', 'imdb-premiumizer', 'imdb-realizer', 'imdb-yoda', 'kitsu-masterani', 'kitsu-wonderfulsubs', 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-13clowns', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-magicality', 'tmdb-metadatautils', 'tmdb-metahandler', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-overeasy', 'tmdb-placenta', 'tmdb-premiumizer', 'tmdb-realizer', 'tmdb-seren', 'tmdb-yoda', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-premiumizer', 'tvdb-realizer', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
+ORDER          = ['fanart-13clowns', 'fanart-exodusredux', 'fanart-gaia', 'fanart-overeasy', 'fanart-metadatautils', 'fanart-placenta', 'fanart-premiumizer', 'fanart-realizer', 'fanart-yoda', 'imdb-13clowns', 'imdb-exodusredux', 'imdb-gaia', 'imdb-overeasy', 'imdb-placenta', 'imdb-premiumizer', 'imdb-realizer', 'imdb-yoda', 'kitsu-wonderfulsubs', 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-13clowns', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-metadatautils', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-overeasy', 'tmdb-placenta', 'tmdb-premiumizer', 'tmdb-realizer', 'tmdb-seren', 'tmdb-yoda', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-premiumizer', 'tvdb-realizer', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
 
 LOGINID = {
 	'login-opensubtitles': {
@@ -195,42 +195,6 @@ LOGINID = {
 		'default'  : 'accounts.informants.tmdb.api',
 		'data'     : ['accounts.informants.tmdb.enabled', 'accounts.informants.tmdb.api'],
 		'activate' : 'RunPlugin(plugin://plugin.video.gaia/?action=accountSettings)'},
-	'fanart-magicality': {
-		'name'     : 'Fanart.tv - Magicality',
-		'plugin'   : 'plugin.video.magicality',
-		'saved'    : 'fanart-magicality',
-		'path'     : os.path.join(ADDONS, 'plugin.video.magicality'),
-		'icon'     : os.path.join(ADDONS, 'plugin.video.magicality', 'icon.png'),
-		'fanart'   : os.path.join(ADDONS, 'plugin.video.magicality', 'fanart.jpg'),
-		'file'     : os.path.join(LOGINFOLD, 'magicality_fanart'),
-		'settings' : os.path.join(ADDOND, 'plugin.video.magicality', 'settings.xml'),
-		'default'  : 'fanart.tv.user',
-		'data'     : ['fanart.tv.user'],
-		'activate' : ''},
-	'tmdb-magicality': {
-		'name'     : 'TMDb - Magicality',
-		'plugin'   : 'plugin.video.magicality',
-		'saved'    : 'tmdb-magicality',
-		'path'     : os.path.join(ADDONS, 'plugin.video.magicality'),
-		'icon'     : os.path.join(ADDONS, 'plugin.video.magicality', 'icon.png'),
-		'fanart'   : os.path.join(ADDONS, 'plugin.video.magicality', 'fanart.jpg'),
-		'file'     : os.path.join(LOGINFOLD, 'magicality_tmdb'),
-		'settings' : os.path.join(ADDOND, 'plugin.video.magicality', 'settings.xml'),
-		'default'  : 'tm.user',
-		'data'     : ['tm.user'],
-		'activate' : ''},
-	'imdb-magicality': {
-		'name'     : 'IMDb - Magicality',
-		'plugin'   : 'plugin.video.magicality',
-		'saved'    : 'imdb-magicality',
-		'path'     : os.path.join(ADDONS, 'plugin.video.magicality'),
-		'icon'     : os.path.join(ADDONS, 'plugin.video.magicality', 'icon.png'),
-		'fanart'   : os.path.join(ADDONS, 'plugin.video.magicality', 'fanart.jpg'),
-		'file'     : os.path.join(LOGINFOLD, 'magicality_imdb'),
-		'settings' : os.path.join(ADDOND, 'plugin.video.magicality', 'settings.xml'),
-		'default'  : 'imdb.user',
-		'data'     : ['imdb.user'],
-		'activate' : ''},
 	'login-eis': {
 		'name'     : 'TMDb Login - ExtendedInfo Script',
 		'plugin'   : 'script.extendedinfo',
@@ -471,18 +435,6 @@ LOGINID = {
 		'default'  : 'iagl_setting_ia_username',
 		'data'     : ['iagl_setting_ia_username', 'iagl_setting_ia_password', 'iagl_setting_enable_login'],
 		'activate' : ''},
-	'kitsu-masterani': {
-		'name'     : 'Kitsu - Masterani Redux',
-		'plugin'   : 'plugin.video.masteraniredux',
-		'saved'    : 'kitsu-masterani',
-		'path'     : os.path.join(ADDONS, 'plugin.video.masteraniredux'),
-		'icon'     : os.path.join(ADDONS, 'plugin.video.masteraniredux', 'icon.png'),
-		'fanart'   : os.path.join(ADDONS, 'plugin.video.masteraniredux', 'fanart.jpg'),
-		'file'     : os.path.join(LOGINFOLD, 'masterani_kitsu'),
-		'settings' : os.path.join(ADDOND, 'plugin.video.masteraniredux', 'settings.xml'),
-		'default'  : 'kitsu.email',
-		'data'     : ['kitsu.email', 'kitsu.password', 'track.yesno'],
-		'activate' : 'RunPlugin(plugin://plugin.video.masteraniredux/?action=kitsu_login)'},
 	'kitsu-wonderfulsubs': {
 		'name'     : 'Kitsu - WonderfulSubs',
 		'plugin'   : 'plugin.video.wonderfulsubs',
@@ -495,7 +447,7 @@ LOGINID = {
 		'default'  : 'kitsu.name',
 		'data'     : ['kitsu.name', 'kitsu.password'],
 		'activate' : 'RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/kitsu)'},
-	'kitsu-masterani': {
+	'mal-wonderfulsubs': {
 		'name'     : 'MyAnimeList - WonderfulSubs',
 		'plugin'   : 'plugin.video.wonderfulsubs',
 		'saved'    : 'mal-wonderfulsubs',
@@ -507,7 +459,7 @@ LOGINID = {
 		'default'  : 'mal.name',
 		'data'     : ['mal.name', 'mal.password'],
 		'activate' : 'RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/mal)'},
-	'kitsu-masterani': {
+	'ws-wonderfulsubs': {
 		'name'     : 'WonderfulSubs - WonderfulSubs',
 		'plugin'   : 'plugin.video.wonderfulsubs',
 		'saved'    : 'ws-wonderfulsubs',
