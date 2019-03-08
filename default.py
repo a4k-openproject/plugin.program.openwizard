@@ -83,7 +83,6 @@ INCLUDEVIDEO     = wiz.getS('includevideo')
 INCLUDEALL       = wiz.getS('includeall')
 INCLUDEPLACENTA    = wiz.getS('includeplacenta')
 INCLUDEEXODUSREDUX    = wiz.getS('includeexodusredux')
-INCLUDE13CLOWNS = wiz.getS('include13clowns')
 INCLUDEGAIA     = wiz.getS('includegaia')
 INCLUDESEREN     = wiz.getS('includeseren')
 INCLUDEOVEREASY     = wiz.getS('includeovereasy')
@@ -779,7 +778,6 @@ def maintMenu(view=None):
         includeovereasy = 'true'
         includeyoda = 'true'
         includeseren = 'true'
-        include13clowns = 'true'
     else:
         includeexodusredux = 'true' if INCLUDEEXODUSREDUX     == 'true' else 'false'
         includeovereasy = 'true' if INCLUDEOVEREASY     == 'true' else 'false'
@@ -787,7 +785,6 @@ def maintMenu(view=None):
         includegaia = 'true' if INCLUDEGAIA   == 'true' else 'false'
         includeyoda = 'true' if INCLUDEYODA   == 'true' else 'false'
         includeseren = 'true' if INCLUDESEREN   == 'true' else 'false'
-        include13clowns = 'true' if INCLUDE13CLOWNS == 'true' else 'false'
     sizepack   = wiz.getSize(PACKAGES)
     sizethumb  = wiz.getSize(THUMBS)
     archive    = wiz.getSize(ARCHIVE_CACHE)
@@ -881,7 +878,6 @@ def maintMenu(view=None):
     addFile('Include Video Cache in Clear Cache: %s' % includevid.replace('true',on).replace('false',off), 'togglecache', 'includevideo', icon=ICONMAINT, themeit=THEME3)
     if includevid == 'true':
         addFile('--- Include All Video Addons: %s' % includeall.replace('true',on).replace('false',off), 'togglecache', 'includeall', icon=ICONMAINT, themeit=THEME3)
-        if xbmc.getCondVisibility('System.HasAddon(plugin.video.13clowns)'): addFile('--- Include 13Clowns: %s' % include13clowns.replace('true',on).replace('false',off), 'togglecache', 'include13clowns', icon=ICONMAINT, themeit=THEME3)
         if xbmc.getCondVisibility('System.HasAddon(plugin.video.exodusredux)'): addFile('--- Include Exodus Redux: %s' % includeexodusredux.replace('true',on).replace('false',off), 'togglecache', 'includeexodusredux', icon=ICONMAINT, themeit=THEME3)
         if xbmc.getCondVisibility('System.HasAddon(plugin.video.gaia)'): addFile('--- Include Gaia: %s' % includegaia.replace('true',on).replace('false',off), 'togglecache', 'includegaia', icon=ICONMAINT, themeit=THEME3)
         if xbmc.getCondVisibility('System.HasAddon(plugin.video.overeasy)'): addFile('--- Include Overeasy: %s' % includeovereasy.replace('true',on).replace('false',off), 'togglecache', 'includeovereasy', icon=ICONMAINT, themeit=THEME3)
@@ -1751,8 +1747,8 @@ def createMenu(type, add, name):
     return menu_items
 
 def toggleCache(state):
-    cachelist = ['includevideo', 'includeall', 'include13clowns', 'includeexodusredux', 'includegaia', 'includeovereasy', 'includeplacenta', 'includeseren', 'includeyoda']
-    titlelist = ['Include Video Addons', 'Include All Addons', 'Include 13Clowns', 'Include Exodus Redux', 'Include Gaia', 'Include Overeasy', 'Include Placenta', 'Include Seren', 'Include Yoda']
+    cachelist = ['includevideo', 'includeall', 'includeexodusredux', 'includegaia', 'includeovereasy', 'includeplacenta', 'includeseren', 'includeyoda']
+    titlelist = ['Include Video Addons', 'Include All Addons', 'Include Exodus Redux', 'Include Gaia', 'Include Overeasy', 'Include Placenta', 'Include Seren', 'Include Yoda']
     if state in ['true', 'false']:
         for item in cachelist:
             wiz.setS(item, state)

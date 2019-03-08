@@ -48,7 +48,7 @@ KEEPLOGIN      = wiz.getS('keeplogin')
 LOGINSAVE      = wiz.getS('loginlastsave')
 COLOR1         = uservar.COLOR1
 COLOR2         = uservar.COLOR2
-ORDER          = ['fanart-13clowns', 'fanart-exodusredux', 'fanart-gaia', 'fanart-overeasy', 'fanart-metadatautils', 'fanart-placenta', 'fanart-premiumizer', 'fanart-realizer', 'fanart-yoda', 'imdb-13clowns', 'imdb-exodusredux', 'imdb-gaia', 'imdb-overeasy', 'imdb-placenta', 'imdb-premiumizer', 'imdb-realizer', 'imdb-yoda', 'kitsu-wonderfulsubs', 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-13clowns', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-metadatautils', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-overeasy', 'tmdb-placenta', 'tmdb-premiumizer', 'tmdb-realizer', 'tmdb-seren', 'tmdb-yoda', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-premiumizer', 'tvdb-realizer', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
+ORDER          = ['fanart-exodusredux', 'fanart-gaia', 'fanart-overeasy', 'fanart-metadatautils', 'fanart-placenta', 'fanart-premiumizer', 'fanart-realizer', 'fanart-yoda', 'imdb-exodusredux', 'imdb-gaia', 'imdb-overeasy', 'imdb-placenta', 'imdb-premiumizer', 'imdb-realizer', 'imdb-yoda', 'kitsu-wonderfulsubs', 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-metadatautils', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-overeasy', 'tmdb-placenta', 'tmdb-premiumizer', 'tmdb-realizer', 'tmdb-seren', 'tmdb-yoda', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-premiumizer', 'tvdb-realizer', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
 
 LOGINID = {
 	'login-opensubtitles': {
@@ -324,42 +324,6 @@ LOGINID = {
 		'fanart'   : os.path.join(ADDONS, 'plugin.video.exodusredux', 'fanart.jpg'),
 		'file'     : os.path.join(LOGINFOLD, 'exodusredux_imdb'),
 		'settings' : os.path.join(ADDOND, 'plugin.video.exodusredux', 'settings.xml'),
-		'default'  : 'imdb.user',
-		'data'     : ['imdb.user'],
-		'activate' : ''},
-	'fanart-13clowns': {
-		'name'     : 'Fanart.tv - 13Clowns',
-		'plugin'   : 'plugin.video.13clowns',
-		'saved'    : 'fanart-13clowns',
-		'path'     : os.path.join(ADDONS, 'plugin.video.13clowns'),
-		'icon'     : os.path.join(ADDONS, 'plugin.video.13clowns', 'icon.png'),
-		'fanart'   : os.path.join(ADDONS, 'plugin.video.13clowns', 'fanart.jpg'),
-		'file'     : os.path.join(LOGINFOLD, '13clowns_fanart'),
-		'settings' : os.path.join(ADDOND, 'plugin.video.13clowns', 'settings.xml'),
-		'default'  : 'fanart.tv.user',
-		'data'     : ['fanart.tv.user'],
-		'activate' : ''},
-	'tmdb-13clowns': {
-		'name'     : 'TMDb - 13Clowns',
-		'plugin'   : 'plugin.video.13clowns',
-		'saved'    : 'tmdb-13clowns',
-		'path'     : os.path.join(ADDONS, 'plugin.video.13clowns'),
-		'icon'     : os.path.join(ADDONS, 'plugin.video.13clowns', 'icon.png'),
-		'fanart'   : os.path.join(ADDONS, 'plugin.video.13clowns', 'fanart.jpg'),
-		'file'     : os.path.join(LOGINFOLD, '13clowns_tmdb'),
-		'settings' : os.path.join(ADDOND, 'plugin.video.13clowns', 'settings.xml'),
-		'default'  : 'tm.user',
-		'data'     : ['tm.user'],
-		'activate' : ''},
-	'imdb-13clowns': {
-		'name'     : 'IMDb - 13Clowns',
-		'plugin'   : 'plugin.video.13clowns',
-		'saved'    : 'imdb-13clowns',
-		'path'     : os.path.join(ADDONS, 'plugin.video.13clowns'),
-		'icon'     : os.path.join(ADDONS, 'plugin.video.13clowns', 'icon.png'),
-		'fanart'   : os.path.join(ADDONS, 'plugin.video.13clowns', 'fanart.jpg'),
-		'file'     : os.path.join(LOGINFOLD, '13clowns_imdb'),
-		'settings' : os.path.join(ADDOND, 'plugin.video.13clowns', 'settings.xml'),
 		'default'  : 'imdb.user',
 		'data'     : ['imdb.user'],
 		'activate' : ''},
