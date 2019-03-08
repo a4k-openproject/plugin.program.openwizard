@@ -48,7 +48,7 @@ KEEPTRAKT      = wiz.getS('keeptrakt')
 TRAKTSAVE      = wiz.getS('traktlastsave')
 COLOR1         = uservar.COLOR1
 COLOR2         = uservar.COLOR2
-ORDER          = ['13clowns', 'exodusredux', 'gaia', 'openmeta', 'overeasy', 'placenta', 'premiumizer', 'realizer', 'seren', 'trakt', 'yoda']
+ORDER          = ['exodusredux', 'gaia', 'openmeta', 'overeasy', 'placenta', 'premiumizer', 'realizer', 'seren', 'trakt', 'yoda']
 
 TRAKTID = {
     'placenta': {
@@ -123,18 +123,6 @@ TRAKTID = {
         'default'  : 'trakt.user',
         'data'     : ['trakt.user', 'trakt.refresh', 'trakt.token'],
         'activate' : 'RunPlugin(plugin://plugin.video.exodusredux/?action=authTrakt)'},
-    '13clowns': {
-        'name'     : '13Clowns',
-        'plugin'   : 'plugin.video.13clowns',
-        'saved'    : '13clowns',
-        'path'     : os.path.join(ADDONS, 'plugin.video.13clowns'),
-        'icon'     : os.path.join(ADDONS, 'plugin.video.13clowns', 'icon.png'),
-        'fanart'   : os.path.join(ADDONS, 'plugin.video.13clowns', 'fanart.jpg'),
-        'file'     : os.path.join(TRAKTFOLD, '13clowns_trakt'),
-        'settings' : os.path.join(ADDOND, 'plugin.video.13clowns', 'settings.xml'),
-        'default'  : 'trakt.user',
-        'data'     : ['trakt.user', 'trakt.refresh', 'trakt.token'],
-        'activate' : 'RunPlugin(plugin://plugin.video.13clowns/?action=authTrakt)'},
     'openmeta': {
         'name'     : 'OpenMeta',
         'plugin'   : 'plugin.video.openmeta',

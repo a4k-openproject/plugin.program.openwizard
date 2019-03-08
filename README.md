@@ -9,7 +9,6 @@ Currently, this version of the wizard supports:
 
 |  Add-on                            | Cache Clearing | Trakt | Real-Debrid | Premiumize | Trakt API | TMDb | TVDB | OMDb | IMDb | Fanart.tv | Location | Username/Password/Login |
 |------------------------------------|:--------------:|:-----:|:-----------:|:----------:|:---------:|:----:|:----:|:----:|:----:|:---------:|:--------:|:-----------------------:|
-| 13Clowns                           | [x]            | [x]   |             |            |           | [x]  |      |      | [x]  | [x]       |          |                         |
 | AutoCompletion                     | [x]            |       |             |            |           |      |      |      |      |           |          |                         |
 | Exodus Redux                       | [x]            | [x]   |             |            |           | [x]  |      |      | [x]  | [x]       |          |                         |
 | ExtendedInfo Script                | [x]            |       |             |            |           | [x]  |      |      |      |           |          |                         |
