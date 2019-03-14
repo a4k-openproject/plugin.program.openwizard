@@ -27,6 +27,7 @@ Currently, this version of the wizard supports:
 | metahandler                        |                |       |             |            |           | [x]  | [x]  | [x]  |      |           |          |                         |
 | ResolveURL                         | [x]            |       | [x]         | [x]        |           |      |      |      |      |           |          |                         |
 | script.module.metadatautils        | [x]            |       |             |            |           | [x]  |      | [x]  |      | [x]       |          |                         |
+| Scrubs v2                          | [x]            | [x]   |             |            |           | [x]  |      |      | [x]  | [x]       |          |                         |
 | Seren                              | [x]            | [x]   | [x]         | [x]        | [x]       | [x]  | [x]  |      |      |           |          |                         |
 | simplecache                        | [x]            |       |             |            |           |      |      |      |      |           |          |                         |
 | Trakt                              |                | [x]   |             |            |           |      |      |      |      |           |          |                         |

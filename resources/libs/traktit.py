@@ -48,7 +48,7 @@ KEEPTRAKT      = wiz.getS('keeptrakt')
 TRAKTSAVE      = wiz.getS('traktlastsave')
 COLOR1         = uservar.COLOR1
 COLOR2         = uservar.COLOR2
-ORDER          = ['exodusredux', 'gaia', 'openmeta', 'overeasy', 'placenta', 'premiumizer', 'realizer', 'seren', 'trakt', 'yoda']
+ORDER          = ['exodusredux', 'gaia', 'openmeta', 'overeasy', 'placenta', 'premiumizer', 'realizer', 'scrubs', 'seren', 'trakt', 'yoda']
 
 TRAKTID = {
     'placenta': {
@@ -147,6 +147,18 @@ TRAKTID = {
         'default'  : 'trakt.auth',
         'data'     : ['trakt.token', 'trakt.refresh', 'trakt.auth'],
         'activate' : 'RunPlugin(plugin://plugin.video.yoda/?action=authTrakt)'},
+    'scrubs': {
+        'name'     : 'Scrubs v2',
+        'plugin'   : 'plugin.video.scrubsv2',
+        'saved'    : 'scrubs',
+        'path'     : os.path.join(ADDONS, 'plugin.video.scrubsv2'),
+        'icon'     : os.path.join(ADDONS, 'plugin.video.scrubsv2', 'icon.jpg'),
+        'fanart'   : os.path.join(ADDONS, 'plugin.video.scrubsv2', 'fanart.png'),
+        'file'     : os.path.join(TRAKTFOLD, 'scrubs_trakt'),
+        'settings' : os.path.join(ADDOND, 'plugin.video.scrubs', 'settings.xml'),
+        'default'  : 'trakt.user',
+        'data'     : ['trakt.user', 'trakt.user2', 'trakt.token', 'trakt.refresh', 'trakt.auth'],
+        'activate' : 'RunPlugin(plugin://plugin.video.scrubsv2/?action=authTrakt)'},
     'premiumizer': {
         'name'     : 'Premiumizer',
         'plugin'   : 'plugin.video.premiumizer',

@@ -60,6 +60,7 @@
 		<setting id="includegaia" type="bool" label="Include Gaia Cache DB: " default="true" enable="eq(-2,false)" visible="System.HasAddon(plugin.video.gaia)"/>
         <setting id="includeovereasy" type="bool" label="Include Overeasy Cache DB: " default="true" enable="eq(-3,false)" visible="System.HasAddon(plugin.video.overeasy)"/>
 		<setting id="includeplacenta" type="bool" label="Include Placenta DB: " default="true" enable="eq(-4,false)" visible="System.HasAddon(plugin.video.placenta)"/>
+		<setting id="includescrubs" type="bool" label="Include Scrubs v2 Cache DB: " default="true" enable="eq(-5,false)" visible="System.HasAddon(plugin.video.scrubsv2)"/>
 		<setting id="includeseren" type="bool" label="Include Seren Cache DB: " default="true" enable="eq(-5,false)" visible="System.HasAddon(plugin.video.seren)"/>
         <setting id="includeyoda" type="bool" label="Include Yoda Cache DB: " default="true" enable="eq(-6,false)" visible="System.HasAddon(plugin.video.yoda)"/>
 	</category>
