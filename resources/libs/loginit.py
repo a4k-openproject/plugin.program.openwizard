@@ -48,7 +48,7 @@ KEEPLOGIN      = wiz.getS('keeplogin')
 LOGINSAVE      = wiz.getS('loginlastsave')
 COLOR1         = uservar.COLOR1
 COLOR2         = uservar.COLOR2
-ORDER          = ['fanart-exodusredux', 'fanart-gaia', 'fanart-overeasy', 'fanart-metadatautils', 'fanart-placenta', 'fanart-premiumizer', 'fanart-realizer', 'fanart-yoda', 'imdb-exodusredux', 'imdb-gaia', 'imdb-overeasy', 'imdb-placenta', 'imdb-premiumizer', 'imdb-realizer', 'imdb-yoda', 'kitsu-wonderfulsubs', 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-metadatautils', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-overeasy', 'tmdb-placenta', 'tmdb-premiumizer', 'tmdb-realizer', 'tmdb-seren', 'tmdb-yoda', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-premiumizer', 'tvdb-realizer', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
+ORDER          = ['fanart-exodusredux', 'fanart-gaia', 'fanart-overeasy', 'fanart-metadatautils', 'fanart-placenta', 'fanart-premiumizer', 'fanart-realizer', 'fanart-scrubs', 'fanart-yoda', 'imdb-exodusredux', 'imdb-gaia', 'imdb-overeasy', 'imdb-placenta', 'imdb-premiumizer', 'imdb-realizer', 'imdb-scrubs', 'imdb-yoda', 'kitsu-wonderfulsubs', 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-metadatautils', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-overeasy', 'tmdb-placenta', 'tmdb-premiumizer', 'tmdb-realizer', 'tmdb-scrubs', 'tmdb-seren', 'tmdb-yoda', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-premiumizer', 'tvdb-realizer', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
 
 LOGINID = {
 	'login-opensubtitles': {
@@ -504,6 +504,42 @@ LOGINID = {
 		'fanart'   : os.path.join(ADDONS, 'plugin.video.overeasy', 'fanart.jpg'),
 		'file'     : os.path.join(LOGINFOLD, 'overeasy_imdb'),
 		'settings' : os.path.join(ADDOND, 'plugin.video.overeasy', 'settings.xml'),
+		'default'  : 'imdb.user',
+		'data'     : ['imdb.user'],
+		'activate' : ''},
+	'fanart-scrubs': {
+		'name'     : 'Fanart.tv - Scrubs v2',
+		'plugin'   : 'plugin.video.scrubsv2',
+		'saved'    : 'fanart-scrubs',
+		'path'     : os.path.join(ADDONS, 'plugin.video.scrubsv2'),
+		'icon'     : os.path.join(ADDONS, 'plugin.video.scrubsv2', 'icon.jpg'),
+		'fanart'   : os.path.join(ADDONS, 'plugin.video.scrubsv2', 'fanart.png'),
+		'file'     : os.path.join(LOGINFOLD, 'scrubs_fanart'),
+		'settings' : os.path.join(ADDOND, 'plugin.video.scrubsv2', 'settings.xml'),
+		'default'  : 'fanart.tv.user',
+		'data'     : ['fanart.tv.user'],
+		'activate' : ''},
+	'tmdb-scrubs': {
+		'name'     : 'TMDb - Scrubs v2',
+		'plugin'   : 'plugin.video.scrubsv2',
+		'saved'    : 'tmdb-scrubs',
+		'path'     : os.path.join(ADDONS, 'plugin.video.scrubsv2'),
+		'icon'     : os.path.join(ADDONS, 'plugin.video.scrubsv2', 'icon.jpg'),
+		'fanart'   : os.path.join(ADDONS, 'plugin.video.scrubsv2', 'fanart.png'),
+		'file'     : os.path.join(LOGINFOLD, 'scrubs_tmdb'),
+		'settings' : os.path.join(ADDOND, 'plugin.video.scrubsv2', 'settings.xml'),
+		'default'  : 'tm.user',
+		'data'     : ['tm.user'],
+		'activate' : ''},
+	'imdb-scrubs': {
+		'name'     : 'IMDb - Scrubs v2',
+		'plugin'   : 'plugin.video.scrubsv2',
+		'saved'    : 'imdb-scrubs',
+		'path'     : os.path.join(ADDONS, 'plugin.video.scrubsv2'),
+		'icon'     : os.path.join(ADDONS, 'plugin.video.scrubsv2', 'icon.jpg'),
+		'fanart'   : os.path.join(ADDONS, 'plugin.video.scrubsv2', 'fanart.png'),
+		'file'     : os.path.join(LOGINFOLD, 'scrubs_imdb'),
+		'settings' : os.path.join(ADDOND, 'plugin.video.scrubsv2', 'settings.xml'),
 		'default'  : 'imdb.user',
 		'data'     : ['imdb.user'],
 		'activate' : ''},
