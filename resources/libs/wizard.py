@@ -281,7 +281,7 @@ def addonUpdates(do=None):
 ###########################
 
 def checkBuild(name, ret):
-	if not workingURL(BUILDFILE) == True: return False
+	if not workingURL(BUILDFILE): return False
 	link = openURL(BUILDFILE).replace('\n','').replace('\r','').replace('\t','').replace('gui=""', 'gui="http://"').replace('theme=""', 'theme="http://"')
 	match = re.compile('name="%s".+?ersion="(.+?)".+?rl="(.+?)".+?inor="(.+?)".+?ui="(.+?)".+?odi="(.+?)".+?heme="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?review="(.+?)".+?dult="(.+?)".+?nfo="(.+?)".+?escription="(.+?)"' % name).findall(link)
 	if len(match) > 0:
@@ -302,7 +302,7 @@ def checkBuild(name, ret):
 	else: return False
 	
 def checkInfo(name):
-	if not workingURL(name) == True: return False
+	if not workingURL(name): return False
 	link = openURL(name).replace('\n','').replace('\r','').replace('\t','')
 	match = re.compile('.+?ame="(.+?)".+?xtracted="(.+?)".+?ipsize="(.+?)".+?kin="(.+?)".+?reated="(.+?)".+?rograms="(.+?)".+?ideo="(.+?)".+?usic="(.+?)".+?icture="(.+?)".+?epos="(.+?)".+?cripts="(.+?)"').findall(link)
 	if len(match) > 0:
@@ -312,7 +312,7 @@ def checkInfo(name):
 
 def checkTheme(name, theme, ret):
 	themeurl = checkBuild(name, 'theme')
-	if not workingURL(themeurl) == True: return False
+	if not workingURL(themeurl): return False
 	link = openURL(themeurl).replace('\n','').replace('\r','').replace('\t','')
 	match = re.compile('name="%s".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult=(.+?).+?escription="(.+?)"' % theme).findall(link)
 	if len(match) > 0:
@@ -326,7 +326,7 @@ def checkTheme(name, theme, ret):
 	else: return False
 
 def checkWizard(ret):
-	if not workingURL(WIZARDFILE) == True: return False
+	if not workingURL(WIZARDFILE): return False
 	link = openURL(WIZARDFILE).replace('\n','').replace('\r','').replace('\t','')
 	match = re.compile('id="%s".+?ersion="(.+?)".+?ip="(.+?)"' % ADDON_ID).findall(link)
 	if len(match) > 0:
@@ -359,7 +359,7 @@ def strTest(string):
 
 def themeCount(name, count=True):
 	themefile = checkBuild(name, 'theme')
-	if themefile == 'http://' or themefile == False: return False
+	if themefile == 'http://' or not themefile: return False
 	link = openURL(themefile).replace('\n','').replace('\r','').replace('\t','')
 	match = re.compile('name="(.+?)".+?dult="(.+?)"').findall(link)
 	if len(match) == 0: return False
@@ -368,7 +368,7 @@ def themeCount(name, count=True):
 		if not SHOWADULT == 'true' and adult.lower() == 'yes': continue
 		themes.append(item)
 	if len(themes) > 0:
-		if count == True: return len(themes)
+		if count: return len(themes)
 		else: return themes
 	else: return False
 
@@ -386,7 +386,7 @@ def thirdParty(url=None):
 
 def basecode(text, encode=True):
 	import base64
-	if encode == True:
+	if encode:
 		msg = base64.encodestring(text)
 	else:
 		msg = base64.decodestring(text)
@@ -604,7 +604,7 @@ def cleanHouse(folder, ignore=False):
 	log(folder)
 	total_files = 0; total_folds = 0
 	for root, dirs, files in os.walk(folder):
-		if ignore == False: dirs[:] = [d for d in dirs if d not in EXCLUDES]
+		if not ignore: dirs[:] = [d for d in dirs if d not in EXCLUDES]
 		file_count = 0
 		file_count += len(files)
 		if file_count >= 0:
@@ -707,7 +707,6 @@ def latestDB(DB):
 def viewFile(name, url):
 	return
 
-
 def forceText():
 	cleanHouse(TEXTCACHE)
 	LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), '[COLOR %s]Text Files Flushed![/COLOR]' % (COLOR2))
@@ -726,7 +725,7 @@ def toggleDependency(name, DP=None):
 		for depends in match:
 			if not 'xbmc.python' in depends:
 				dependspath=os.path.join(ADDONS, depends)
-				if not DP == None:
+				if not DP is None:
 					DP.update("","Checking Dependency [COLOR yellow]%s[/COLOR] for [COLOR yellow]%s[/COLOR]" % (depends, name),"")
 				if os.path.exists(dependspath):
 					toggleAddon(name, 'true')
@@ -810,7 +809,7 @@ def toggleAddon(id, value, over=None):
 			pass
 	query = '{"jsonrpc":"2.0", "method":"Addons.SetAddonEnabled","params":{"addonid":"%s","enabled":%s}, "id":1}' % (addonid, value)
 	response = xbmc.executeJSONRPC(query)
-	if 'error' in response and over == None:
+	if 'error' in response and over is None:
 		v = 'Enabling' if value == 'true' else 'Disabling'
 		DIALOG.ok(ADDONTITLE, "[COLOR %s]Error %s [COLOR %s]%s[/COLOR]" % (COLOR2, v, COLOR1 , id), "Check to make sure the addon list is upto date and try again.[/COLOR]")
 		forceUpdate()
@@ -852,7 +851,7 @@ def createQR():
 	if not url.startswith('http://') and not url.startswith('https://'): LogNotify("[COLOR %s]Create QR[/COLOR]" % COLOR1, '[COLOR %s]Not a Valid URL![/COLOR]' % COLOR2); return
 	if url == 'http://' or url == 'https://': LogNotify("[COLOR %s]Create QR[/COLOR]" % COLOR1, '[COLOR %s]Not a Valid URL![/COLOR]' % COLOR2); return
 	working = workingURL(url)
-	if not working == True:
+	if not working:
 		if not DIALOG.yesno(ADDONTITLE, "[COLOR %s]It seems the your enter isnt working, Would you like to create it anyways?[/COLOR]" % COLOR2, "[COLOR %s]%s[/COLOR]" % (COLOR1, working), yeslabel="[B][COLOR red]Yes Create[/COLOR][/B]", nolabel="[B][COLOR springgreen]No Cancel[/COLOR][/B]"):
 			return
 	name = getKeyboard('', "%s: Insert the name for the QRCode." % ADDONTITLE)
@@ -925,7 +924,7 @@ def splitNotify(notify):
 def forceUpdate(silent=False):
 	ebi('UpdateAddonRepos()')
 	ebi('UpdateLocalAddons()')
-	if silent == False: LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), '[COLOR %s]Forcing Addon Updates[/COLOR]' % COLOR2)
+	if not silent: LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), '[COLOR %s]Forcing Addon Updates[/COLOR]' % COLOR2)
 
 def convertSpecial(url, over=False):
 	total = fileCount(url); start = 0
@@ -949,7 +948,7 @@ def convertSpecial(url, over=False):
 					sys.exit()
 	DP.close()
 	log("[Convert Paths to Special] Complete", xbmc.LOGNOTICE)
-	if over == False: LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Convert Paths to Special: Complete![/COLOR]" % COLOR2)
+	if not over: LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Convert Paths to Special: Complete![/COLOR]" % COLOR2)
 
 def clearCrash():
 	files = []
@@ -1226,9 +1225,9 @@ def chunks(s, n):
 		yield s[start:start+n]
 
 def asciiCheck(use=None, over=False):
-	if use == None:
+	if use is None:
 		source = DIALOG.browse(3, '[COLOR %s]Select the folder you want to scan[/COLOR]' % COLOR2, 'files', '', False, False, HOME)
-		if over == True:
+		if over:
 			yes = 1
 		else:
 			yes = DIALOG.yesno(ADDONTITLE,'[COLOR %s]Do you want to [COLOR %s]delete[/COLOR] all filenames with special characters or would you rather just [COLOR %s]scan and view[/COLOR] the results in the log?[/COLOR]' % (COLOR2, COLOR1, COLOR1), yeslabel='[B][COLOR springgreen]Delete[/COLOR][/B]', nolabel='[B][COLOR red]Scan[/COLOR][/B]')
@@ -1461,7 +1460,7 @@ def backUpOptions(type, name=""):
 						addonfolds.append(foldername)
 			if KODIV > 16:
 				selected = DIALOG.multiselect("%s: Select the addons you wish to add to the zip." % ADDONTITLE, addonnames)
-				if selected == None: selected = []
+				if selected is None: selected = []
 			else:
 				selected = []; choice = 0
 				tempaddonnames = ["-- Click here to Continue --"] + addonnames
@@ -2058,10 +2057,10 @@ def platform():
 	elif xbmc.getCondVisibility('system.platform.darwin'):            return 'ios'
 
 def Grab_Log(file=False, old=False, wizard=False):
-	if wizard == True:
+	if wizard:
 		if not os.path.exists(WIZLOG): return False
 		else:
-			if file == True:
+			if file:
 				return WIZLOG
 			else:
 				filename    = open(WIZLOG, 'r')
@@ -2073,12 +2072,12 @@ def Grab_Log(file=False, old=False, wizard=False):
 	logsfound   = []
 
 	for item in logfilepath:
-		if old == True and item.endswith('.old.log'): logsfound.append(os.path.join(LOG, item))
-		elif old == False and item.endswith('.log') and not item.endswith('.old.log'): logsfound.append(os.path.join(LOG, item))
+		if old and item.endswith('.old.log'): logsfound.append(os.path.join(LOG, item))
+		elif not old and item.endswith('.log') and not item.endswith('.old.log'): logsfound.append(os.path.join(LOG, item))
 
 	if len(logsfound) > 0:
 		logsfound.sort(key=lambda f: os.path.getmtime(f))
-		if file == True: return logsfound[-1]
+		if file: return logsfound[-1]
 		else:
 			filename    = open(logsfound[-1], 'r')
 			logtext     = filename.read()
@@ -2386,7 +2385,7 @@ def clearCache(over=None):
 							log("[Success] wiped %s " % os.path.join(root,d), xbmc.LOGNOTICE)
 						except:
 							log("[Failed] to wipe cache in: %s" % os.path.join(item,d), xbmc.LOGNOTICE)
-	if INCLUDEVIDEO == 'true' and over == None:
+	if INCLUDEVIDEO == 'true' and over is None:
 		files = []
 		if INCLUDEALL == 'true': files = dbfiles
 		else:
@@ -2474,7 +2473,7 @@ def checkSources():
 			DP.update(perc, '', "[COLOR %s]Checking [COLOR %s]%s[/COLOR]:[/COLOR]" % (COLOR2, COLOR1, name), "[COLOR %s]%s[/COLOR]" % (COLOR1, path))
 			if 'http' in path:
 				working = workingURL(path)
-				if not working == True:
+				if not working:
 					bad.append([name, path, sharing, working])
 
 		log("Bad Sources: %s" % len(bad), xbmc.LOGNOTICE)
@@ -2564,14 +2563,14 @@ def redoThumbs():
 def reloadFix(default=None):
 	DIALOG.ok(ADDONTITLE, "[COLOR %s]WARNING: Sometimes Reloading the Profile causes Kodi to crash.  While Kodi is Reloading the Profile Please Do Not Press Any Buttons![/COLOR]" % COLOR2)
 	if not os.path.exists(PACKAGES): os.makedirs(PACKAGES)
-	if default == None:
+	if default is None:
 		lookandFeelData('save')
 	redoThumbs()
 	ebi('ActivateWindow(Home)')
 	reloadProfile()
 	xbmc.sleep(10000)
 	if KODIV >= 17: kodi17Fix()
-	if default == None:
+	if default is None:
 		log("Switching to: %s" % getS('defaultskin'))
 		gotoskin = getS('defaultskin')
 		swapSkins(gotoskin)
@@ -2655,7 +2654,7 @@ def addonDatabase(addon=None, state=1, array=False):
 			log("Error Removing %s from DB" % addon)
 		return True
 	try:
-		if array == False:
+		if not array:
 			textexe.execute('INSERT or IGNORE into installed (addonID , enabled, installDate) VALUES (?,?,?)', (addon, state, installedtime,))
 			textexe.execute('UPDATE installed SET enabled = ? WHERE addonID = ? ', (state, addon,))
 		else:
