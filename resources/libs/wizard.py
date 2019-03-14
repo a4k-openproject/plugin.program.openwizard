@@ -448,7 +448,7 @@ def workingURL(url):
 			response.close()
 			status = True
 			break
-		except Exception, e:
+		except Exception as e:
 			status = str(e)
 			log("Working Url Error: %s [%s]" % (e, url))
 			xbmc.sleep(500)
@@ -898,7 +898,7 @@ def cleanupBackup():
 				try:
 					shutil.rmtree(path)
 					passed = True
-				except Exception ,e:
+				except Exception as e:
 					log("Error removing %s" % path, xbmc.LOGNOTICE)
 			if passed: LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]%s Removed![/COLOR]" % (COLOR2, list[selected]))
 			else: LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Error Removing %s![/COLOR]" % (COLOR2, list[selected]))
@@ -1416,7 +1416,7 @@ def backUpOptions(type, name=""):
 	try:
 		if not os.path.exists(backup): xbmcvfs.mkdirs(backup)
 		if not os.path.exists(mybuilds): xbmcvfs.mkdirs(mybuilds)
-	except Exception, e:
+	except Exception as e:
 		DIALOG.ok(ADDONTITLE, "[COLOR %s]Error making Back Up directories:[/COLOR]" % (COLOR2), "[COLOR %s]%s[/COLOR]" % (COLOR1, str(e)))
 		return
 	if type == "addon pack":
@@ -1599,14 +1599,14 @@ def backUpOptions(type, name=""):
 						try:
 							zipf.write(fn, fn[len(HOME):], zipfile.ZIP_DEFLATED)
 							extractsize += os.path.getsize(fn)
-						except Exception, e:
+						except Exception as e:
 							log("[Back Up] Type = '%s': Unable to backup %s" % (type, file), xbmc.LOGNOTICE)
 							log("%s / %s" % (Exception, e))
 						if DP.iscanceled():
 							DP.close()
 							LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Backup Cancelled[/COLOR]" % COLOR2)
 							sys.exit()
-					except Exception, e:
+					except Exception as e:
 						log("[Back Up] Type = '%s': Unable to backup %s" % (type, file), xbmc.LOGNOTICE)
 						log("Build Backup Error: %s" % str(e), xbmc.LOGNOTICE)
 			if 'addon_data' in exclude_dirs:
@@ -1702,7 +1702,7 @@ def backUpOptions(type, name=""):
 											fn = os.path.join(base, file)
 											zipf.write(fn, fn[len(USERDATA):], zipfile.ZIP_DEFLATED)
 						else: log("[Back Up] Type = '%s': %s ignored" % (type, fold), xbmc.LOGNOTICE)
-			except Exception, e:
+			except Exception as e:
 				log("[Back Up] Type = '%s': %s" % (type, e), xbmc.LOGNOTICE)
 				pass
 			zipf.close()
@@ -1780,7 +1780,7 @@ def backUpOptions(type, name=""):
 							try:
 								fn2 = os.path.join(base, file)
 								zipf.write(fn2, fn2[len(HOME):], zipfile.ZIP_DEFLATED)
-							except Exception, e:
+							except Exception as e:
 								log("[Back Up] Type = '%s': Unable to backup %s" % (type, file), xbmc.LOGNOTICE)
 								log("Backup Error: %s" % str(e), xbmc.LOGNOTICE)
 				text = latestDB('Textures')
@@ -1849,16 +1849,16 @@ def backUpOptions(type, name=""):
 										added.append(depends)
 			if DIALOG.yesno('[COLOR %s]%s[/COLOR][COLOR %s]: Theme Backup[/COLOR]' % (COLOR1, ADDONTITLE, COLOR2), "[COLOR %s]Would you like to include the [COLOR %s]guisettings.xml[/COLOR]?[/COLOR]" % (COLOR2, COLOR1), yeslabel="[B][COLOR springgreen]Yes Include[/COLOR][/B]", nolabel="[B][COLOR red]No Continue[/COLOR][/B]"):
 				zipf.write(GUISETTINGS, '/userdata/guisettings.xml', zipfile.ZIP_DEFLATED)
-		except Exception, e:
+		except Exception as e:
 			zipf.close()
 			log("[Back Up] Type = '%s': %s" % (type, str(e)), xbmc.LOGNOTICE)
 			DIALOG.ok(ADDONTITLE, "[COLOR %s]%s[/COLOR][COLOR %s] theme zip failed:[/COLOR]" % (COLOR1, themename, COLOR2), "[COLOR %s]%s[/COLOR]" % (COLOR1, str(e)))
 			if not tempzipname == '':
 				try: os.remove(xbmc.translatePath(tempzipname))
-				except Exception, e: log(str(e))
+				except Exception as e: log(str(e))
 			else:
 				try: os.remove(xbmc.translatePath(zipname))
-				except Exception, e: log(str(e))
+				except Exception as e: log(str(e))
 			return
 		zipf.close()
 		if not tempzipname == '':
@@ -1919,10 +1919,10 @@ def backUpOptions(type, name=""):
 								if not file == latestDB(temp):  log("[Back Up] Type = '%s': Ignore %s" % (type, file), xbmc.LOGNOTICE); continue
 						try:
 							zipf.write(fn, fn[len(ADDOND):], zipfile.ZIP_DEFLATED)
-						except Exception, e:
+						except Exception as e:
 							log("[Back Up] Type = '%s': Unable to backup %s" % (type, file), xbmc.LOGNOTICE)
 							log("Backup Error: %s" % str(e), xbmc.LOGNOTICE)
-					except Exception, e:
+					except Exception as e:
 						log("[Back Up] Type = '%s': Unable to backup %s" % (type, file), xbmc.LOGNOTICE)
 						log("Backup Error: %s" % str(e), xbmc.LOGNOTICE)
 			zipf.close()
@@ -1940,7 +1940,7 @@ def restoreLocal(type):
 	try:
 		if not os.path.exists(backup): xbmcvfs.mkdirs(backup)
 		if not os.path.exists(mybuilds): xbmcvfs.mkdirs(mybuilds)
-	except Exception, e:
+	except Exception as e:
 		DIALOG.ok(ADDONTITLE, "[COLOR %s]Error making Back Up directories:[/COLOR]" % (COLOR2), "[COLOR %s]%s[/COLOR]" % (COLOR1, str(e)))
 		return
 	file = DIALOG.browse(1, '[COLOR %s]Select the backup file you want to restore[/COLOR]' % COLOR2, 'files', '.zip', False, False, mybuilds)
@@ -2140,7 +2140,7 @@ def whiteList(do):
 		for item in currentWhite:
 			log(str(item), xbmc.LOGDEBUG)
 			try: name, id, fold = item
-			except Exception, e: log(str(e))
+			except Exception as e: log(str(e))
 			if id in addonids:
 				pos = addonids.index(id)+1
 				selected.append(pos-1)
@@ -2192,7 +2192,7 @@ def whiteList(do):
 			msg = "Here is a list of your whitelist items, these items(along with dependencies) will not be removed when preforming a fresh start or the userdata overwritten in a build install.[CR][CR]"
 			for item in list:
 				try: name, id, fold = item
-				except Exception, e: log(str(e))
+				except Exception as e: log(str(e))
 				msg += "[COLOR %s]%s[/COLOR] [COLOR %s]\"%s\"[/COLOR][CR]" % (COLOR1, name, COLOR2, id)
 			TextBox("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), msg)
 		else: LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]No items in White List[/COLOR]" % COLOR2)
@@ -2214,7 +2214,7 @@ def whiteList(do):
 			for item in lines:
 				try:
 					name, id, folder = eval(item)
-				except Exception, e:
+				except Exception as e:
 					log("Error Adding: '%s' / %s" % (item, str(e)), xbmc.LOGERROR)
 					continue
 				log("%s / %s / %s" % (name, id, folder), xbmc.LOGDEBUG)
@@ -2231,7 +2231,7 @@ def whiteList(do):
 			xbmcvfs.copy(WHITELIST, os.path.join(source, 'whitelist.txt'))
 			DIALOG.ok(ADDONTITLE, "[COLOR %s]Whitelist has been exported to:[/COLOR]" % (COLOR2), "[COLOR %s]%s[/COLOR]" % (COLOR1, os.path.join(source, 'whitelist.txt')))
 			LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Whitelist Exported[/COLOR]" % (COLOR2))
-		except Exception, e:
+		except Exception as e:
 			log("Export Error: %s" % str(e), xbmc.LOGERROR)
 			if not DIALOG.yesno(ADDONTITLE, "[COLOR %s]The location you selected isnt writable would you like to select another one?[/COLOR]" % COLOR2, yeslabel="[B][COLOR springgreen]Change Location[/COLOR][/B]", nolabel="[B][COLOR red]No Cancel[/COLOR][/B]"):
 				LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Whitelist Export Cancelled[/COLOR]" % (COLOR2, e))
@@ -2262,7 +2262,7 @@ def clearPackages(over=None):
 						for d in dirs: shutil.rmtree(os.path.join(root, d))
 						LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE),'[COLOR %s]Clear Packages: Success![/COLOR]' % COLOR2)
 				else: LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE),'[COLOR %s]Clear Packages: None Found![/COLOR]' % COLOR2)
-		except Exception, e:
+		except Exception as e:
 			LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE),'[COLOR %s]Clear Packages: Error![/COLOR]' % COLOR2)
 			log("Clear Packages Error: %s" % str(e), xbmc.LOGERROR)
 	else: LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE),'[COLOR %s]Clear Packages: None Found![/COLOR]' % COLOR2)
@@ -2288,11 +2288,11 @@ def clearPackagesStartup():
 						file_count += cleanfiles + cleanfold
 						try:
 							shutil.rmtree(file)
-						except Exception, e:
+						except Exception as e:
 							log("Failed to remove %s: %s" % (file, str(e), xbmc.LOGERROR))
 			if file_count > 0: LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), '[COLOR %s]Clear Packages: Success: %s[/COLOR]' % (COLOR2, convertSize(cleanupsize)))
 			else: LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), '[COLOR %s]Clear Packages: None Found![/COLOR]' % COLOR2)
-		except Exception, e:
+		except Exception as e:
 			LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), '[COLOR %s]Clear Packages: Error![/COLOR]' % COLOR2)
 			log("Clear Packages Error: %s" % str(e), xbmc.LOGERROR)
 	else: LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), '[COLOR %s]Clear Packages: None Found![/COLOR]' % COLOR2)
@@ -2423,7 +2423,7 @@ def clearCache(over=None):
 					try:
 						textdb = database.connect(item)
 						textexe = textdb.cursor()
-					except Exception, e:
+					except Exception as e:
 						log("DB Connection error: %s" % str(e), xbmc.LOGERROR)
 						continue
 					if 'Database' in item:
@@ -2433,7 +2433,7 @@ def clearCache(over=None):
 							textdb.commit()
 							textexe.close()
 							log("[Success] wiped %s" % item, xbmc.LOGNOTICE)
-						except Exception, e:
+						except Exception as e:
 							log("[Failed] wiped %s: %s" % (item, str(e)), xbmc.LOGNOTICE)
 					else:
 						textexe.execute("SELECT name FROM sqlite_master WHERE type = 'table'")
@@ -2443,7 +2443,7 @@ def clearCache(over=None):
 								textexe.execute("VACUUM")
 								textdb.commit()
 								log("[Success] wiped %s in %s" % (table[0], item), xbmc.LOGNOTICE)
-							except Exception, e:
+							except Exception as e:
 								try:
 									log("[Failed] wiped %s in %s: %s" % (table[0], item, str(e)), xbmc.LOGNOTICE)
 								except:
@@ -2641,7 +2641,7 @@ def addonDatabase(addon=None, state=1, array=False):
 		try:
 			textdb = database.connect(dbfile)
 			textexe = textdb.cursor()
-		except Exception, e:
+		except Exception as e:
 			log("DB Connection Error: %s" % str(e), xbmc.LOGERROR)
 			return False
 	else: return False
@@ -2650,7 +2650,7 @@ def addonDatabase(addon=None, state=1, array=False):
 			textexe.execute("DELETE FROM installed WHERE addonID = ?", (addon,))
 			textdb.commit()
 			textexe.close()
-		except Exception, e:
+		except:
 			log("Error Removing %s from DB" % addon)
 		return True
 	try:
@@ -2663,7 +2663,7 @@ def addonDatabase(addon=None, state=1, array=False):
 				textexe.execute('UPDATE installed SET enabled = ? WHERE addonID = ? ', (state, item,))
 		textdb.commit()
 		textexe.close()
-	except Exception, e:
+	except:
 		log("Erroring enabling addon: %s" % addon)
 
 def data_type(str):
@@ -2715,7 +2715,7 @@ def purgeDb(name):
 		try:
 			textdb = database.connect(name)
 			textexe = textdb.cursor()
-		except Exception, e:
+		except Exception as e:
 			log("DB Connection Error: %s" % str(e), xbmc.LOGERROR)
 			return False
 	else: log('%s not found.' % name, xbmc.LOGERROR); return False
@@ -2728,7 +2728,7 @@ def purgeDb(name):
 				textexe.execute("DELETE FROM %s" % table[0])
 				textdb.commit()
 				log('Data from table `%s` cleared.' % table[0], xbmc.LOGDEBUG)
-			except Exception, e: log("DB Remove Table `%s` Error: %s" % (table[0], str(e)), xbmc.LOGERROR)
+			except Exception as e: log("DB Remove Table `%s` Error: %s" % (table[0], str(e)), xbmc.LOGERROR)
 	textexe.close()
 	log('%s DB Purging Complete.' % name, xbmc.LOGNOTICE)
 	show = name.replace('\\', '/').split('/')
@@ -2745,7 +2745,7 @@ def oldThumbs():
 		try:
 			textdb = database.connect(dbfile)
 			textexe = textdb.cursor()
-		except Exception, e:
+		except Exception as e:
 			log("DB Connection Error: %s" % str(e), xbmc.LOGERROR)
 			return False
 	else: log('%s not found.' % dbfile, xbmc.LOGERROR); return False
@@ -2909,13 +2909,13 @@ def copytree(src, dst, symlinks=False, ignore=None):
 				copytree(srcname, dstname, symlinks, ignore)
 			else:
 				copy2(srcname, dstname)
-		except Error, err:
+		except Error as err:
 			errors.extend(err.args[0])
-		except EnvironmentError, why:
+		except EnvironmentError as why:
 			errors.append((srcname, dstname, str(why)))
 	try:
 		copystat(src, dst)
-	except OSError, why:
+	except OSError as why:
 		errors.extend((src, dst, str(why)))
 	if errors:
-		raise Error, errors
+		raise Error
