@@ -944,7 +944,7 @@ def convertSpecial(url, over=False):
 				f.close()
 				if DP.iscanceled():
 					DP.close()
-					wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Convert Path Cancelled[/COLOR]" % COLOR2)
+					LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Convert Path Cancelled[/COLOR]" % COLOR2)
 					sys.exit()
 	DP.close()
 	log("[Convert Paths to Special] Complete", xbmc.LOGNOTICE)
@@ -1260,9 +1260,9 @@ def asciiCheck(use=None, over=False):
 			try:
 				file.encode('ascii')
 			except UnicodeEncodeError:
-				wiz.log("[ASCII Check] Illegal character found in file: {0}".format(item.filename))
+				log("[ASCII Check] Illegal character found in file: {0}".format(item.filename))
 			except UnicodeDecodeError:
-				wiz.log("[ASCII Check] Illegal character found in file: {0}".format(item.filename))
+				log("[ASCII Check] Illegal character found in file: {0}".format(item.filename))
 				badfile = os.path.join(base, file)
 				if yes:
 					try:
@@ -1287,7 +1287,7 @@ def asciiCheck(use=None, over=False):
 				pass
 		if DP.iscanceled():
 			DP.close()
-			wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Ascii Check Cancelled[/COLOR]" % COLOR2)
+			LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Ascii Check Cancelled[/COLOR]" % COLOR2)
 			sys.exit()
 	DP.close(); afiles.close(); afails.close()
 	total = int(f1) + int(f2)
