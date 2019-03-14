@@ -106,6 +106,7 @@ INCLUDEGAIA   = ADDON.getSetting('includegaia')
 INCLUDESEREN   = ADDON.getSetting('includeseren')
 INCLUDEOVEREASY   = ADDON.getSetting('includeovereasy')
 INCLUDEYODA   = ADDON.getSetting('includeyoda')
+INCLUDESCRUBS   = ADDON.getSetting('includescrubs')
 SHOWADULT      = ADDON.getSetting('adult')
 WIZDEBUGGING   = ADDON.getSetting('addon_debug')
 DEBUGLEVEL     = ADDON.getSetting('debuglevel')
@@ -561,6 +562,10 @@ def getCacheSize():
 				files.append(os.path.join(ADDOND, 'plugin.video.yoda', 'cache.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.yoda', 'meta.5.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.yoda', 'providers.13.db'))
+			if INCLUDESCRUBS == 'true':
+				files.append(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'cache.db'))
+				files.append(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'meta.5.db'))
+				files.append(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'providers.13.db'))
 			if INCLUDEGAIA == 'true':
 				files.append(os.path.join(ADDOND, 'plugin.video.gaia', 'cache.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.gaia', 'meta.db'))
@@ -1398,6 +1403,9 @@ def backUpOptions(type, name=""):
 					(os.path.join(ADDOND, 'plugin.video.yoda', 'cache.db')),
 					(os.path.join(ADDOND, 'plugin.video.yoda', 'cache.meta.5.db')),
 					(os.path.join(ADDOND, 'plugin.video.yoda', 'cache.providers.13.db')),
+					(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'cache.db')),
+					(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'cache.meta.5.db')),
+					(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'cache.providers.13.db')),
 					(os.path.join(ADDOND, 'plugin.video.gaia', 'cache.db')),
 					(os.path.join(ADDOND, 'plugin.video.gaia', 'meta.db')),
 					(os.path.join(ADDOND, 'plugin.video.seren', 'cache.db')),
@@ -2316,6 +2324,9 @@ def clearCache(over=None):
 		(os.path.join(ADDOND, 'plugin.video.yoda', 'cache.db')),
 		(os.path.join(ADDOND, 'plugin.video.yoda', 'meta.5.db')),
 		(os.path.join(ADDOND, 'plugin.video.yoda', 'cache.providers.13.db')),
+		(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'cache.db')),
+		(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'meta.5.db')),
+		(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'cache.providers.13.db')),
 		(os.path.join(ADDOND, 'plugin.video.seren', 'cache.db')),
 		(os.path.join(ADDOND, 'plugin.video.seren', 'torrentScrape.db')),
 		(os.path.join(ADDOND, 'script.module.simplecache', 'simplecache.db'))]
@@ -2392,6 +2403,10 @@ def clearCache(over=None):
 				files.append(os.path.join(ADDOND, 'plugin.video.yoda', 'cache.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.yoda', 'meta.5.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.yoda', 'providers.13.db'))
+			if INCLUDESCRUBS == 'true':
+				files.append(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'cache.db'))
+				files.append(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'meta.5.db'))
+				files.append(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'providers.13.db'))
 			if INCLUDEOVEREASY == 'true':
 				files.append(os.path.join(ADDOND, 'plugin.video.overeasy', 'cache.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.overeasy', 'meta.5.db'))
