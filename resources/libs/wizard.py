@@ -17,9 +17,8 @@
 #  http://www.gnu.org/copyleft/gpl.html                                        #
 ################################################################################
 
-import xbmc, xbmcaddon, xbmcgui, xbmcplugin, os, sys, xbmcvfs, HTMLParser, glob, json
+import xbmc, xbmcaddon, xbmcgui, xbmcplugin, os, sys, xbmcvfs, HTMLParser, glob
 import shutil
-import errno
 import string
 import random
 import urllib2,urllib
@@ -28,12 +27,12 @@ import downloader
 import extract
 import uservar
 import skinSwitch
-import time
 import pyqrcode
+import os
+from shutil import *
 from datetime import date, datetime, timedelta
 try:    from sqlite3 import dbapi2 as database
 except: from pysqlite2 import dbapi2 as database
-from string import digits
 
 ADDON_ID       = uservar.ADDON_ID
 ADDONTITLE     = uservar.ADDONTITLE
@@ -2658,9 +2657,7 @@ def data_type(str):
 	return datatype
 
 def net_info():
-	import re
 	import json
-	from urllib2 import urlopen
 	infoLabel = ['Network.IPAddress',
 				 'Network.MacAddress',]
 	data      = []; x = 0
@@ -2876,8 +2873,6 @@ def replaceHTMLCodes(txt):
 	txt = txt.replace("&amp;", "&")
 	return txt
 
-import os
-from shutil import *
 def copytree(src, dst, symlinks=False, ignore=None):
 	names = os.listdir(src)
 	if ignore is not None:
