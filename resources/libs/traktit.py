@@ -144,8 +144,8 @@ TRAKTID = {
         'fanart'   : os.path.join(ADDONS, 'plugin.video.yoda', 'fanart.jpg'),
         'file'     : os.path.join(TRAKTFOLD, 'yoda_trakt'),
         'settings' : os.path.join(ADDOND, 'plugin.video.yoda', 'settings.xml'),
-        'default'  : 'trakt.auth',
-        'data'     : ['trakt.token', 'trakt.refresh', 'trakt.auth'],
+        'default'  : 'trakt.user',
+        'data'     : ['trakt.token', 'trakt.refresh', 'trakt.user'],
         'activate' : 'RunPlugin(plugin://plugin.video.yoda/?action=authTrakt)'},
     'scrubs': {
         'name'     : 'Scrubs v2',
