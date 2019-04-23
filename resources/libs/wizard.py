@@ -1265,9 +1265,9 @@ def asciiCheck(use=None, over=False):
 			try:
 				file.encode('ascii')
 			except UnicodeEncodeError:
-				log("[ASCII Check] Illegal character found in file: {0}".format(item.filename))
+				log("[ASCII Check] Illegal character found in file: {0}".format(file))
 			except UnicodeDecodeError:
-				log("[ASCII Check] Illegal character found in file: {0}".format(item.filename))
+				log("[ASCII Check] Illegal character found in file: {0}".format(file))
 				badfile = os.path.join(base, file)
 				if yes:
 					try:
