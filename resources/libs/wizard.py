@@ -106,6 +106,7 @@ INCLUDEGAIA   = ADDON.getSetting('includegaia')
 INCLUDESEREN   = ADDON.getSetting('includeseren')
 INCLUDEOVEREASY   = ADDON.getSetting('includeovereasy')
 INCLUDEYODA   = ADDON.getSetting('includeyoda')
+INCLUDEVENOM   = ADDON.getSetting('includevenom')
 INCLUDESCRUBS   = ADDON.getSetting('includescrubs')
 SHOWADULT      = ADDON.getSetting('adult')
 WIZDEBUGGING   = ADDON.getSetting('addon_debug')
@@ -562,6 +563,10 @@ def getCacheSize():
 				files.append(os.path.join(ADDOND, 'plugin.video.yoda', 'cache.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.yoda', 'meta.5.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.yoda', 'providers.13.db'))
+			if INCLUDEVENOM == 'true':
+				files.append(os.path.join(ADDOND, 'plugin.video.venom', 'cache.db'))
+				files.append(os.path.join(ADDOND, 'plugin.video.venom', 'meta.5.db'))
+				files.append(os.path.join(ADDOND, 'plugin.video.venom', 'providers.13.db'))
 			if INCLUDESCRUBS == 'true':
 				files.append(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'cache.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'meta.5.db'))
@@ -2402,6 +2407,10 @@ def clearCache(over=None):
 				files.append(os.path.join(ADDOND, 'plugin.video.yoda', 'cache.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.yoda', 'meta.5.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.yoda', 'providers.13.db'))
+			if INCLUDEVENOM == 'true':
+				files.append(os.path.join(ADDOND, 'plugin.video.venom', 'cache.db'))
+				files.append(os.path.join(ADDOND, 'plugin.video.venom', 'meta.5.db'))
+				files.append(os.path.join(ADDOND, 'plugin.video.venom', 'providers.13.db'))
 			if INCLUDESCRUBS == 'true':
 				files.append(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'cache.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'meta.5.db'))

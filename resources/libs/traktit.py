@@ -48,7 +48,7 @@ KEEPTRAKT      = wiz.getS('keeptrakt')
 TRAKTSAVE      = wiz.getS('traktlastsave')
 COLOR1         = uservar.COLOR1
 COLOR2         = uservar.COLOR2
-ORDER          = ['exodusredux', 'gaia', 'openmeta', 'overeasy', 'placenta', 'premiumizer', 'realizer', 'scrubs', 'seren', 'trakt', 'yoda']
+ORDER          = ['exodusredux', 'gaia', 'openmeta', 'overeasy', 'placenta', 'premiumizer', 'realizer', 'scrubs', 'seren', 'trakt', 'venom', 'yoda']
 
 TRAKTID = {
     'placenta': {
@@ -147,6 +147,18 @@ TRAKTID = {
         'default'  : 'trakt.user',
         'data'     : ['trakt.token', 'trakt.refresh', 'trakt.user'],
         'activate' : 'RunPlugin(plugin://plugin.video.yoda/?action=authTrakt)'},
+    'venom': {
+        'name'     : 'Venom',
+        'plugin'   : 'plugin.video.venom',
+        'saved'    : 'venom',
+        'path'     : os.path.join(ADDONS, 'plugin.video.venom'),
+        'icon'     : os.path.join(ADDONS, 'plugin.video.venom', 'icon.png'),
+        'fanart'   : os.path.join(ADDONS, 'plugin.video.venom', 'fanart.jpg'),
+        'file'     : os.path.join(TRAKTFOLD, 'venom_trakt'),
+        'settings' : os.path.join(ADDOND, 'plugin.video.venom', 'settings.xml'),
+        'default'  : 'trakt.user',
+        'data'     : ['trakt.token', 'trakt.refresh', 'trakt.user'],
+        'activate' : 'RunPlugin(plugin://plugin.video.venom/?action=authTrakt&opensettings=tru&query=10.2)'},
     'scrubs': {
         'name'     : 'Scrubs v2',
         'plugin'   : 'plugin.video.scrubsv2',
