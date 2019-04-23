@@ -180,20 +180,20 @@ TRAKTID = {
         'fanart'   : os.path.join(ADDONS, 'plugin.video.premiumizer', 'fanart.jpg'),
         'file'     : os.path.join(TRAKTFOLD, 'premiumizer_trakt'),
         'settings' : os.path.join(ADDOND, 'plugin.video.premiumizer', 'settings.xml'),
-        'default'  : 'trakt.auth',
-        'data'     : ['trakt.token', 'trakt.refresh', 'trakt.auth'],
+        'default'  : 'trakt.user',
+        'data'     : ['trakt.token', 'trakt.refresh', 'trakt.user'],
         'activate' : 'RunPlugin(plugin://plugin.video.premiumizer/?action=authTrakt)'},
     'realizer': {
         'name'     : 'Realizer',
         'plugin'   : 'plugin.video.realizer',
-        'saved'    : 'premiumizer',
+        'saved'    : 'realizer',
         'path'     : os.path.join(ADDONS, 'plugin.video.realizer'),
         'icon'     : os.path.join(ADDONS, 'plugin.video.realizer', 'icon.png'),
         'fanart'   : os.path.join(ADDONS, 'plugin.video.realizer', 'fanart.jpg'),
         'file'     : os.path.join(TRAKTFOLD, 'realizer_trakt'),
         'settings' : os.path.join(ADDOND, 'plugin.video.realizer', 'settings.xml'),
-        'default'  : 'trakt.auth',
-        'data'     : ['trakt.token', 'trakt.refresh', 'trakt.auth'],
+        'default'  : 'trakt.user',
+        'data'     : ['trakt.token', 'trakt.refresh', 'trakt.user'],
         'activate' : 'RunPlugin(plugin://plugin.video.realizer/?action=authTrakt)'}
 }
 
