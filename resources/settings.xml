@@ -64,6 +64,81 @@
 		<setting id="includeseren" type="bool" label="Include Seren Cache DB: " default="true" enable="eq(-5,false)" visible="System.HasAddon(plugin.video.seren)"/>
         <setting id="includevenom" type="bool" label="Include Venom Cache DB: " default="true" enable="eq(-6,false)" visible="System.HasAddon(plugin.video.venom)"/>
 		<setting id="includeyoda" type="bool" label="Include Yoda Cache DB: " default="true" enable="eq(-7,false)" visible="System.HasAddon(plugin.video.yoda)"/>
+
+		<!-- Default settings for Save Data entries -->
+		<setting id="exodusredux" type="text" default="" visible="false"/>
+		<setting id="gaia" type="text" default="" visible="false"/>
+		<setting id="openmeta" type="text" default="" visible="false"/>
+		<setting id="overeasy" type="text" default="" visible="false"/>
+		<setting id="placenta" type="text" default="" visible="false"/>
+		<setting id="premiumizer" type="text" default="" visible="false"/>
+		<setting id="realizer" type="text" default="" visible="false"/>
+		<setting id="scrubs" type="text" default="" visible="false"/>
+		<setting id="seren" type="text" default="" visible="false"/>
+		<setting id="trakt" type="text" default="" visible="false"/>
+		<setting id="venom" type="text" default="" visible="false"/>
+		<setting id="yoda" type="text" default="" visible="false"/>
+
+		<setting id="gaiard" type="text" default="" visible="false"/>
+		<setting id="gaiapm" type="text" default="" visible="false"/>
+		<setting id="pmzer" type="text" default="" visible="false"/>
+		<setting id="serenrd" type="text" default="" visible="false"/>
+		<setting id="serenpm" type="text" default="" visible="false"/>
+		<setting id="rurlrd" type="text" default="" visible="false"/>
+		<setting id="rurlpm" type="text" default="" visible="false"/>
+		<setting id="urlrd" type="text" default="" visible="false"/>
+		<setting id="urlpm" type="text" default="" visible="false"/>
+
+		<setting id="fanart-exodusredux" type="text" default="" visible="false"/>
+		<setting id="fanart-gaia" type="text" default="" visible="false"/>
+		<setting id="fanart-overeasy" type="text" default="" visible="false"/>
+		<setting id="fanart-metadatautils" type="text" default="" visible="false"/>
+		<setting id="fanart-premiumizer" type="text" default="" visible="false"/>
+		<setting id="fanart-realizer" type="text" default="" visible="false"/>
+		<setting id="fanart-scrubs" type="text" default="" visible="false"/>
+		<setting id="fanart-venom" type="text" default="" visible="false"/>
+		<setting id="fanart-yoda" type="text" default="" visible="false"/>
+		<setting id="imdb-exodusredux" type="text" default="" visible="false"/>
+		<setting id="imdb-gaia" type="text" default="" visible="false"/>
+		<setting id="imdb-overeasy" type="text" default="" visible="false"/>
+		<setting id="imdb-placenta" type="text" default="" visible="false"/>
+		<setting id="imdb-premiumizer" type="text" default="" visible="false"/>
+		<setting id="imdb-realizer" type="text" default="" visible="false"/>
+		<setting id="imdb-scrubs" type="text" default="" visible="false"/>
+		<setting id="imdb-venom" type="text" default="" visible="false"/>
+		<setting id="imdb-yoda" type="text" default="" visible="false"/>
+		<setting id="kitsu-wonderfulsubs" type="text" default="" visible="false"/>
+		<setting id="login-iagl" type="text" default="" visible="false"/>
+		<setting id="login-netflix" type="text" default="" visible="false"/>
+		<setting id="mal-wonderfulsubs" type="text" default="" visible="false"/>
+		<setting id="omdb-metadatautils" type="text" default="" visible="false"/>
+		<setting id="omdb-metahandler" type="text" default="" visible="false"/>
+		<setting id="login-opensubtitles" type="text" default="" visible="false"/>
+		<setting id="login-opensubsbyopensubs" type="text" default="" visible="false"/>
+		<setting id="login-orion" type="text" default="" visible="false"/>
+		<setting id="tmdb-exodusredux" type="text" default="" visible="false"/>
+		<setting id="login-eis" type="text" default="" visible="false"/>
+		<setting id="tmdb-gaia" type="text" default="" visible="false"/>
+		<setting id="tmdb-metadatautils" type="text" default="" visible="false"/>
+		<setting id="tmdb-eis" type="text" default="" visible="false"/>
+		<setting id="tmdb-openmeta" type="text" default="" visible="false"/>
+		<setting id="tmdb-overeasy" type="text" default="" visible="false"/>
+		<setting id="tmdb-placenta" type="text" default="" visible="false"/>
+		<setting id="tmdb-premiumizer" type="text" default="" visible="false"/>
+		<setting id="tmdb-realizer" type="text" default="" visible="false"/>
+		<setting id="tmdb-scrubs" type="text" default="" visible="false"/>
+		<setting id="tmdb-seren" type="text" default="" visible="false"/>
+		<setting id="tmdb-venom" type="text" default="" visible="false"/>
+		<setting id="tmdb-yoda" type="text" default="" visible="false"/>
+		<setting id="trakt-openmeta" type="text" default="" visible="false"/>
+		<setting id="trakt-seren" type="text" default="" visible="false"/>
+		<setting id="tvdb-metahandler" type="text" default="" visible="false"/>
+		<setting id="tvdb-openmeta" type="text" default="" visible="false"/>
+		<setting id="tvdb-premiumizer" type="text" default="" visible="false"/>
+		<setting id="tvdb-realizer" type="text" default="" visible="false"/>
+		<setting id="tvdb-seren" type="text" default="" visible="false"/>
+		<setting id="location-yahoo" type="text" default="" visible="false"/>
+		<setting id="ws-wonderfulsubs" type="text" default="" visible="false"/>
 	</category>
 
 	<category label="Install Settings">

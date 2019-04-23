@@ -48,10 +48,10 @@ KEEPTRAKT      = wiz.getS('keepdebrid')
 REALSAVE       = wiz.getS('debridlastsave')
 COLOR1         = uservar.COLOR1
 COLOR2         = uservar.COLOR2
-ORDER          = ['gaia', 'gaiapm', 'premiumizer', 'serenrd', 'serenpm', 'rurlrd', 'rurlpm', 'urlrd', 'urlpm']
+ORDER          = ['gaiard', 'gaiapm', 'pmzer', 'serenrd', 'serenpm', 'rurlrd', 'rurlpm', 'urlrd', 'urlpm']
 
 DEBRIDID = {
-	'gaia': {
+	'gaiard': {
 		'name'     : 'Gaia RD',
 		'plugin'   : 'plugin.video.gaia',
 		'saved'    : 'gaiard',
@@ -147,10 +147,10 @@ DEBRIDID = {
 		'default'  : 'PremiumizeMeResolver_token',
 		'data'     : ['PremiumizeMeResolver_enabled', 'PremiumizeMeResolver_priority', 'PremiumizeMeResolver_token', 'PremiumizeMeResolver_torrents', 'PremiumizeMeResolver_cached_only'],
 		'activate' : ''},
-	'premiumizer': {
+	'pmzer': {
 		'name'     : 'Premiumizer',
 		'plugin'   : 'plugin.video.premiumizer',
-		'saved'    : 'premiumizer',
+		'saved'    : 'pmzer',
 		'path'     : os.path.join(ADDONS, 'plugin.video.premiumizer'),
 		'icon'     : os.path.join(ADDONS, 'plugin.video.premiumizer', 'icon.png'),
 		'fanart'   : os.path.join(ADDONS, 'plugin.video.premiumizer', 'fanart.jpg'),
