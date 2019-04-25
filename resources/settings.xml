@@ -153,6 +153,7 @@
 		<setting id="keepfavourites" type="bool" label="Keep My Favourites" default="false"/>
 		<setting id="keepsources" type="bool" label="Keep My Sources" default="false"/>
 		<setting id="keepprofiles" type="bool" label="Keep My Profiles" default="false"/>
+		<setting id="keepplayercore" type="bool" label="Keep My playercorefactory.xml" default="false"/>
 		<setting id="keepadvanced" type="bool" label="Keep My AdvancedSettings.xml" default="false"/>
 		<setting id="keeprepos" type="bool" label="Keep Installed Repositories" default="false"/>
 		<setting id="keepsuper" type="bool" label="Keep Super Favourites" default="false"/>

@@ -31,6 +31,7 @@ GUISETTINGS    = os.path.join(USERDATA,  'guisettings.xml')
 KEEPFAVS       = wiz.getS('keepfavourites')
 KEEPSOURCES    = wiz.getS('keepsources')
 KEEPPROFILES   = wiz.getS('keepprofiles')
+KEEPPLAYERCORE   = wiz.getS('keepplayercore')
 KEEPADVANCED   = wiz.getS('keepadvanced')
 KEEPSUPER      = wiz.getS('keepsuper')
 KEEPREPOS      = wiz.getS('keeprepos')
@@ -100,6 +101,7 @@ def allWithProgress(_in, _out, dp, ignore, title):
 		if item.filename == 'userdata/sources.xml' and KEEPSOURCES == 'true': skip = True
 		elif item.filename == 'userdata/favourites.xml' and KEEPFAVS == 'true': skip = True
 		elif item.filename == 'userdata/profiles.xml' and KEEPPROFILES == 'true': skip = True
+		elif item.filename == 'userdata/playercorefactory.xml' and KEEPPLAYERCORE == 'true': skip = True
 		elif item.filename == 'userdata/advancedsettings.xml' and KEEPADVANCED == 'true': skip = True
 		elif file[0] == 'addons' and file[1] in excludes: skip = True
 		elif file[0] == 'userdata' and file[1] == 'addon_data' and file[2] in excludes: skip = True

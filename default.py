@@ -99,6 +99,7 @@ LOGINSAVE        = wiz.getS('loginlastsave')
 KEEPFAVS         = wiz.getS('keepfavourites')
 KEEPSOURCES      = wiz.getS('keepsources')
 KEEPPROFILES     = wiz.getS('keepprofiles')
+KEEPPLAYERCORE     = wiz.getS('keepplayercore')
 KEEPADVANCED     = wiz.getS('keepadvanced')
 KEEPREPOS        = wiz.getS('keeprepos')
 KEEPSUPER        = wiz.getS('keepsuper')
@@ -1116,6 +1117,7 @@ def saveMenu():
     sources    = 'true' if KEEPSOURCES   == 'true' else 'false'
     advanced   = 'true' if KEEPADVANCED  == 'true' else 'false'
     profiles   = 'true' if KEEPPROFILES  == 'true' else 'false'
+    playercore = 'true' if KEEPPLAYERCORE == 'true' else 'false'
     favourites = 'true' if KEEPFAVS      == 'true' else 'false'
     repos      = 'true' if KEEPREPOS     == 'true' else 'false'
     super      = 'true' if KEEPSUPER     == 'true' else 'false'
@@ -1132,6 +1134,7 @@ def saveMenu():
     addFile('Save Login Info: %s' % login.replace('true',on).replace('false',off)                  ,'togglesetting', 'keeplogin',      icon=ICONLOGIN, themeit=THEME1)
     addFile('Keep \'Sources.xml\': %s' % sources.replace('true',on).replace('false',off)           ,'togglesetting', 'keepsources',    icon=ICONSAVE,  themeit=THEME1)
     addFile('Keep \'Profiles.xml\': %s' % profiles.replace('true',on).replace('false',off)         ,'togglesetting', 'keepprofiles',   icon=ICONSAVE,  themeit=THEME1)
+    addFile('Keep \'playercorefactory.xml\': %s' % playercore.replace('true', on).replace('false', off), 'togglesetting', 'keepplayercore', icon=ICONSAVE, themeit=THEME1)
     addFile('Keep \'Advancedsettings.xml\': %s' % advanced.replace('true',on).replace('false',off) ,'togglesetting', 'keepadvanced',   icon=ICONSAVE,  themeit=THEME1)
     addFile('Keep \'Favourites.xml\': %s' % favourites.replace('true',on).replace('false',off)     ,'togglesetting', 'keepfavourites', icon=ICONSAVE,  themeit=THEME1)
     addFile('Keep Super Favourites: %s' % super.replace('true',on).replace('false',off)            ,'togglesetting', 'keepsuper',      icon=ICONSAVE,  themeit=THEME1)
@@ -2171,7 +2174,7 @@ def manageSaveData(do):
         mybuilds = xbmc.translatePath(MYBUILDS)
         dir   = [traktit.TRAKTFOLD, debridit.REALFOLD, loginit.LOGINFOLD]
         xmls  = ['advancedsettings.xml', 'sources.xml', 'favourites.xml', 'profiles.xml']
-        keepx = [KEEPADVANCED, KEEPSOURCES, KEEPFAVS, KEEPPROFILES]
+        keepx = [KEEPADVANCED, KEEPSOURCES, KEEPFAVS, KEEPPROFILES, KEEPPLAYERCORE]
         traktit.traktIt('update', 'all')
         loginit.loginIt('update', 'all')
         debridit.debridIt('update', 'all')
@@ -2278,6 +2281,7 @@ def freshStart(install=None, over=False):
                 if name == 'sources.xml' and fold[-1] == 'userdata' and KEEPSOURCES == 'true': wiz.log("Keep Sources: %s" % os.path.join(root, name), xbmc.LOGNOTICE)
                 elif name == 'favourites.xml' and fold[-1] == 'userdata' and KEEPFAVS == 'true': wiz.log("Keep Favourites: %s" % os.path.join(root, name), xbmc.LOGNOTICE)
                 elif name == 'profiles.xml' and fold[-1] == 'userdata' and KEEPPROFILES == 'true': wiz.log("Keep Profiles: %s" % os.path.join(root, name), xbmc.LOGNOTICE)
+                elif name == 'playercorefactory.xml' and fold[-1] == 'userdata' and KEEPPLAYERCORE == 'true': wiz.log("Keep playercorefactory.xml: %s" % os.path.join(root, name), xbmc.LOGNOTICE)
                 elif name == 'advancedsettings.xml' and fold[-1] == 'userdata' and KEEPADVANCED == 'true':  wiz.log("Keep Advanced Settings: %s" % os.path.join(root, name), xbmc.LOGNOTICE)
                 elif name in LOGFILES: wiz.log("Keep Log File: %s" % name, xbmc.LOGNOTICE)
                 elif name.endswith('.db'):
