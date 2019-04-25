@@ -33,6 +33,7 @@ Currently, this version of the wizard supports:
 | Trakt                              |                | [x]   |             |            |           |      |      |      |      |           |          |                         |
 | URLResolver                        | [x]            |       | [x]         | [x]        |           |      |      |      |      |           |          |                         |
 | WonderfulSubs                      |                |       |             |            |           |      |      |      |      |           |          | [x]                     |
+| Venom                              | [x]            | [x]   |             |            |           | [x]  |      |      | [x]  | [x]       |          |                         |
 | Yahoo! Weather                     |                |       |             |            |           |      |      |      |      |           | [x]      |                         |
 | Yoda                               | [x]            | [x]   |             |            |           | [x]  |      |      | [x]  | [x]       |          |                         |
 
