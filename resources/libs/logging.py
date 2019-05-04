@@ -3,6 +3,7 @@ import xbmc
 import os
 
 import uservar
+from resources.libs import gui
 from resources.libs import tools
 from resources.libs import vars
 
@@ -87,4 +88,4 @@ def check_log():
 
 
 def log_notify(title, message, times=2000, icon=vars.ICON, sound=False):
-    tools.DIALOG.notification(title, message, icon, int(times), sound)
+    gui.DIALOG.notification(title, message, icon, int(times), sound)

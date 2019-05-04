@@ -28,13 +28,13 @@ except ImportError:  # Python 2
     from urllib import urlretrieve
 
 import uservar
+from resources.libs import gui
 from resources.libs import logging
-from resources.libs import tools
 
 
 def download(url, dest, dp=None):
     if not dp:
-        dp = tools.DP
+        dp = gui.DP
         dp.create(uservar.ADDONTITLE, "Downloading Content", ' ', ' ')
     dp.update(0)
     start_time = time.time()
