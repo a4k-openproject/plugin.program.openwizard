@@ -27,16 +27,6 @@ from resources.libs import tools
 from resources.libs import vars
 from resources.libs import whitelist
 
-
-KEEPFAVS = tools.get_setting('keepfavourites')
-KEEPSOURCES = tools.get_setting('keepsources')
-KEEPPROFILES = tools.get_setting('keepprofiles')
-KEEPPLAYERCORE = tools.get_setting('keepplayercore')
-KEEPADVANCED = tools.get_setting('keepadvanced')
-KEEPSUPER = tools.get_setting('keepsuper')
-KEEPREPOS = tools.get_setting('keeprepos')
-KEEPWHITELIST = tools.get_setting('keepwhitelist')
-
 if vars.KODIV > 17:
     from resources.libs import zfile as zipfile
 else:
@@ -49,12 +39,12 @@ bad_files = ['onechannelcache.db', 'saltscache.db', 'saltscache.db-shm', 'saltsc
 
 def all(_in, _out, dp=None, ignore=None, title=None):
     if dp:
-        return allWithProgress(_in, _out, dp, ignore, title)
+        return all_with_progress(_in, _out, dp, ignore, title)
     else:
-        return allNoProgress(_in, _out, ignore)
+        return all_no_progress(_in, _out, ignore)
 
 
-def allNoProgress(_in, _out, ignore):
+def all_no_progress(_in, _out, ignore):
     try:
         zin = zipfile.ZipFile(_in, 'r')
         zin.extractall(_out)
@@ -64,7 +54,7 @@ def allNoProgress(_in, _out, ignore):
     return True
 
 
-def allWithProgress(_in, _out, dp, ignore, title):
+def all_with_progress(_in, _out, dp, ignore, title):
     count = 0
     errors = 0
     error = ''
@@ -96,6 +86,13 @@ def allWithProgress(_in, _out, dp, ignore, title):
     zipit = str(_in).replace('\\', '/').split('/')
     title = title if title else zipit[-1].replace('.zip', '')
 
+    KEEPFAVS = tools.get_setting('keepfavourites')
+    KEEPSOURCES = tools.get_setting('keepsources')
+    KEEPPROFILES = tools.get_setting('keepprofiles')
+    KEEPPLAYERCORE = tools.get_setting('keepplayercore')
+    KEEPADVANCED = tools.get_setting('keepadvanced')
+    KEEPSUPER = tools.get_setting('keepsuper')
+
     for item in zin.infolist():
         try:
             str(item.filename).encode('ascii')
@@ -110,38 +107,69 @@ def allWithProgress(_in, _out, dp, ignore, title):
         size += item.file_size
         file = str(item.filename).split('/')
         skip = False
-        line1 = '%s [COLOR %s][B][Errors:%s][/B][/COLOR]' % (title, uservar.COLOR2, errors)
-        line2 = '[COLOR %s][B]File:[/B][/COLOR] [COLOR %s]%s/%s[/COLOR] ' % (uservar.COLOR2, uservar.COLOR1, count, int(nFiles))
-        line2 += '[COLOR %s][B]Size:[/B][/COLOR] [COLOR %s]%s/%s[/COLOR]' % (uservar.COLOR2, uservar.COLOR1, wiz.convertSize(size), zipsize)
-        line3 = '[COLOR %s]%s[/COLOR]' % (uservar.COLOR1, item.filename)
-        if item.filename == 'userdata/sources.xml' and KEEPSOURCES == 'true': skip = True
-        elif item.filename == 'userdata/favourites.xml' and KEEPFAVS == 'true': skip = True
-        elif item.filename == 'userdata/profiles.xml' and KEEPPROFILES == 'true': skip = True
-        elif item.filename == 'userdata/playercorefactory.xml' and KEEPPLAYERCORE == 'true': skip = True
-        elif item.filename == 'userdata/advancedsettings.xml' and KEEPADVANCED == 'true': skip = True
-        elif file[0] == 'addons' and file[1] in excludes: skip = True
-        elif file[0] == 'userdata' and file[1] == 'addon_data' and file[2] in excludes: skip = True
-        elif file[-1] in logging.LOGFILES: skip = True
-        elif file[-1] in bad_files: skip = True
-        elif file[-1].endswith('.csv'): skip = True
-        elif not str(item.filename).find('plugin.program.super.favourites') == -1 and KEEPSUPER == 'true': skip = True
-        elif not str(item.filename).find(uservar.ADDON_ID) == -1 and ignore == None: skip = True
+        line1 = '{0} [COLOR {1}][B][Errors:{2}][/B][/COLOR]'.format(title,
+                                                                    uservar.COLOR2,
+                                                                    errors)
+        line2 = '[COLOR {0}][B]File:[/B][/COLOR] [COLOR {1}]{2}/{3}[/COLOR] '.format(uservar.COLOR2,
+                                                                                     uservar.COLOR1,
+                                                                                     count,
+                                                                                     int(nFiles))
+        line2 += '[COLOR {0}][B]Size:[/B][/COLOR] [COLOR {1}]{2}/{3}[/COLOR]'.format(uservar.COLOR2,
+                                                                                     uservar.COLOR1,
+                                                                                     tools.convert_size(size),
+                                                                                     zipsize)
+        line3 = '[COLOR {0}]{1}[/COLOR]'.format(uservar.COLOR1, item.filename)
+        if item.filename == 'userdata/sources.xml' and KEEPSOURCES == 'true':
+            skip = True
+        elif item.filename == 'userdata/favourites.xml' and KEEPFAVS == 'true':
+            skip = True
+        elif item.filename == 'userdata/profiles.xml' and KEEPPROFILES == 'true':
+            skip = True
+        elif item.filename == 'userdata/playercorefactory.xml' and KEEPPLAYERCORE == 'true':
+            skip = True
+        elif item.filename == 'userdata/advancedsettings.xml' and KEEPADVANCED == 'true':
+            skip = True
+        elif file[0] == 'addons' and file[1] in excludes:
+            skip = True
+        elif file[0] == 'userdata' and file[1] == 'addon_data' and file[2] in excludes:
+            skip = True
+        elif file[-1] in logging.LOGFILES:
+            skip = True
+        elif file[-1] in bad_files:
+            skip = True
+        elif file[-1].endswith('.csv'):
+            skip = True
+        elif not str(item.filename).find('plugin.program.super.favourites') == -1 and KEEPSUPER == 'true':
+            skip = True
+        elif not str(item.filename).find(uservar.ADDON_ID) == -1 and ignore is None:
+            skip = True
         if skip:
-            logging.log("Skipping: %s" % item.filename, xbmc.LOGNOTICE)
+            logging.log("Skipping: {0}".format(item.filename), level=xbmc.LOGNOTICE)
         else:
             try:
                 zin.extract(item, _out)
             except Exception as e:
-                errormsg  = "[COLOR %s]File:[/COLOR] [COLOR %s]%s[/COLOR]\n" % (uservar.COLOR2, uservar.COLOR1, file[-1])
-                errormsg += "[COLOR %s]Folder:[/COLOR] [COLOR %s]%s[/COLOR]\n" % (uservar.COLOR2, uservar.COLOR1, (item.filename).replace(file[-1],''))
-                errormsg += "[COLOR %s]Error:[/COLOR] [COLOR %s]%s[/COLOR]\n\n" % (uservar.COLOR2, uservar.COLOR1, str(e).replace('\\\\','\\').replace("'%s'" % item.filename, ''))
-                errors += 1; error += errormsg
-                logging.log('Error Extracting: %s(%s)' % (item.filename, str(e)), xbmc.LOGERROR)
+                errormsg = "[COLOR {0}]File:[/COLOR] [COLOR {1}]{2}[/COLOR]\n".format(uservar.COLOR2,
+                                                                                      uservar.COLOR1,
+                                                                                      file[-1])
+                errormsg += "[COLOR {0}]Folder:[/COLOR] [COLOR {1}]{2}[/COLOR]\n".format(uservar.COLOR2,
+                                                                                         uservar.COLOR1,
+                                                                                         item.filename.replace(file[-1], ''))
+                errormsg += "[COLOR {0}]Error:[/COLOR] [COLOR {1}]{2}[/COLOR]\n\n".format(uservar.COLOR2,
+                                                                                          uservar.COLOR1,
+                                                                                          str(e).replace('\\\\', '\\')
+                                                                                          .replace("'{0}'"
+                                                                                          .format(item.filename), ''))
+                errors += 1
+                error += errormsg
+                logging.log('Error Extracting: {0}({1})'.format(item.filename, str(e)), level=xbmc.LOGERROR)
                 pass
         dp.update(prog, line1, line2, line3)
-        if dp.iscanceled(): break
+        if dp.iscanceled():
+            break
     if dp.iscanceled():
         dp.close()
-        logging.log_notify("[COLOR %s]%s[/COLOR]" % (uservar.COLOR1, uservar.ADDONTITLE), "[COLOR %s]Extract Cancelled[/COLOR]" % uservar.COLOR2)
+        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(uservar.COLOR1, uservar.ADDONTITLE),
+                           "[COLOR {0}]Extract Cancelled[/COLOR]".format(uservar.COLOR2))
         sys.exit()
     return prog, errors, error
