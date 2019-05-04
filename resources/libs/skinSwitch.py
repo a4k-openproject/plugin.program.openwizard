@@ -80,9 +80,9 @@ def swap_skins(skin):
 def swap_us():
 	new = '"addons.unknownsources"'
 	value = 'true'
-	query = '{"jsonrpc":"2.0", "method":"Settings.GetSettingValue","params":{"setting":{0}}, "id":1}'.format(new)
+	query = '{"jsonrpc":"2.0", "method":"Settings.GetSettingValue","params":{"setting":%s}, "id":1}' % new
 	response = xbmc.executeJSONRPC(query)
-	logging.log("Unknown Sources Get Settings: %s" % str(response), xbmc.LOGDEBUG)
+	logging.log("Unknown Sources Get Settings: {0}".format(str(response)), level=xbmc.LOGDEBUG)
 	if 'false' in response:
 		thread.start_new_thread(dialog_watch, ())
 		xbmc.sleep(200)

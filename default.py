@@ -2547,7 +2547,7 @@ elif mode=='editthird'      : editThirdParty(name); wiz.refresh()
 
 elif mode=='maint'          : maintMenu(name)
 elif mode=='kodi17fix'      : wiz.kodi17Fix()
-elif mode=='unknownsources' : skinSwitch.swapUS()
+elif mode=='unknownsources' : skinSwitch.swap_us()
 elif mode=='advancedsetting': advancedWindow(name)
 elif mode=='autoadvanced'   : showAutoAdvanced(); wiz.refresh()
 elif mode=='removeadvanced' : removeAdvanced(); wiz.refresh()
