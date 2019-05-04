@@ -1,9 +1,6 @@
 import xbmcgui
 
 
-DIALOG = xbmcgui.Dialog()
-DP = xbmcgui.DialogProgress()
-
 
 def get_setting(name):
     try:

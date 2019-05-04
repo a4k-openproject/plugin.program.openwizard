@@ -24,6 +24,7 @@ import os
 
 import uservar
 from resources.libs import wizard as wiz
+from resources.libs import whitelist
 
 ADDON_ID       = uservar.ADDON_ID
 ADDONTITLE     = uservar.ADDONTITLE
