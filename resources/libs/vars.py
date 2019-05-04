@@ -32,8 +32,6 @@ TEXTCACHE = os.path.join(ADDONDATA, 'Cache')
 ARCHIVE_CACHE = os.path.join(TEMPDIR, 'archive_cache')
 ART = os.path.join(PLUGIN, 'resources', 'art')
 SKIN = xbmc.getSkinDir()
-BACKUPLOCATION = tools.get_setting('path') if not tools.get_setting('path') == '' else HOME
-MYBUILDS = os.path.join(BACKUPLOCATION, 'My_Builds')
 
 
 # File-related variables
