@@ -61,7 +61,7 @@ def check_log():
     CLEANLINES = tools.get_setting('wizlogcleanlines')
 
     next = tools.get_date(days=1)
-    lines = tools.read_from_file(vars.WIZLOG)
+    lines = tools.read_from_file(vars.WIZLOG).split('\n')
 
     if CLEANWIZLOGBY == '0':  # By Days
         keep = tools.get_date(days=-MAXWIZDATES[int(float(CLEANDAYS))])

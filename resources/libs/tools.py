@@ -20,8 +20,7 @@ def read_from_file(file):
     f = open(file)
     a = f.read()
     f.close()
-    lines = a.split('\n')
-    return lines
+    return a
 
 
 def write_to_file(file, content):
