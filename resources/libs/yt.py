@@ -43,17 +43,18 @@
 #        120: "hd720",
 #        121: "hd1080"
 
+import xbmcgui
 
 import re
 import urllib2
 import urllib
 import cgi
 import HTMLParser
-import xbmcgui
 
-try: import simplejson as json
-
-except ImportError: import json
+try:
+    import simplejson as json
+except ImportError:
+    import json
 
 dp            =  xbmcgui.DialogProgress()
 MAX_REC_DEPTH = 5

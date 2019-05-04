@@ -24,20 +24,16 @@
 #   Added Email Logfile Url Support                                            #
 ################################################################################
 
+import xbmc
+import xbmcgui
+import xbmcvfs
+
 import os
 import re
 import socket
-import pyqrcode
 from urllib import urlencode
 from urllib import FancyURLopener
-import urllib2
-import urlparse
-import urllib
-import json
-import xbmc
-import xbmcgui
-import xbmcaddon
-import xbmcvfs
+
 import uservar
 from resources.libs import wizard as wiz
 

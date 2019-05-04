@@ -17,13 +17,28 @@
 #  http://www.gnu.org/copyleft/gpl.html                                        #
 ################################################################################
 
-import xbmc, xbmcaddon, xbmcgui, xbmcplugin, os, sys, xbmcvfs, glob
-import shutil
-import urllib2,urllib
+import xbmc
+import xbmcgui
+import xbmcvfs
+
+import os
+import sys
+import glob
+import urllib
 import re
+
+from datetime import date
+from datetime import datetime
+from datetime import timedelta
+
 import uservar
-from datetime import date, datetime, timedelta
-from resources.libs import extract, downloader, notify, loginit, debridit, traktit, skinSwitch, uploadLog, wizard as wiz
+from resources.libs import extract
+from resources.libs import downloader
+from resources.libs import notify
+from resources.libs import loginit
+from resources.libs import debridit
+from resources.libs import traktit
+from resources.libs import wizard as wiz
 
 ADDON_ID       = uservar.ADDON_ID
 ADDONTITLE     = uservar.ADDONTITLE

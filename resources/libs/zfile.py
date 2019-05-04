@@ -34,22 +34,30 @@
 #                 ~-<_(_.^-~"                                              #
 #                                                                          #
 ############################################################################
-import struct, os, time, sys, shutil
-import binascii, cStringIO, stat
+
+import xbmc
+
+import struct
+import os
+import time
+import sys
+import shutil
+import binascii
+import cStringIO
+import stat
 import io
 import re
 import string
+
 try:
     import zlib
     crc32 = zlib.crc32
 except ImportError:
     zlib = None
     crc32 = binascii.crc32
-import xbmc
+
 KODIV          = float(xbmc.getInfoLabel("System.BuildVersion")[:4])
-if KODIV > 17:
-	import xbmcaddon, xbmcgui, xbmcplugin #FTG mod for Kodi 18
-else:pass
+
 __all__ = ["BadZipfile", "error", "ZIP_STORED", "ZIP_DEFLATED", "is_zipfile",
            "ZipInfo", "ZipFile", "PyZipFile", "LargeZipFile" ]
 class BadZipfile(Exception):

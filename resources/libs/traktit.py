@@ -17,15 +17,22 @@
 #  http://www.gnu.org/copyleft/gpl.html                                        #
 ################################################################################
 
-import xbmc, xbmcaddon, xbmcgui, xbmcplugin, os, sys, xbmcvfs, glob
-import shutil
-import urllib2,urllib
+import xbmc
+import xbmcgui
+
+import os
 import re
-import uservar
 import time
-try:    from sqlite3 import dbapi2 as database
-except: from pysqlite2 import dbapi2 as database
-from datetime import date, datetime, timedelta
+
+try:
+    from sqlite3 import dbapi2 as database
+except ImportError:
+    from pysqlite2 import dbapi2 as database
+
+from datetime import date
+from datetime import timedelta
+
+import uservar
 from resources.libs import wizard as wiz
 
 ADDON_ID       = uservar.ADDON_ID

@@ -17,22 +17,36 @@
 #  http://www.gnu.org/copyleft/gpl.html                                        #
 ################################################################################
 
-import xbmc, xbmcaddon, xbmcgui, xbmcplugin, os, sys, xbmcvfs, HTMLParser, glob
+import xbmc
+import xbmcaddon
+import xbmcgui
+
+import sys
+import xbmcvfs
+import HTMLParser
+import glob
 import shutil
 import string
 import random
-import urllib2,urllib
+import urllib2
+import urllib
 import re
-import downloader
-import extract
-import uservar
-import skinSwitch
-import pyqrcode
 import os
-from shutil import *
-from datetime import date, datetime, timedelta
-try:    from sqlite3 import dbapi2 as database
-except: from pysqlite2 import dbapi2 as database
+
+try:
+	from sqlite3 import dbapi2 as database
+except ImportError:
+	from pysqlite2 import dbapi2 as database
+
+from datetime import date
+from datetime import datetime
+from datetime import timedelta
+
+import pyqrcode
+import uservar
+from resources.libs import downloader
+from resources.libs import extract
+from resources.libs import skinSwitch
 
 ADDON_ID       = uservar.ADDON_ID
 ADDONTITLE     = uservar.ADDONTITLE

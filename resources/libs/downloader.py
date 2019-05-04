@@ -17,8 +17,15 @@
 #  http://www.gnu.org/copyleft/gpl.html                                        #
 ################################################################################
 
-import xbmc, xbmcgui, urllib, sys, time, uservar
-import wizard as wiz
+import xbmc
+import xbmcgui
+
+import urllib
+import sys
+import time
+
+import uservar
+from resources.libs import wizard as wiz
 
 ADDONTITLE     = uservar.ADDONTITLE
 COLOR1         = uservar.COLOR1

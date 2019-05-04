@@ -21,10 +21,22 @@
 # Tobias Ussing And Henrik Mosgaard Jensen for parseDOM
 # WhiteCream thread for clicking yes on dialog for unknown sources
 
-import xbmc, xbmcvfs, xbmcaddon, xbmcgui,re, os, glob, thread
+import xbmc
+import xbmcvfs
+import xbmcaddon
+import xbmcgui
+
+import re
+import os
+import glob
+import thread
+
+try:
+	from sqlite3 import dbapi2 as database
+except ImportError:
+	from pysqlite2 import dbapi2 as database
+
 from datetime import datetime
-try:    from sqlite3 import dbapi2 as database
-except: from pysqlite2 import dbapi2 as database
 
 def main():
 	class enableAll():

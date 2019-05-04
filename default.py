@@ -17,17 +17,42 @@
 #  http://www.gnu.org/copyleft/gpl.html                                        #
 ################################################################################
 
-import xbmc, xbmcaddon, xbmcgui, xbmcplugin, os, sys, xbmcvfs, glob
+import xbmc
+import xbmcaddon
+import xbmcgui
+import xbmcplugin
+import xbmcvfs
+
+import os
+import sys
+import glob
 import shutil
-import urllib2,urllib
+import urllib
 import re
-import uservar
 import fnmatch
-try:    from sqlite3 import dbapi2 as database
-except: from pysqlite2 import dbapi2 as database
-from datetime import date, datetime, timedelta
+
+try:
+    from sqlite3 import dbapi2 as database
+except ImportError:
+    from pysqlite2 import dbapi2 as database
+
+from datetime import date
+from datetime import datetime
+from datetime import timedelta
 from urlparse import urljoin
-from resources.libs import extract, downloader, notify, debridit, traktit, loginit, skinSwitch, uploadLog, yt, speedtest, wizard as wiz
+
+import uservar
+from resources.libs import extract
+from resources.libs import downloader
+from resources.libs import notify
+from resources.libs import debridit
+from resources.libs import traktit
+from resources.libs import loginit
+from resources.libs import skinSwitch
+from resources.libs import uploadLog
+from resources.libs import yt
+from resources.libs import speedtest
+from resources.libs import wizard as wiz
 
 ADDON_ID         = uservar.ADDON_ID
 ADDONTITLE       = uservar.ADDONTITLE

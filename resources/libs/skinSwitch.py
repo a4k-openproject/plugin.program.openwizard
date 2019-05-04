@@ -17,11 +17,20 @@
 #  http://www.gnu.org/copyleft/gpl.html                                        #
 ################################################################################
 
-import os, re, shutil, time, xbmc, xbmcaddon, thread, wizard as wiz, uservar
+
+import xbmc
+import xbmcaddon
+
+import os
+import thread
+
 try:
 	import json as simplejson 
-except:
+except ImportError:
 	import simplejson
+
+import uservar
+from resources.libs import wizard as wiz
 
 KODIV  = float(xbmc.getInfoLabel("System.BuildVersion")[:4])
 COLOR1 = uservar.COLOR1
