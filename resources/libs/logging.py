@@ -4,6 +4,7 @@ import os
 
 import uservar
 from resources.libs import tools
+from resources.libs import vars
 
 
 LOGFILES = ['log', 'xbmc.old.log', 'kodi.log', 'kodi.old.log', 'spmc.log', 'spmc.old.log',
