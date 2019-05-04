@@ -1,18 +1,13 @@
-import os
-import re
-import sys
+import xbmcgui
+
 import math
-import signal
 import socket
 import timeit
 import threading
-import uservar
-import xbmc
-import xbmcaddon
-import xbmcgui
-import xbmcplugin
 import os
 import sys
+
+import uservar
 
 ADDONTITLE = uservar.ADDONTITLE
 COLOR1 = uservar.COLOR1

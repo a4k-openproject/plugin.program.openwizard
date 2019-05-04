@@ -17,14 +17,17 @@
 #  http://www.gnu.org/copyleft/gpl.html                                        #
 ################################################################################
 
-import xbmc, xbmcaddon, xbmcgui, xbmcplugin, os, sys, xbmcvfs, glob
-import shutil
-import urllib2,urllib
-import re
+import xbmc
+import xbmcgui
+
+import os
+import urllib
+
+from datetime import date
+from datetime import timedelta
+
 import uservar
-import time
 from resources.libs import wizard as wiz
-from datetime import date, datetime, timedelta
 
 ADDON_ID       = uservar.ADDON_ID
 ADDON          = wiz.addonId(ADDON_ID)
