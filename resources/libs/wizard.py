@@ -2608,7 +2608,7 @@ def skinToDefault(title):
 	return swapSkins(skin, title)
 
 def swapSkins(goto, title="Error"):
-	skinSwitch.swapSkins(goto)
+	skinSwitch.swap_skins(goto)
 	x = 0
 	xbmc.sleep(1000)
 	while not xbmc.getCondVisibility("Window.isVisible(yesnodialog)") and x < 150:
