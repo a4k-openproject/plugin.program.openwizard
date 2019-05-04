@@ -4,12 +4,12 @@ import xbmcaddon
 import os
 
 import uservar
-from resources.libs import tools
 
 # Add-on metadata-related variables
 ADDON = xbmcaddon.Addon(uservar.ADDON_ID)
 VERSION = ADDON.getAddonInfo('version')
 KODIV = float(xbmc.getInfoLabel("System.BuildVersion")[:4])
+PATH = ADDON.getAddonInfo('path')
 
 
 # Path-related variables
