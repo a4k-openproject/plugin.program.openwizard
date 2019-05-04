@@ -1,5 +1,3 @@
-import xbmcgui
-
 import re
 
 
