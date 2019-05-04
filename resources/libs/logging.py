@@ -9,7 +9,7 @@ from resources.libs import vars
 
 
 LOGFILES = ['log', 'xbmc.old.log', 'kodi.log', 'kodi.old.log', 'spmc.log', 'spmc.old.log',
-            'tvmc.log', 'tvmc.old.log', 'dmp']
+            'tvmc.log', 'tvmc.old.log', 'dmp', 'Thumbs.db', '.gitignore', '.DS_Store']
 MAXWIZSIZE = [100, 200, 300, 400, 500, 1000]
 MAXWIZLINES = [100, 200, 300, 400, 500]
 MAXWIZDATES = [1, 2, 3, 7]
