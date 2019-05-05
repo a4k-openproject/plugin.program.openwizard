@@ -4,12 +4,15 @@ import xbmcaddon
 import os
 
 import uservar
+from resources.libs import tools
 
 # Add-on metadata-related variables
 ADDON = xbmcaddon.Addon(uservar.ADDON_ID)
 VERSION = ADDON.getAddonInfo('version')
-KODIV = float(xbmc.getInfoLabel("System.BuildVersion")[:4])
 PATH = ADDON.getAddonInfo('path')
+ADDONID = ADDON.getAddonInfo('id')
+KODIV = float(xbmc.getInfoLabel("System.BuildVersion")[:4])
+RAM = int(xbmc.getInfoLabel("System.Memory(total)")[:-2])
 
 
 # Path-related variables
@@ -21,6 +24,7 @@ TEMPDIR = xbmc.translatePath('special://temp')
 DATABASE = xbmc.translatePath('special://database/')
 
 ADDONS = os.path.join(HOME, 'addons')
+KODIADDONS = os.path.join(XBMC, 'addons')
 USERDATA = os.path.join(HOME, 'userdata')
 PLUGIN = os.path.join(ADDONS, uservar.ADDON_ID)
 PACKAGES = os.path.join(ADDONS, 'packages')
@@ -32,7 +36,8 @@ TEXTCACHE = os.path.join(ADDONDATA, 'Cache')
 ARCHIVE_CACHE = os.path.join(TEMPDIR, 'archive_cache')
 ART = os.path.join(PLUGIN, 'resources', 'art')
 SKIN = xbmc.getSkinDir()
-
+BACKUPLOCATION = tools.get_setting('path') if tools.get_setting('path') else vars.HOME
+MYBUILDS = os.path.join(BACKUPLOCATION, 'My_Builds')
 
 # File-related variables
 ADVANCED = os.path.join(USERDATA, 'advancedsettings.xml')
