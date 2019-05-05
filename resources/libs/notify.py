@@ -27,6 +27,7 @@ from datetime import date
 from datetime import timedelta
 
 import uservar
+from resources.libs import tools
 from resources.libs import wizard as wiz
 
 ADDON_ID       = uservar.ADDON_ID
@@ -615,6 +616,17 @@ def firstRun():
 	fr = MyWindow( "FirstRunBuild.xml" , ADDON.getAddonInfo('path'), 'DefaultSkin')
 	fr.doModal()
 	del fr
+
+
+def split_notify(notify):
+	link = tools.open_url(notify).replace('\r', '').replace('\t', '').replace('\n', '[CR]')
+	if link.find('|||') == -1:
+		return False, False
+	id, msg = link.split('|||')
+	if msg.startswith('[CR]'):
+		msg = msg[4:]
+	return id.replace('[CR]', ''), msg
+
 
 def notification(msg='', test=False):
 	class MyWindow(xbmcgui.WindowXMLDialog):
