@@ -12,10 +12,6 @@ from resources.libs import tools
 from resources.libs import vars
 
 
-BACKUPLOCATION = tools.get_setting('path') if tools.get_setting('path') else vars.HOME
-MYBUILDS = os.path.join(BACKUPLOCATION, 'My_Builds')
-
-
 def parse(file, foldername):
     getid = tools.parse_dom(file, 'addon', ret='id')
     getname = tools.parse_dom(file, 'addon', ret='name')
