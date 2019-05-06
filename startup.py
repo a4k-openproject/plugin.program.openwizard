@@ -33,15 +33,10 @@ import uservar
 from resources.libs import addon
 from resources.libs import cache
 from resources.libs import check
-from resources.libs import debridit
-from resources.libs import downloader
-from resources.libs import extract
 from resources.libs import gui
 from resources.libs import logging
-from resources.libs import loginit
 from resources.libs import notify
 from resources.libs import skinSwitch
-from resources.libs import traktit
 from resources.libs import tools
 from resources.libs import update
 from resources.libs import vars
@@ -251,16 +246,21 @@ logging.log("[Auto Install Repo] Started", xbmc.LOGNOTICE)
 if uservar.AUTOINSTALL == 'Yes' and not os.path.exists(os.path.join(vars.ADDONS, uservar.REPOID)):
 	workingxml = check.check_url(uservar.REPOADDONXML)
 	if workingxml:
-		ver = tools.parse_dom(tools.open_url(uservar.REPOADDONXML), 'addon', ret='version', attrs = {'id': uservar.REPOID})
+		ver = tools.parse_dom(tools.open_url(uservar.REPOADDONXML), 'addon', ret='version', attrs={'id': uservar.REPOID})
 		if len(ver) > 0:
 			installzip = '%s-%s.zip' % (uservar.REPOID, ver[0])
 			workingrepo = check.check_url(uservar.REPOZIPURL+installzip)
 			if workingrepo:
-				gui.DP.create(uservar.ADDONTITLE,'Downloading Repo...','', 'Please Wait')
-				if not os.path.exists(vars.PACKAGES): os.makedirs(vars.PACKAGES)
-				lib=os.path.join(vars.PACKAGES, installzip)
-				try: os.remove(lib)
-				except: pass
+				gui.DP.create(uservar.ADDONTITLE,'Downloading Repo...', '', 'Please Wait')
+				if not os.path.exists(vars.PACKAGES):
+					os.makedirs(vars.PACKAGES)
+				lib = os.path.join(vars.PACKAGES, installzip)
+				try:
+					os.remove(lib)
+				except:
+					pass
+				from resources.libs import downloader
+				from resources.libs import extract
 				downloader.download(uservar.REPOZIPURL+installzip,lib, gui.DP)
 				extract.all(lib, vars.ADDONS, gui.DP)
 				try:
@@ -374,12 +374,15 @@ if INSTALLED == 'true':
 	KEEPLOGIN = tools.get_setting('keeplogin')
 
 	if KEEPTRAKT == 'true':
+		from resources.libs import traktit
 		traktit.traktIt('restore', 'all')
 		logging.log('[Installed Check] Restoring Trakt Data', level=xbmc.LOGNOTICE)
 	if KEEPREAL == 'true':
+		from resources.libs import debridit
 		debridit.debridIt('restore', 'all')
 		logging.log('[Installed Check] Restoring Real Debrid Data', level=xbmc.LOGNOTICE)
 	if KEEPLOGIN == 'true':
+		from resources.libs import loginit
 		loginit.loginIt('restore', 'all')
 		logging.log('[Installed Check] Restoring Login Data', level=xbmc.LOGNOTICE)
 	tools.clear_setting('install')
@@ -423,6 +426,7 @@ KEEPLOGIN = tools.get_setting('keeplogin')
 
 if KEEPTRAKT == 'true':
 	if TRAKTSAVE <= str(tools.get_date()):
+		from resources.libs import traktit
 		logging.log("[Trakt Data] Saving all Data", level=xbmc.LOGNOTICE)
 		traktit.autoUpdate('all')
 		tools.set_setting('traktlastsave', str(tools.get_date(days=3)))
@@ -433,6 +437,7 @@ else: logging.log("[Trakt Data] Not Enabled", level=xbmc.LOGNOTICE)
 logging.log("[Debrid Data] Started", level=xbmc.LOGNOTICE)
 if KEEPREAL == 'true':
 	if REALSAVE <= str(tools.get_date()):
+		from resources.libs import debridit
 		logging.log("[Debrid Data] Saving all Data", level=xbmc.LOGNOTICE)
 		debridit.autoUpdate('all')
 		tools.set_setting('debridlastsave', str(tools.get_date(days=3)))
@@ -444,6 +449,7 @@ else:
 logging.log("[Login Info] Started", level=xbmc.LOGNOTICE)
 if KEEPLOGIN == 'true':
 	if LOGINSAVE <= str(tools.get_date()):
+		from resources.libs import loginit
 		logging.log("[Login Info] Saving all Data", level=xbmc.LOGNOTICE)
 		loginit.autoUpdate('all')
 		tools.set_setting('loginlastsave', str(tools.get_date(days=3)))

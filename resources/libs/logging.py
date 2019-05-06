@@ -3,8 +3,6 @@ import xbmc
 import os
 
 import uservar
-from resources.libs import gui
-from resources.libs import tools
 from resources.libs import vars
 
 
@@ -16,6 +14,8 @@ MAXWIZDATES = [1, 2, 3, 7]
 
 
 def log(msg, level=xbmc.LOGDEBUG):
+    from resources.libs import tools
+
     WIZDEBUGGING = tools.get_setting('addon_debug')
     DEBUGLEVEL = tools.get_setting('debuglevel')
     ENABLEWIZLOG = tools.get_setting('wizardlog')
@@ -55,6 +55,8 @@ def log(msg, level=xbmc.LOGDEBUG):
 
 
 def check_log():
+    from resources.libs import tools
+
     CLEANWIZLOGBY = tools.get_setting('wizlogcleanby')
     CLEANDAYS = tools.get_setting('wizlogcleandays')
     CLEANSIZE = tools.get_setting('wizlogcleansize')
@@ -88,4 +90,5 @@ def check_log():
 
 
 def log_notify(title, message, times=2000, icon=vars.ICON, sound=False):
+    from resources.libs import gui
     gui.DIALOG.notification(title, message, icon, int(times), sound)
