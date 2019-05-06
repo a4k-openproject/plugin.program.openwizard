@@ -4,7 +4,6 @@ import xbmcaddon
 import os
 
 import uservar
-from resources.libs import tools
 
 # Add-on metadata-related variables
 ADDON = xbmcaddon.Addon(uservar.ADDON_ID)
@@ -36,8 +35,6 @@ TEXTCACHE = os.path.join(ADDONDATA, 'Cache')
 ARCHIVE_CACHE = os.path.join(TEMPDIR, 'archive_cache')
 ART = os.path.join(PLUGIN, 'resources', 'art')
 SKIN = xbmc.getSkinDir()
-BACKUPLOCATION = tools.get_setting('path') if tools.get_setting('path') else vars.HOME
-MYBUILDS = os.path.join(BACKUPLOCATION, 'My_Builds')
 
 # File-related variables
 ADVANCED = os.path.join(USERDATA, 'advancedsettings.xml')
