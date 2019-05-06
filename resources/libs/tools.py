@@ -38,6 +38,15 @@ def set_setting(name, value):
         return False
 
 
+def open_settings(name=""):
+    if name is not "":
+        from resources.libs import addon
+        addon.addon_id(name).openSettings()
+    else:
+        from resources.libs import vars
+        vars.ADDON.openSettings()
+
+
 def clear_setting(type):
     build = {'buildname': '', 'buildversion': '', 'buildtheme': '', 'latestversion': '', 'lastbuildcheck': '2016-01-01'}
     install = {'installed': 'false', 'extract': '', 'errors': ''}
@@ -99,6 +108,21 @@ def remove_file(path):
         os.remove(path)
     except:
         return False
+
+
+def empty_folder(folder):
+    total = 0
+    for root, dirs, files in os.walk(folder, topdown=True):
+        dirs[:] = [d for d in dirs if d not in uservar.EXCLUDES]
+        file_count = 0
+        file_count += len(files) + len(dirs)
+        if file_count == 0:
+            shutil.rmtree(os.path.join(root))
+            total += 1
+
+            from resources.libs import logging
+            logging.log("Empty Folder: {0}".format(root), level=xbmc.LOGNOTICE)
+    return total
 
 
 def clean_house(folder, ignore=False):
