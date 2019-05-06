@@ -10,8 +10,6 @@ from datetime import timedelta
 import sqlite3 as database
 
 import uservar
-from resources.libs import check
-from resources.libs import gui
 from resources.libs import logging
 from resources.libs import tools
 
@@ -32,6 +30,8 @@ def flush_old_cache():
 
 
 def text_cache(url):
+    from resources.libs import check
+
     try:
         age = int(float(uservar.CACHEAGE))
     except:
@@ -72,6 +72,8 @@ def clear_packages(over=None):
                     if over:
                         yes = 1
                     else:
+                        from resources.libs import gui
+
                         yes = gui.DIALOG.yesno("[COLOR {0}]Delete Package Files".format(uservar.COLOR2),
                                            "[COLOR {0}]{1}[/COLOR] files found / [COLOR {2}]{3}[/COLOR] in size.".format(
                                            uservar.COLOR1, str(file_count), uservar.COLOR1, size),

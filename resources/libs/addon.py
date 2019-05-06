@@ -13,10 +13,9 @@ except ImportError:
 from datetime import datetime
 
 import uservar
-from resources.libs import gui
 from resources.libs import logging
 from resources.libs import tools
-from resources.libs import update
+
 
 def get_info(label):
     try:
@@ -99,6 +98,7 @@ def kodi_17_fix():
         addon_database(disabledAddons, 1, True)
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(uservar.COLOR1, uservar.ADDONTITLE),
                            "[COLOR {0}]Enabling Addons Complete![/COLOR]".format(uservar.COLOR2))
+    from resources.libs import update
     update.force_update()
     xbmc.executebuiltin("ReloadSkin()")
 
@@ -127,9 +127,11 @@ def toggle_addon(id, value, over=None):
     response = xbmc.executeJSONRPC(query)
     if 'error' in response and over is None:
         v = 'Enabling' if value == 'true' else 'Disabling'
+        from resources.libs import gui
         gui.DIALOG.ok(uservar.ADDONTITLE,
                       "[COLOR {0}]Error {1} [COLOR {2}]{3}[/COLOR]".format(uservar.COLOR2, v, uservar.COLOR1, id),
                       "Check to make sure the add-on list is up to date and try again.[/COLOR]")
+        from resources.libs import update
         update.force_update()
 
 

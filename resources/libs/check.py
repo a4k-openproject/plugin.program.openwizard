@@ -10,9 +10,7 @@ except ImportError:
     from urllib2 import Request
 
 import uservar
-from resources.libs import logging
 from resources.libs import tools
-from resources.libs import vars
 
 
 def check_url(url):
@@ -23,6 +21,8 @@ def check_url(url):
     while check < 3:
         check += 1
         try:
+            from resources.libs import vars
+
             req = Request(url)
             req.add_header('User-Agent', vars.USER_AGENT)
             response = urlopen(req)
@@ -31,6 +31,7 @@ def check_url(url):
             break
         except Exception as e:
             status = str(e)
+            from resources.libs import logging
             logging.log("Working Url Error: %s [%s]" % (e, url))
             xbmc.sleep(500)
     return status

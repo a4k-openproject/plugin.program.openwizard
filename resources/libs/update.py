@@ -4,12 +4,6 @@ import os
 import re
 
 import uservar
-from resources.libs import check
-from resources.libs import downloader
-from resources.libs import extract
-from resources.libs import gui
-from resources.libs import logging
-from resources.libs import notify
 from resources.libs import tools
 
 
@@ -17,12 +11,17 @@ def force_update(silent=False):
     xbmc.executebuiltin('UpdateAddonRepos()')
     xbmc.executebuiltin('UpdateLocalAddons()')
     if not silent:
+        from resources.libs import logging
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(uservar.COLOR1, uservar.ADDONTITLE),
                            '[COLOR {0}]Forcing Addon Updates[/COLOR]'.format(uservar.COLOR2))
 
 
 def wizard_update(startup=None):
-    if tools.working_url(uservar.WIZARDFILE):
+    from resources.libs import check
+    from resources.libs import gui
+    from resources.libs import logging
+
+    if check.check_url(uservar.WIZARDFILE):
         try:
             wid, ver, zip = check.check_wizard('all')
         except:
@@ -42,6 +41,8 @@ def wizard_update(startup=None):
                     os.remove(lib)
                 except:
                     pass
+                from resources.libs import downloader
+                from resources.libs import extract
                 downloader.download(zip, lib, DP)
                 xbmc.sleep(2000)
                 gui.DP.update(0, "", "Installing {0} update".format(uservar.ADDONTITLE))
@@ -54,6 +55,7 @@ def wizard_update(startup=None):
                                    '[COLOR {0}]Add-on updated[/COLOR]'.format(uservar.COLOR2))
                 logging.log("[Auto Update Wizard] Wizard updated to v{0}".format(ver), level=xbmc.LOGNOTICE)
                 tools.remove_file(os.path.join(uservar.ADDONDATA, 'settings.xml'))
+                from resources.libs import notify
                 notify.firstRunSettings()
                 if startup:
                     xbmc.executebuiltin('RunScript({0}/startup.py)'.format(vars.PLUGIN))
