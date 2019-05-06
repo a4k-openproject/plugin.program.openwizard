@@ -1,17 +1,13 @@
 import xbmc
-import xbmcaddon
 
-import glob
 import os
 import re
 import shutil
 
 try:
-    from sqlite3 import dbapi2 as database
     from urllib.request import urlopen
     from urllib.request import Request
 except ImportError:
-    from pysqlite2 import dbapi2 as database
     from urllib2 import urlopen
     from urllib2 import Request
 
@@ -20,21 +16,15 @@ from datetime import datetime
 from datetime import timedelta
 
 import uservar
-from resources.libs import check
-from resources.libs import downloader
-from resources.libs import extract
-from resources.libs import gui
-from resources.libs import logging
-from resources.libs import notify
-from resources.libs import vars
 
 #########################
-#  Settings Functions   #
+#  Settings Functions   #+
 #########################
 
 
 def get_setting(name):
     try:
+        from resources.libs import vars
         return vars.ADDON.getSetting(name)
     except:
         return False
@@ -42,6 +32,7 @@ def get_setting(name):
 
 def set_setting(name, value):
     try:
+        from resources.libs import vars
         vars.ADDON.setSetting(name, value)
     except:
         return False
@@ -93,6 +84,7 @@ def write_to_file(file, content):
 
 
 def remove_folder(path):
+    from resources.libs import logging
     logging.log("Deleting Folder: {0}".format(path), level=xbmc.LOGNOTICE)
     try:
         shutil.rmtree(path, ignore_errors=True, onerror=None)
@@ -101,6 +93,7 @@ def remove_folder(path):
 
 
 def remove_file(path):
+    from resources.libs import logging
     logging.log("Deleting File: {0}".format(path), level=xbmc.LOGNOTICE)
     try:
         os.remove(path)
@@ -109,6 +102,7 @@ def remove_file(path):
 
 
 def clean_house(folder, ignore=False):
+    from resources.libs import logging
     logging.log(folder)
     total_files = 0
     total_folds = 0
@@ -180,6 +174,22 @@ def convert_size(num, suffix='B'):
             return "%3.02f %s%s" % (num, unit, suffix)
         num /= 1024.0
     return "%.02f %s%s" % (num, 'G', suffix)
+
+
+def get_keyboard( default="", heading="", hidden=False ):
+    keyboard = xbmc.Keyboard( default, heading, hidden )
+    keyboard.doModal()
+    if keyboard.isConfirmed():
+        return unicode( keyboard.getText(), "utf-8" )
+    return default
+
+
+def get_size(path, total=0):
+    for dirpath, dirnames, filenames in os.walk(path):
+        for f in filenames:
+            fp = os.path.join(dirpath, f)
+            total += os.path.getsize(fp)
+    return total
 
 
 def percentage(part, whole):
@@ -329,249 +339,12 @@ def platform():
 #########################
 
 
-def working_url(url):
-    if url in ['http://', 'https://', '']:
-        return False
-    check = 0
-    status = ''
-    while check < 3:
-        check += 1
-        try:
-            req = Request(url)
-            req.add_header('User-Agent', vars.USER_AGENT)
-            response = urlopen(req)
-            response.close()
-            status = True
-            break
-        except Exception as e:
-            status = str(e)
-            logging.log("Working Url Error: %s [%s]" % (e, url))
-            xbmc.sleep(500)
-    return status
-
-
 def open_url(url):
+    from resources.libs import vars
+
     req = Request(url)
     req.add_header('User-Agent', vars.USER_AGENT)
     response = urlopen(req)
     link = response.read()
     response.close()
     return link
-
-#########################
-#  Update Functions     #
-#########################
-
-
-def force_update(silent=False):
-    xbmc.executebuiltin('UpdateAddonRepos()')
-    xbmc.executebuiltin('UpdateLocalAddons()')
-    if not silent:
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(uservar.COLOR1, uservar.ADDONTITLE),
-                           '[COLOR {0}]Forcing Addon Updates[/COLOR]'.format(uservar.COLOR2))
-
-
-def wizard_update(startup=None):
-    if working_url(uservar.WIZARDFILE):
-        try:
-            wid, ver, zip = check.check_wizard('all')
-        except:
-            return
-        if ver > vars.VERSION:
-            yes = gui.DIALOG.yesno(uservar.ADDONTITLE,
-                                   '[COLOR {0}]There is a new version of the [COLOR {1}]{2}[/COLOR]!'.format(uservar.COLOR2, uservar.COLOR1, uservar.ADDONTITLE),
-                                   'Would you like to download [COLOR {0}]v{1}[/COLOR]?[/COLOR]'.format(uservar.COLOR1, ver),
-                                   nolabel='[B][COLOR red]Remind Me Later[/COLOR][/B]',
-                                   yeslabel="[B][COLOR springgreen]Update Wizard[/COLOR][/B]")
-            if yes:
-                logging.log("[Auto Update Wizard] Installing wizard v{0}".format(ver), level=xbmc.LOGNOTICE)
-                gui.DP.create(uservar.ADDONTITLE, '[COLOR {0}]Downloading Update...'.format(uservar.COLOR2), '',
-                              'Please Wait[/COLOR]')
-                lib = os.path.join(vars.PACKAGES, '{0}-{1}.zip'.format(uservar.ADDON_ID, ver))
-                try:
-                    os.remove(lib)
-                except:
-                    pass
-                downloader.download(zip, lib, DP)
-                xbmc.sleep(2000)
-                gui.DP.update(0, "", "Installing {0} update".format(uservar.ADDONTITLE))
-                percent, errors, error = extract.all(lib, vars.ADDONS, gui.DP, True)
-                gui.DP.close()
-                xbmc.sleep(1000)
-                force_update()
-                xbmc.sleep(1000)
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(uservar.COLOR1, uservar.ADDONTITLE),
-                                   '[COLOR {0}]Add-on updated[/COLOR]'.format(uservar.COLOR2))
-                logging.log("[Auto Update Wizard] Wizard updated to v{0}".format(ver), level=xbmc.LOGNOTICE)
-                remove_file(os.path.join(uservar.ADDONDATA, 'settings.xml'))
-                notify.firstRunSettings()
-                if startup:
-                    xbmc.executebuiltin('RunScript({0}/startup.py)'.format(vars.PLUGIN))
-                return
-            else:
-                logging.log("[Auto Update Wizard] Install New Wizard Ignored: {0}".format(ver), level=xbmc.LOGNOTICE)
-        else:
-            if not startup:
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(uservar.COLOR1, uservar.ADDONTITLE),
-                                   "[COLOR {0}]No New Version of Wizard[/COLOR]".format(uservar.COLOR2))
-            logging.log("[Auto Update Wizard] No New Version v{0}".format(ver), level=xbmc.LOGNOTICE)
-    else:
-        logging.log("[Auto Update Wizard] Url for wizard file not valid: {0}".format(uservar.WIZARDFILE), level=xbmc.LOGNOTICE)
-
-
-def addon_updates(do=None):
-    setting = '"general.addonupdates"'
-    if do == 'set':
-        query = '{"jsonrpc":"2.0", "method":"Settings.GetSettingValue","params":{"setting":%s}, "id":1}' % setting
-        response = xbmc.executeJSONRPC(query)
-        match = re.compile('{"value":(.+?)}').findall(response)
-        if len(match) > 0:
-            default = match[0]
-        else:
-            default = 0
-        set_setting('default.addonupdate', str(default))
-        query = '{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{"setting":%s,"value":%s}, "id":1}' % (setting, '2')
-        response = xbmc.executeJSONRPC(query)
-    elif do == 'reset':
-        try:
-            value = int(float(get_setting('default.addonupdate')))
-        except:
-            value = 0
-        if value not in [0, 1, 2]:
-            value = 0
-        query = '{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{"setting":%s,"value":%s}, "id":1}' % (setting, value)
-        response = xbmc.executeJSONRPC(query)
-
-#########################
-#  Add-on Functions     #
-#########################
-
-
-def get_info(label):
-    try:
-        return xbmc.getInfoLabel(label)
-    except:
-        return False
-
-
-def addon_database(addon=None, state=1, array=False):
-    dbfile = latest_db('Addons')
-    dbfile = os.path.join(vars.DATABASE, dbfile)
-    installedtime = str(datetime.now())[:-7]
-    if os.path.exists(dbfile):
-        try:
-            textdb = database.connect(dbfile)
-            textexe = textdb.cursor()
-        except Exception as e:
-            logging.log("DB Connection Error: {0}".format(str(e)), level=xbmc.LOGERROR)
-            return False
-    else:
-        return False
-    if state == 2:
-        try:
-            textexe.execute("DELETE FROM installed WHERE addonID = ?", (addon,))
-            textdb.commit()
-            textexe.close()
-        except:
-            logging.log("Error Removing {0} from DB".format(addon))
-        return True
-    try:
-        if not array:
-            textexe.execute('INSERT or IGNORE into installed (addonID , enabled, installDate) VALUES (?,?,?)', (addon, state, installedtime,))
-            textexe.execute('UPDATE installed SET enabled = ? WHERE addonID = ? ', (state, addon,))
-        else:
-            for item in addon:
-                textexe.execute('INSERT or IGNORE into installed (addonID , enabled, installDate) VALUES (?,?,?)', (item, state, installedtime,))
-                textexe.execute('UPDATE installed SET enabled = ? WHERE addonID = ? ', (state, item,))
-        textdb.commit()
-        textexe.close()
-    except:
-        logging.log("Erroring enabling addon: {0}".format(addon))
-
-
-def latest_db(db):
-    if db in ['Addons', 'ADSP', 'Epg', 'MyMusic', 'MyVideos', 'Textures', 'TV', 'ViewModes']:
-        match = glob.glob(os.path.join(vars.DATABASE, '{0}*.db'.format(db)))
-        comp = '{0}(.+?).db'.format(db[1:])
-        highest = 0
-        for file in match:
-            try:
-                check = int(re.compile(comp).findall(file)[0])
-            except:
-                check = 0
-            if highest < check:
-                highest = check
-        return '{0}{1}.db'.format(db, highest)
-    else:
-        return False
-
-
-def kodi_17_fix():
-    addonlist = glob.glob(os.path.join(vars.ADDONS, '*/'))
-    disabledAddons = []
-    for folder in sorted(addonlist, key=lambda x: x):
-        addonxml = os.path.join(folder, 'addon.xml')
-        if os.path.exists(addonxml):
-            fold = folder.replace(vars.ADDONS, '')[1:-1]
-            aid = parse_dom(read_from_file(addonxml), 'addon', ret='id')
-            try:
-                if len(aid) > 0: addonid = aid[0]
-                else: addonid = fold
-                add = xbmcaddon.Addon(id=addonid)
-            except:
-                try:
-                    logging.log("{0} was disabled".format(aid[0]), level=xbmc.LOGDEBUG)
-                    disabledAddons.append(addonid)
-                except:
-                    logging.log("Unabled to enable: {0}".format(folder), level=xbmc.LOGERROR)
-    if len(disabledAddons) > 0:
-        addon_database(disabledAddons, 1, True)
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(uservar.COLOR1, uservar.ADDONTITLE),
-                           "[COLOR {0}]Enabling Addons Complete![/COLOR]".format(uservar.COLOR2))
-    force_update()
-    xbmc.executebuiltin("ReloadSkin()")
-
-
-def toggle_addon(id, value, over=None):
-    logging.log("Toggling {0}".format(id))
-    addonid = id
-    addonxml = os.path.join(vars.ADDONS, id, 'addon.xml')
-    if os.path.exists(addonxml):
-        b = read_from_file(addonxml)
-        tid = parse_dom(b, 'addon', ret='id')
-        tname = parse_dom(b, 'addon', ret='name')
-        tservice = parse_dom(b, 'extension', ret='library', attrs={'point': 'xbmc.service'})
-        try:
-            if len(tid) > 0:
-                addonid = tid[0]
-            if len(tservice) > 0:
-                logging.log("We got a live one, stopping script: {0}".format(match[0]), level=xbmc.LOGDEBUG)
-                xbmc.executebuiltin('StopScript(%s)' % os.path.join(vars.ADDONS, addonid))
-                xbmc.executebuiltin('StopScript(%s)' % addonid)
-                xbmc.executebuiltin('StopScript(%s)' % os.path.join(vars.ADDONS, addonid, tservice[0]))
-                xbmc.sleep(500)
-        except:
-            pass
-    query = '{"jsonrpc":"2.0", "method":"Addons.SetAddonEnabled","params":{"addonid":"%s","enabled":%s}, "id":1}' % (addonid, value)
-    response = xbmc.executeJSONRPC(query)
-    if 'error' in response and over is None:
-        v = 'Enabling' if value == 'true' else 'Disabling'
-        gui.DIALOG.ok(uservar.ADDONTITLE,
-                      "[COLOR {0}]Error {1} [COLOR {2}]{3}[/COLOR]".format(uservar.COLOR2, v, uservar.COLOR1, id),
-                      "Check to make sure the add-on list is up to date and try again.[/COLOR]")
-        force_update()
-
-
-def addon_id(add):
-    try:
-        return xbmcaddon.Addon(id=add)
-    except:
-        return False
-
-
-def addon_info(add, info):
-    addon = addon_id(add)
-    if addon:
-        return addon.getAddonInfo(info)
-    else:
-        return False

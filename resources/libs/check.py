@@ -1,11 +1,43 @@
+import xbmc
+
 import re
 
+try:
+    from urllib.request import urlopen
+    from urllib.request import Request
+except ImportError:
+    from urllib2 import urlopen
+    from urllib2 import Request
+
 import uservar
+from resources.libs import logging
 from resources.libs import tools
+from resources.libs import vars
+
+
+def check_url(url):
+    if url in ['http://', 'https://', '']:
+        return False
+    check = 0
+    status = ''
+    while check < 3:
+        check += 1
+        try:
+            req = Request(url)
+            req.add_header('User-Agent', vars.USER_AGENT)
+            response = urlopen(req)
+            response.close()
+            status = True
+            break
+        except Exception as e:
+            status = str(e)
+            logging.log("Working Url Error: %s [%s]" % (e, url))
+            xbmc.sleep(500)
+    return status
 
 
 def check_build(name, ret):
-    if not tools.working_url(uservar.BUILDFILE): return False
+    if not check_url(uservar.BUILDFILE): return False
     link = tools.open_url(uservar.BUILDFILE).replace('\n', '').replace('\r', '').replace('\t', '')\
         .replace('gui=""', 'gui="http://"').replace('theme=""', 'theme="http://"')
     match = re.compile('name="%s".+?ersion="(.+?)".+?rl="(.+?)".+?inor="(.+?)".+?ui="(.+?)".+?odi="(.+?)".+?heme="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?review="(.+?)".+?dult="(.+?)".+?nfo="(.+?)".+?escription="(.+?)"' % name).findall(link)
@@ -42,7 +74,7 @@ def check_build(name, ret):
 
 
 def check_info(name):
-    if not tools.working_url(name):
+    if not check_url(name):
         return False
     link = tools.open_url(name).replace('\n', '').replace('\r', '').replace('\t', '')
     match = re.compile('.+?ame="(.+?)".+?xtracted="(.+?)".+?ipsize="(.+?)".+?kin="(.+?)".+?reated="(.+?)".+?rograms="(.+?)".+?ideo="(.+?)".+?usic="(.+?)".+?icture="(.+?)".+?epos="(.+?)".+?cripts="(.+?)"').findall(link)
@@ -55,7 +87,7 @@ def check_info(name):
 
 def check_theme(name, theme, ret):
     themeurl = check_build(name, 'theme')
-    if not tools.working_url(themeurl):
+    if not check_url(themeurl):
         return False
     link = tools.open_url(themeurl).replace('\n', '').replace('\r', '').replace('\t', '')
     match = re.compile('name="%s".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult=(.+?).+?escription="(.+?)"' % theme).findall(link)
@@ -76,7 +108,7 @@ def check_theme(name, theme, ret):
 
 
 def check_wizard(ret):
-    if not tools.working_url(uservar.WIZARDFILE):
+    if not check_url(uservar.WIZARDFILE):
         return False
     link = tools.open_url(uservar.WIZARDFILE).replace('\n', '').replace('\r', '').replace('\t', '')
     match = re.compile('id="{0}".+?ersion="(.+?)".+?ip="(.+?)"'.format(uservar.ADDON_ID)).findall(link)

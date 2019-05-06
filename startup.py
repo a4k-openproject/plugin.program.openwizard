@@ -30,7 +30,9 @@ from datetime import datetime
 from datetime import timedelta
 
 import uservar
+from resources.libs import addon
 from resources.libs import cache
+from resources.libs import check
 from resources.libs import debridit
 from resources.libs import downloader
 from resources.libs import extract
@@ -41,6 +43,7 @@ from resources.libs import notify
 from resources.libs import skinSwitch
 from resources.libs import traktit
 from resources.libs import tools
+from resources.libs import update
 from resources.libs import vars
 
 SKINCHECK = ['skin.aftermath.zephyr', 'skin.aftermath.silvo', 'skin.aftermath.simple', 'skin.ccm.aftermath']
@@ -232,11 +235,12 @@ if vars.KODIADDONS in vars.PATH:
 		tools.copytree(vars.PATH, newpath)
 	except Exception:
 		pass
-	tools.force_update(silent=True)
+	update.force_update(silent=True)
 
 try:
-	mybuilds = vars.MYBUILDS
-	if not os.path.exists(mybuilds): xbmcvfs.mkdirs(mybuilds)
+	BACKUPLOCATION = tools.get_setting('path') if tools.get_setting('path') else vars.HOME
+	MYBUILDS = os.path.join(BACKUPLOCATION, 'My_Builds')
+	if not os.path.exists(MYBUILDS): xbmcvfs.mkdirs(MYBUILDS)
 except:
 	pass
 
@@ -245,12 +249,12 @@ cache.flush_old_cache()
 
 logging.log("[Auto Install Repo] Started", xbmc.LOGNOTICE)
 if uservar.AUTOINSTALL == 'Yes' and not os.path.exists(os.path.join(vars.ADDONS, uservar.REPOID)):
-	workingxml = tools.working_url(uservar.REPOADDONXML)
+	workingxml = check.check_url(uservar.REPOADDONXML)
 	if workingxml:
 		ver = tools.parse_dom(tools.open_url(uservar.REPOADDONXML), 'addon', ret='version', attrs = {'id': uservar.REPOID})
 		if len(ver) > 0:
 			installzip = '%s-%s.zip' % (uservar.REPOID, ver[0])
-			workingrepo = tools.working_url(uservar.REPOZIPURL+installzip)
+			workingrepo = check.check_url(uservar.REPOZIPURL+installzip)
 			if workingrepo:
 				gui.DP.create(uservar.ADDONTITLE,'Downloading Repo...','', 'Please Wait')
 				if not os.path.exists(vars.PACKAGES): os.makedirs(vars.PACKAGES)
@@ -269,7 +273,7 @@ if uservar.AUTOINSTALL == 'Yes' and not os.path.exists(os.path.join(vars.ADDONS,
 					tools.addon_database(uservar.REPOID, 1)
 				gui.DP.close()
 				xbmc.sleep(500)
-				tools.force_update(silent=True)
+				update.force_update(silent=True)
 				logging.log("[Auto Install Repo] Successfully Installed", xbmc.LOGNOTICE)
 			else:
 				logging.log_notify("[COLOR %s]Repo Install Error[/COLOR]" % uservar.COLOR1, "[COLOR %s]Invalid url for zip![/COLOR]" % uservar.COLOR2)
@@ -284,14 +288,14 @@ elif os.path.exists(os.path.join(vars.ADDONS, uservar.REPOID)): logging.log("[Au
 
 logging.log("[Auto Update Wizard] Started", xbmc.LOGNOTICE)
 if uservar.AUTOUPDATE == 'Yes':
-	tools.wizard_update('startup')
+	update.wizard_update('startup')
 else: logging.log("[Auto Update Wizard] Not Enabled", xbmc.LOGNOTICE)
 
 logging.log("[Notifications] Started", xbmc.LOGNOTICE)
 if uservar.ENABLE == 'Yes':
 	NOTIFY = tools.get_setting('notify')
 	if not NOTIFY == 'true':
-		url = tools.working_url(uservar.NOTIFICATION)
+		url = check.check_url(uservar.NOTIFICATION)
 		if url:
 			id, msg = notify.split_notify(uservar.NOTIFICATION)
 			if id:
@@ -325,7 +329,7 @@ EXTERROR = tools.get_setting('errors')
 if INSTALLED == 'true':
 	BUILDNAME = tools.get_setting('buildname')
 	if vars.KODIV >= 17:
-		tools.kodi_17_fix()
+		addon.kodi_17_fix()
 		if vars.SKIN in ['skin.confluence', 'skin.estuary']:
 			checkSkin()
 		FAILED = True
@@ -346,12 +350,12 @@ if INSTALLED == 'true':
 				if skinSwitch.swap_to_skin(defaults):
 					skinSwitch.look_and_feel_data('restore')
 		if not vars.SKIN == defaults and not BUILDNAME == "":
-			gui_xml = tools.check_build(BUILDNAME, 'gui')
+			gui_xml = check.check_build(BUILDNAME, 'gui')
 			FAILED = True
 			if gui_xml == 'http://':
 				logging.log("[Installed Check] Guifix was set to http://", xbmc.LOGNOTICE)
 				gui.DIALOG.ok(uservar.ADDONTITLE, "[COLOR %s]It looks like the skin settings was not applied to the build." % uservar.COLOR2, "Sadly no gui fix was attatched to the build", "You will need to reinstall the build and make sure to do a force close[/COLOR]")
-			elif tools.working_url(gui):
+			elif check.check_url(gui):
 				yes = gui.DIALOG.yesno(uservar.ADDONTITLE, '%s was not installed correctly!' % BUILDNAME, 'It looks like the skin settings was not applied to the build.', 'Would you like to apply the GuiFix?', nolabel='[B]No, Cancel[/B]', yeslabel='[B]Apply Fix[/B]')
 				if yes: xbmc.executebuiltin("PlayMedia(plugin://%s/?mode=install&name=%s&url=gui)" % (uservar.ADDON_ID, urllib.quote_plus(BUILDNAME))); logging.log("[Installed Check] Guifix attempting to install")
 				else: logging.log('[Installed Check] Guifix url working but cancelled: %s' % gui, xbmc.LOGNOTICE)
@@ -361,9 +365,9 @@ if INSTALLED == 'true':
 	else:
 		logging.log('[Installed Check] Install seems to be completed correctly', xbmc.LOGNOTICE)
 	if not tools.get_setting('pvrclient') == "":
-		tools.toggle_addon(tools.get_setting('pvrclient'), 1)
+		addon.toggle_addon(tools.get_setting('pvrclient'), 1)
 		xbmc.executebuiltin('StartPVRManager')
-	tools.addon_updates('reset')
+	update.addon_updates('reset')
 
 	KEEPTRAKT = tools.get_setting('keeptrakt')
 	KEEPREAL = tools.get_setting('keepdebrid')
@@ -388,11 +392,11 @@ if not FAILED:
 	BUILDNAME = tools.get_setting('buildname')
 	UPDATECHECK = uservar.UPDATECHECK if str(uservar.UPDATECHECK).isdigit() else 1
 
-	if not tools.working_url(uservar.BUILDFILE):
+	if not check.check_url(uservar.BUILDFILE):
 		logging.log("[Build Check] Not a valid URL for Build File: %s" % uservar.BUILDFILE, level=xbmc.LOGNOTICE)
 	elif BUILDCHECK == '' and BUILDNAME == '':
 		logging.log("[Build Check] First Run", level=xbmc.LOGNOTICE)
-		checkInstalled()
+		check_installed()
 		tools.set_setting('lastbuildcheck', str(tools.get_date(days=UPDATECHECK)))
 	elif not BUILDNAME == '':
 		logging.log("[Build Check] Build Installed", level=xbmc.LOGNOTICE)
@@ -400,11 +404,11 @@ if not FAILED:
 			checkSkin()
 			logging.log("[Build Check] Build Installed: Checking Updates", level=xbmc.LOGNOTICE)
 			tools.set_setting('lastbuildcheck', str(tools.get_date(days=UPDATECHECK)))
-			checkUpdate()
+			check_update()
 		elif BUILDCHECK <= str(tools.get_date()):
 			logging.log("[Build Check] Build Installed: Checking Updates", level=xbmc.LOGNOTICE)
 			tools.set_setting('lastbuildcheck', str(tools.get_date(days=UPDATECHECK)))
-			checkUpdate()
+			check_update()
 		else:
 			logging.log("[Build Check] Build Installed: Next check isn't until: %s / TODAY is: %s" % (BUILDCHECK, str(tools.get_date())), level=xbmc.LOGNOTICE)
 
