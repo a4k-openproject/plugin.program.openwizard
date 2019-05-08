@@ -14,7 +14,8 @@ class Config:
         self.init_settings()
 
     def init_meta(self):
-        self.ADDON = xbmcaddon.Addon(uservar.ADDON_ID)
+        self.ADDON_ID = xbmcaddon.Addon().getAddonInfo('id')
+        self.ADDON = xbmcaddon.Addon(self.ADDON_ID)
         self.ADDON_NAME = self.ADDON.getAddonInfo('name')
         self.ADDON_VERSION = self.ADDON.getAddonInfo('version')
         self.ADDON_PATH = self.ADDON.getAddonInfo('path')
@@ -25,7 +26,6 @@ class Config:
 
     def init_uservars(self):
         # User Edit Variables
-        self.ADDON_ID = uservar.ADDON_ID
         self.EXCLUDES = uservar.EXCLUDES
         self.CACHETEXT = uservar.CACHETEXT
         self.CACHEAGE = uservar.CACHEAGE if str(uservar.CACHEAGE).isdigit() else 30
@@ -224,19 +224,19 @@ class Config:
         self.MAXWIZLINES = [100, 200, 300, 400, 500]
         self.MAXWIZDATES = [1, 2, 3, 7]
 
-    def get_setting(self, key, id=uservar.ADDON_ID):
+    def get_setting(self, key, id=xbmcaddon.Addon().getAddonInfo('id')):
         try:
             return xbmcaddon.Addon(id).getSetting(key)
         except:
             return False
 
-    def set_setting(self, key, value, id=uservar.ADDON_ID):
+    def set_setting(self, key, value, id=xbmcaddon.Addon().getAddonInfo('id')):
         try:
             return xbmcaddon.Addon(id).setSetting(key, value)
         except:
             return False
 
-    def open_settings(self, id=uservar.ADDON_ID):
+    def open_settings(self, id=xbmcaddon.Addon().getAddonInfo('id')):
         try:
             return xbmcaddon.Addon(id).openSettings()
         except:
