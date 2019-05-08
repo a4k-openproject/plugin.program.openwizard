@@ -3,8 +3,9 @@ import xbmcaddon
 import os
 
 #########################################################
-#        Global Variables                               #
+#         Global Variables - DON'T EDIT!!!              #
 #########################################################
+ADDON_ID = xbmcaddon.Addon().getAddonInfo('id')
 PATH = xbmcaddon.Addon().getAddonInfo('path')
 ART = os.path.join(PATH, 'resources', 'art')
 #########################################################
@@ -12,7 +13,6 @@ ART = os.path.join(PATH, 'resources', 'art')
 #########################################################
 #        User Edit Variables                            #
 #########################################################
-ADDON_ID = xbmcaddon.Addon().getAddonInfo('id')
 ADDONTITLE = '[B][COLOR dodgerblue]Aftermath[/COLOR][/B] Wizard'
 BUILDERNAME = 'Aftermath'
 EXCLUDES = [ADDON_ID, 'repository.aftermath']
