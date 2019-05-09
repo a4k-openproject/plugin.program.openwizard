@@ -143,6 +143,10 @@ class Config:
         self.BUILDVERSION = self.get_setting('buildversion')
         self.BUILDTHEME = self.get_setting('buildtheme')
         self.BUILDLATEST = self.get_setting('latestversion')
+        self.DISABLEUPDATE = self.get_setting('disableupdate')
+        self.INSTALLED = self..get_setting('installed')
+        self.EXTRACT = self.get_setting('extract')
+        self.EXTERROR = self.get_setting('errors')
         
         # View variables
         self.SHOW15 = self.get_setting('show15')
@@ -178,6 +182,7 @@ class Config:
         # Notification variables
         self.NOTIFY = self.get_setting('notify')
         self.NOTEID = self.get_setting('noteid')
+        self.NOTEID = 0 if self.NOTEID == "" else int(self.NOTEID)
         self.NOTEDISMISS = self.get_setting('notedismiss')
         
         # Save Data variables
