@@ -41,7 +41,6 @@ from resources.libs import skinSwitch
 from resources.libs import tools
 from resources.libs import update
 
-SKINCHECK = ['skin.aftermath.zephyr', 'skin.aftermath.silvo', 'skin.aftermath.simple', 'skin.ccm.aftermath']
 FAILED = False
 
 ########################
@@ -70,57 +69,6 @@ def check_update():
             logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}]".format(CONFIG.BUILDVERSION, version), level=xbmc.LOGNOTICE)
     else:
         logging.log("[Check Updates] ERROR: Unable to find build version in build text file", level=xbmc.LOGERROR)
-
-
-def check_installed():
-	current = ''
-	for skin in SKINCHECK:
-		skinpath = os.path.join(vars.ADDONS, skin)
-		if os.path.exists(skinpath):
-			current = skin
-	if current == SKINCHECK[0]:
-		yes_pressed = gui.DIALOG.yesno(uservar.ADDONTITLE, "[COLOR dodgerblue]Aftermath[/COLOR] Zephyr is currently outdated and is no longer being updated.",
-									   "Please download one of the newer community builds.",
-									   yeslabel="Build Menu",
-									   nolabel="Ignore")
-		if yes_pressed:
-			xbmc.executebuiltin('ActivateWindow(10025 , "plugin://%s/?mode=builds", return)' % uservar.ADDON_ID)
-		else:
-			gui.DIALOG.ok(uservar.ADDONTITLE, 'You can still install a community build from the [COLOR dodgerblue]Aftermath[/COLOR] Wizard.')
-	elif current == SKINCHECK[1]:
-		yes_pressed = gui.DIALOG.yesno(uservar.ADDONTITLE,"[COLOR dodgerblue]Aftermath[/COLOR] Silvo is currently outdated and is no longer being updated.", "Please download one of the newer community builds.", yeslabel="Build Menu", nolabel="Ignore")
-		if yes_pressed:
-			xbmc.executebuiltin('ActivateWindow(10025 , "plugin://%s/?mode=builds", return)' % uservar.ADDON_ID)
-		else:
-			gui.DIALOG.ok(uservar.ADDONTITLE, 'You can still install a community build from the [COLOR dodgerblue]Aftermath[/COLOR] Wizard.')
-	elif current == SKINCHECK[2]:
-		if vars.KODIV >= 16:
-			gui_xml = os.path.join(vars.ADDOND, SKINCHECK[2], 'settings.xml')
-			g = tools.read_from_file(gui_xml)
-			match = re.compile('<setting id=\"SubSettings.3.Label\" type=\"string\">(.+?)<\/setting>').findall(g)
-			if len(match):
-				name, build, ver = match[0].replace('[COLOR dodgerblue]', '').replace('[/COLOR]', '').split(' ')
-			else:
-				build = "Simple"
-				ver = "v0.1"
-		else:
-			gui_xml = os.path.join(vars.USERDATA,'guisettings.xml')
-			g = tools.read_from_file(gui_xml)
-			match = re.compile('<setting type=\"string\" name=\"skin.aftermath.simple.SubSettings.3.Label\">(.+?)<\/setting>').findall(g)
-			name, build, ver = match[0].replace('[COLOR dodgerblue]', '').replace('[/COLOR]', '').split(' ')
-
-		UPDATECHECK = uservar.UPDATECHECK if str(uservar.UPDATECHECK).isdigit() else 1
-		tools.set_setting('buildname', 'Aftermath {0}'.format(build))
-		tools.set_setting('buildversion', ver[1:])
-		tools.set_setting('lastbuildcheck', str(tools.get_date(days=UPDATECHECK)))
-		check_update()
-	elif current == SKINCHECK[3]:
-		yes_pressed = gui.DIALOG.yesno(uservar.ADDONTITLE,"[COLOR dodgerblue]Aftermath[/COLOR] CCM is currently outdated and is no longer being updated.", "Please download one of the newer community builds.", yeslabel="Build Menu", nolabel="Ignore")
-		if yes_pressed:	xbmc.executebuiltin('ActivateWindow(10025 , "plugin://%s/?mode=builds", return)' % uservar.ADDON_ID)
-		else: gui.DIALOG.ok(uservar.ADDONTITLE, 'You can still install a community build from the [COLOR dodgerblue]Aftermath[/COLOR] Wizard.')
-	else:
-		notify.firstRunSettings()
-		notify.firstRun()
 
 
 def writeAdvanced():
