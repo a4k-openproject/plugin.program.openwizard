@@ -27,15 +27,15 @@ try:  # Python 3
 except ImportError:  # Python 2
     from urllib import urlretrieve
 
-import uservar
+from resources.libs.config import CONFIG
 from resources.libs import gui
 from resources.libs import logging
 
 
 def download(url, dest, dp=None):
-    if not dp:
+    if dp is None:
         dp = gui.DP
-        dp.create(uservar.ADDONTITLE, "Downloading Content", ' ', ' ')
+        dp.create(CONFIG.ADDONTITLE, "Downloading Content", ' ', ' ')
     dp.update(0)
     start_time = time.time()
     urlretrieve(url, dest, lambda nb, bs, fs: _pbhook(nb, bs, fs, dp, start_time))
@@ -46,7 +46,7 @@ def _pbhook(numblocks, blocksize, filesize, dp, start_time):
         percent = min(numblocks * blocksize * 100 / filesize, 100)
         currently_downloaded = float(numblocks) * blocksize / (1024 * 1024)
         kbps_speed = numblocks * blocksize / (time.time() - start_time)
-        if kbps_speed > 0 and not percent == 100:
+        if kbps_speed > 0 and not percent >= 100:
             eta = (filesize - numblocks * blocksize) / kbps_speed
         else:
             eta = 0
@@ -56,15 +56,15 @@ def _pbhook(numblocks, blocksize, filesize, dp, start_time):
             kbps_speed = kbps_speed / 1024
             type_speed = 'MB'
         total = float(filesize) / (1024 * 1024)
-        mbs = '[COLOR %s][B]Size:[/B] [COLOR %s]%.02f[/COLOR] MB of [COLOR %s]%.02f[/COLOR] MB[/COLOR]' % (uservar.COLOR2, uservar.COLOR1, currently_downloaded, uservar.COLOR1, total)
-        e = '[COLOR %s][B]Speed:[/B] [COLOR %s]%.02f [/COLOR]%s/s ' % (uservar.COLOR2, uservar.COLOR1, kbps_speed, type_speed)
-        e += '[B]ETA:[/B] [COLOR ' + uservar.COLOR1 + ']%02d:%02d[/COLOR][/COLOR]' % divmod(eta, 60)
+        mbs = '[COLOR %s][B]Size:[/B] [COLOR %s]%.02f[/COLOR] MB of [COLOR %s]%.02f[/COLOR] MB[/COLOR]' % (CONFIG.COLOR2, CONFIG.COLOR1, currently_downloaded, CONFIG.COLOR1, total)
+        e = '[COLOR %s][B]Speed:[/B] [COLOR %s]%.02f [/COLOR]%s/s ' % (CONFIG.COLOR2, CONFIG.COLOR1, kbps_speed, type_speed)
+        e += '[B]ETA:[/B] [COLOR %s]%02d:%02d[/COLOR][/COLOR]' % (CONFIG.COLOR1, divmod(eta, 60))
         dp.update(percent, '', mbs, e)
     except Exception as e:
         logging.log("ERROR Downloading: %s".format(str(e)), level=xbmc.LOGERROR)
         return str(e)
     if dp.iscanceled():
         dp.close()
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(uservar.COLOR1, uservar.ADDONTITLE),
-                           "[COLOR {0}]Download Cancelled[/COLOR]".format(uservar.COLOR2))
+        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                           "[COLOR {0}]Download Cancelled[/COLOR]".format(CONFIG.COLOR2))
         sys.exit()

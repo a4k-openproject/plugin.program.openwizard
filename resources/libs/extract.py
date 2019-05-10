@@ -21,20 +21,15 @@ import xbmc
 
 import sys
 
-import uservar
+from resources.libs.config import CONFIG
 from resources.libs import logging
 from resources.libs import tools
-from resources.libs import vars
 from resources.libs import whitelist
 
-if vars.KODIV > 17:
+if CONFIG.KODIV > 17:
     from resources.libs import zfile as zipfile
 else:
     import zipfile
-
-bad_files = ['onechannelcache.db', 'saltscache.db', 'saltscache.db-shm', 'saltscache.db-wal',
-             'saltshd.lite.db', 'saltshd.lite.db-shm', 'saltshd.lite.db-wal', 'queue.db', 'commoncache.db',
-             'access.log', 'trakt.db', 'video_cache.db']
 
 
 def all(_in, _out, dp=None, ignore=None, title=None):
@@ -78,20 +73,13 @@ def all_with_progress(_in, _out, dp, ignore, title):
             pass
         excludes.append(fold)
         if fold.startswith('pvr'):
-            tools.set_setting('pvrclient', id)
+            CONFIG.set_setting('pvrclient', id)
 
     nFiles = float(len(zin.namelist()))
     zipsize = tools.convert_size(sum([item.file_size for item in zin.infolist()]))
 
     zipit = str(_in).replace('\\', '/').split('/')
     title = title if title else zipit[-1].replace('.zip', '')
-
-    KEEPFAVS = tools.get_setting('keepfavourites')
-    KEEPSOURCES = tools.get_setting('keepsources')
-    KEEPPROFILES = tools.get_setting('keepprofiles')
-    KEEPPLAYERCORE = tools.get_setting('keepplayercore')
-    KEEPADVANCED = tools.get_setting('keepadvanced')
-    KEEPSUPER = tools.get_setting('keepsuper')
 
     for item in zin.infolist():
         try:
@@ -108,40 +96,40 @@ def all_with_progress(_in, _out, dp, ignore, title):
         file = str(item.filename).split('/')
         skip = False
         line1 = '{0} [COLOR {1}][B][Errors:{2}][/B][/COLOR]'.format(title,
-                                                                    uservar.COLOR2,
+                                                                    CONFIG.COLOR2,
                                                                     errors)
-        line2 = '[COLOR {0}][B]File:[/B][/COLOR] [COLOR {1}]{2}/{3}[/COLOR] '.format(uservar.COLOR2,
-                                                                                     uservar.COLOR1,
+        line2 = '[COLOR {0}][B]File:[/B][/COLOR] [COLOR {1}]{2}/{3}[/COLOR] '.format(CONFIG.COLOR2,
+                                                                                     CONFIG.COLOR1,
                                                                                      count,
                                                                                      int(nFiles))
-        line2 += '[COLOR {0}][B]Size:[/B][/COLOR] [COLOR {1}]{2}/{3}[/COLOR]'.format(uservar.COLOR2,
-                                                                                     uservar.COLOR1,
+        line2 += '[COLOR {0}][B]Size:[/B][/COLOR] [COLOR {1}]{2}/{3}[/COLOR]'.format(CONFIG.COLOR2,
+                                                                                     CONFIG.COLOR1,
                                                                                      tools.convert_size(size),
                                                                                      zipsize)
-        line3 = '[COLOR {0}]{1}[/COLOR]'.format(uservar.COLOR1, item.filename)
-        if item.filename == 'userdata/sources.xml' and KEEPSOURCES == 'true':
+        line3 = '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, item.filename)
+        if item.filename == 'userdata/sources.xml' and CONFIG.KEEPSOURCES == 'true':
             skip = True
-        elif item.filename == 'userdata/favourites.xml' and KEEPFAVS == 'true':
+        elif item.filename == 'userdata/favourites.xml' and CONFIG.KEEPFAVS == 'true':
             skip = True
-        elif item.filename == 'userdata/profiles.xml' and KEEPPROFILES == 'true':
+        elif item.filename == 'userdata/profiles.xml' and CONFIG.KEEPPROFILES == 'true':
             skip = True
-        elif item.filename == 'userdata/playercorefactory.xml' and KEEPPLAYERCORE == 'true':
+        elif item.filename == 'userdata/playercorefactory.xml' and CONFIG.KEEPPLAYERCORE == 'true':
             skip = True
-        elif item.filename == 'userdata/advancedsettings.xml' and KEEPADVANCED == 'true':
+        elif item.filename == 'userdata/advancedsettings.xml' and CONFIG.KEEPADVANCED == 'true':
             skip = True
         elif file[0] == 'addons' and file[1] in excludes:
             skip = True
         elif file[0] == 'userdata' and file[1] == 'addon_data' and file[2] in excludes:
             skip = True
-        elif file[-1] in logging.LOGFILES:
+        elif file[-1] in CONFIG.LOGFILES:
             skip = True
-        elif file[-1] in bad_files:
+        elif file[-1] in CONFIG.BAD_FILES:
             skip = True
         elif file[-1].endswith('.csv'):
             skip = True
-        elif not str(item.filename).find('plugin.program.super.favourites') == -1 and KEEPSUPER == 'true':
+        elif not str(item.filename).find('plugin.program.super.favourites') == -1 and CONFIG.KEEPSUPER == 'true':
             skip = True
-        elif not str(item.filename).find(uservar.ADDON_ID) == -1 and ignore is None:
+        elif not str(item.filename).find(CONFIG.ADDON_ID) == -1 and ignore is None:
             skip = True
         if skip:
             logging.log("Skipping: {0}".format(item.filename), level=xbmc.LOGNOTICE)
@@ -149,14 +137,14 @@ def all_with_progress(_in, _out, dp, ignore, title):
             try:
                 zin.extract(item, _out)
             except Exception as e:
-                errormsg = "[COLOR {0}]File:[/COLOR] [COLOR {1}]{2}[/COLOR]\n".format(uservar.COLOR2,
-                                                                                      uservar.COLOR1,
+                errormsg = "[COLOR {0}]File:[/COLOR] [COLOR {1}]{2}[/COLOR]\n".format(CONFIG.COLOR2,
+                                                                                      CONFIG.COLOR1,
                                                                                       file[-1])
-                errormsg += "[COLOR {0}]Folder:[/COLOR] [COLOR {1}]{2}[/COLOR]\n".format(uservar.COLOR2,
-                                                                                         uservar.COLOR1,
+                errormsg += "[COLOR {0}]Folder:[/COLOR] [COLOR {1}]{2}[/COLOR]\n".format(CONFIG.COLOR2,
+                                                                                         CONFIG.COLOR1,
                                                                                          item.filename.replace(file[-1], ''))
-                errormsg += "[COLOR {0}]Error:[/COLOR] [COLOR {1}]{2}[/COLOR]\n\n".format(uservar.COLOR2,
-                                                                                          uservar.COLOR1,
+                errormsg += "[COLOR {0}]Error:[/COLOR] [COLOR {1}]{2}[/COLOR]\n\n".format(CONFIG.COLOR2,
+                                                                                          CONFIG.COLOR1,
                                                                                           str(e).replace('\\\\', '\\')
                                                                                           .replace("'{0}'"
                                                                                           .format(item.filename), ''))
@@ -169,7 +157,7 @@ def all_with_progress(_in, _out, dp, ignore, title):
             break
     if dp.iscanceled():
         dp.close()
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(uservar.COLOR1, uservar.ADDONTITLE),
-                           "[COLOR {0}]Extract Cancelled[/COLOR]".format(uservar.COLOR2))
+        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                           "[COLOR {0}]Extract Cancelled[/COLOR]".format(CONFIG.COLOR2))
         sys.exit()
     return prog, errors, error
