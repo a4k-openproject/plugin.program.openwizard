@@ -34,7 +34,7 @@ except ImportError:  # Python 3
     from urllib import quote_plus
 
 from resources.libs.config import CONFIG
-from resources.libs import addon
+from resources.libs import db
 from resources.libs import cache
 from resources.libs import check
 from resources.libs import gui
@@ -252,7 +252,7 @@ if CONFIG.AUTOINSTALL == 'Yes' and not os.path.exists(os.path.join(CONFIG.ADDONS
                     pass
 
                 if CONFIG.KODIV >= 17:
-                    addon.addon_database(CONFIG.REPOID, 1)
+                    db.addon_database(CONFIG.REPOID, 1)
 
                 gui.DP.close()
                 xbmc.sleep(500)
@@ -313,7 +313,7 @@ else:
 logging.log("[Installed Check] Started", level=xbmc.LOGNOTICE)
 if CONFIG.INSTALLED == 'true':
     if CONFIG.KODIV >= 17:
-        addon.kodi_17_fix()
+        db.kodi_17_fix()
         if CONFIG.SKIN in ['skin.confluence', 'skin.estuary']:
             checkSkin()
         FAILED = True
@@ -367,7 +367,7 @@ if CONFIG.INSTALLED == 'true':
     else:
         logging.log('[Installed Check] Install seems to be completed correctly', level=xbmc.LOGNOTICE)
     if not CONFIG.get_setting('pvrclient') == "":
-        addon.toggle_addon(CONFIG.get_setting('pvrclient'), 1)
+        db.toggle_addon(CONFIG.get_setting('pvrclient'), 1)
         xbmc.executebuiltin('StartPVRManager')
     update.addon_updates('reset')
 
