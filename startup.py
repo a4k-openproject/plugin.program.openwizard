@@ -23,13 +23,16 @@ import xbmcvfs
 import os
 import sys
 import glob
-import urllib
 import re
 
 from datetime import datetime
 from datetime import timedelta
 
-import uservar
+try:  # Python 3
+    from urllib.parse import quote_plus
+except ImportError:  # Python 3
+    from urllib import quote_plus
+
 from resources.libs.config import CONFIG
 from resources.libs import addon
 from resources.libs import cache
@@ -324,7 +327,7 @@ if CONFIG.INSTALLED == 'true':
         CONFIG.clear_setting('build')
         FAILED = True
         if yes:
-            xbmc.executebuiltin("PlayMedia(plugin://{0}/?mode=install&name={1}&url=fresh)".format(CONFIG.ADDON_ID, urllib.quote_plus(CONFIG.BUILDNAME)))
+            xbmc.executebuiltin("PlayMedia(plugin://{0}/?mode=install&name={1}&url=fresh)".format(CONFIG.ADDON_ID, quote_plus(CONFIG.BUILDNAME)))
             logging.log("[Installed Check] Fresh Install Re-activated", level=xbmc.LOGNOTICE)
         else:
             logging.log("[Installed Check] Reinstall Ignored")
@@ -351,7 +354,7 @@ if CONFIG.INSTALLED == 'true':
                                        'Would you like to apply the GuiFix?',
                                        nolabel='[B]No, Cancel[/B]', yeslabel='[B]Apply Fix[/B]')
                 if yes:
-                    xbmc.executebuiltin("PlayMedia(plugin://{0}/?mode=install&name={1}&url=gui)".format(CONFIG.ADDON_ID, urllib.quote_plus(CONFIG.BUILDNAME)))
+                    xbmc.executebuiltin("PlayMedia(plugin://{0}/?mode=install&name={1}&url=gui)".format(CONFIG.ADDON_ID, quote_plus(CONFIG.BUILDNAME)))
                     logging.log("[Installed Check] Guifix attempting to install")
                 else:
                     logging.log('[Installed Check] Guifix url working but cancelled: {0}'.format(gui), level=xbmc.LOGNOTICE)
