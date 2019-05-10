@@ -4,10 +4,10 @@ import os
 import re
 import shutil
 
-try:
+try:  # Python 3
     from urllib.request import urlopen
     from urllib.request import Request
-except ImportError:
+except ImportError:  # Python 3
     from urllib2 import urlopen
     from urllib2 import Request
 
@@ -86,8 +86,8 @@ def read_from_file(file):
     return a
 
 
-def write_to_file(file, content):
-    f = open(file, 'w')
+def write_to_file(file, content, mode='w'):
+    f = open(file, mode)
     f.write(content)
     f.close()
 

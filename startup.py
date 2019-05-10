@@ -72,8 +72,10 @@ def check_update():
 
 
 def writeAdvanced():
-    if CONFIG.RAM > 1536: buffer = '209715200'
-    else: buffer = '104857600'
+    if CONFIG.RAM > 1536:
+        buffer = '209715200'
+    else:
+        buffer = '104857600'
     with open(CONFIG.ADVANCED, 'w+') as f:
         f.write('<advancedsettings>\n')
         f.write('	<network>\n')
@@ -93,9 +95,9 @@ def checkSkin():
     if not CONFIG.DEFAULTSKIN == '':
         if os.path.exists(os.path.join(CONFIG.ADDONS, CONFIG.DEFAULTSKIN)):
             if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
-								"[COLOR {0}]It seems that the skin has been set back to [COLOR {1}]{2}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.SKIN[5:].title()),
-								"Would you like to set the skin back to:[/COLOR]",
-								'[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.DEFAULTNAME)):
+                                "[COLOR {0}]It seems that the skin has been set back to [COLOR {1}]{2}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.SKIN[5:].title()),
+                                "Would you like to set the skin back to:[/COLOR]",
+                                '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.DEFAULTNAME)):
                 gotoskin = CONFIG.DEFAULTSKIN
                 gotoname = CONFIG.DEFAULTNAME
             else:
@@ -103,10 +105,10 @@ def checkSkin():
                 CONFIG.set_setting('defaultskinignore', 'true')
                 gotoskin = False
         else:
-			CONFIG.set_setting('defaultskin', '')
-			CONFIG.set_setting('defaultskinname', '')
-			CONFIG.DEFAULTSKIN = ''
-			CONFIG.DEFAULTNAME = ''
+            CONFIG.set_setting('defaultskin', '')
+            CONFIG.set_setting('defaultskinname', '')
+            CONFIG.DEFAULTSKIN = ''
+            CONFIG.DEFAULTNAME = ''
     if CONFIG.DEFAULTSKIN == '':
         skinname = []
         skinlist = []
@@ -118,41 +120,41 @@ def checkSkin():
                 match2 = tools.parse_dom(g, 'addon', ret='name')
                 logging.log("{0}: {1}".format(folder, str(match[0])), level=xbmc.LOGNOTICE)
                 if len(match) > 0:
-					skinlist.append(str(match[0]))
-					skinname.append(str(match2[0]))
+                    skinlist.append(str(match[0]))
+                    skinname.append(str(match2[0]))
                 else:
-					logging.log("ID not found for {0}".format(folder), level=xbmc.LOGNOTICE)
+                    logging.log("ID not found for {0}".format(folder), level=xbmc.LOGNOTICE)
             else:
-				logging.log("ID not found for {0}".format(folder), level=xbmc.LOGNOTICE)
+                logging.log("ID not found for {0}".format(folder), level=xbmc.LOGNOTICE)
         if len(skinlist) > 0:
             if len(skinlist) > 1:
                 if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
-									"[COLOR {0}]It seems that the skin has been set back to [COLOR {1}]{2}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.SKIN[5:].title()),
-									"Would you like to view a list of avaliable skins?[/COLOR]"):
+                                    "[COLOR {0}]It seems that the skin has been set back to [COLOR {1}]{2}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.SKIN[5:].title()),
+                                    "Would you like to view a list of avaliable skins?[/COLOR]"):
                     choice = gui.DIALOG.select("Select skin to switch to!", skinname)
                     if choice == -1:
-						logging.log("Skin was not reset", level=xbmc.LOGNOTICE)
-						CONFIG.set_setting('defaultskinignore', 'true')
+                        logging.log("Skin was not reset", level=xbmc.LOGNOTICE)
+                        CONFIG.set_setting('defaultskinignore', 'true')
                     else:
                         gotoskin = skinlist[choice]
                         gotoname = skinname[choice]
                 else:
-					logging.log("Skin was not reset", level=xbmc.LOGNOTICE)
-					CONFIG.set_setting('defaultskinignore', 'true')
+                    logging.log("Skin was not reset", level=xbmc.LOGNOTICE)
+                    CONFIG.set_setting('defaultskinignore', 'true')
             else:
                 if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
-									"[COLOR {0}]It seems that the skin has been set back to [COLOR {1}]{2}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.SKIN[5:].title()),
-									"Would you like to set the skin back to:[/COLOR]",
-									'[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, skinname[0])):
+                                    "[COLOR {0}]It seems that the skin has been set back to [COLOR {1}]{2}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.SKIN[5:].title()),
+                                    "Would you like to set the skin back to:[/COLOR]",
+                                    '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, skinname[0])):
                     gotoskin = skinlist[0]
                     gotoname = skinname[0]
                 else:
-					logging.log("Skin was not reset", level=xbmc.LOGNOTICE)
-					CONFIG.set_setting('defaultskinignore', 'true')
+                    logging.log("Skin was not reset", level=xbmc.LOGNOTICE)
+                    CONFIG.set_setting('defaultskinignore', 'true')
         else:
-			logging.log("No skins found in addons folder.", level=xbmc.LOGNOTICE)
-			CONFIG.set_setting('defaultskinignore', 'true')
-			gotoskin = False
+            logging.log("No skins found in addons folder.", level=xbmc.LOGNOTICE)
+            CONFIG.set_setting('defaultskinignore', 'true')
+            gotoskin = False
     if gotoskin:
         if skinSwitch.switch_to_skin(gotoskin):
             skinSwitch.look_and_feel_data('restore')
@@ -269,7 +271,7 @@ elif os.path.exists(os.path.join(CONFIG.ADDONS, CONFIG.REPOID)):
     logging.log("[Auto Install Repo] Repository already installed")
 
 logging.log("[Auto Update Wizard] Started", level=xbmc.LOGNOTICE)
-if uservar.AUTOUPDATE == 'Yes':
+if CONFIG.AUTOUPDATE == 'Yes':
     update.wizard_update('startup')
 else:
     logging.log("[Auto Update Wizard] Not Enabled", level=xbmc.LOGNOTICE)
