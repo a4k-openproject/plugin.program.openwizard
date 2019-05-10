@@ -147,7 +147,7 @@ class Config:
         self.BUILDTHEME = self.get_setting('buildtheme')
         self.BUILDLATEST = self.get_setting('latestversion')
         self.DISABLEUPDATE = self.get_setting('disableupdate')
-        self.INSTALLED = self..get_setting('installed')
+        self.INSTALLED = self.get_setting('installed')
         self.EXTRACT = self.get_setting('extract')
         self.EXTERROR = self.get_setting('errors')
         

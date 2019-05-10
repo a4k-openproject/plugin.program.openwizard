@@ -71,6 +71,6 @@ def check_log():
     CONFIG.set_setting('nextcleandate', str(next))
 
 
-def log_notify(title, message, times=2000, icon=CONFIG.ICON, sound=False):
+def log_notify(title, message, times=2000, icon=CONFIG.ADDON_ICON, sound=False):
     from resources.libs import gui
     gui.DIALOG.notification(title, message, icon, int(times), sound)
