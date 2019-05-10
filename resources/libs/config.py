@@ -97,6 +97,7 @@ class Config:
         self.BAD_FILES = ['onechannelcache.db', 'saltscache.db', 'saltscache.db-shm', 'saltscache.db-wal',
                           'saltshd.lite.db', 'saltshd.lite.db-shm', 'saltshd.lite.db-wal', 'queue.db', 'commoncache.db',
                           'access.log', 'trakt.db', 'video_cache.db', '.gitignore', '.DS_Store']
+        self.DB_FILES = ['Addons', 'ADSP', 'Epg', 'MyMusic', 'MyVideos', 'Textures', 'TV', 'ViewModes']
 
         # Default special paths
         self.XBMC = xbmc.translatePath('special://xbmc/')
