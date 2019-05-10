@@ -1,4 +1,5 @@
 import xbmc
+import xbmcaddon
 
 import os
 import re
@@ -15,64 +16,8 @@ from datetime import date
 from datetime import datetime
 from datetime import timedelta
 
-import uservar
+from resources.libs.config import CONFIG
 
-#########################
-#  Settings Functions   #+
-#########################
-
-
-def get_setting(name):
-    try:
-        from resources.libs import vars
-        return vars.ADDON.getSetting(name)
-    except:
-        return False
-
-
-def set_setting(name, value):
-    try:
-        from resources.libs import vars
-        vars.ADDON.setSetting(name, value)
-    except:
-        return False
-
-
-def open_settings(name=""):
-    if name is not "":
-        from resources.libs import addon
-        addon.addon_id(name).openSettings()
-    else:
-        from resources.libs import vars
-        vars.ADDON.openSettings()
-
-
-def clear_setting(type):
-    build = {'buildname': '', 'buildversion': '', 'buildtheme': '', 'latestversion': '', 'lastbuildcheck': '2016-01-01'}
-    install = {'installed': 'false', 'extract': '', 'errors': ''}
-    default = {'defaultskinignore': 'false', 'defaultskin': '', 'defaultskinname': ''}
-    lookfeel = ['default.enablerssfeeds', 'default.font', 'default.rssedit', 'default.skincolors', 'default.skintheme',
-                'default.skinzoom', 'default.soundskin', 'default.startupwindow', 'default.stereostrength']
-    if type == 'build':
-        for element in build:
-            set_setting(element, build[element])
-        for element in install:
-            set_setting(element, install[element])
-        for element in default:
-            set_setting(element, default[element])
-        for element in lookfeel:
-            set_setting(element, '')
-    elif type == 'default':
-        for element in default:
-            set_setting(element, default[element])
-        for element in lookfeel:
-            set_setting(element, '')
-    elif type == 'install':
-        for element in install:
-            set_setting(element, install[element])
-    elif type == 'lookfeel':
-        for element in lookfeel:
-            set_setting(element, '')
 
 #########################
 #  File Functions       #
@@ -113,7 +58,7 @@ def remove_file(path):
 def empty_folder(folder):
     total = 0
     for root, dirs, files in os.walk(folder, topdown=True):
-        dirs[:] = [d for d in dirs if d not in uservar.EXCLUDES]
+        dirs[:] = [d for d in dirs if d not in CONFIG.EXCLUDES]
         file_count = 0
         file_count += len(files) + len(dirs)
         if file_count == 0:
@@ -131,7 +76,8 @@ def clean_house(folder, ignore=False):
     total_files = 0
     total_folds = 0
     for root, dirs, files in os.walk(folder):
-        if not ignore: dirs[:] = [d for d in dirs if d not in uservar.EXCLUDES]
+        if not ignore:
+            dirs[:] = [d for d in dirs if d not in CONFIG.EXCLUDES]
         file_count = 0
         file_count += len(files)
         if file_count >= 0:
@@ -176,10 +122,10 @@ def copytree(src, dst, symlinks=False, ignore=None):
                 copytree(srcname, dstname, symlinks, ignore)
             else:
                 shutil.copy2(srcname, dstname)
-        except Exception as err:
-            errors.extend(err.args[0])
         except EnvironmentError as why:
             errors.append((srcname, dstname, str(why)))
+        except Exception as err:
+            errors.extend(err.args[0])
     try:
         shutil.copystat(src, dst)
     except OSError as why:
@@ -204,7 +150,7 @@ def get_keyboard( default="", heading="", hidden=False ):
     keyboard = xbmc.Keyboard( default, heading, hidden )
     keyboard.doModal()
     if keyboard.isConfirmed():
-        return unicode( keyboard.getText(), "utf-8" )
+        return unicode(keyboard.getText(), "utf-8")
     return default
 
 
@@ -322,13 +268,13 @@ def parse_dom(html, name=u"", attrs={}, ret=False):
 
 
 def get_date(days=0, now=False):
-    if not now:
+    if now:
+        return datetime.now()
+    else:
         if days == 0:
             return date.today()
         else:
             return date.today() + timedelta(days)
-    else:
-        return datetime.now()
 
 
 def basecode(text, encode=True):
@@ -357,6 +303,32 @@ def platform():
         return 'ios'
     elif xbmc.getCondVisibility('system.platform.darwin'):
         return 'ios'
+
+#########################
+#  Add-on Functions     #
+#########################
+
+
+def get_addon_by_id(id):
+    try:
+        return xbmcaddon.Addon(id=id)
+    except:
+        return False
+
+
+def get_addon_info(id, info):
+    addon = get_addon_by_id(id)
+    if addon:
+        return addon.getAddonInfo(info)
+    else:
+        return False
+
+
+def get_info_label(label):
+    try:
+        return xbmc.getInfoLabel(label)
+    except:
+        return False
 
 #########################
 #  URL Functions        #
