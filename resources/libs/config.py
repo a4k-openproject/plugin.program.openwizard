@@ -83,6 +83,7 @@ class Config:
         self.HEADERIMAGE = uservar.HEADERIMAGE
         self.FONTSETTINGS = uservar.FONTSETTINGS
         self.BACKGROUND = uservar.BACKGROUND
+        self.BACKGROUND = self.BACKGROUND if not self.BACKGROUND == '' else self.ADDON_FANART
 
     def init_paths(self):
         # Static variables
