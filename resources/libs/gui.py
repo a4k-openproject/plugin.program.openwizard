@@ -1,6 +1,8 @@
 import xbmcgui
 
-from resources.libs import vars
+import os
+
+from resources.libs.config import CONFIG
 
 
 DIALOG = xbmcgui.Dialog()
@@ -45,6 +47,55 @@ def TextBox(title, msg):
             elif action == ACTION_NAV_BACK:
                 self.close()
 
-    tb = TextBoxes("Textbox.xml", vars.PATH, 'DefaultSkin', title=title, msg=msg)
+    tb = TextBoxes("Textbox.xml", CONFIG.PATH, 'DefaultSkin', title=title, msg=msg)
     tb.doModal()
     del tb
+
+
+def get_artwork(file):
+    if file == 'button':
+        return os.path.join(CONFIG.SKIN, 'Button', 'button-focus_lightblue.png'),\
+               os.path.join(CONFIG.SKIN, 'Button', 'button-focus_grey.png')
+    elif file == 'radio' :
+        return os.path.join(CONFIG.SKIN, 'RadioButton', 'MenuItemFO.png'),\
+               os.path.join(CONFIG.SKIN, 'RadioButton', 'MenuItemNF.png'),\
+               os.path.join(CONFIG.SKIN, 'RadioButton', 'radiobutton-focus.png'),\
+               os.path.join(CONFIG.SKIN, 'RadioButton', 'radiobutton-nofocus.png')
+    elif file == 'slider':
+        return os.path.join(CONFIG.SKIN, 'Slider', 'osd_slider_nib.png'),\
+               os.path.join(CONFIG.SKIN, 'Slider', 'osd_slider_nibNF.png'),\
+               os.path.join(CONFIG.SKIN, 'Slider', 'slider1.png'),\
+               os.path.join(CONFIG.SKIN, 'Slider', 'slider1.png')
+
+
+def contact(msg=""):
+    class MyWindow(xbmcgui.WindowXMLDialog):
+        def __init__(self, *args, **kwargs):
+            self.title = CONFIG.THEME3 % kwargs["title"]
+            self.image = kwargs["image"]
+            self.fanart = kwargs["fanart"]
+            self.msg = CONFIG.THEME2 % kwargs["msg"]
+
+        def onInit(self):
+            self.fanartimage = 101
+            self.titlebox = 102
+            self.imagecontrol = 103
+            self.textbox = 104
+            self.scrollcontrol = 105
+            self.showdialog()
+
+        def showdialog(self):
+            self.getControl(self.imagecontrol).setImage(self.image)
+            self.getControl(self.fanartimage).setImage(self.fanart)
+            self.getControl(self.fanartimage).setColorDiffuse('9FFFFFFF')
+            self.getControl(self.textbox).setText(self.msg)
+            self.getControl(self.titlebox).setLabel(self.title)
+            self.setFocusId(self.scrollcontrol)
+
+        def onAction(self,action):
+            if   action == ACTION_PREVIOUS_MENU: self.close()
+            elif action == ACTION_NAV_BACK: self.close()
+
+    cw = MyWindow("Contact.xml", CONFIG.PATH, 'DefaultSkin', title=CONFIG.ADDONTITLE, fanart=CONFIG.CONTACTFANART, image=CONFIG.CONTACTICON, msg=msg)
+    cw.doModal()
+    del cw
