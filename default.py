@@ -49,7 +49,7 @@ from resources.libs import debridit
 from resources.libs import traktit
 from resources.libs import loginit
 from resources.libs import skinSwitch
-from resources.libs import uploadLog
+from resources.libs import logging
 from resources.libs import yt
 from resources.libs import speedtest
 from resources.libs import wizard as wiz
@@ -1927,7 +1927,7 @@ def LogViewer(default=None):
 
         def onClick(self, controlId):
             if   controlId == self.okbutton: self.close()
-            elif controlId == self.upload: self.close(); uploadLog.Main()
+            elif controlId == self.upload: self.close(); logging.upload_log()
             elif controlId == self.kodi:
                 newmsg = wiz.Grab_Log(False)
                 filename = wiz.Grab_Log(True)
@@ -2573,7 +2573,7 @@ elif mode=='toggleaddon'    : wiz.toggleAddon(name, url); wiz.refresh()
 elif mode=='togglecache'    : toggleCache(name); wiz.refresh()
 elif mode=='toggleadult'    : wiz.toggleAdult(); wiz.refresh()
 elif mode=='changefeq'      : changeFeq(); wiz.refresh()
-elif mode=='uploadlog'      : uploadLog.Main()
+elif mode=='uploadlog'      : logging.upload_log()
 elif mode=='viewlog'        : LogViewer()
 elif mode=='viewwizlog'     : LogViewer(WIZLOG)
 elif mode=='viewerrorlog'   : errorChecking()
