@@ -37,8 +37,8 @@ def TextBox(title, msg):
             self.getControl(self.msg).setText(msg)
             self.setFocusId(self.scrollbar)
 
-        def onClick(self, controlId):
-            if controlId == self.okbutton:
+        def onClick(self, controlid):
+            if controlid == self.okbutton:
                 self.close()
 
         def onAction(self, action):
@@ -92,10 +92,41 @@ def contact(msg=""):
             self.getControl(self.titlebox).setLabel(self.title)
             self.setFocusId(self.scrollcontrol)
 
-        def onAction(self,action):
-            if   action == ACTION_PREVIOUS_MENU: self.close()
-            elif action == ACTION_NAV_BACK: self.close()
+        def onAction(self, action):
+            if action == ACTION_PREVIOUS_MENU:
+                self.close()
+            elif action == ACTION_NAV_BACK:
+                self.close()
 
-    cw = MyWindow("Contact.xml", CONFIG.PATH, 'DefaultSkin', title=CONFIG.ADDONTITLE, fanart=CONFIG.CONTACTFANART, image=CONFIG.CONTACTICON, msg=msg)
+    cw = MyWindow("Contact.xml", CONFIG.PATH, 'DefaultSkin', title=CONFIG.ADDONTITLE, fanart=CONFIG.CONTACTFANART,
+                  image=CONFIG.CONTACTICON, msg=msg)
     cw.doModal()
     del cw
+
+
+def show_qr_code(layout, imagefile, message):
+    class QRCode(xbmcgui.WindowXMLDialog):
+        def __init__(self, *args, **kwargs):
+            self.image = kwargs["image"]
+            self.text = kwargs["text"]
+
+        def onInit(self):
+            self.imagecontrol = 501
+            self.textbox = 502
+            self.okbutton = 503
+            self.title = 504
+            self.showdialog()
+
+        def showdialog(self):
+            self.getControl(self.imagecontrol).setImage(self.image)
+            self.getControl(self.textbox).setText(self.text)
+            self.getControl(self.title).setLabel(CONFIG.ADDONTITLE)
+            self.setFocus(self.getControl(self.okbutton))
+
+        def onClick(self, controlid):
+            if controlid == self.okbutton:
+                self.close()
+
+    qr = QRCode(layout, CONFIG.ADDON_PATH, 'DefaultSkin', image=imagefile, text=message)
+    qr.doModal()
+    del qr

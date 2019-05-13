@@ -233,6 +233,10 @@ class Config:
         self.MAXWIZSIZE = [100, 200, 300, 400, 500, 1000]
         self.MAXWIZLINES = [100, 200, 300, 400, 500]
         self.MAXWIZDATES = [1, 2, 3, 7]
+        self.KEEPOLDLOG = self.get_setting('oldlog') == 'true'
+        self.KEEPWIZLOG = self.get_setting('wizlog') == 'true'
+        self.KEEPCRASHLOG = self.get_setting('crashlog') == 'true'
+        self.LOGEMAIL = self.get_setting('email')
 
     def get_setting(self, key, id=xbmcaddon.Addon().getAddonInfo('id')):
         try:

@@ -2,8 +2,10 @@ import xbmc
 import xbmcaddon
 
 import os
+import random
 import re
 import shutil
+import string
 
 try:  # Python 3
     from urllib.request import urlopen
@@ -303,6 +305,10 @@ def platform():
         return 'ios'
     elif xbmc.getCondVisibility('system.platform.darwin'):
         return 'ios'
+
+
+def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
 
 #########################
 #  Add-on Functions     #
