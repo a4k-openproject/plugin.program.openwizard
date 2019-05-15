@@ -23,8 +23,6 @@ import sys
 
 from resources.libs.config import CONFIG
 from resources.libs import logging
-from resources.libs import tools
-from resources.libs import whitelist
 
 if CONFIG.KODIV > 17:
     from resources.libs import zfile as zipfile
@@ -50,6 +48,9 @@ def all_no_progress(_in, _out, ignore):
 
 
 def all_with_progress(_in, _out, dp, ignore, title):
+    from resources.libs import tools
+    from resources.libs import whitelist
+
     count = 0
     errors = 0
     error = ''

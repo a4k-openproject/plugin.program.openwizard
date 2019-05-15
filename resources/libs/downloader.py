@@ -28,12 +28,12 @@ except ImportError:  # Python 2
     from urllib import urlretrieve
 
 from resources.libs.config import CONFIG
-from resources.libs import gui
-from resources.libs import logging
 
 
 def download(url, dest, dp=None):
     if dp is None:
+        from resources.libs import gui
+
         dp = gui.DP
         dp.create(CONFIG.ADDONTITLE, "Downloading Content", ' ', ' ')
     dp.update(0)
@@ -42,6 +42,8 @@ def download(url, dest, dp=None):
 
 
 def _pbhook(numblocks, blocksize, filesize, dp, start_time):
+    from resources.libs import logging
+
     try:
         percent = min(numblocks * blocksize * 100 / filesize, 100)
         currently_downloaded = float(numblocks) * blocksize / (1024 * 1024)

@@ -3,35 +3,39 @@ import xbmc
 import os
 import re
 
-from resources.libs import check
 from resources.libs.config import CONFIG
-from resources.libs import gui
-from resources.libs import logging
-from resources.libs import notify
-from resources.libs import tools
 
 
 def force_update(silent=False):
     xbmc.executebuiltin('UpdateAddonRepos()')
     xbmc.executebuiltin('UpdateLocalAddons()')
     if not silent:
+        from resources.libs import logging
+
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            '[COLOR {0}]Forcing Addon Updates[/COLOR]'.format(CONFIG.COLOR2))
 
 
 def wizard_update(startup=None):
+    from resources.libs import check
+    from resources.libs import logging
+
     if check.check_url(CONFIG.WIZARDFILE):
         try:
             wid, ver, zip = check.check_wizard('all')
         except:
             return
         if ver > CONFIG.VERSION:
+            from resources.libs import gui
+
             yes = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
                                    '[COLOR {0}]There is a new version of the [COLOR {1}]{2}[/COLOR]!'.format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                    'Would you like to download [COLOR {0}]v{1}[/COLOR]?[/COLOR]'.format(CONFIG.COLOR1, ver),
                                    nolabel='[B][COLOR red]Remind Me Later[/COLOR][/B]',
                                    yeslabel="[B][COLOR springgreen]Update Wizard[/COLOR][/B]")
             if yes:
+                from resources.libs import tools
+
                 logging.log("[Auto Update Wizard] Installing wizard v{0}".format(ver), level=xbmc.LOGNOTICE)
                 gui.DP.create(CONFIG.ADDONTITLE, '[COLOR {0}]Downloading Update...'.format(CONFIG.COLOR2), '',
                               'Please Wait[/COLOR]')

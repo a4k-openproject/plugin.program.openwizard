@@ -13,7 +13,6 @@ from datetime import datetime
 
 from resources.libs.config import CONFIG
 from resources.libs import logging
-from resources.libs import tools
 
 
 def addon_database(addon=None, state=1, array=False):
@@ -69,6 +68,9 @@ def latest_db(db):
 
 
 def kodi_17_fix():
+    from resources.libs import tools
+    from resources.libs import update
+
     addonlist = glob.glob(os.path.join(CONFIG.ADDONS, '*/'))
     disabledAddons = []
     for folder in sorted(addonlist, key=lambda x: x):
@@ -91,12 +93,13 @@ def kodi_17_fix():
         addon_database(disabledAddons, 1, True)
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            "[COLOR {0}]Enabling Addons Complete![/COLOR]".format(CONFIG.COLOR2))
-    from resources.libs import update
     update.force_update()
     xbmc.executebuiltin("ReloadSkin()")
 
 
 def toggle_addon(id, value, over=None):
+    from resources.libs import tools
+
     logging.log("Toggling {0}".format(id))
     addonid = id
     addonxml = os.path.join(CONFIG.ADDONS, id, 'addon.xml')
@@ -119,10 +122,10 @@ def toggle_addon(id, value, over=None):
     query = '{"jsonrpc":"2.0", "method":"Addons.SetAddonEnabled","params":{"addonid":"{0}","enabled":{1}}, "id":1}'.format(addonid, value)
     response = xbmc.executeJSONRPC(query)
     if 'error' in response and over is None:
-        v = 'Enabling' if value == 'true' else 'Disabling'
         from resources.libs import gui
+        from resources.libs import update
+        v = 'Enabling' if value == 'true' else 'Disabling'
         gui.DIALOG.ok(CONFIG.ADDONTITLE,
                       "[COLOR {0}]Error {1} [COLOR {2}]{3}[/COLOR]".format(CONFIG.COLOR2, v, CONFIG.COLOR1, id),
                       "Check to make sure the add-on list is up to date and try again.[/COLOR]")
-        from resources.libs import update
         update.force_update()
