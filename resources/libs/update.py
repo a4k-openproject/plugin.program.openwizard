@@ -54,7 +54,7 @@ def wizard_update(startup=None):
                                    '[COLOR {0}]Add-on updated[/COLOR]'.format(CONFIG.COLOR2))
                 logging.log("[Auto Update Wizard] Wizard updated to v{0}".format(ver), level=xbmc.LOGNOTICE)
                 tools.remove_file(os.path.join(CONFIG.ADDONDATA, 'settings.xml'))
-                notify.firstRunSettings()
+                gui.show_save_data_settings()
                 if startup:
                     xbmc.executebuiltin('RunScript({0}/startup.py)'.format(CONFIG.PLUGIN))
                 return

@@ -34,13 +34,12 @@ except ImportError:  # Python 3
     from urllib import quote_plus
 
 from resources.libs.config import CONFIG
-from resources.libs import db
 from resources.libs import cache
 from resources.libs import check
+from resources.libs import db
 from resources.libs import gui
 from resources.libs import logging
 from resources.libs import skin
-from resources.libs import skinSwitch
 from resources.libs import tools
 from resources.libs import update
 
@@ -65,7 +64,7 @@ def check_update():
         if version > CONFIG.BUILDVERSION:
             if CONFIG.DISABLEUPDATE == 'false':
                 logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}] Opening Update Window".format(CONFIG.BUILDVERSION, version), level=xbmc.LOGNOTICE)
-                notify.updateWindow(CONFIG.BUILDNAME, CONFIG.BUILDVERSION, version, icon, fanart)
+                gui.show_update_window(CONFIG.BUILDNAME, CONFIG.BUILDVERSION, version, icon, fanart)
             else:
                 logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}] Update Window Disabled".format(CONFIG.BUILDVERSION, version), level=xbmc.LOGNOTICE)
         else:
@@ -284,20 +283,20 @@ if CONFIG.ENABLE == 'Yes':
     if not CONFIG.NOTIFY == 'true':
         url = check.check_url(CONFIG.NOTIFICATION)
         if url:
-            id, msg = notify.split_notify(CONFIG.NOTIFICATION)
+            id, msg = gui.split_notify(CONFIG.NOTIFICATION)
             if id:
                 try:
                     id = int(id)
                     if id == CONFIG.NOTEID:
                         if CONFIG.NOTEDISMISS == 'false':
-                            notify.notification(msg)
+                            gui.show_notification(msg)
                         else:
                             logging.log("[Notifications] id[{0}] Dismissed".format(int(id)), level=xbmc.LOGNOTICE)
                     elif id > CONFIG.NOTEID:
                         logging.log("[Notifications] id: {0}".format(str(id)), level=xbmc.LOGNOTICE)
                         CONFIG.set_setting('noteid', str(id))
                         CONFIG.set_setting('notedismiss', 'false')
-                        notify.notification(msg=msg)
+                        gui.show_notification(msg=msg)
                         logging.log("[Notifications] Complete", level=xbmc.LOGNOTICE)
                 except Exception as e:
                     logging.log("Error on Notifications Window: {0}".format(str(e)), level=xbmc.LOGERROR)
@@ -393,8 +392,8 @@ if not FAILED:
         logging.log("[Build Check] Not a valid URL for Build File: {0}".format(CONFIG.BUILDFILE), level=xbmc.LOGNOTICE)
     elif CONFIG.BUILDCHECK == '' and CONFIG.BUILDNAME == '':
         logging.log("[Build Check] First Run", level=xbmc.LOGNOTICE)
-        notify.firstRunSettings()
-        notify.firstRun()
+        gui.show_save_data_settings()
+        gui.show_build_prompt()
         CONFIG.set_setting('lastbuildcheck', str(tools.get_date(days=CONFIG.UPDATECHECK)))
     elif not CONFIG.BUILDNAME == '':
         logging.log("[Build Check] Build Installed", level=xbmc.LOGNOTICE)
