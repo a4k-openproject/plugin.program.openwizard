@@ -1,6 +1,5 @@
 import xbmc
 import xbmcvfs
-import xbmcgui
 
 import os
 import re
@@ -24,8 +23,8 @@ REPLACES = (('//.+?:.+?@', '//USER:PASSWORD@'), ('<user>.+?</user>', '<user>USER
 def log(msg, level=xbmc.LOGDEBUG):
     from resources.libs import tools
 
-    if not os.path.exists(CONFIG.ADDONDATA):
-        os.makedirs(CONFIG.ADDONDATA)
+    if not os.path.exists(CONFIG.ADDON_DATA):
+        os.makedirs(CONFIG.ADDON_DATA)
     if not os.path.exists(CONFIG.WIZLOG):
         f = tools.write_to_file(CONFIG.WIZLOG, "")
     if CONFIG.WIZDEBUGGING == 'false':
@@ -145,8 +144,8 @@ def upload_log():
             content = clean_log(data)
             succes, result = post_log(content, name)
             if succes:
-                msg = "Post this url or scan QRcode for your [COLOR %s]%s[/COLOR]," \
-                      "together with a description of the problem:[CR][COLOR {0}]{1}[/COLOR]".format(
+                msg = "Post this url or scan QRcode for your [COLOR {0}]{1}[/COLOR]," \
+                      "together with a description of the problem:[CR][COLOR {2}]{3}[/COLOR]".format(
                     CONFIG.COLOR1, name, CONFIG.COLOR1, result)
 
                 # if len(self.email) > 5:
