@@ -7,11 +7,8 @@ import threading
 import os
 import sys
 
-import uservar
+from resources.libs.config import CONFIG
 
-ADDONTITLE = uservar.ADDONTITLE
-COLOR1 = uservar.COLOR1
-COLOR2 = uservar.COLOR2
 __version__ = '0.3.5'
 user_agent = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36 SE 2.X MetaSr 1.0'
 source = None
@@ -462,14 +459,14 @@ def speedtest(
     global line1, line2, line3
 
     dp = xbmcgui.DialogProgress()
-    line1 = '[COLOR %s]Starting test..[/COLOR]' % COLOR2
-    dp.create('%s: [COLOR %s]Speed Test[/COLOR]' % (ADDONTITLE,
-              COLOR1), line1)
+    line1 = '[COLOR %s]Starting test..[/COLOR]' % CONFIG.COLOR2
+    dp.create('%s: [COLOR %s]Speed Test[/COLOR]' % (CONFIG.ADDONTITLE,
+              CONFIG.COLOR1), line1)
     dp.update(0)
     print_('Retrieving speedtest.net configuration...')
     line2 = \
         '[COLOR %s]Retrieving speedtest.net configuration...[/COLOR]' \
-        % COLOR2
+        % CONFIG.COLOR2
     dp.update(2, line1, line2)
     try:
         config = getConfig()
@@ -479,27 +476,27 @@ def speedtest(
 
     print_('Retrieving speedtest.net server list...')
     line3 = '[COLOR %s]Retrieving speedtest.net server list...[/COLOR]' \
-        % COLOR2
+        % CONFIG.COLOR2
     dp.update(4, line1, line2, line3)
 
     servers = closestServers(config['client'])
 
     print_('Testing from %(isp)s (%(ip)s)...' % config['client'])
-    line1 = '[COLOR ' + COLOR2 + ']Testing From:[/COLOR] [COLOR ' \
-        + COLOR1 + ']%(isp)s (%(ip)s)[/COLOR]' % config['client']
+    line1 = '[COLOR ' + CONFIG.COLOR2 + ']Testing From:[/COLOR] [COLOR ' \
+        + CONFIG.COLOR1 + ']%(isp)s (%(ip)s)[/COLOR]' % config['client']
     dp.update(6, line1)
 
     print_('Selecting best server based on latency...')
     line2 = \
         '[COLOR %s]Selecting best server based on latency...[/COLOR]' \
-        % COLOR2
+        % CONFIG.COLOR2
     dp.update(8, '', line2)
     best = getBestServer(servers)
 
     print_(('Hosted by %(sponsor)s (%(name)s) [%(d)0.2f km]: %(latency)s ms'
             % best).encode('utf-8', 'ignore'))
 
-    line2 = ('[COLOR ' + COLOR2
+    line2 = ('[COLOR ' + CONFIG.COLOR2
              + ']Server location: %(name)s [%(d)0.2f km]: %(latency)s ms[/COLOR]'
               % best).encode('utf-8', 'ignore')
     dp.update(10, '', line2)
@@ -523,7 +520,7 @@ def speedtest(
                         % (os.path.dirname(best['url']), size, size))
 
     print_('Testing download speed', end='')
-    line3 = '[COLOR %s]Testing download speed...[/COLOR]' % COLOR2
+    line3 = '[COLOR %s]Testing download speed...[/COLOR]' % CONFIG.COLOR2
     dp.update(15, '', '', line3)
     dlspeed = downloadSpeed(urls, simple)
 
@@ -540,8 +537,8 @@ def speedtest(
     print_('[COLOR red]Testing upload speed[/COLOR]', end='')
     line2 = \
         '[COLOR %s]Testing download speed:[/COLOR] [COLOR %s]%0.2f M%s/s[/COLOR]' \
-        % (COLOR2, COLOR1, dlspeed / 1000 / 1000 * units[1], units[0])
-    line3 = '[COLOR %s]Testing upload speed...[/COLOR]' % COLOR2
+        % (CONFIG.COLOR2, CONFIG.COLOR1, dlspeed / 1000 / 1000 * units[1], units[0])
+    line3 = '[COLOR %s]Testing upload speed...[/COLOR]' % CONFIG.COLOR2
     dp.update(65, '', line2, line3)
     ulspeed = uploadSpeed(best['url'], sizes, simple)
 
@@ -552,7 +549,7 @@ def speedtest(
     i = 2
     while ulspeed < 1:
 
-        dp.update(65, '', '', '[COLOR ' + COLOR2
+        dp.update(65, '', '', '[COLOR ' + CONFIG.COLOR2
                   + ']Testing upload speed... [Attempt [/COLOR]'
                   + str(i) + ']')
         ulspeed = uploadSpeed(best['url'], sizes, simple)
@@ -566,8 +563,8 @@ def speedtest(
     line1 = line2
     line2 = \
         '[COLOR %s]Testing upload speed:[/COLOR] [COLOR %s]%0.2f M%s/s[/COLOR]' \
-        % (COLOR2, COLOR1, ulspeed / 1000 / 1000 * units[1], units[0])
-    line3 = '[COLOR %s]Getting results...[/COLOR]' % COLOR2
+        % (CONFIG.COLOR2, CONFIG.COLOR1, ulspeed / 1000 / 1000 * units[1], units[0])
+    line3 = '[COLOR %s]Getting results...[/COLOR]' % CONFIG.COLOR2
     dp.update(95, line1, line2, line3)
 
     if share:
