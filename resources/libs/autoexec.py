@@ -25,7 +25,6 @@ import xbmc
 import xbmcvfs
 import xbmcaddon
 
-import re
 import os
 import glob
 import thread
@@ -37,22 +36,21 @@ except ImportError:
 
 from datetime import datetime
 
-from resources.libs import gui
+from resources.libs.config import CONFIG
 from resources.libs import logging
-from resources.libs import tools
-from resources.libs import vars
 
 
 def main():
     class enableAll():
         def __init__(self):
-            self.databasepath = vars.DATABASE
+            from resources.libs import db
             self.addons = vars.ADDONS
             self.tempauto = os.path.join(vars.USERDATA, 'autoexec_temp.py')
             self.dbfilename = self.latestDB()
             self.dbfilename = os.path.join(self.databasepath, self.dbfilename)
             self.swap_us()
             if not os.path.exists(os.path.join(self.databasepath, self.dbfilename)):
+                from resources.libs import gui
                 gui.DIALOG.notification("AutoExec.py", "No Addons27.db file")
                 logging.log("DB File not found.")
 
@@ -62,6 +60,7 @@ def main():
                 addonxml = os.path.join(folder, 'addon.xml')
                 if os.path.exists(addonxml):
                     fold = folder.replace(self.addons, '')[1:-1]
+                    from resources.libs import tools
                     aid = tools.parse_dom(tools.read_from_file(addonxml), 'addon', ret='id')
                     try:
                         if len(aid) > 0:
@@ -141,6 +140,7 @@ def main():
             except Exception:
                 logging.log("Erroring enabling addon: {0}".format(addon), level=xbmc.LOGERROR)
 
+    from resources.libs import gui
     try:
         gui.DIALOG.notification("AutoExec.py", "Starting Script...")
         firstRun = enableAll()

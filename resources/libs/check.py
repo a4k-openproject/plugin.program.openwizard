@@ -9,11 +9,12 @@ except ImportError:
     from urllib2 import urlopen
     from urllib2 import Request
 
-import uservar
-from resources.libs import tools
+from resources.libs.config import CONFIG
 
 
 def check_url(url):
+    from resources.libs import tools
+
     if url in ['http://', 'https://', '']:
         return False
     check = 0
@@ -21,7 +22,7 @@ def check_url(url):
     while check < 3:
         check += 1
         try:
-            from resources.libs import vars
+            status = tools.open_url(url)
 
             req = Request(url)
             req.add_header('User-Agent', vars.USER_AGENT)
@@ -38,7 +39,7 @@ def check_url(url):
 
 
 def check_build(name, ret):
-    if not check_url(uservar.BUILDFILE): return False
+    from resources.libs import tools
     link = tools.open_url(uservar.BUILDFILE).replace('\n', '').replace('\r', '').replace('\t', '')\
         .replace('gui=""', 'gui="http://"').replace('theme=""', 'theme="http://"')
     match = re.compile('name="%s".+?ersion="(.+?)".+?rl="(.+?)".+?inor="(.+?)".+?ui="(.+?)".+?odi="(.+?)".+?heme="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?review="(.+?)".+?dult="(.+?)".+?nfo="(.+?)".+?escription="(.+?)"' % name).findall(link)
@@ -75,6 +76,8 @@ def check_build(name, ret):
 
 
 def check_info(name):
+    from resources.libs import tools
+
     if not check_url(name):
         return False
     link = tools.open_url(name).replace('\n', '').replace('\r', '').replace('\t', '')
@@ -87,6 +90,8 @@ def check_info(name):
 
 
 def check_theme(name, theme, ret):
+    from resources.libs import tools
+
     themeurl = check_build(name, 'theme')
     if not check_url(themeurl):
         return False
@@ -109,7 +114,7 @@ def check_theme(name, theme, ret):
 
 
 def check_wizard(ret):
-    if not check_url(uservar.WIZARDFILE):
+    from resources.libs import tools
         return False
     link = tools.open_url(uservar.WIZARDFILE).replace('\n', '').replace('\r', '').replace('\t', '')
     match = re.compile('id="{0}".+?ersion="(.+?)".+?ip="(.+?)"'.format(uservar.ADDON_ID)).findall(link)

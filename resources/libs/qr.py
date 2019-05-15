@@ -1,10 +1,6 @@
 import os
 
 from resources.libs.config import CONFIG
-from resources.libs import check
-from resources.libs import gui
-from resources.libs import logging
-from resources.libs import tools
 
 
 def generate_code(url, filename):
@@ -19,6 +15,11 @@ def generate_code(url, filename):
 
 
 def create_code():
+    from resources.libs import check
+    from resources.libs import gui
+    from resources.libs import logging
+    from resources.libs import tools
+
     url = tools.get_keyboard('', "{0}: Insert the URL for the QR Code.".format(CONFIG.ADDONTITLE))
     if not url:
         logging.log_notify("[COLOR {0}]Create QR Code[/COLOR]".format(CONFIG.COLOR1),

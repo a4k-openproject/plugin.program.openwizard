@@ -63,6 +63,8 @@ def text_cache(url):
 
 
 def clear_packages(over=None):
+    from resources.libs import tools
+
     if os.path.exists(CONFIG.PACKAGES):
         try:
             for root, dirs, files in os.walk(CONFIG.PACKAGES):
@@ -101,8 +103,10 @@ def clear_packages(over=None):
 
 
 def clear_packages_startup():
+    from resources.libs import tools
+
     start = datetime.utcnow() - timedelta(minutes=3)
-    file_count = 0;
+    file_count = 0
     cleanupsize = 0
     if os.path.exists(CONFIG.PACKAGES):
         pack = os.listdir(CONFIG.PACKAGES)
@@ -141,6 +145,7 @@ def clear_packages_startup():
 
 def clear_archive():
     if os.path.exists(CONFIG.ARCHIVE_CACHE):
+        from resources.libs import tools
         tools.clean_house(CONFIG.ARCHIVE_CACHE)
 
 

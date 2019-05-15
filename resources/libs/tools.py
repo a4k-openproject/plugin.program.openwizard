@@ -14,10 +14,6 @@ except ImportError:  # Python 3
     from urllib2 import urlopen
     from urllib2 import Request
 
-from datetime import date
-from datetime import datetime
-from datetime import timedelta
-
 from resources.libs.config import CONFIG
 
 
@@ -41,6 +37,7 @@ def write_to_file(file, content, mode='w'):
 
 def remove_folder(path):
     from resources.libs import logging
+
     logging.log("Deleting Folder: {0}".format(path), level=xbmc.LOGNOTICE)
     try:
         shutil.rmtree(path, ignore_errors=True, onerror=None)
@@ -50,6 +47,7 @@ def remove_folder(path):
 
 def remove_file(path):
     from resources.libs import logging
+
     logging.log("Deleting File: {0}".format(path), level=xbmc.LOGNOTICE)
     try:
         os.remove(path)
@@ -74,6 +72,7 @@ def empty_folder(folder):
 
 def clean_house(folder, ignore=False):
     from resources.libs import logging
+
     logging.log(folder)
     total_files = 0
     total_folds = 0
@@ -270,6 +269,10 @@ def parse_dom(html, name=u"", attrs={}, ret=False):
 
 
 def get_date(days=0, now=False):
+    from datetime import date
+    from datetime import datetime
+    from datetime import timedelta
+
     if now:
         return datetime.now()
     else:
@@ -342,10 +345,8 @@ def get_info_label(label):
 
 
 def open_url(url):
-    from resources.libs import vars
-
     req = Request(url)
-    req.add_header('User-Agent', vars.USER_AGENT)
+    req.add_header('User-Agent', CONFIG.USER_AGENT)
     response = urlopen(req)
     link = response.read()
     response.close()
