@@ -788,7 +788,7 @@ def update_login(do, who):
                                    '[COLOR {0}]Addon Data: Cleared![/COLOR]'.format(CONFIG.COLOR2),
                                    2000,
                                    icon)
-            except Exception ass= e:
+            except Exception as e:
                 logging.log("[Trakt Data] Unable to Clear Addon {0} ({1})".format(who, str(e)), level=xbmc.LOGERROR)
     xbmc.executebuiltin('Container.Refresh()')
 

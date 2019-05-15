@@ -48,7 +48,7 @@ from resources.libs import notify
 from resources.libs import debridit
 from resources.libs import traktit
 from resources.libs import loginit
-from resources.libs import skinSwitch
+from resources.libs import skin
 from resources.libs import logging
 from resources.libs import yt
 from resources.libs import speedtest
@@ -2537,7 +2537,7 @@ elif mode=='editthird'      : editThirdParty(name); wiz.refresh()
 
 elif mode=='maint'          : maintMenu(name)
 elif mode=='kodi17fix'      : wiz.kodi17Fix()
-elif mode=='unknownsources' : skinSwitch.swap_us()
+elif mode=='unknownsources' : skin.swap_us()
 elif mode=='advancedsetting': advancedWindow(name)
 elif mode=='autoadvanced'   : showAutoAdvanced(); wiz.refresh()
 elif mode=='removeadvanced' : removeAdvanced(); wiz.refresh()

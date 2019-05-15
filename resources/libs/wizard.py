@@ -46,7 +46,7 @@ import pyqrcode
 import uservar
 from resources.libs import downloader
 from resources.libs import extract
-from resources.libs import skinSwitch
+from resources.libs import skin
 
 ADDON_ID       = uservar.ADDON_ID
 ADDONTITLE     = uservar.ADDONTITLE
@@ -2608,7 +2608,7 @@ def skinToDefault(title):
 	return swapSkins(skin, title)
 
 def swapSkins(goto, title="Error"):
-	skinSwitch.swap_skins(goto)
+	skin.swap_skins(goto)
 	x = 0
 	xbmc.sleep(1000)
 	while not xbmc.getCondVisibility("Window.isVisible(yesnodialog)") and x < 150:

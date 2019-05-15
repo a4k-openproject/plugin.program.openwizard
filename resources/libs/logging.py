@@ -26,7 +26,8 @@ def log(msg, level=xbmc.LOGDEBUG):
     if not os.path.exists(CONFIG.ADDON_DATA):
         os.makedirs(CONFIG.ADDON_DATA)
     if not os.path.exists(CONFIG.WIZLOG):
-        f = tools.write_to_file(CONFIG.WIZLOG, "")
+        f = open(CONFIG.WIZLOG, 'w')
+        f.close()
     if CONFIG.WIZDEBUGGING == 'false':
         return False
     if CONFIG.DEBUGLEVEL == '0':  # No Logging
