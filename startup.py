@@ -39,7 +39,7 @@ from resources.libs import cache
 from resources.libs import check
 from resources.libs import gui
 from resources.libs import logging
-from resources.libs import notify
+from resources.libs import skin
 from resources.libs import skinSwitch
 from resources.libs import tools
 from resources.libs import update
@@ -159,8 +159,8 @@ def checkSkin():
             CONFIG.set_setting('defaultskinignore', 'true')
             gotoskin = False
     if gotoskin:
-        if skinSwitch.switch_to_skin(gotoskin):
-            skinSwitch.look_and_feel_data('restore')
+        if skin.switch_to_skin(gotoskin):
+            skin.look_and_feel_data('restore')
     logging.log("[Build Check] Invalid Skin Check End", level=xbmc.LOGNOTICE)
 
 
@@ -336,8 +336,8 @@ if CONFIG.INSTALLED == 'true':
         defaults = CONFIG.get_setting('defaultskin')
         if not defaults == '':
             if os.path.exists(os.path.join(CONFIG.ADDONS, defaults)):
-                if skinSwitch.swap_to_skin(defaults):
-                    skinSwitch.look_and_feel_data('restore')
+                if skin.swap_to_skin(defaults):
+                    skin.look_and_feel_data('restore')
         if not CONFIG.SKIN == defaults and not CONFIG.BUILDNAME == "":
             gui_xml = check.check_build(CONFIG.BUILDNAME, 'gui')
             FAILED = True
