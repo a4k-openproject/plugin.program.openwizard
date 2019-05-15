@@ -168,7 +168,7 @@ while xbmc.Player().isPlayingVideo():
 
 
 if CONFIG.KODIV >= 17:
-    NOW = datetime.now()
+    NOW = tools.get_date(now=True)
     temp = CONFIG.get_setting('kodi17iscrap')
     if not temp == '':
         if temp > str(NOW - timedelta(minutes=2)):
