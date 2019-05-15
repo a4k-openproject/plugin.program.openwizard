@@ -131,6 +131,9 @@ class Config:
         self.SPEEDTEST = os.path.join(self.PLUGIN_DATA, 'SpeedTest')
         self.ARCHIVE_CACHE = os.path.join(self.TEMP, 'archive_cache')
         self.ART = os.path.join(self.PLUGIN, 'resources', 'art')
+        self.DEBRIDFOLD = os.path.join(self.ADDON_DATA, 'debrid')
+        self.TRAKTFOLD = os.path.join(self.ADDON_DATA, 'trakt')
+        self.LOGINFOLD = os.path.join(self.ADDON_DATA, 'login')
 
         # File paths
         self.ADVANCED = os.path.join(self.USERDATA, 'advancedsettings.xml')
@@ -194,7 +197,7 @@ class Config:
         
         # Save Data variables
         self.TRAKTSAVE = self.get_setting('traktlastsave')
-        self.REALSAVE = self.get_setting('debridlastsave')
+        self.DEBRIDSAVE = self.get_setting('debridlastsave')
         self.LOGINSAVE = self.get_setting('loginlastsave')
         self.KEEPFAVS = self.get_setting('keepfavourites')
         self.KEEPSOURCES = self.get_setting('keepsources')
@@ -205,7 +208,7 @@ class Config:
         self.KEEPSUPER = self.get_setting('keepsuper')
         self.KEEPWHITELIST = self.get_setting('keepwhitelist')
         self.KEEPTRAKT = self.get_setting('keeptrakt')
-        self.KEEPREAL = self.get_setting('keepdebrid')
+        self.KEEPDEBRID = self.get_setting('keepdebrid')
         self.KEEPLOGIN = self.get_setting('keeplogin')
         
         # Third Party Wizard variables
