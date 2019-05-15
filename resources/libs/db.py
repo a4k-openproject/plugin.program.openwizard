@@ -67,6 +67,36 @@ def latest_db(db):
         return False
 
 
+def purge_db(name):
+    logging.log('Purging DB {0}.'.format(name), level=xbmc.LOGNOTICE)
+    if os.path.exists(name):
+        try:
+            textdb = database.connect(name)
+            textexe = textdb.cursor()
+        except Exception as e:
+            logging.log("DB Connection Error: {0}".format(str(e)), level=xbmc.LOGERROR)
+            return False
+    else:
+        logging.log('{0} not found.'.format(name), level=xbmc.LOGERROR)
+        return False
+    textexe.execute("SELECT name FROM sqlite_master WHERE type = 'table'")
+    for table in textexe.fetchall():
+        if table[0] == 'version':
+            logging.log('Data from table `{0}` skipped.'.format(table[0]))
+        else:
+            try:
+                textexe.execute("DELETE FROM {0}".format(table[0]))
+                textdb.commit()
+                logging.log('Data from table `{0}` cleared.'.format(table[0]))
+            except Exception as e:
+                logging.log("DB Remove Table `{0}` Error: {1}".format(table[0], str(e)), level=xbmc.LOGERROR)
+    textexe.close()
+    logging.log('{0} DB Purging Complete.'.format(name), level=xbmc.LOGNOTICE)
+    show = name.replace('\\', '/').split('/')
+    logging.log_notify("[COLOR {0}]Purge Database[/COLOR]".format(CONFIG.COLOR1),
+                       "[COLOR {0}]{1} Complete[/COLOR]".format(CONFIG.COLOR2, show[len(show)-1]))
+
+
 def kodi_17_fix():
     from resources.libs import tools
     from resources.libs import update
