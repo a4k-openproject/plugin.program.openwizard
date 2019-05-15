@@ -26,6 +26,8 @@ class Config:
 
     def init_uservars(self):
         # User Edit Variables
+        self.ADDONTITLE = uservar.ADDONTITLE
+        self.BUILDERNAME = uservar.BUILDERNAME
         self.EXCLUDES = uservar.EXCLUDES
         self.CACHETEXT = uservar.CACHETEXT
         self.CACHEAGE = uservar.CACHEAGE if str(uservar.CACHEAGE).isdigit() else 30
@@ -237,6 +239,7 @@ class Config:
         self.KEEPWIZLOG = self.get_setting('wizlog') == 'true'
         self.KEEPCRASHLOG = self.get_setting('crashlog') == 'true'
         self.LOGEMAIL = self.get_setting('email')
+        self.NEXTCLEANDATE = self.get_setting('nextcleandate')
 
     def get_setting(self, key, id=xbmcaddon.Addon().getAddonInfo('id')):
         try:
