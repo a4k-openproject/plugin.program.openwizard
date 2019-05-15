@@ -171,6 +171,7 @@ def clear_cache(over=None):
         (os.path.join(CONFIG.ADDOND, 'plugin.video.overeasy', 'cache.db')),
         (os.path.join(CONFIG.ADDOND, 'plugin.video.overeasy', 'meta.5.db')),
         (os.path.join(CONFIG.ADDOND, 'plugin.video.overeasy', 'cache.providers.13.db')),
+        (os.path.join(CONFIG.ADDOND, 'plugin.video.venom', 'cache.db')),
         (os.path.join(CONFIG.ADDOND, 'plugin.video.yoda', 'cache.db')),
         (os.path.join(CONFIG.ADDOND, 'plugin.video.yoda', 'meta.5.db')),
         (os.path.join(CONFIG.ADDOND, 'plugin.video.yoda', 'cache.providers.13.db')),
@@ -202,30 +203,33 @@ def clear_cache(over=None):
     delfiles = 0
     excludes = ['meta_cache', 'archive_cache']
     for item in cachelist:
-        if not os.path.exists(item): continue
-        if not item in [CONFIG.ADDOND, PROFILEADDONDATA]:
+        if not os.path.exists(item):
+            continue
+        if item not in [CONFIG.ADDOND, PROFILEADDONDATA]:
             for root, dirs, files in os.walk(item):
                 dirs[:] = [d for d in dirs if d not in excludes]
                 file_count = 0
                 file_count += len(files)
                 if file_count > 0:
                     for f in files:
-                        if not f in CONFIG.LOGFILES:
+                        if f not in CONFIG.LOGFILES:
                             try:
                                 os.unlink(os.path.join(root, f))
-                                logging.log("[Wiped] %s" % os.path.join(root, f), level=xbmc.LOGNOTICE)
+                                logging.log("[Wiped] {0}".format(os.path.join(root, f)), level=xbmc.LOGNOTICE)
                                 delfiles += 1
                             except:
                                 pass
                         else:
-                            logging.log('Ignore Log File: %s' % f, level=xbmc.LOGNOTICE)
+                            logging.log('Ignore Log File: {0}'.format(f), level=xbmc.LOGNOTICE)
                     for d in dirs:
                         try:
                             shutil.rmtree(os.path.join(root, d))
                             delfiles += 1
-                            logging.log("[Success] cleared %s files from {0}".format(str(file_count), os.path.join(item, d)), level=xbmc.LOGNOTICE)
+                            logging.log("[Success] cleared {0} files from {1}".format(str(file_count), os.path.join(item, d)),
+                                        level=xbmc.LOGNOTICE)
                         except:
-                            logging.log("[Failed] to wipe cache in: {0}".format(os.path.join(item, d)), level=xbmc.LOGNOTICE)
+                            logging.log("[Failed] to wipe cache in: {0}".format(os.path.join(item, d)),
+                                        level=xbmc.LOGNOTICE)
         else:
             for root, dirs, files in os.walk(item):
                 dirs[:] = [d for d in dirs if d not in excludes]
@@ -258,8 +262,6 @@ def clear_cache(over=None):
                 files.append(os.path.join(CONFIG.ADDOND, 'plugin.video.yoda', 'providers.13.db'))
             if CONFIG.INCLUDEVENOM == 'true':
                 files.append(os.path.join(CONFIG.ADDOND, 'plugin.video.venom', 'cache.db'))
-                files.append(os.path.join(CONFIG.ADDOND, 'plugin.video.venom', 'meta.5.db'))
-                files.append(os.path.join(CONFIG.ADDOND, 'plugin.video.venom', 'providers.13.db'))
             if CONFIG.INCLUDESCRUBS == 'true':
                 files.append(os.path.join(CONFIG.ADDOND, 'plugin.video.scrubsv2', 'cache.db'))
                 files.append(os.path.join(CONFIG.ADDOND, 'plugin.video.scrubsv2', 'meta.5.db'))

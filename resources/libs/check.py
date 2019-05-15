@@ -23,12 +23,6 @@ def check_url(url):
         check += 1
         try:
             status = tools.open_url(url)
-
-            req = Request(url)
-            req.add_header('User-Agent', vars.USER_AGENT)
-            response = urlopen(req)
-            response.close()
-            status = True
             break
         except Exception as e:
             status = str(e)
@@ -40,7 +34,10 @@ def check_url(url):
 
 def check_build(name, ret):
     from resources.libs import tools
-    link = tools.open_url(uservar.BUILDFILE).replace('\n', '').replace('\r', '').replace('\t', '')\
+
+    if not check_url(CONFIG.BUILDFILE):
+        return False
+    link = tools.open_url(CONFIG.BUILDFILE).replace('\n', '').replace('\r', '').replace('\t', '')\
         .replace('gui=""', 'gui="http://"').replace('theme=""', 'theme="http://"')
     match = re.compile('name="%s".+?ersion="(.+?)".+?rl="(.+?)".+?inor="(.+?)".+?ui="(.+?)".+?odi="(.+?)".+?heme="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?review="(.+?)".+?dult="(.+?)".+?nfo="(.+?)".+?escription="(.+?)"' % name).findall(link)
     if len(match) > 0:
@@ -115,9 +112,11 @@ def check_theme(name, theme, ret):
 
 def check_wizard(ret):
     from resources.libs import tools
+
+    if not check_url(CONFIG.WIZARDFILE):
         return False
-    link = tools.open_url(uservar.WIZARDFILE).replace('\n', '').replace('\r', '').replace('\t', '')
-    match = re.compile('id="{0}".+?ersion="(.+?)".+?ip="(.+?)"'.format(uservar.ADDON_ID)).findall(link)
+    link = tools.open_url(CONFIG.WIZARDFILE).replace('\n', '').replace('\r', '').replace('\t', '')
+    match = re.compile('id="{0}".+?ersion="(.+?)".+?ip="(.+?)"'.format(CONFIG.ADDON_ID)).findall(link)
     if len(match) > 0:
         for version, zip in match:
             if ret == 'version':
@@ -125,6 +124,6 @@ def check_wizard(ret):
             elif ret == 'zip':
                 return zip
             elif ret == 'all':
-                return uservar.ADDON_ID, version, zip
+                return CONFIG.ADDON_ID, version, zip
     else:
         return False

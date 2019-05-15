@@ -41,15 +41,17 @@ from resources.libs import logging
 
 
 def main():
-    class enableAll():
+    class EnableAll:
         def __init__(self):
             from resources.libs import db
-            self.addons = vars.ADDONS
-            self.tempauto = os.path.join(vars.USERDATA, 'autoexec_temp.py')
-            self.dbfilename = self.latestDB()
+            
+            self.databasepath = CONFIG.DATABASE
+            self.addons = CONFIG.ADDONS
+            self.tempauto = os.path.join(CONFIG.USERDATA, 'autoexec_temp.py')
+            self.dbfilename = db.latest_db(db="Addons")
             self.dbfilename = os.path.join(self.databasepath, self.dbfilename)
             self.swap_us()
-            if not os.path.exists(os.path.join(self.databasepath, self.dbfilename)):
+            if not os.path.exists(self.dbfilename):
                 from resources.libs import gui
                 gui.DIALOG.notification("AutoExec.py", "No Addons27.db file")
                 logging.log("DB File not found.")
@@ -78,20 +80,6 @@ def main():
             xbmc.executebuiltin('UpdateAddonRepos()')
             xbmc.executebuiltin('UpdateLocalAddons()')
             xbmc.executebuiltin("ReloadSkin()")
-
-        def latestDB(self, db="Addons"):
-            match = glob.glob(os.path.join(self.databasepath,'{0}*.db'.format(db)))
-            comp = '{0}(.+?).db'.format(db[1:])
-            highest = 0
-            for file in match:
-                try:
-                    check = int(re.compile(comp).findall(file)[0])
-                except Exception as e:
-                    check = 0
-                    logging.log(str(e))
-                if highest < check:
-                    highest = check
-            return '{0}{1}.db'.format(db, highest)
 
         def swap_us(self):
             new = '"addons.unknownsources"'
@@ -143,7 +131,7 @@ def main():
     from resources.libs import gui
     try:
         gui.DIALOG.notification("AutoExec.py", "Starting Script...")
-        firstRun = enableAll()
+        firstRun = EnableAll()
         gui.DIALOG.notification("AutoExec.py", "All Addons Enabled")
         xbmcvfs.delete('special://userdata/autoexec.py')
         xbmcvfs.copy('special://home/userdata/autoexec_temp.py', 'special://userdata/autoexec.py')
