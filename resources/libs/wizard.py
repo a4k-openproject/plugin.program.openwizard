@@ -19,241 +19,40 @@
 
 import xbmc
 import xbmcaddon
-import xbmcgui
+import xbmcvfs
 
 import sys
-import xbmcvfs
 import HTMLParser
 import glob
 import shutil
-import string
-import random
-import urllib2
-import urllib
 import re
 import os
+
+import urllib2
+import urllib
 
 try:
 	from sqlite3 import dbapi2 as database
 except ImportError:
 	from pysqlite2 import dbapi2 as database
 
-from datetime import date
 from datetime import datetime
-from datetime import timedelta
 
-import pyqrcode
-import uservar
+from resources.libs.config import CONFIG
 from resources.libs import downloader
 from resources.libs import extract
-from resources.libs import skin
 
-ADDON_ID       = uservar.ADDON_ID
-ADDONTITLE     = uservar.ADDONTITLE
-ADDON          = xbmcaddon.Addon(ADDON_ID)
-VERSION        = ADDON.getAddonInfo('version')
-USER_AGENT     = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36 SE 2.X MetaSr 1.0'
-DIALOG         = xbmcgui.Dialog()
-DP             = xbmcgui.DialogProgress()
-HOME           = xbmc.translatePath('special://home/')
-XBMC           = xbmc.translatePath('special://xbmc/')
-LOG            = xbmc.translatePath('special://logpath/')
-PROFILE        = xbmc.translatePath('special://profile/')
-TEMPDIR        = xbmc.translatePath('special://temp')
-ADDONS         = os.path.join(HOME,      'addons')
-USERDATA       = os.path.join(HOME,      'userdata')
-PLUGIN         = os.path.join(ADDONS,    ADDON_ID)
-PACKAGES       = os.path.join(ADDONS,    'packages')
-ADDOND         = os.path.join(USERDATA,  'addon_data')
-ADDONDATA      = os.path.join(USERDATA,  'addon_data', ADDON_ID)
-ADVANCED       = os.path.join(USERDATA,  'advancedsettings.xml')
-SOURCES        = os.path.join(USERDATA,  'sources.xml')
-GUISETTINGS    = os.path.join(USERDATA,  'guisettings.xml')
-FAVOURITES     = os.path.join(USERDATA,  'favourites.xml')
-PROFILES       = os.path.join(USERDATA,  'profiles.xml')
-THUMBS         = os.path.join(USERDATA,  'Thumbnails')
-DATABASE       = os.path.join(USERDATA,  'Database')
-FANART         = os.path.join(PLUGIN,    'fanart.jpg')
-ICON           = os.path.join(PLUGIN,    'icon.png')
-ART            = os.path.join(PLUGIN,    'resources', 'art')
-WIZLOG         = os.path.join(ADDONDATA, 'wizard.log')
-WHITELIST      = os.path.join(ADDONDATA, 'whitelist.txt')
-QRCODES        = os.path.join(ADDONDATA, 'QRCodes')
-TEXTCACHE      = os.path.join(ADDONDATA, 'Cache')
-ARCHIVE_CACHE  = os.path.join(TEMPDIR,   'archive_cache')
-SKIN           = xbmc.getSkinDir()
-TODAY          = date.today()
-TOMORROW       = TODAY + timedelta(days=1)
-TWODAYS        = TODAY + timedelta(days=2)
-THREEDAYS      = TODAY + timedelta(days=3)
-ONEWEEK        = TODAY + timedelta(days=7)
-
-KODIV            = float(xbmc.getInfoLabel("System.BuildVersion")[:4])
+KODIV = float(xbmc.getInfoLabel("System.BuildVersion")[:4])
 if KODIV > 17:
 	from resources.libs import zfile as zipfile
 else:
 	import zipfile
 
-EXCLUDES       = uservar.EXCLUDES
-CACHETEXT      = uservar.CACHETEXT
-CACHEAGE       = uservar.CACHEAGE if str(uservar.CACHEAGE).isdigit() else 30
-BUILDFILE      = uservar.BUILDFILE
-APKFILE        = uservar.APKFILE
-YOUTUBEFILE    = uservar.YOUTUBEFILE
-ADDONFILE      = uservar.ADDONFILE
-ADVANCEDFILE   = uservar.ADVANCEDFILE
-AUTOUPDATE     = uservar.AUTOUPDATE
-WIZARDFILE     = uservar.WIZARDFILE
-NOTIFICATION   = uservar.NOTIFICATION
-ENABLE         = uservar.ENABLE
-AUTOINSTALL    = uservar.AUTOINSTALL
-REPOADDONXML   = uservar.REPOADDONXML
-REPOZIPURL     = uservar.REPOZIPURL
-CONTACT        = uservar.CONTACT
-COLOR1         = uservar.COLOR1
-COLOR2         = uservar.COLOR2
-INCLUDEVIDEO   = ADDON.getSetting('includevideo')
-INCLUDEALL     = ADDON.getSetting('includeall')
-INCLUDEPLACENTA  = ADDON.getSetting('includeplacenta')
-INCLUDEEXODUSREDUX  = ADDON.getSetting('includeexodusredux')
-INCLUDEGAIA   = ADDON.getSetting('includegaia')
-INCLUDESEREN   = ADDON.getSetting('includeseren')
-INCLUDEOVEREASY   = ADDON.getSetting('includeovereasy')
-INCLUDEYODA   = ADDON.getSetting('includeyoda')
-INCLUDEVENOM   = ADDON.getSetting('includevenom')
-INCLUDESCRUBS   = ADDON.getSetting('includescrubs')
-SHOWADULT      = ADDON.getSetting('adult')
-WIZDEBUGGING   = ADDON.getSetting('addon_debug')
-DEBUGLEVEL     = ADDON.getSetting('debuglevel')
-ENABLEWIZLOG   = ADDON.getSetting('wizardlog')
-CLEANWIZLOG    = ADDON.getSetting('autocleanwiz')
-CLEANWIZLOGBY  = ADDON.getSetting('wizlogcleanby')
-CLEANDAYS      = ADDON.getSetting('wizlogcleandays')
-CLEANSIZE      = ADDON.getSetting('wizlogcleansize')
-CLEANLINES     = ADDON.getSetting('wizlogcleanlines')
-INSTALLMETHOD  = ADDON.getSetting('installmethod')
-DEVELOPER      = ADDON.getSetting('developer')
-THIRDPARTY     = ADDON.getSetting('enable3rd')
-THIRD1NAME     = ADDON.getSetting('wizard1name')
-THIRD1URL      = ADDON.getSetting('wizard1url')
-THIRD2NAME     = ADDON.getSetting('wizard2name')
-THIRD2URL      = ADDON.getSetting('wizard2url')
-THIRD3NAME     = ADDON.getSetting('wizard3name')
-THIRD3URL      = ADDON.getSetting('wizard3url')
-BACKUPLOCATION = ADDON.getSetting('path') if not ADDON.getSetting('path') == '' else 'special://home/'
-MYBUILDS       = os.path.join(BACKUPLOCATION, 'My_Builds', '')
-LOGFILES       = ['log', 'xbmc.old.log', 'kodi.log', 'kodi.old.log', 'spmc.log', 'spmc.old.log', 'tvmc.log', 'tvmc.old.log', 'dmp']
-DEFAULTPLUGINS = ['metadata.album.universal', 'metadata.artists.universal', 'metadata.common.fanart.tv', 'metadata.common.imdb.com', 'metadata.common.musicbrainz.org', 'metadata.themoviedb.org', 'metadata.tvdb.com', 'service.xbmc.versioncheck']
-MAXWIZSIZE     = [100, 200, 300, 400, 500, 1000]
-MAXWIZLINES    = [100, 200, 300, 400, 500]
-MAXWIZDATES    = [1, 2, 3, 7]
-
-
-###########################
-###### Settings Items #####
-###########################
-
-def getS(name):
-	try: return ADDON.getSetting(name)
-	except: return False
-
-def setS(name, value):
-	try: ADDON.setSetting(name, value)
-	except: return False
-
-def openS(name=""):
-	ADDON.openSettings()
-
-def clearS(type):
-	build    = {'buildname':'', 'buildversion':'', 'buildtheme':'', 'latestversion':'', 'lastbuildcheck':'2016-01-01'}
-	install  = {'installed':'false', 'extract':'', 'errors':''}
-	default  = {'defaultskinignore':'false', 'defaultskin':'', 'defaultskinname':''}
-	lookfeel = ['default.enablerssfeeds', 'default.font', 'default.rssedit', 'default.skincolors', 'default.skintheme', 'default.skinzoom', 'default.soundskin', 'default.startupwindow', 'default.stereostrength']
-	if type == 'build':
-		for set in build:
-			setS(set, build[set])
-		for set in install:
-			setS(set, install[set])
-		for set in default:
-			setS(set, default[set])
-		for set in lookfeel:
-			setS(set, '')
-	elif type == 'default':
-		for set in default:
-			setS(set, default[set])
-		for set in lookfeel:
-			setS(set, '')
-	elif type == 'install':
-		for set in install:
-			setS(set, install[set])
-	elif type == 'lookfeel':
-		for set in lookfeel:
-			setS(set, '')
-
 ###########################
 ###### Display Items ######
 ###########################
 
-# def TextBoxes(heading,announce):
-	# class TextBox():
-		# WINDOW=10147
-		# CONTROL_LABEL=1
-		# CONTROL_TEXTBOX=5
-		# def __init__(self,*args,**kwargs):
-			# ebi("ActivateWindow(%d)" % (self.WINDOW, )) # activate the text viewer window
-			# self.win=xbmcgui.Window(self.WINDOW) # get window
-			# xbmc.sleep(500) # give window time to initialize
-			# self.setControls()
-		# def setControls(self):
-			# self.win.getControl(self.CONTROL_LABEL).setLabel(heading) # set heading
-			# try: f=open(announce); text=f.read()
-			# except: text=announce
-			# self.win.getControl(self.CONTROL_TEXTBOX).setText(str(text))
-			# return
-	# TextBox()
-	# while xbmc.getCondVisibility('Window.IsVisible(10147)'):
-		# xbmc.sleep(500)
-
-
-ACTION_PREVIOUS_MENU 			=  10	## ESC action
-ACTION_NAV_BACK 				=  92	## Backspace action
-ACTION_MOVE_LEFT				=   1	## Left arrow key
-ACTION_MOVE_RIGHT 				=   2	## Right arrow key
-ACTION_MOVE_UP 					=   3	## Up arrow key
-ACTION_MOVE_DOWN 				=   4	## Down arrow key
-ACTION_MOUSE_WHEEL_UP 			= 104	## Mouse wheel up
-ACTION_MOUSE_WHEEL_DOWN			= 105	## Mouse wheel down
-ACTION_MOVE_MOUSE 				= 107	## Down arrow key
-ACTION_SELECT_ITEM				=   7	## Number Pad Enter
-ACTION_BACKSPACE				= 110	## ?
-ACTION_MOUSE_LEFT_CLICK 		= 100
-ACTION_MOUSE_LONG_CLICK 		= 108
-def TextBox(title, msg):
-	class TextBoxes(xbmcgui.WindowXMLDialog):
-		def onInit(self):
-			self.title      = 101
-			self.msg        = 102
-			self.scrollbar  = 103
-			self.okbutton   = 201
-			self.showdialog()
-
-		def showdialog(self):
-			self.getControl(self.title).setLabel(title)
-			self.getControl(self.msg).setText(msg)
-			self.setFocusId(self.scrollbar)
-
-		def onClick(self, controlId):
-			if (controlId == self.okbutton):
-				self.close()
-
-		def onAction(self, action):
-			if   action == ACTION_PREVIOUS_MENU: self.close()
-			elif action == ACTION_NAV_BACK: self.close()
-
-	tb = TextBoxes( "Textbox.xml" , ADDON.getAddonInfo('path'), 'DefaultSkin', title=title, msg=msg)
-	tb.doModal()
-	del tb
-
+# MIGRATION: move into gui
 def highlightText(msg):
 	msg = msg.replace('\n', '[NL]')
 	matches = re.compile("-->Python callback/script returned the following error<--(.+?)-->End of Python script error report<--").findall(msg)
@@ -264,93 +63,11 @@ def highlightText(msg):
 	msg = msg.replace('\\\\', '\\').replace(HOME, '')
 	return msg
 
-def LogNotify(title, message, times=2000, icon=ICON,sound=False):
-	DIALOG.notification(title, message, icon, int(times), sound)
-	#ebi('XBMC.Notification(%s, %s, %s, %s)' % (title, message, times, icon))
-
-def percentage(part, whole):
-	return 100 * float(part)/float(whole)
-
-def addonUpdates(do=None):
-	setting = '"general.addonupdates"'
-	if do == 'set':
-		query = '{"jsonrpc":"2.0", "method":"Settings.GetSettingValue","params":{"setting":%s}, "id":1}' % (setting)
-		response = xbmc.executeJSONRPC(query)
-		match = re.compile('{"value":(.+?)}').findall(response)
-		if len(match) > 0: default = match[0]
-		else: default = 0
-		setS('default.addonupdate', str(default))
-		query = '{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{"setting":%s,"value":%s}, "id":1}' % (setting, '2')
-		response = xbmc.executeJSONRPC(query)
-	elif do == 'reset':
-		try:
-			value = int(float(getS('default.addonupdate')))
-		except:
-			value = 0
-		if not value in [0, 1, 2]: value = 0
-		query = '{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{"setting":%s,"value":%s}, "id":1}' % (setting, value)
-		response = xbmc.executeJSONRPC(query)
-
 ###########################
 ###### Build Info #########
 ###########################
 
-def checkBuild(name, ret):
-	if not workingURL(BUILDFILE): return False
-	link = openURL(BUILDFILE).replace('\n','').replace('\r','').replace('\t','').replace('gui=""', 'gui="http://"').replace('theme=""', 'theme="http://"')
-	match = re.compile('name="%s".+?ersion="(.+?)".+?rl="(.+?)".+?inor="(.+?)".+?ui="(.+?)".+?odi="(.+?)".+?heme="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?review="(.+?)".+?dult="(.+?)".+?nfo="(.+?)".+?escription="(.+?)"' % name).findall(link)
-	if len(match) > 0:
-		for version, url, minor, gui, kodi, theme, icon, fanart, preview, adult, info, description in match:
-			if ret   == 'version':       return version
-			elif ret == 'url':           return url
-			elif ret == 'minor':         return minor
-			elif ret == 'gui':           return gui
-			elif ret == 'kodi':          return kodi
-			elif ret == 'theme':         return theme
-			elif ret == 'icon':          return icon
-			elif ret == 'fanart':        return fanart
-			elif ret == 'preview':       return preview
-			elif ret == 'adult':         return adult
-			elif ret == 'description':   return description
-			elif ret == 'info':          return info
-			elif ret == 'all':           return name, version, url, minor, gui, kodi, theme, icon, fanart, preview, adult, info, description
-	else: return False
-	
-def checkInfo(name):
-	if not workingURL(name): return False
-	link = openURL(name).replace('\n','').replace('\r','').replace('\t','')
-	match = re.compile('.+?ame="(.+?)".+?xtracted="(.+?)".+?ipsize="(.+?)".+?kin="(.+?)".+?reated="(.+?)".+?rograms="(.+?)".+?ideo="(.+?)".+?usic="(.+?)".+?icture="(.+?)".+?epos="(.+?)".+?cripts="(.+?)"').findall(link)
-	if len(match) > 0:
-		for name, extracted, zipsize, skin, created, programs, video, music, picture, repos, scripts in match:
-			return name, extracted, zipsize, skin, created, programs, video, music, picture, repos, scripts
-	else: return False
-
-def checkTheme(name, theme, ret):
-	themeurl = checkBuild(name, 'theme')
-	if not workingURL(themeurl): return False
-	link = openURL(themeurl).replace('\n','').replace('\r','').replace('\t','')
-	match = re.compile('name="%s".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult=(.+?).+?escription="(.+?)"' % theme).findall(link)
-	if len(match) > 0:
-		for url, icon, fanart, adult, description in match:
-			if ret   == 'url':           return url
-			elif ret == 'icon':          return icon
-			elif ret == 'fanart':        return fanart
-			elif ret == 'adult':         return adult
-			elif ret == 'description':   return description
-			elif ret == 'all':           return name, theme, url, icon, fanart, adult, description
-	else: return False
-
-def checkWizard(ret):
-	if not workingURL(WIZARDFILE): return False
-	link = openURL(WIZARDFILE).replace('\n','').replace('\r','').replace('\t','')
-	match = re.compile('id="%s".+?ersion="(.+?)".+?ip="(.+?)"' % ADDON_ID).findall(link)
-	if len(match) > 0:
-		for version, zip in match:
-			if ret   == 'version':       return version
-			elif ret == 'zip':           return zip
-			elif ret == 'all':           return ADDON_ID, version, zip
-	else: return False
-
+# MIGRATION: move into check
 def buildCount(ver=None):
 	link  = openURL(BUILDFILE).replace('\n','').replace('\r','').replace('\t','')
 	match = re.compile('name="(.+?)".+?odi="(.+?)".+?dult="(.+?)"').findall(link)
@@ -367,11 +84,8 @@ def buildCount(ver=None):
 			elif kodi <= 15: count15 += 1
 	return total, count15, count16, count17, count18, adultcount, hidden
 
-def strTest(string):
-	a = (string.lower()).split(' ')
-	if 'test' in a: return True
-	else: return False
 
+# MIGRATION: move into check
 def themeCount(name, count=True):
 	themefile = checkBuild(name, 'theme')
 	if themefile == 'http://' or not themefile: return False
@@ -387,355 +101,8 @@ def themeCount(name, count=True):
 		else: return themes
 	else: return False
 
-def thirdParty(url=None):
-	if url == None: return
-	link = openURL(url).replace('\n','').replace('\r','').replace('\t','')
-	match  = re.compile('name="(.+?)".+?ersion="(.+?)".+?rl="(.+?)".+?odi="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"').findall(link)
-	match2 = re.compile('name="(.+?)".+?rl="(.+?)".+?mg="(.+?)".+?anart="(.+?)".+?escription="(.+?)"').findall(link)
-	if len(match) > 0:
-		return True, match
-	elif len(match2) > 0:
-		return False, match2
-	else:
-		return False, []
 
-def basecode(text, encode=True):
-	import base64
-	if encode:
-		msg = base64.encodestring(text)
-	else:
-		msg = base64.decodestring(text)
-	return msg
-
-def flushOldCache():
-	if not os.path.exists(TEXTCACHE): os.makedirs(TEXTCACHE)
-	try:    age = int(float(CACHEAGE))
-	except: age = 30
-	match = glob.glob(os.path.join(TEXTCACHE,'*.txt'))
-	for file in match:
-		file_modified = datetime.fromtimestamp(os.path.getmtime(file))
-		if datetime.now() - file_modified > timedelta(minutes=age):
-			log("Found: %s" % file)
-			os.remove(file)
-
-def textCache(url):
-	try:    age = int(float(CACHEAGE))
-	except: age = 30
-	if CACHETEXT.lower() == 'yes':
-		spliturl = url.split('/')
-		if not os.path.exists(TEXTCACHE): os.makedirs(TEXTCACHE)
-		file = xbmc.makeLegalFilename(os.path.join(TEXTCACHE, spliturl[-1]+'_'+spliturl[-2]+'.txt'))
-		if os.path.exists(file):
-			file_modified = datetime.fromtimestamp(os.path.getmtime(file))
-			if datetime.now() - file_modified > timedelta(minutes=age):
-				if workingURL(url):
-					os.remove(file)
-
-		if not os.path.exists(file):
-			if not workingURL(url): return False
-			f = open(file, 'w+')
-			textfile = openURL(url)
-			content = basecode(textfile, True)
-			f.write(content)
-			f.close()
-
-		f = open(file, 'r')
-		a = basecode(f.read(), False)
-		f.close()
-		return a
-	else:
-		textfile = openURL(url)
-		return textfile
-
-###########################
-###### URL Checks #########
-###########################
-
-def workingURL(url):
-	if url in ['http://', 'https://', '']: return False
-	check = 0; status = ''
-	while check < 3:
-		check += 1
-		try:
-			req = urllib2.Request(url)
-			req.add_header('User-Agent', USER_AGENT)
-			response = urllib2.urlopen(req)
-			response.close()
-			status = True
-			break
-		except Exception as e:
-			status = str(e)
-			log("Working Url Error: %s [%s]" % (e, url))
-			xbmc.sleep(500)
-	return status
-
-def openURL(url):
-	req = urllib2.Request(url)
-	req.add_header('User-Agent', USER_AGENT)
-	response = urllib2.urlopen(req)
-	link=response.read()
-	response.close()
-	return link
-
-###########################
-###### Misc Functions #####
-###########################
-
-def getKeyboard( default="", heading="", hidden=False ):
-	keyboard = xbmc.Keyboard( default, heading, hidden )
-	keyboard.doModal()
-	if keyboard.isConfirmed():
-		return unicode( keyboard.getText(), "utf-8" )
-	return default
-
-def getSize(path, total=0):
-	for dirpath, dirnames, filenames in os.walk(path):
-		for f in filenames:
-			fp = os.path.join(dirpath, f)
-			total += os.path.getsize(fp)
-	return total
-
-def convertSize(num, suffix='B'):
-	for unit in ['', 'K', 'M', 'G']:
-		if abs(num) < 1024.0:
-			return "%3.02f %s%s" % (num, unit, suffix)
-		num /= 1024.0
-	return "%.02f %s%s" % (num, 'G', suffix)
-
-def getCacheSize():
-	PROFILEADDONDATA = os.path.join(PROFILE,'addon_data')
-	dbfiles   = [
-		## TODO: fix these
-		(os.path.join(ADDOND, 'plugin.video.placenta', 'cache.db')),
-		(os.path.join(ADDOND, 'plugin.video.placenta', 'cache.meta.5.db')),
-		(os.path.join(ADDOND, 'plugin.video.placenta', 'cache.providers.13.db')),
-		(os.path.join(ADDOND, 'plugin.video.exodusredux', 'cache.db')),
-		(os.path.join(ADDOND, 'plugin.video.exodusredux', 'cache.meta.5.db')),
-		(os.path.join(ADDOND, 'plugin.video.exodusredux', 'cache.providers.13.db')),
-		(os.path.join(ADDOND, 'plugin.video.overeasy', 'cache.db')),
-		(os.path.join(ADDOND, 'plugin.video.overeasy', 'cache.meta.5.db')),
-		(os.path.join(ADDOND, 'plugin.video.overeasy', 'cache.providers.13.db')),
-		(os.path.join(ADDOND, 'plugin.video.yoda', 'cache.db')),
-		(os.path.join(ADDOND, 'plugin.video.yoda', 'cache.meta.5.db')),
-		(os.path.join(ADDOND, 'plugin.video.yoda', 'cache.providers.13.db')),
-		(os.path.join(ADDOND, 'plugin.video.gaia', 'cache.db')),
-		(os.path.join(ADDOND, 'plugin.video.gaia', 'meta.db')),
-		(os.path.join(ADDOND, 'plugin.video.seren', 'cache.db')),
-		(os.path.join(ADDOND, 'plugin.video.seren', 'torrentScrape.db')),
-		(os.path.join(ADDOND, 'script.module.simplecache', 'simplecache.db'))]
-	cachelist = [
-		(ADDOND),
-		(os.path.join(HOME,'cache')),
-		(os.path.join(HOME,'temp')),
-		(os.path.join('/private/var/mobile/Library/Caches/AppleTV/Video/', 'Other')),
-		(os.path.join('/private/var/mobile/Library/Caches/AppleTV/Video/', 'LocalAndRental')),
-		(os.path.join(ADDOND,'script.module.simple.downloader')),
-		(os.path.join(ADDOND,'plugin.video.itv','Images')),
-		(os.path.join(ADDOND, 'script.extendedinfo', 'images')),
-		(os.path.join(ADDOND, 'script.extendedinfo', 'TheMovieDB')),
-		(os.path.join(ADDOND, 'script.extendedinfo', 'YouTube')),
-		(os.path.join(ADDOND, 'plugin.program.autocompletion', 'Google')),
-		(os.path.join(ADDOND, 'plugin.program.autocompletion', 'Bing')),
-		(os.path.join(ADDOND, 'plugin.video.openmeta', '.storage'))]
-	if not PROFILEADDONDATA == ADDOND:
-		cachelist.append(os.path.join(PROFILEADDONDATA,'script.module.simple.downloader'))
-		cachelist.append(os.path.join(PROFILEADDONDATA,'plugin.video.itv','Images'))
-		cachelist.append(os.path.join(ADDOND, 'script.extendedinfo', 'images'))
-		cachelist.append(os.path.join(ADDOND, 'script.extendedinfo', 'TheMovieDB')),
-		cachelist.append(os.path.join(ADDOND, 'script.extendedinfo', 'YouTube')),
-		cachelist.append(os.path.join(ADDOND, 'plugin.program.autocompletion', 'Google')),
-		cachelist.append(os.path.join(ADDOND, 'plugin.program.autocompletion', 'Bing')),
-		cachelist.append(os.path.join(ADDOND, 'plugin.video.openmeta', '.storage')),
-		cachelist.append(PROFILEADDONDATA)
-
-	totalsize = 0
-
-	for item in cachelist:
-		if not os.path.exists(item): continue
-		if not item in [ADDOND, PROFILEADDONDATA]:
-			totalsize = getSize(item, totalsize)
-		else:
-			for root, dirs, files in os.walk(item):
-				for d in dirs:
-					if 'cache' in d.lower() and not d.lower() in ['meta_cache']:
-						totalsize = getSize(os.path.join(root, d), totalsize)
-
-	if INCLUDEVIDEO == 'true':
-		files = []
-		if INCLUDEALL == 'true': files = dbfiles
-		else:
-			## TODO: Double check these and add more
-			if INCLUDEEXODUSREDUX == 'true':
-				files.append(os.path.join(ADDOND, 'plugin.video.exodusredux', 'cache.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.exodusredux', 'meta.5.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.exodusredux', 'providers.13.db'))
-			if INCLUDEPLACENTA == 'true':
-				files.append(os.path.join(ADDOND, 'plugin.video.placenta', 'cache.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.placenta', 'meta.5.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.placenta', 'providers.13.db'))
-			if INCLUDEYODA == 'true':
-				files.append(os.path.join(ADDOND, 'plugin.video.yoda', 'cache.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.yoda', 'meta.5.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.yoda', 'providers.13.db'))
-			if INCLUDEVENOM == 'true':
-				files.append(os.path.join(ADDOND, 'plugin.video.venom', 'cache.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.venom', 'meta.5.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.venom', 'providers.13.db'))
-			if INCLUDESCRUBS == 'true':
-				files.append(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'cache.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'meta.5.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'providers.13.db'))
-			if INCLUDEGAIA == 'true':
-				files.append(os.path.join(ADDOND, 'plugin.video.gaia', 'cache.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.gaia', 'meta.db'))
-			if INCLUDESEREN == 'true':
-				files.append(os.path.join(ADDOND, 'plugin.video.seren', 'cache.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.seren', 'torrentScrape.db'))
-			if INCLUDEOVEREASY == 'true': 
-				files.append(os.path.join(ADDOND, 'plugin.video.overeasy', 'cache.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.overeasy', 'meta.5.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.overeasy', 'providers.13.db'))
-		if len(files) > 0:
-			for item in files:
-				if not os.path.exists(item): continue
-				totalsize += os.path.getsize(item)
-		else: log("Clear Cache: Clear Video Cache Not Enabled", xbmc.LOGNOTICE)
-	return totalsize
-
-def getInfo(label):
-	try: return xbmc.getInfoLabel(label)
-	except: return False
-
-def removeFolder(path):
-	log("Deleting Folder: %s" % path, xbmc.LOGNOTICE)
-	try: shutil.rmtree(path,ignore_errors=True, onerror=None)
-	except: return False
-
-def removeFile(path):
-	log("Deleting File: %s" % path, xbmc.LOGNOTICE)
-	try:    os.remove(path)
-	except: return False
-
-def currSkin():
-	return xbmc.getSkinDir()
-
-def cleanHouse(folder, ignore=False):
-	log(folder)
-	total_files = 0; total_folds = 0
-	for root, dirs, files in os.walk(folder):
-		if not ignore: dirs[:] = [d for d in dirs if d not in EXCLUDES]
-		file_count = 0
-		file_count += len(files)
-		if file_count >= 0:
-			for f in files:
-				try:
-					os.unlink(os.path.join(root, f))
-					total_files += 1
-				except:
-					try:
-						shutil.rmtree(os.path.join(root, f))
-					except:
-						log("Error Deleting %s" % f, xbmc.LOGERROR)
-			for d in dirs:
-				total_folds += 1
-				try:
-					shutil.rmtree(os.path.join(root, d))
-					total_folds += 1
-				except:
-					log("Error Deleting %s" % d, xbmc.LOGERROR)
-	return total_files, total_folds
-
-def emptyfolder(folder):
-	total = 0
-	for root, dirs, files in os.walk(folder, topdown=True):
-		dirs[:] = [d for d in dirs if d not in EXCLUDES]
-		file_count = 0
-		file_count += len(files) + len(dirs)
-		if file_count == 0:
-			shutil.rmtree(os.path.join(root))
-			total += 1
-			log("Empty Folder: %s" % root, xbmc.LOGNOTICE)
-	return total
-
-def log(msg, level=xbmc.LOGDEBUG):
-	if not os.path.exists(ADDONDATA): os.makedirs(ADDONDATA)
-	if not os.path.exists(WIZLOG): f = open(WIZLOG, 'w'); f.close()
-	if WIZDEBUGGING == 'false': return False
-	if DEBUGLEVEL == '0': return False
-	if DEBUGLEVEL == '1' and not level in [xbmc.LOGNOTICE, xbmc.LOGERROR, xbmc.LOGSEVERE, xbmc.LOGFATAL]: return False
-	if DEBUGLEVEL == '2': level = xbmc.LOGNOTICE
-	try:
-		if isinstance(msg, unicode):
-			msg = '%s' % (msg.encode('utf-8'))
-		xbmc.log('%s: %s' % (ADDONTITLE, msg), level)
-	except Exception as e:
-		try: xbmc.log('Logging Failure: %s' % (e), level)
-		except: pass
-	if ENABLEWIZLOG == 'true':
-		lastcheck = getS('nextcleandate') if not getS('nextcleandate') == '' else str(TODAY)
-		if CLEANWIZLOG == 'true' and lastcheck <= str(TODAY): checkLog()
-		with open(WIZLOG, 'a') as f:
-			line = "[%s %s] %s" % (datetime.now().date(), str(datetime.now().time())[:8], msg)
-			f.write(line.rstrip('\r\n')+'\n')
-
-def checkLog():
-	nextclean = getS('nextcleandate')
-	next = TOMORROW
-	if CLEANWIZLOGBY == '0':
-		keep = TODAY - timedelta(days=MAXWIZDATES[int(float(CLEANDAYS))])
-		x    = 0
-		f    = open(WIZLOG); a = f.read(); f.close(); lines = a.split('\n')
-		for line in lines:
-			if str(line[1:11]) >= str(keep):
-				break
-			x += 1
-		newfile = lines[x:]
-		writing = '\n'.join(newfile)
-		f = open(WIZLOG, 'w'); f.write(writing); f.close()
-	elif CLEANWIZLOGBY == '1':
-		maxsize = MAXWIZSIZE[int(float(CLEANSIZE))]*1024
-		f    = open(WIZLOG); a = f.read(); f.close(); lines = a.split('\n')
-		if os.path.getsize(WIZLOG) >= maxsize:
-			start = len(lines)/2
-			newfile = lines[start:]
-			writing = '\n'.join(newfile)
-			f = open(WIZLOG, 'w'); f.write(writing); f.close()
-	elif CLEANWIZLOGBY == '2':
-		f      = open(WIZLOG); a = f.read(); f.close(); lines = a.split('\n')
-		maxlines = MAXWIZLINES[int(float(CLEANLINES))]
-		if len(lines) > maxlines:
-			start = len(lines) - int(maxlines/2)
-			newfile = lines[start:]
-			writing = '\n'.join(newfile)
-			f = open(WIZLOG, 'w'); f.write(writing); f.close()
-	setS('nextcleandate', str(next))
-
-def latestDB(DB):
-	if DB in ['Addons', 'ADSP', 'Epg', 'MyMusic', 'MyVideos', 'Textures', 'TV', 'ViewModes']:
-		match = glob.glob(os.path.join(DATABASE,'%s*.db' % DB))
-		comp = '%s(.+?).db' % DB[1:]
-		highest = 0
-		for file in match :
-			try: check = int(re.compile(comp).findall(file)[0])
-			except: check = 0
-			if highest < check :
-				highest = check
-		return '%s%s.db' % (DB, highest)
-	else: return False
-
-def viewFile(name, url):
-	return
-
-def forceText():
-	cleanHouse(TEXTCACHE)
-	LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), '[COLOR %s]Text Files Flushed![/COLOR]' % (COLOR2))
-
-def addonId(add):
-	try:
-		return xbmcaddon.Addon(id=add)
-	except:
-		return False
-
+# MIGRATION: move into db
 def toggleDependency(name, DP=None):
 	dep=os.path.join(ADDONS, name, 'addon.xml')
 	if os.path.exists(dep):
@@ -750,6 +117,7 @@ def toggleDependency(name, DP=None):
 					toggleAddon(name, 'true')
 			xbmc.sleep(100)
 
+# MIGRATION: move into db
 def toggleAdult():
 	do = DIALOG.yesno(ADDONTITLE, "[COLOR %s]Would you like to [COLOR %s]Enable[/COLOR] or [COLOR %s]Disable[/COLOR] all Adult addons?[/COLOR]" % (COLOR2, COLOR1, COLOR1), yeslabel="[B][COLOR springgreen]Enable[/COLOR][/B]", nolabel="[B][COLOR red]Disable[/COLOR][/B]")
 	state = 'true' if do == 1 else 'false'
@@ -771,6 +139,7 @@ def toggleAdult():
 		forceUpdate(True)
 	else: LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]No Adult Addons Found[/COLOR]" % COLOR2)
 
+# MIGRATION: move into db
 def createTemp(plugin):
 	temp   = os.path.join(PLUGIN, 'resources', 'tempaddon.xml')
 	f      = open(temp, 'r'); r = f.read(); f.close()
@@ -781,6 +150,7 @@ def createTemp(plugin):
 	a.close()
 	log("%s: wrote addon.xml" % plugin)
 
+# MIGRATION: move into db
 def fixmetas():
 	idlist = []
 	#temp   = os.path.join(PLUGIN, 'resources', 'tempaddon.xml')
@@ -798,46 +168,7 @@ def fixmetas():
 			#a.close()
 			#log("%s: re-wrote addon.xml" % item)
 
-def toggleAddon(id, value, over=None):
-	log("toggling %s" % id)
-	# if KODIV >= 17:
-		# log("kodi 17 way")
-		# goto = 0 if value == 'false' else 1
-		# addonDatabase(id, goto)
-		# if not over == None:
-			# forceUpdate(True)
-		# return
-	addonid  = id
-	addonxml = os.path.join(ADDONS, id, 'addon.xml')
-	if os.path.exists(addonxml):
-		f        = open(addonxml)
-		b        = f.read()
-		tid      = parseDOM(b, 'addon', ret='id')
-		tname    = parseDOM(b, 'addon', ret='name')
-		tservice = parseDOM(b, 'extension', ret='library', attrs = {'point': 'xbmc.service'})
-		try:
-			if len(tid) > 0:
-				addonid = tid[0]
-			if len(tservice) > 0:
-				log("We got a live one, stopping script: %s" % match[0], xbmc.LOGDEBUG)
-				ebi('StopScript(%s)' % os.path.join(ADDONS, addonid))
-				ebi('StopScript(%s)' % addonid)
-				ebi('StopScript(%s)' % os.path.join(ADDONS, addonid, tservice[0]))
-				xbmc.sleep(500)
-		except:
-			pass
-	query = '{"jsonrpc":"2.0", "method":"Addons.SetAddonEnabled","params":{"addonid":"%s","enabled":%s}, "id":1}' % (addonid, value)
-	response = xbmc.executeJSONRPC(query)
-	if 'error' in response and over is None:
-		v = 'Enabling' if value == 'true' else 'Disabling'
-		DIALOG.ok(ADDONTITLE, "[COLOR %s]Error %s [COLOR %s]%s[/COLOR]" % (COLOR2, v, COLOR1 , id), "Check to make sure the addon list is upto date and try again.[/COLOR]")
-		forceUpdate()
-
-def addonInfo(add, info):
-	addon = addonId(add)
-	if addon: return addon.getAddonInfo(info)
-	else: return False
-
+# MIGRATION: move into gui
 def whileWindow(window, active=False, count=0, counter=15):
 	windowopen = getCond('Window.IsActive(%s)' % window)
 	log("%s is %s" % (window, windowopen), xbmc.LOGDEBUG)
@@ -854,30 +185,7 @@ def whileWindow(window, active=False, count=0, counter=15):
 		xbmc.sleep(250)
 	return active
 
-def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
-	return ''.join(random.choice(chars) for _ in range(size))
-
-def generateQR(url, filename):
-	if not os.path.exists(QRCODES): os.makedirs(QRCODES)
-	imagefile = os.path.join(QRCODES,'%s.png' % filename)
-	qrIMG     = pyqrcode.create(url)
-	qrIMG.png(imagefile, scale=10)
-	return imagefile
-
-def createQR():
-	url = getKeyboard('', "%s: Insert the URL for the QRCode." % ADDONTITLE)
-	if url == "": LogNotify("[COLOR %s]Create QR[/COLOR]" % COLOR1, '[COLOR %s]Create QR Code Cancelled![/COLOR]' % COLOR2); return
-	if not url.startswith('http://') and not url.startswith('https://'): LogNotify("[COLOR %s]Create QR[/COLOR]" % COLOR1, '[COLOR %s]Not a Valid URL![/COLOR]' % COLOR2); return
-	if url == 'http://' or url == 'https://': LogNotify("[COLOR %s]Create QR[/COLOR]" % COLOR1, '[COLOR %s]Not a Valid URL![/COLOR]' % COLOR2); return
-	working = workingURL(url)
-	if not working:
-		if not DIALOG.yesno(ADDONTITLE, "[COLOR %s]It seems the your enter isnt working, Would you like to create it anyways?[/COLOR]" % COLOR2, "[COLOR %s]%s[/COLOR]" % (COLOR1, working), yeslabel="[B][COLOR red]Yes Create[/COLOR][/B]", nolabel="[B][COLOR springgreen]No Cancel[/COLOR][/B]"):
-			return
-	name = getKeyboard('', "%s: Insert the name for the QRCode." % ADDONTITLE)
-	name = "QrImage_%s" % id_generator(6) if name == "" else name
-	image = generateQR(url, name)
-	DIALOG.ok(ADDONTITLE, "[COLOR %s]The QRCode image has been created and is located in the addondata directory:[/COLOR]" % COLOR2, "[COLOR %s]%s[/COLOR]" % (COLOR1, image.replace(HOME, '')))
-
+# MIGRATION: move into backup
 def cleanupBackup():
 	mybuilds = xbmc.translatePath(MYBUILDS)
 	folder = glob.glob(os.path.join(mybuilds, "*"))
@@ -924,27 +232,7 @@ def cleanupBackup():
 		else:
 			LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Clean Up Cancelled![/COLOR]" % COLOR2)
 
-def getCond(type):
-	return xbmc.getCondVisibility(type)
-
-def ebi(proc):
-	xbmc.executebuiltin(proc)
-
-def refresh():
-	ebi('Container.Refresh()')
-
-def splitNotify(notify):
-	link = openURL(notify).replace('\r','').replace('\t','').replace('\n', '[CR]')
-	if link.find('|||') == -1: return False, False
-	id, msg = link.split('|||')
-	if msg.startswith('[CR]'): msg = msg[4:]
-	return id.replace('[CR]', ''), msg
-
-def forceUpdate(silent=False):
-	ebi('UpdateAddonRepos()')
-	ebi('UpdateLocalAddons()')
-	if not silent: LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), '[COLOR %s]Forcing Addon Updates[/COLOR]' % COLOR2)
-
+# MIGRATION: move into tools
 def convertSpecial(url, over=False):
 	total = fileCount(url); start = 0
 	DP.create(ADDONTITLE, "[COLOR %s]Changing Physical Paths To Special" % COLOR2, "", "Please Wait[/COLOR]")
@@ -969,18 +257,7 @@ def convertSpecial(url, over=False):
 	log("[Convert Paths to Special] Complete", xbmc.LOGNOTICE)
 	if not over: LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Convert Paths to Special: Complete![/COLOR]" % COLOR2)
 
-def clearCrash():
-	files = []
-	for file in glob.glob(os.path.join(LOG, '*crashlog*.*')):
-		files.append(file)
-	if len(files) > 0:
-		if DIALOG.yesno(ADDONTITLE, '[COLOR %s]Would you like to delete the Crash logs?' % COLOR2, '[COLOR %s]%s[/COLOR] Files Found[/COLOR]' % (COLOR1, len(files)), yeslabel="[B][COLOR springgreen]Remove Logs[/COLOR][/B]", nolabel="[B][COLOR red]Keep Logs[/COLOR][/B]"):
-			for f in files:
-				os.remove(f)
-			LogNotify('[COLOR %s]Clear Crash Logs[/COLOR]' % COLOR1, '[COLOR %s]%s Crash Logs Removed[/COLOR]' % (COLOR2, len(files)))
-		else: LogNotify('[COLOR %s]%s[/COLOR]' % (COLOR1, ADDONTITLE), '[COLOR %s]Clear Crash Logs Cancelled[/COLOR]' % COLOR2)
-	else: LogNotify('[COLOR %s]Clear Crash Logs[/COLOR]' % COLOR1, '[COLOR %s]No Crash Logs Found[/COLOR]' % COLOR2)
-
+# MIGRATION: move into db?
 def hidePassword():
 	if DIALOG.yesno(ADDONTITLE, "[COLOR %s]Would you like to [COLOR %s]hide[/COLOR] all passwords when typing in the add-on settings menus?[/COLOR]" % COLOR2, yeslabel="[B][COLOR springgreen]Hide Passwords[/COLOR][/B]", nolabel="[B][COLOR red]No Cancel[/COLOR][/B]"):
 		count = 0
@@ -1004,6 +281,7 @@ def hidePassword():
 		log("[Hide Passwords] %s items changed" % count, xbmc.LOGNOTICE)
 	else: log("[Hide Passwords] Cancelled", xbmc.LOGNOTICE)
 
+# MIGRATION: move into db?
 def unhidePassword():
 	if DIALOG.yesno(ADDONTITLE, "[COLOR %s]Would you like to [COLOR %s]unhide[/COLOR] all passwords when typing in the add-on settings menus?[/COLOR]" % (COLOR2, COLOR1), yeslabel="[B][COLOR springgreen]Unhide Passwords[/COLOR][/B]", nolabel="[B][COLOR red]No Cancel[/COLOR][/B]"):
 		count = 0
@@ -1027,222 +305,8 @@ def unhidePassword():
 		log("[Unhide Passwords] %s items changed" % count, xbmc.LOGNOTICE)
 	else: log("[Unhide Passwords] Cancelled", xbmc.LOGNOTICE)
 
-def wizardUpdate(startup=None):
-	if workingURL(WIZARDFILE):
-		try:
-			wid, ver, zip = checkWizard('all')
-		except:
-			return
-		if ver > VERSION:
-			yes = DIALOG.yesno(ADDONTITLE, '[COLOR %s]There is a new version of the [COLOR %s]%s[/COLOR]!' % (COLOR2, COLOR1, ADDONTITLE), 'Would you like to download [COLOR %s]v%s[/COLOR]?[/COLOR]' % (COLOR1, ver), nolabel='[B][COLOR red]Remind Me Later[/COLOR][/B]', yeslabel="[B][COLOR springgreen]Update Wizard[/COLOR][/B]")
-			if yes:
-				log("[Auto Update Wizard] Installing wizard v%s" % ver, xbmc.LOGNOTICE)
-				DP.create(ADDONTITLE,'[COLOR %s]Downloading Update...' % COLOR2,'', 'Please Wait[/COLOR]')
-				lib=os.path.join(PACKAGES, '%s-%s.zip' % (ADDON_ID, ver))
-				try: os.remove(lib)
-				except: pass
-				downloader.download(zip, lib, DP)
-				xbmc.sleep(2000)
-				DP.update(0,"", "Installing %s update" % ADDONTITLE)
-				percent, errors, error = extract.all(lib, ADDONS, DP, True)
-				DP.close()
-				xbmc.sleep(1000)
-				ebi('UpdateAddonRepos()')
-				ebi('UpdateLocalAddons()')
-				xbmc.sleep(1000)
-				LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE),'[COLOR %s]Add-on updated[/COLOR]' % COLOR2)
-				log("[Auto Update Wizard] Wizard updated to v%s" % ver, xbmc.LOGNOTICE)
-				removeFile(os.path.join(ADDONDATA, 'settings.xml'))
-				notify.firstRunSettings()
-				#reloadProfile()
-				if startup:
-					ebi('RunScript(%s/startup.py)' % PLUGIN)
-				return
-			else: log("[Auto Update Wizard] Install New Wizard Ignored: %s" % ver, xbmc.LOGNOTICE)
-		else:
-			if not startup: LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]No New Version of Wizard[/COLOR]" % COLOR2)
-			log("[Auto Update Wizard] No New Version v%s" % ver, xbmc.LOGNOTICE)
-	else: log("[Auto Update Wizard] Url for wizard file not valid: %s" % WIZARDFILE, xbmc.LOGNOTICE)
 
-def convertText():
-	TEXTFILES = os.path.join(ADDONDATA, 'TextFiles')
-	if not os.path.exists(TEXTFILES): os.makedirs(TEXTFILES)
-
-	DP.create(ADDONTITLE,'[COLOR %s][B]Converting Text:[/B][/COLOR]' % (COLOR2),'', 'Please Wait')
-
-	if not BUILDFILE == 'http://':
-		filename = os.path.join(TEXTFILES, 'builds.txt')
-		writing = '';x = 0
-		a = openURL(BUILDFILE).replace('\n','').replace('\r','').replace('\t','')
-		DP.update(0,'[COLOR %s][B]Converting Text:[/B][/COLOR] [COLOR %s]Builds.txt[/COLOR]' % (COLOR2, COLOR1),'', 'Please Wait')
-		if WIZARDFILE == BUILDFILE:
-			try:
-				addonid, version, url = checkWizard('all')
-				writing  = 'id="%s"\n' % addonid
-				writing += 'version="%s"\n' % version
-				writing += 'zip="%s"\n' % url
-			except:
-				pass
-		match = re.compile('name="(.+?)".+?ersion="(.+?)".+?rl="(.+?)".+?ui="(.+?)".+?odi="(.+?)".+?heme="(.+?)".+?con="(.+?)".+?anart="(.+?)"').findall(a)
-		match2 = re.compile('name="(.+?)".+?ersion="(.+?)".+?rl="(.+?)".+?ui="(.+?)".+?odi="(.+?)".+?heme="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?review="(.+?)"+?dult="(.+?)".+?escription="(.+?)"').findall(a)
-		if len(match2) == 0:
-			for name, version, url, gui, kodi, theme, icon, fanart in match:
-				x += 1
-				DP.update(int(percentage(x, len(match2))), '', "[COLOR %s]%s[/COLOR]" % (COLOR1, name))
-				if not writing == '': writing += '\n'
-				writing += 'name="%s"\n' % name
-				writing += 'version="%s"\n' % version
-				writing += 'url="%s"\n' % url
-				writing += 'minor="http://"\n'
-				writing += 'gui="%s"\n' % gui
-				writing += 'kodi="%s"\n' % kodi
-				writing += 'theme="%s"\n' % theme
-				writing += 'icon="%s"\n' % icon
-				writing += 'fanart="%s"\n' % fanart
-				writing += 'preview="http://"\n'
-				writing += 'adult="no"\n'
-				writing += 'info="http://"\n'
-				writing += 'description="Download %s from %s"\n' % (name, ADDONTITLE)
-				if not theme == 'http://':
-					filename2 = os.path.join(TEXTFILES, '%s_theme.txt' % name)
-					themewrite = ''; x2 = 0
-					a = openURL(theme).replace('\n','').replace('\r','').replace('\t','')
-					DP.update(0,'[COLOR %s][B]Converting Text:[/B][/COLOR] [COLOR %s]%s_theme.txt[/COLOR]' % (COLOR2, COLOR1, name),'', 'Please Wait')
-					match3 = re.compile('name="(.+?)".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?escription="(.+?)"').findall(a)
-					for name, url, icon, fanart, description in match3:
-						x2 += 1
-						DP.update(int(percentage(x2, len(match2))), '', "[COLOR %s]%s[/COLOR]" % (COLOR1, name))
-						if not themewrite == '': themewrite += '\n'
-						themewrite += 'name="%s"\n' % name
-						themewrite += 'url="%s"\n' % url
-						themewrite += 'icon="%s"\n' % icon
-						themewrite += 'fanart="%s"\n' % fanart
-						themewrite += 'adult="no"\n'
-						themewrite += 'description="%s"\n' % description
-					f = open(filename2, 'w'); f.write(themewrite); f.close()
-		else:
-			for name, version, url, gui, kodi, theme, icon, fanart, preview, adult, description in match2:
-				x += 1
-				DP.update(int(percentage(x, len(match2))), '', "[COLOR %s]%s[/COLOR]" % (COLOR1, name))
-				if not writing == '': writing += '\n'
-				writing += 'name="%s"\n' % name
-				writing += 'version="%s"\n' % version
-				writing += 'url="%s"\n' % url
-				writing += 'minor="http://"\n'
-				writing += 'gui="%s"\n' % gui
-				writing += 'kodi="%s"\n' % kodi
-				writing += 'theme="%s"\n' % theme
-				writing += 'icon="%s"\n' % icon
-				writing += 'fanart="%s"\n' % fanart
-				writing += 'preview="%s"\n' % preview
-				writing += 'adult="%s"\n' % adult
-				writing += 'info="http://"\n'
-				writing += 'description="%s"\n' % description
-				if not theme == 'http://':
-					filename2 = os.path.join(TEXTFILES, '%s_theme.txt' % name)
-					themewrite = ''; x2 = 0
-					a = openURL(theme).replace('\n','').replace('\r','').replace('\t','')
-					DP.update(0,'[COLOR %s][B]Converting Text:[/B][/COLOR] [COLOR %s]%s_theme.txt[/COLOR]' % (COLOR2, COLOR1, name),'', 'Please Wait')
-					match3 = re.compile('name="(.+?)".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?escription="(.+?)"').findall(a)
-					for name, url, icon, fanart, description in match3:
-						x2 += 1
-						DP.update(int(percentage(x2, len(match2))), '', "[COLOR %s]%s[/COLOR]" % (COLOR1, name))
-						if not themewrite == '': themewrite += '\n'
-						themewrite += 'name="%s"\n' % name
-						themewrite += 'url="%s"\n' % url
-						themewrite += 'icon="%s"\n' % icon
-						themewrite += 'fanart="%s"\n' % fanart
-						themewrite += 'adult="no"\n'
-						themewrite += 'description="%s"\n' % description
-					f = open(filename2, 'w'); f.write(themewrite); f.close()
-		f = open(filename, 'w'); f.write(writing); f.close()
-	if not APKFILE == 'http://':
-		filename = os.path.join(TEXTFILES, 'apks.txt')
-		writing = ''; x = 0
-		a = openURL(APKFILE).replace('\n','').replace('\r','').replace('\t','')
-		DP.update(0,'[COLOR %s][B]Converting Text:[/B][/COLOR] [COLOR %s]Apks.txt[/COLOR]' % (COLOR2, COLOR1), '', 'Please Wait')
-		match = re.compile('name="(.+?)".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)"').findall(a)
-		match2 = re.compile('name="(.+?)".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"').findall(a)
-		if len(match2) == 0:
-			for name, url, icon, fanart in match:
-				x += 1
-				DP.update(int(percentage(x, len(match))), '', "[COLOR %s]%s[/COLOR]" % (COLOR1, name))
-				if not writing == '': writing += '\n'
-				writing += 'name="%s"\n' % name
-				writing += 'section="no"'
-				writing += 'url="%s"\n' % url
-				writing += 'icon="%s"\n' % icon
-				writing += 'fanart="%s"\n' % fanart
-				writing += 'adult="no"\n'
-				writing += 'description="Download %s from %s"\n' % (name, ADDONTITLE)
-		else:
-			for name, url, icon, fanart, adult, description in match2:
-				x += 1
-				DP.update(int(percentage(x, len(match2))), '', "[COLOR %s]%s[/COLOR]" % (COLOR1, name))
-				if not writing == '': writing += '\n'
-				writing += 'name="%s"\n' % name
-				writing += 'section="no"'
-				writing += 'url="%s"\n' % url
-				writing += 'icon="%s"\n' % icon
-				writing += 'fanart="%s"\n' % fanart
-				writing += 'adult="%s"\n' % adult
-				writing += 'description="%s"\n' % description
-		f = open(filename, 'w'); f.write(writing); f.close()
-
-	if not YOUTUBEFILE == 'http://':
-		filename = os.path.join(TEXTFILES, 'youtube.txt')
-		writing = ''; x = 0
-		a = openURL(YOUTUBEFILE).replace('\n','').replace('\r','').replace('\t','')
-		DP.update(0,'[COLOR %s][B]Converting Text:[/B][/COLOR] [COLOR %s]YouTube.txt[/COLOR]' % (COLOR2, COLOR1), '', 'Please Wait')
-		match = re.compile('name="(.+?)".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?escription="(.+?)"').findall(a)
-		for name, url, icon, fanart, description in match:
-			x += 1
-			DP.update(int(percentage(x, len(match))), '', "[COLOR %s]%s[/COLOR]" % (COLOR1, name))
-			if not writing == '': writing += '\n'
-			writing += 'name="%s"\n' % name
-			writing += 'section="no"'
-			writing += 'url="%s"\n' % url
-			writing += 'icon="%s"\n' % icon
-			writing += 'fanart="%s"\n' % fanart
-			writing += 'description="%s"\n' % description
-		f = open(filename, 'w'); f.write(writing); f.close()
-
-	if not ADVANCEDFILE == 'http://':
-		filename = os.path.join(TEXTFILES, 'advancedsettings.txt')
-		writing = ''; x = 0
-		a = openURL(ADVANCEDFILE).replace('\n','').replace('\r','').replace('\t','')
-		DP.update(0,'[COLOR %s][B]Converting Text:[/B][/COLOR] [COLOR %s]AdvancedSettings.txt[/COLOR]' % (COLOR2, COLOR1), '', 'Please Wait')
-		match = re.compile('name="(.+?)".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?escription="(.+?)"').findall(a)
-		for name, url, icon, fanart, description in match:
-			x += 1
-			DP.update(int(percentage(x, len(match))), '', "[COLOR %s]%s[/COLOR]" % (COLOR1, name))
-			if not writing == '': writing += '\n'
-			writing += 'name="%s"\n' % name
-			writing += 'section="no"'
-			writing += 'url="%s"\n' % url
-			writing += 'icon="%s"\n' % icon
-			writing += 'fanart="%s"\n' % fanart
-			writing += 'description="%s"\n' % description
-		f = open(filename, 'w'); f.write(writing); f.close()
-
-	DP.close()
-	DIALOG.ok(ADDONTITLE, '[COLOR %s]Your text files have been converted to 0.1.7 and are location in the [COLOR %s]/addon_data/%s/[/COLOR] folder[/COLOR]' % (COLOR2, COLOR1, ADDON_ID))
-
-def reloadProfile(profile=None):
-	if profile == None:
-		#if os.path.exists(PROFILES):
-		#	profile = getInfo('System.ProfileName')
-		#	log("Profile: %s" % profile)
-		#	ebi('LoadProfile(%s)' % profile)
-		#else:
-		#ebi('Mastermode')
-		ebi('LoadProfile(Master user)')
-	else: ebi('LoadProfile(%s)' % profile)
-
-def chunks(s, n):
-	for start in range(0, len(s), n):
-		yield s[start:start+n]
-
+# MIGRATION: move into tools?
 def asciiCheck(use=None, over=False):
 	if use is None:
 		source = DIALOG.browse(3, '[COLOR %s]Select the folder you want to scan[/COLOR]' % COLOR2, 'files', '', False, False, HOME)
@@ -1334,63 +398,7 @@ def fileCount(home, excludes=True):
 			item.append(file)
 	return len(item)
 
-def defaultSkin():
-	log("[Default Skin Check]", xbmc.LOGNOTICE)
-	tempgui = os.path.join(USERDATA, 'guitemp.xml')
-	gui = tempgui if os.path.exists(tempgui) else GUISETTINGS
-	if not os.path.exists(gui): return False
-	log("Reading gui file: %s" % gui, xbmc.LOGNOTICE)
-	guif = open(gui, 'r+')
-	msg = guif.read().replace('\n','').replace('\r','').replace('\t','').replace('    ',''); guif.close()
-	log("Opening gui settings", xbmc.LOGNOTICE)
-	match = re.compile('<lookandfeel>.+?<ski.+?>(.+?)</skin>.+?</lookandfeel>').findall(msg)
-	log("Matches: %s" % str(match), xbmc.LOGNOTICE)
-	if len(match) > 0:
-		skinid = match[0]
-		addonxml = os.path.join(ADDONS, match[0], 'addon.xml')
-		if os.path.exists(addonxml):
-			addf = open(addonxml, 'r+')
-			msg2 = addf.read(); addf.close()
-			match2 = parseDOM(msg2, 'addon', ret='name')
-			if len(match2) > 0: skinname = match2[0]
-			else: skinname = 'no match'
-		else: skinname = 'no file'
-		log("[Default Skin Check] Skin name: %s" % skinname, xbmc.LOGNOTICE)
-		log("[Default Skin Check] Skin id: %s" % skinid, xbmc.LOGNOTICE)
-		setS('defaultskin', skinid)
-		setS('defaultskinname', skinname)
-		setS('defaultskinignore', 'false')
-	if os.path.exists(tempgui):
-		log("Deleting Temp Gui File.", xbmc.LOGNOTICE)
-		os.remove(tempgui)
-	log("[Default Skin Check] End", xbmc.LOGNOTICE)
-
-def lookandFeelData(do='save'):
-	scan = ['lookandfeel.enablerssfeeds', 'lookandfeel.font', 'lookandfeel.rssedit', 'lookandfeel.skincolors', 'lookandfeel.skintheme', 'lookandfeel.skinzoom', 'lookandfeel.soundskin', 'lookandfeel.startupwindow', 'lookandfeel.stereostrength']
-	if do == 'save':
-		for item in scan:
-			query = '{"jsonrpc":"2.0", "method":"Settings.GetSettingValue","params":{"setting":"%s"}, "id":1}' % (item)
-			response = xbmc.executeJSONRPC(query)
-			if not 'error' in response:
-				match = re.compile('{"value":(.+?)}').findall(str(response))
-				setS(item.replace('lookandfeel', 'default'), match[0])
-				log("%s saved to %s" % (item, match[0]), xbmc.LOGNOTICE)
-	else:
-		for item in scan:
-			value = getS(item.replace('lookandfeel', 'default'))
-			query = '{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{"setting":"%s","value":%s}, "id":1}' % (item, value)
-			response = xbmc.executeJSONRPC(query)
-			log("%s restored to %s" % (item, value), xbmc.LOGNOTICE)
-
-def sep(middle=''):
-	char = uservar.SPACER
-	ret = char * 40
-	if not middle == '':
-		middle = '[ %s ]' % middle
-		fluff = int((40 - len(middle))/2)
-		ret = "%s%s%s" % (ret[:fluff], middle, ret[:fluff+2])
-	return ret[:40]
-
+# MIGRATION: move into advanced?
 def convertAdvanced():
 	if os.path.exists(ADVANCED):
 		f = open(ADVANCED)
@@ -2059,422 +1067,11 @@ def restoreExternal(type):
 	if todo == 1: reloadFix()
 	else: killxbmc(True)
 
-def extractAZip():
-	return
 ##########################
 ###DETERMINE PLATFORM#####
 ##########################
 
-def platform():
-	if xbmc.getCondVisibility('system.platform.android'):             return 'android'
-	elif xbmc.getCondVisibility('system.platform.linux'):             return 'linux'
-	elif xbmc.getCondVisibility('system.platform.linux.Raspberrypi'): return 'linux'
-	elif xbmc.getCondVisibility('system.platform.windows'):           return 'windows'
-	elif xbmc.getCondVisibility('system.platform.osx'):               return 'osx'
-	elif xbmc.getCondVisibility('system.platform.atv2'):              return 'atv2'
-	elif xbmc.getCondVisibility('system.platform.ios'):               return 'ios'
-	elif xbmc.getCondVisibility('system.platform.darwin'):            return 'ios'
-
-def Grab_Log(file=False, old=False, wizard=False):
-	if wizard:
-		if not os.path.exists(WIZLOG): return False
-		else:
-			if file:
-				return WIZLOG
-			else:
-				filename    = open(WIZLOG, 'r')
-				logtext     = filename.read()
-				filename.close()
-				return logtext
-	finalfile   = 0
-	logfilepath = os.listdir(LOG)
-	logsfound   = []
-
-	for item in logfilepath:
-		if old and item.endswith('.old.log'): logsfound.append(os.path.join(LOG, item))
-		elif not old and item.endswith('.log') and not item.endswith('.old.log'): logsfound.append(os.path.join(LOG, item))
-
-	if len(logsfound) > 0:
-		logsfound.sort(key=lambda f: os.path.getmtime(f))
-		if file: return logsfound[-1]
-		else:
-			filename    = open(logsfound[-1], 'r')
-			logtext     = filename.read()
-			filename.close()
-			return logtext
-	else:
-		return False
-
-def whiteList(do):
-	backup   = xbmc.translatePath(BACKUPLOCATION)
-	mybuilds = xbmc.translatePath(MYBUILDS)
-	if   do == 'edit':
-		fold = glob.glob(os.path.join(ADDONS, '*/'))
-		addonnames = []; addonids = []; addonfolds = []
-		for folder in sorted(fold, key = lambda x: x):
-			foldername = os.path.split(folder[:-1])[1]
-			if foldername in EXCLUDES: continue
-			elif foldername in DEFAULTPLUGINS: continue
-			elif foldername == 'packages': continue
-			xml = os.path.join(folder, 'addon.xml')
-			if os.path.exists(xml):
-				f       = open(xml)
-				a       = f.read()
-				f.close()
-				getid   = parseDOM(a, 'addon', ret='id')
-				getname = parseDOM(a, 'addon', ret='name')
-				addid   = foldername if len(getid) == 0 else getid[0]
-				title   = foldername if len(getname) == 0 else getname[0]
-				temp    = title.replace('[', '<').replace(']', '>')
-				temp    = re.sub('<[^<]+?>', '', temp)
-				addonnames.append(temp)
-				addonids.append(addid)
-				addonfolds.append(foldername)
-		fold2 = glob.glob(os.path.join(ADDOND, '*/'))
-		for folder in sorted(fold2, key = lambda x: x):
-			foldername = os.path.split(folder[:-1])[1]
-			if foldername in addonfolds: continue
-			if foldername in EXCLUDES: continue
-			xml  = os.path.join(ADDONS, foldername, 'addon.xml')
-			xml2 = os.path.join(XBMC, 'addons', foldername, 'addon.xml')
-			if os.path.exists(xml):
-				f       = open(xml)
-			elif os.path.exists(xml2):
-				f       = open(xml2)
-			else: continue
-			a       = f.read()
-			f.close()
-			getid   = parseDOM(a, 'addon', ret='id')
-			getname = parseDOM(a, 'addon', ret='name')
-			addid   = foldername if len(getid) == 0 else getid[0]
-			title   = foldername if len(getname) == 0 else getname[0]
-			temp    = title.replace('[', '<').replace(']', '>')
-			temp    = re.sub('<[^<]+?>', '', temp)
-			addonnames.append(temp)
-			addonids.append(addid)
-			addonfolds.append(foldername)
-		selected = []; choice = 0
-		tempaddonnames = ["-- Click here to Continue --"] + addonnames
-		currentWhite = whiteList('read')
-		for item in currentWhite:
-			log(str(item), xbmc.LOGDEBUG)
-			try: name, id, fold = item
-			except Exception as e: log(str(e))
-			if id in addonids:
-				pos = addonids.index(id)+1
-				selected.append(pos-1)
-				tempaddonnames[pos] = "[B][COLOR %s]%s[/COLOR][/B]" % (COLOR1, name)
-			else:
-				addonids.append(id)
-				addonnames.append(name)
-				tempaddonnames.append("[B][COLOR %s]%s[/COLOR][/B]" % (COLOR1, name))
-		choice = 1
-		while not choice in [-1, 0]:
-			choice = DIALOG.select("%s: Select the addons you wish to White List." % ADDONTITLE, tempaddonnames)
-			if choice == -1: break
-			elif choice == 0: break
-			else:
-				choice2 = (choice-1)
-				if choice2 in selected:
-					selected.remove(choice2)
-					tempaddonnames[choice] = addonnames[choice2]
-				else:
-					selected.append(choice2)
-					tempaddonnames[choice] = "[B][COLOR %s]%s[/COLOR][/B]" % (COLOR1, addonnames[choice2])
-		whitelist = []
-		if len(selected) > 0:
-			for addon in selected:
-				whitelist.append("['%s', '%s', '%s']" % (addonnames[addon], addonids[addon], addonfolds[addon]))
-			writing = '\n'.join(whitelist)
-			f = open(WHITELIST, 'w'); f.write(writing); f.close()
-		else:
-			try: os.remove(WHITELIST)
-			except: pass
-		LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]%s Addons in White List[/COLOR]" % (COLOR2, len(selected)))
-	elif do == 'read' :
-		white = []
-		if os.path.exists(WHITELIST):
-			f = open(WHITELIST)
-			a = f.read()
-			f.close()
-			lines = a.split('\n')
-			for item in lines:
-				try:
-					name, id, fold = eval(item)
-					white.append(eval(item))
-				except:
-					pass
-		return white
-	elif do == 'view' :
-		list = whiteList('read')
-		if len(list) > 0:
-			msg = "Here is a list of your whitelist items, these items(along with dependencies) will not be removed when preforming a fresh start or the userdata overwritten in a build install.[CR][CR]"
-			for item in list:
-				try: name, id, fold = item
-				except Exception as e: log(str(e))
-				msg += "[COLOR %s]%s[/COLOR] [COLOR %s]\"%s\"[/COLOR][CR]" % (COLOR1, name, COLOR2, id)
-			TextBox("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), msg)
-		else: LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]No items in White List[/COLOR]" % COLOR2)
-	elif do == 'import':
-		source = DIALOG.browse(1, '[COLOR %s]Select the whitelist file to import[/COLOR]' % COLOR2, 'files', '.txt', False, False, HOME)
-		log(str(source))
-		if not source.endswith('.txt'):
-			LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Import Cancelled![/COLOR]" % COLOR2)
-			return
-		f       = xbmcvfs.File(source)
-		a       = f.read()
-		f.close()
-		current = whiteList('read'); idList = []; count = 0
-		for item in current:
-			name, id, fold = item
-			idList.append(id)
-		lines = a.split('\n')
-		with open(WHITELIST, 'a') as f:
-			for item in lines:
-				try:
-					name, id, folder = eval(item)
-				except Exception as e:
-					log("Error Adding: '%s' / %s" % (item, str(e)), xbmc.LOGERROR)
-					continue
-				log("%s / %s / %s" % (name, id, folder), xbmc.LOGDEBUG)
-				if not id in idList:
-					count += 1
-					writing = "['%s', '%s', '%s']" % (name, id, folder)
-					if len(idList) + count > 1: writing = "\n%s" % writing
-					f.write(writing)
-			LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]%s Item(s) Added[/COLOR]" % (COLOR2, count))
-	elif do == 'export':
-		source = DIALOG.browse(3, '[COLOR %s]Select where you wish to export the whitelist file[/COLOR]' % COLOR2, 'files', '.txt', False, False, HOME)
-		log(str(source), xbmc.LOGDEBUG)
-		try:
-			xbmcvfs.copy(WHITELIST, os.path.join(source, 'whitelist.txt'))
-			DIALOG.ok(ADDONTITLE, "[COLOR %s]Whitelist has been exported to:[/COLOR]" % (COLOR2), "[COLOR %s]%s[/COLOR]" % (COLOR1, os.path.join(source, 'whitelist.txt')))
-			LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Whitelist Exported[/COLOR]" % (COLOR2))
-		except Exception as e:
-			log("Export Error: %s" % str(e), xbmc.LOGERROR)
-			if not DIALOG.yesno(ADDONTITLE, "[COLOR %s]The location you selected isnt writable would you like to select another one?[/COLOR]" % COLOR2, yeslabel="[B][COLOR springgreen]Change Location[/COLOR][/B]", nolabel="[B][COLOR red]No Cancel[/COLOR][/B]"):
-				LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Whitelist Export Cancelled[/COLOR]" % (COLOR2, e))
-			else:
-				whitelist(export)
-	elif do == 'clear':
-		if not DIALOG.yesno(ADDONTITLE, "[COLOR %s]Are you sure you want to clear your whitelist?" % COLOR2, "This process can't be undone.[/COLOR]", yeslabel="[B][COLOR springgreen]Yes Remove[/COLOR][/B]", nolabel="[B][COLOR red]No Cancel[/COLOR][/B]"):
-			LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Clear Whitelist Cancelled[/COLOR]" % (COLOR2))
-			return
-		try:
-			os.remove(WHITELIST)
-			LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Whitelist Cleared[/COLOR]" % (COLOR2))
-		except:
-			LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Error Clearing Whitelist![/COLOR]" % (COLOR2))
-
-def clearPackages(over=None):
-	if os.path.exists(PACKAGES):
-		try:
-			for root, dirs, files in os.walk(PACKAGES):
-				file_count = 0
-				file_count += len(files)
-				if file_count > 0:
-					size = convertSize(getSize(PACKAGES))
-					if over: yes=1
-					else: yes=DIALOG.yesno("[COLOR %s]Delete Package Files" % COLOR2, "[COLOR %s]%s[/COLOR] files found / [COLOR %s]%s[/COLOR] in size." % (COLOR1, str(file_count), COLOR1, size), "Do you want to delete them?[/COLOR]", nolabel='[B][COLOR red]Don\'t Clear[/COLOR][/B]',yeslabel='[B][COLOR springgreen]Clear Packages[/COLOR][/B]')
-					if yes:
-						for f in files: os.unlink(os.path.join(root, f))
-						for d in dirs: shutil.rmtree(os.path.join(root, d))
-						LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE),'[COLOR %s]Clear Packages: Success![/COLOR]' % COLOR2)
-				else: LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE),'[COLOR %s]Clear Packages: None Found![/COLOR]' % COLOR2)
-		except Exception as e:
-			LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE),'[COLOR %s]Clear Packages: Error![/COLOR]' % COLOR2)
-			log("Clear Packages Error: %s" % str(e), xbmc.LOGERROR)
-	else: LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE),'[COLOR %s]Clear Packages: None Found![/COLOR]' % COLOR2)
-
-def clearPackagesStartup():
-	start = datetime.utcnow() - timedelta(minutes=3)
-	file_count = 0; cleanupsize = 0
-	if os.path.exists(PACKAGES):
-		pack = os.listdir(PACKAGES)
-		pack.sort(key=lambda f: os.path.getmtime(os.path.join(PACKAGES, f)))
-		try:
-			for item in pack:
-				file = os.path.join(PACKAGES, item)
-				lastedit = datetime.utcfromtimestamp(os.path.getmtime(file))
-				if lastedit <= start:
-					if os.path.isfile(file):
-						file_count += 1
-						cleanupsize += os.path.getsize(file)
-						os.unlink(file)
-					elif os.path.isdir(file):
-						cleanupsize += getSize(file)
-						cleanfiles, cleanfold = cleanHouse(file)
-						file_count += cleanfiles + cleanfold
-						try:
-							shutil.rmtree(file)
-						except Exception as e:
-							log("Failed to remove %s: %s" % (file, str(e), xbmc.LOGERROR))
-			if file_count > 0: LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), '[COLOR %s]Clear Packages: Success: %s[/COLOR]' % (COLOR2, convertSize(cleanupsize)))
-			else: LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), '[COLOR %s]Clear Packages: None Found![/COLOR]' % COLOR2)
-		except Exception as e:
-			LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), '[COLOR %s]Clear Packages: Error![/COLOR]' % COLOR2)
-			log("Clear Packages Error: %s" % str(e), xbmc.LOGERROR)
-	else: LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), '[COLOR %s]Clear Packages: None Found![/COLOR]' % COLOR2)
-
-def clearArchive():
-	if os.path.exists(ARCHIVE_CACHE):
-		cleanHouse(ARCHIVE_CACHE)
-
-def clearFunctionCache():
-	if xbmc.getCondVisibility('System.HasAddon(script.module.resolveurl)'): xbmc.executebuiltin('RunPlugin(plugin://script.module.resolveurl/?mode=reset_cache)')
-	if xbmc.getCondVisibility('System.HasAddon(script.module.urlresolver)'): xbmc.executebuiltin('RunPlugin(plugin://script.module.urlresolver/?mode=reset_cache)')
-        
-def clearCache(over=None):
-	PROFILEADDONDATA = os.path.join(PROFILE,'addon_data')
-	dbfiles   = [
-		## TODO: Double check these
-		(os.path.join(ADDOND, 'plugin.video.placenta', 'cache.db')),
-		(os.path.join(ADDOND, 'plugin.video.placenta', 'cache.meta.5.db')),
-		(os.path.join(ADDOND, 'plugin.video.placenta', 'cache.providers.13.db')),
-		(os.path.join(ADDOND, 'plugin.video.gaia', 'cache.db')),
-		(os.path.join(ADDOND, 'plugin.video.gaia', 'meta.db')),
-		(os.path.join(ADDOND, 'plugin.video.exodusredux', 'cache.db')),
-		(os.path.join(ADDOND, 'plugin.video.exodusredux', 'meta.5.db')),
-		(os.path.join(ADDOND, 'plugin.video.exodusredux', 'cache.providers.13.db')),
-		(os.path.join(ADDOND, 'plugin.video.overeasy', 'cache.db')),
-		(os.path.join(ADDOND, 'plugin.video.overeasy', 'meta.5.db')),
-		(os.path.join(ADDOND, 'plugin.video.overeasy', 'cache.providers.13.db')),
-		(os.path.join(ADDOND, 'plugin.video.yoda', 'cache.db')),
-		(os.path.join(ADDOND, 'plugin.video.yoda', 'meta.5.db')),
-		(os.path.join(ADDOND, 'plugin.video.yoda', 'cache.providers.13.db')),
-		(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'cache.db')),
-		(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'meta.5.db')),
-		(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'cache.providers.13.db')),
-		(os.path.join(ADDOND, 'plugin.video.seren', 'cache.db')),
-		(os.path.join(ADDOND, 'plugin.video.seren', 'torrentScrape.db')),
-		(os.path.join(ADDOND, 'script.module.simplecache', 'simplecache.db'))]
-
-	cachelist = [
-		(PROFILEADDONDATA),
-		(ADDOND),
-		(os.path.join(HOME,'cache')),
-		(os.path.join(HOME,'temp')),
-		(os.path.join('/private/var/mobile/Library/Caches/AppleTV/Video/', 'Other')),
-		(os.path.join('/private/var/mobile/Library/Caches/AppleTV/Video/', 'LocalAndRental')),
-		(os.path.join(ADDOND,'script.module.simple.downloader')),
-		(os.path.join(ADDOND,'plugin.video.itv','Images')),
-		(os.path.join(PROFILEADDONDATA,'script.module.simple.downloader')),
-		(os.path.join(PROFILEADDONDATA,'plugin.video.itv','Images')),
-		(os.path.join(ADDOND, 'script.extendedinfo', 'images')),
-		(os.path.join(ADDOND, 'script.extendedinfo', 'TheMovieDB')),
-		(os.path.join(ADDOND, 'script.extendedinfo', 'YouTube')),
-		(os.path.join(ADDOND, 'plugin.program.autocompletion', 'Google')),
-		(os.path.join(ADDOND, 'plugin.program.autocompletion', 'Bing')),
-		(os.path.join(ADDOND, 'plugin.video.openmeta', '.storage'))]
-
-	delfiles = 0
-	excludes = ['meta_cache', 'archive_cache']
-	for item in cachelist:
-		if not os.path.exists(item): continue
-		if not item in [ADDOND, PROFILEADDONDATA]:
-			for root, dirs, files in os.walk(item):
-				dirs[:] = [d for d in dirs if d not in excludes]
-				file_count = 0
-				file_count += len(files)
-				if file_count > 0:
-					for f in files:
-						if not f in LOGFILES:
-							try:
-								os.unlink(os.path.join(root, f))
-								log("[Wiped] %s" % os.path.join(root, f), xbmc.LOGNOTICE)
-								delfiles += 1
-							except:
-								pass
-						else: log('Ignore Log File: %s' % f, xbmc.LOGNOTICE)
-					for d in dirs:
-						try:
-							shutil.rmtree(os.path.join(root, d))
-							delfiles += 1
-							log("[Success] cleared %s files from %s" % (str(file_count), os.path.join(item,d)), xbmc.LOGNOTICE)
-						except:
-							log("[Failed] to wipe cache in: %s" % os.path.join(item,d), xbmc.LOGNOTICE)
-		else:
-			for root, dirs, files in os.walk(item):
-				dirs[:] = [d for d in dirs if d not in excludes]
-				for d in dirs:
-					if not str(d.lower()).find('cache') == -1:
-						try:
-							shutil.rmtree(os.path.join(root, d))
-							delfiles += 1
-							log("[Success] wiped %s " % os.path.join(root,d), xbmc.LOGNOTICE)
-						except:
-							log("[Failed] to wipe cache in: %s" % os.path.join(item,d), xbmc.LOGNOTICE)
-	if INCLUDEVIDEO == 'true' and over is None:
-		files = []
-		if INCLUDEALL == 'true': files = dbfiles
-		else:
-			## TODO: Double check these
-			if INCLUDEPLACENTA == 'true':
-				files.append(os.path.join(ADDOND, 'plugin.video.placenta', 'cache.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.placenta', 'meta.5.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.placenta', 'providers.13.db'))
-			if INCLUDEEXODUSREDUX == 'true':
-				files.append(os.path.join(ADDOND, 'plugin.video.exodusredux', 'cache.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.exodusredux', 'meta.5.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.exodusredux', 'providers.13.db'))
-			if INCLUDEYODA == 'true':
-				files.append(os.path.join(ADDOND, 'plugin.video.yoda', 'cache.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.yoda', 'meta.5.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.yoda', 'providers.13.db'))
-			if INCLUDEVENOM == 'true':
-				files.append(os.path.join(ADDOND, 'plugin.video.venom', 'cache.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.venom', 'meta.5.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.venom', 'providers.13.db'))
-			if INCLUDESCRUBS == 'true':
-				files.append(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'cache.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'meta.5.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'providers.13.db'))
-			if INCLUDEOVEREASY == 'true':
-				files.append(os.path.join(ADDOND, 'plugin.video.overeasy', 'cache.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.overeasy', 'meta.5.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.overeasy', 'providers.13.db'))
-			if INCLUDEGAIA == 'true':
-				files.append(os.path.join(ADDOND, 'plugin.video.gaia', 'cache.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.gaia', 'meta.db'))
-			if INCLUDESEREN == 'true':
-				files.append(os.path.join(ADDOND, 'plugin.video.seren', 'cache.db'))
-				files.append(os.path.join(ADDOND, 'plugin.video.seren', 'torrentScrape.db'))
-		if len(files) > 0:
-			for item in files:
-				if os.path.exists(item):
-					delfiles += 1
-					try:
-						textdb = database.connect(item)
-						textexe = textdb.cursor()
-					except Exception as e:
-						log("DB Connection error: %s" % str(e), xbmc.LOGERROR)
-						continue
-					if 'Database' in item:
-						try:
-							textexe.execute("DELETE FROM url_cache")
-							textexe.execute("VACUUM")
-							textdb.commit()
-							textexe.close()
-							log("[Success] wiped %s" % item, xbmc.LOGNOTICE)
-						except Exception as e:
-							log("[Failed] wiped %s: %s" % (item, str(e)), xbmc.LOGNOTICE)
-					else:
-						textexe.execute("SELECT name FROM sqlite_master WHERE type = 'table'")
-						for table in textexe.fetchall():
-							try:
-								textexe.execute("DELETE FROM %s" % table[0])
-								textexe.execute("VACUUM")
-								textdb.commit()
-								log("[Success] wiped %s in %s" % (table[0], item), xbmc.LOGNOTICE)
-							except Exception as e:
-								try:
-									log("[Failed] wiped %s in %s: %s" % (table[0], item, str(e)), xbmc.LOGNOTICE)
-								except:
-									pass
-						textexe.close()
-		else: log("Clear Cache: Clear Video Cache Not Enabled", xbmc.LOGNOTICE)
-	LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), '[COLOR %s]Clear Cache: Removed %s Files[/COLOR]' % (COLOR2, delfiles))
-
+# MIGRATION: move into check
 def checkSources():
 	if not os.path.exists(SOURCES):
 		LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]No Sources.xml File Found![/COLOR]" % COLOR2)
@@ -2567,13 +1164,7 @@ def checkRepos():
 ####KILL XBMC ###############
 #####THANKS BRACKETS ########
 
-def killxbmc(over=None):
-	if over: choice = 1
-	else: choice = DIALOG.yesno('Force Close Kodi', '[COLOR %s]You are about to close Kodi' % COLOR2, 'Would you like to continue?[/COLOR]', nolabel='[B][COLOR red] No Cancel[/COLOR][/B]',yeslabel='[B][COLOR springgreen]Force Close Kodi[/COLOR][/B]')
-	if choice == 1:
-		log("Force Closing Kodi: Platform[%s]" % str(platform()), xbmc.LOGNOTICE)
-		os._exit(1)
-
+# MIGRATION: move into tools
 def redoThumbs():
 	if not os.path.exists(THUMBS): os.makedirs(THUMBS)
 	thumbfolders = '0123456789abcdef'
@@ -2602,93 +1193,7 @@ def reloadFix(default=None):
 	forceUpdate()
 	ebi("ReloadSkin()")
 
-def skinToDefault(title):
-	if not currSkin() in ['skin.confluence', 'skin.estuary']:
-		skin = 'skin.confluence' if KODIV < 17 else 'skin.estuary'
-	return swapSkins(skin, title)
-
-def swapSkins(goto, title="Error"):
-	skin.swap_skins(goto)
-	x = 0
-	xbmc.sleep(1000)
-	while not xbmc.getCondVisibility("Window.isVisible(yesnodialog)") and x < 150:
-		x += 1
-		xbmc.sleep(100)
-		#ebi('SendAction(Select)')
-
-	if xbmc.getCondVisibility("Window.isVisible(yesnodialog)"):
-		ebi('SendClick(11)')
-	else: LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), '[COLOR %s]%s: Skin Swap Timed Out![/COLOR]' % (COLOR2, title)); return False
-	return True
-
-def mediaCenter():
-	if str(HOME).lower().find('kodi'):
-		return 'Kodi'
-	elif str(HOME).lower().find('spmc'):
-		return 'SPMC'
-	else:
-		return 'Unknown Fork'
-
-def kodi17Fix():
-	addonlist = glob.glob(os.path.join(ADDONS, '*/'))
-	disabledAddons = []
-	for folder in sorted(addonlist, key = lambda x: x):
-		addonxml = os.path.join(folder, 'addon.xml')
-		if os.path.exists(addonxml):
-			fold   = folder.replace(ADDONS, '')[1:-1]
-			f      = open(addonxml)
-			a      = f.read()
-			aid    = parseDOM(a, 'addon', ret='id')
-			f.close()
-			try:
-				if len(aid) > 0: addonid = aid[0]
-				else: addonid = fold
-				add    = xbmcaddon.Addon(id=addonid)
-			except:
-				try:
-					log("%s was disabled" % aid[0], xbmc.LOGDEBUG)
-					disabledAddons.append(addonid)
-				except:
-					log("Unabled to enable: %s" % folder, xbmc.LOGERROR)
-	if len(disabledAddons) > 0:
-		addonDatabase(disabledAddons, 1, True)
-		LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Enabling Addons Complete![/COLOR]" % COLOR2)
-	forceUpdate()
-	ebi("ReloadSkin()")
-
-def addonDatabase(addon=None, state=1, array=False):
-	dbfile = latestDB('Addons')
-	dbfile = os.path.join(DATABASE, dbfile)
-	installedtime = str(datetime.now())[:-7]
-	if os.path.exists(dbfile):
-		try:
-			textdb = database.connect(dbfile)
-			textexe = textdb.cursor()
-		except Exception as e:
-			log("DB Connection Error: %s" % str(e), xbmc.LOGERROR)
-			return False
-	else: return False
-	if state == 2:
-		try:
-			textexe.execute("DELETE FROM installed WHERE addonID = ?", (addon,))
-			textdb.commit()
-			textexe.close()
-		except:
-			log("Error Removing %s from DB" % addon)
-		return True
-	try:
-		if not array:
-			textexe.execute('INSERT or IGNORE into installed (addonID , enabled, installDate) VALUES (?,?,?)', (addon, state, installedtime,))
-			textexe.execute('UPDATE installed SET enabled = ? WHERE addonID = ? ', (state, addon,))
-		else:
-			for item in addon:
-				textexe.execute('INSERT or IGNORE into installed (addonID , enabled, installDate) VALUES (?,?,?)', (item, state, installedtime,))
-				textexe.execute('UPDATE installed SET enabled = ? WHERE addonID = ? ', (state, item,))
-		textdb.commit()
-		textexe.close()
-	except:
-		log("Erroring enabling addon: %s" % addon)
-
+# MIGRATION: move into tools
 def data_type(str):
 	datatype = type(str).__name__
 	return datatype
@@ -2729,216 +1234,11 @@ def net_info():
 ##########################
 ### PURGE DATABASE #######
 ##########################
-def purgeDb(name):
-	#dbfile = name.replace('.db','').translate(None, digits)
-	#if dbfile not in ['Addons', 'ADSP', 'Epg', 'MyMusic', 'MyVideos', 'Textures', 'TV', 'ViewModes']: return False
-	#textfile = os.path.join(DATABASE, name)
-	log('Purging DB %s.' % name, xbmc.LOGNOTICE)
-	if os.path.exists(name):
-		try:
-			textdb = database.connect(name)
-			textexe = textdb.cursor()
-		except Exception as e:
-			log("DB Connection Error: %s" % str(e), xbmc.LOGERROR)
-			return False
-	else: log('%s not found.' % name, xbmc.LOGERROR); return False
-	textexe.execute("SELECT name FROM sqlite_master WHERE type = 'table'")
-	for table in textexe.fetchall():
-		if table[0] == 'version':
-			log('Data from table `%s` skipped.' % table[0], xbmc.LOGDEBUG)
-		else:
-			try:
-				textexe.execute("DELETE FROM %s" % table[0])
-				textdb.commit()
-				log('Data from table `%s` cleared.' % table[0], xbmc.LOGDEBUG)
-			except Exception as e: log("DB Remove Table `%s` Error: %s" % (table[0], str(e)), xbmc.LOGERROR)
-	textexe.close()
-	log('%s DB Purging Complete.' % name, xbmc.LOGNOTICE)
-	show = name.replace('\\', '/').split('/')
-	LogNotify("[COLOR %s]Purge Database[/COLOR]" % COLOR1, "[COLOR %s]%s Complete[/COLOR]" % (COLOR2, show[len(show)-1]))
 
-def oldThumbs():
-	dbfile = os.path.join(DATABASE, latestDB('Textures'))
-	use    = 30
-	week   = TODAY - timedelta(days=7)
-	ids    = []
-	images = []
-	size   = 0
-	if os.path.exists(dbfile):
-		try:
-			textdb = database.connect(dbfile)
-			textexe = textdb.cursor()
-		except Exception as e:
-			log("DB Connection Error: %s" % str(e), xbmc.LOGERROR)
-			return False
-	else: log('%s not found.' % dbfile, xbmc.LOGERROR); return False
-	textexe.execute("SELECT idtexture FROM sizes WHERE usecount < ? AND lastusetime < ?", (use, str(week)))
-	found = textexe.fetchall()
-	for rows in found:
-		idfound = rows[0]
-		ids.append(idfound)
-		textexe.execute("SELECT cachedurl FROM texture WHERE id = ?", (idfound, ))
-		found2 = textexe.fetchall()
-		for rows2 in found2:
-			images.append(rows2[0])
-	log("%s total thumbs cleaned up." % str(len(images)), xbmc.LOGNOTICE)
-	for id in ids:
-		textexe.execute("DELETE FROM sizes   WHERE idtexture = ?", (id, ))
-		textexe.execute("DELETE FROM texture WHERE id        = ?", (id, ))
-	textexe.execute("VACUUM")
-	textdb.commit()
-	textexe.close()
-	for image in images:
-		path = os.path.join(THUMBS, image)
-		try:
-			imagesize = os.path.getsize(path)
-			os.remove(path)
-			size += imagesize
-		except:
-			pass
-	removed = convertSize(size)
-	if len(images) > 0: LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), '[COLOR %s]Clear Thumbs: %s Files / %s MB[/COLOR]!' % (COLOR2, str(len(images)), removed))
-	else: LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), '[COLOR %s]Clear Thumbs: None Found![/COLOR]' % COLOR2)
-
-def parseDOM(html, name=u"", attrs={}, ret=False):
-	# Copyright (C) 2010-2011 Tobias Ussing And Henrik Mosgaard Jensen
-
-	if isinstance(html, str):
-		try:
-			html = [html.decode("utf-8")]
-		except:
-			html = [html]
-	elif isinstance(html, unicode):
-		html = [html]
-	elif not isinstance(html, list):
-		return u""
-
-	if not name.strip():
-		return u""
-
-	ret_lst = []
-	for item in html:
-		temp_item = re.compile('(<[^>]*?\n[^>]*?>)').findall(item)
-		for match in temp_item:
-			item = item.replace(match, match.replace("\n", " "))
-
-		lst = []
-		for key in attrs:
-			lst2 = re.compile('(<' + name + '[^>]*?(?:' + key + '=[\'"]' + attrs[key] + '[\'"].*?>))', re.M | re.S).findall(item)
-			if len(lst2) == 0 and attrs[key].find(" ") == -1:
-				lst2 = re.compile('(<' + name + '[^>]*?(?:' + key + '=' + attrs[key] + '.*?>))', re.M | re.S).findall(item)
-
-			if len(lst) == 0:
-				lst = lst2
-				lst2 = []
-			else:
-				test = range(len(lst))
-				test.reverse()
-				for i in test:
-					if not lst[i] in lst2:
-						del(lst[i])
-
-		if len(lst) == 0 and attrs == {}:
-			lst = re.compile('(<' + name + '>)', re.M | re.S).findall(item)
-			if len(lst) == 0:
-				lst = re.compile('(<' + name + ' .*?>)', re.M | re.S).findall(item)
-
-		if isinstance(ret, str):
-			lst2 = []
-			for match in lst:
-				attr_lst = re.compile('<' + name + '.*?' + ret + '=([\'"].[^>]*?[\'"])>', re.M | re.S).findall(match)
-				if len(attr_lst) == 0:
-					attr_lst = re.compile('<' + name + '.*?' + ret + '=(.[^>]*?)>', re.M | re.S).findall(match)
-				for tmp in attr_lst:
-					cont_char = tmp[0]
-					if cont_char in "'\"":
-						if tmp.find('=' + cont_char, tmp.find(cont_char, 1)) > -1:
-							tmp = tmp[:tmp.find('=' + cont_char, tmp.find(cont_char, 1))]
-
-						if tmp.rfind(cont_char, 1) > -1:
-							tmp = tmp[1:tmp.rfind(cont_char)]
-					else:
-						if tmp.find(" ") > 0:
-							tmp = tmp[:tmp.find(" ")]
-						elif tmp.find("/") > 0:
-							tmp = tmp[:tmp.find("/")]
-						elif tmp.find(">") > 0:
-							tmp = tmp[:tmp.find(">")]
-
-					lst2.append(tmp.strip())
-			lst = lst2
-		else:
-			lst2 = []
-			for match in lst:
-				endstr = u"</" + name
-
-				start = item.find(match)
-				end = item.find(endstr, start)
-				pos = item.find("<" + name, start + 1 )
-
-				while pos < end and pos != -1:
-					tend = item.find(endstr, end + len(endstr))
-					if tend != -1:
-						end = tend
-					pos = item.find("<" + name, pos + 1)
-
-				if start == -1 and end == -1:
-					temp = u""
-				elif start > -1 and end > -1:
-					temp = item[start + len(match):end]
-				elif end > -1:
-					temp = item[:end]
-				elif start > -1:
-					temp = item[start + len(match):]
-
-				if ret:
-					endstr = item[end:item.find(">", item.find(endstr)) + 1]
-					temp = match + temp + endstr
-
-				item = item[item.find(temp, item.find(match)) + len(temp):]
-				lst2.append(temp)
-			lst = lst2
-		ret_lst += lst
-
-	return ret_lst
-
-
+# MIGRATION: move into tools?
 def replaceHTMLCodes(txt):
 	txt = re.sub("(&#[0-9]+)([^;^0-9]+)", "\\1;\\2", txt)
 	txt = HTMLParser.HTMLParser().unescape(txt)
 	txt = txt.replace("&quot;", "\"")
 	txt = txt.replace("&amp;", "&")
 	return txt
-
-def copytree(src, dst, symlinks=False, ignore=None):
-	names = os.listdir(src)
-	if ignore is not None:
-		ignored_names = ignore(src, names)
-	else:
-		ignored_names = set()
-	if not os.path.isdir(dst):
-		os.makedirs(dst)
-	errors = []
-	for name in names:
-		if name in ignored_names:
-			continue
-		srcname = os.path.join(src, name)
-		dstname = os.path.join(dst, name)
-		try:
-			if symlinks and os.path.islink(srcname):
-				linkto = os.readlink(srcname)
-				os.symlink(linkto, dstname)
-			elif os.path.isdir(srcname):
-				copytree(srcname, dstname, symlinks, ignore)
-			else:
-				copy2(srcname, dstname)
-		except Error as err:
-			errors.extend(err.args[0])
-		except EnvironmentError as why:
-			errors.append((srcname, dstname, str(why)))
-	try:
-		copystat(src, dst)
-	except OSError as why:
-		errors.extend((src, dst, str(why)))
-	if errors:
-		raise Error

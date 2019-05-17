@@ -29,6 +29,32 @@ ACTION_MOUSE_LEFT_CLICK = 100
 ACTION_MOUSE_LONG_CLICK = 108
 
 
+def sep(middle=''):
+    char = CONFIG.SPACER
+    ret = char * 40
+    if not middle == '':
+        middle = '[ {0} ]'.format(middle)
+        fluff = int((40 - len(middle))/2)
+        ret = "{0}{1}{2}".format(ret[:fluff], middle, ret[:fluff+2])
+    return ret[:40]
+
+
+def get_artwork(file):
+    if file == 'button':
+        return os.path.join(CONFIG.SKIN, 'Button', 'button-focus_lightblue.png'),\
+               os.path.join(CONFIG.SKIN, 'Button', 'button-focus_grey.png')
+    elif file == 'radio' :
+        return os.path.join(CONFIG.SKIN, 'RadioButton', 'MenuItemFO.png'),\
+               os.path.join(CONFIG.SKIN, 'RadioButton', 'MenuItemNF.png'),\
+               os.path.join(CONFIG.SKIN, 'RadioButton', 'radiobutton-focus.png'),\
+               os.path.join(CONFIG.SKIN, 'RadioButton', 'radiobutton-nofocus.png')
+    elif file == 'slider':
+        return os.path.join(CONFIG.SKIN, 'Slider', 'osd_slider_nib.png'),\
+               os.path.join(CONFIG.SKIN, 'Slider', 'osd_slider_nibNF.png'),\
+               os.path.join(CONFIG.SKIN, 'Slider', 'slider1.png'),\
+               os.path.join(CONFIG.SKIN, 'Slider', 'slider1.png')
+
+
 def show_text_box(title, msg):
     class TextBox(xbmcgui.WindowXMLDialog):
         def onInit(self):
@@ -54,22 +80,6 @@ def show_text_box(title, msg):
     tb = TextBox("Textbox.xml", CONFIG.PATH, 'DefaultSkin', title=title, msg=msg)
     tb.doModal()
     del tb
-
-
-def get_artwork(file):
-    if file == 'button':
-        return os.path.join(CONFIG.SKIN, 'Button', 'button-focus_lightblue.png'),\
-               os.path.join(CONFIG.SKIN, 'Button', 'button-focus_grey.png')
-    elif file == 'radio' :
-        return os.path.join(CONFIG.SKIN, 'RadioButton', 'MenuItemFO.png'),\
-               os.path.join(CONFIG.SKIN, 'RadioButton', 'MenuItemNF.png'),\
-               os.path.join(CONFIG.SKIN, 'RadioButton', 'radiobutton-focus.png'),\
-               os.path.join(CONFIG.SKIN, 'RadioButton', 'radiobutton-nofocus.png')
-    elif file == 'slider':
-        return os.path.join(CONFIG.SKIN, 'Slider', 'osd_slider_nib.png'),\
-               os.path.join(CONFIG.SKIN, 'Slider', 'osd_slider_nibNF.png'),\
-               os.path.join(CONFIG.SKIN, 'Slider', 'slider1.png'),\
-               os.path.join(CONFIG.SKIN, 'Slider', 'slider1.png')
 
 
 def show_contact(msg=""):
