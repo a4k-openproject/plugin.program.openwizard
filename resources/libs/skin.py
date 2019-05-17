@@ -87,6 +87,7 @@ def switch_to_skin(goto, title="Error"):
     if xbmc.getCondVisibility("Window.isVisible(yesnodialog)"):
         xbmc.executebuiltin('SendClick(11)')
     else:
+        from resources.libs import logging
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            '[COLOR {0}]{1}: Skin Swap Timed Out![/COLOR]'.format(CONFIG.COLOR2, title))
         return False

@@ -10,7 +10,6 @@ from datetime import timedelta
 import sqlite3 as database
 
 from resources.libs.config import CONFIG
-from resources.libs import db
 from resources.libs import logging
 from resources.libs import tools
 
@@ -366,3 +365,33 @@ def old_thumbs():
     else:
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            '[COLOR {0}]Clear Thumbs: None Found![/COLOR]'.format(CONFIG.COLOR2))
+
+
+def clear_crash():
+    files = []
+    for file in glob.glob(os.path.join(CONFIG.LOGPATH, '*crashlog*.*')):
+        files.append(file)
+    if len(files) > 0:
+        from resources.libs import gui
+
+        if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                            '[COLOR {0}]Would you like to delete the Crash logs?'.format(CONFIG.COLOR2),
+                            '[COLOR {0}]{1}[/COLOR] Files Found[/COLOR]'.format(CONFIG.COLOR1, len(files)),
+                            yeslabel="[B][COLOR springgreen]Remove Logs[/COLOR][/B]",
+                            nolabel="[B][COLOR red]Keep Logs[/COLOR][/B]"):
+            for f in files:
+                os.remove(f)
+            logging.log_notify('[COLOR 0}]Clear Crash Logs[/COLOR]'.format(CONFIG.COLOR1),
+                               '[COLOR {0}]{1} Crash Logs Removed[/COLOR]'.format(CONFIG.COLOR2, len(files)))
+        else:
+            logging.log_notify('[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                               '[COLOR {0}]Clear Crash Logs Cancelled[/COLOR]'.format(CONFIG.COLOR2))
+    else:
+        logging.log_notify('[COLOR {0}]Clear Crash Logs[/COLOR]'.format(CONFIG.COLOR1),
+                           '[COLOR {0}]No Crash Logs Found[/COLOR]'.format(CONFIG.COLOR2))
+
+
+def force_text():
+    tools.clean_house(CONFIG.TEXTCACHE)
+    logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                       '[COLOR {0}]Text Files Flushed![/COLOR]'.format(CONFIG.COLOR2))

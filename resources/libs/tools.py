@@ -313,6 +313,42 @@ def platform():
 def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
+
+def str_test(teststr):
+    a = (teststr.lower()).split(' ')
+    if 'test' in a:
+        return True
+    else:
+        return False
+
+
+def kill_kodi(over=None):
+    if over:
+        choice = 1
+    else:
+        from resources.libs import gui
+        choice = gui.DIALOG.yesno('Force Close Kodi',
+                                  '[COLOR {0}]You are about to close Kodi'.format(CONFIG.COLOR2),
+                                  'Would you like to continue?[/COLOR]',
+                                  nolabel='[B][COLOR red] No Cancel[/COLOR][/B]',
+                                  yeslabel='[B][COLOR springgreen]Force Close Kodi[/COLOR][/B]')
+    if choice == 1:
+        from resources.libs import logging
+        logging.log("Force Closing Kodi: Platform[{0}]".format(str(platform())), level=xbmc.LOGNOTICE)
+        os._exit(1)
+
+
+def reload_profile(profile=None):
+    if profile is None:
+        xbmc.executebuiltin('LoadProfile(Master user)')
+    else:
+        xbmc.executebuiltin('LoadProfile({0})'.format(profile))
+
+
+def chunks(s, n):
+    for start in range(0, len(s), n):
+        yield s[start:start+n]
+
 #########################
 #  Add-on Functions     #
 #########################
