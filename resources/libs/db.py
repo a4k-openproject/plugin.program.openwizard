@@ -159,3 +159,151 @@ def toggle_addon(id, value, over=None):
                       "[COLOR {0}]Error {1} [COLOR {2}]{3}[/COLOR]".format(CONFIG.COLOR2, v, CONFIG.COLOR1, id),
                       "Check to make sure the add-on list is up to date and try again.[/COLOR]")
         update.force_update()
+
+
+def toggle_dependency(name, dp=None):
+    from resources.libs import tools
+
+    dep = os.path.join(CONFIG.ADDONS, name, 'addon.xml')
+    if os.path.exists(dep):
+        match = tools.parse_dom(tools.read_from_file(dep), 'import', ret='addon')
+        for depends in match:
+            if 'xbmc.python' not in depends:
+                dependspath = os.path.join(CONFIG.ADDONS, depends)
+                if dp is not None:
+                    dp.update("",
+                              "Checking Dependency [COLOR yellow]{0}[/COLOR] for [COLOR yellow]{1}[/COLOR]".format(depends, name),
+                              "")
+                if os.path.exists(dependspath):
+                    toggle_addon(name, 'true')
+            xbmc.sleep(100)
+
+
+# NOT CURRENTLY IN USE, BROKEN DUE TO DEAD NaN LINK
+def toggle_adult():
+    from resources.libs import gui
+    from resources.libs import tools
+
+    do = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                          "[COLOR {0}]Would you like to [COLOR {1}]Enable[/COLOR] or [COLOR {2}]Disable[/COLOR] all Adult add-ons?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1),
+                          yeslabel="[B][COLOR springgreen]Enable[/COLOR][/B]",
+                          nolabel="[B][COLOR red]Disable[/COLOR][/B]")
+    state = 'true' if do == 1 else 'false'
+    goto = 'Enabling' if do == 1 else 'Disabling'
+    link = tools.open_url('http://noobsandnerds.com/TI/AddonPortal/adult.php').replace('\n', '').replace('\r', '').replace('\t', '')
+    list = re.compile('i="(.+?)"').findall(link)
+    found = []
+    for item in list:
+        fold = os.path.join(CONFIG.ADDONS, item)
+        if os.path.exists(fold):
+            found.append(item)
+            toggle_addon(item, state, True)
+            logging.log("[Toggle Adult] {0} {1}".format(goto, item), level=xbmc.LOGNOTICE)
+    if len(found) > 0:
+        if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                            "[COLOR {0}]Would you like to view a list of the add-ons that where {1}?[/COLOR]".format(CONFIG.COLOR2, goto.replace('ing', 'ed')),
+                            yeslabel="[B][COLOR springgreen]View List[/COLOR][/B]",
+                            nolabel="[B][COLOR red]Cancel[/COLOR][/B]"):
+            editlist = '[CR]'.join(found)
+            gui.show_text_box(CONFIG.ADDONTITLE,
+                              "[COLOR {0}]Here are a list of the add-ons that where {1} for Adult Content:[/COLOR][CR][CR][COLOR {2}]{3}[/COLOR]".format(CONFIG.COLOR1, goto.replace('ing', 'ed'), CONFIG.COLOR2, editlist))
+        else:
+            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                               "[COLOR {0}[COLOR {1}]{2}[/COLOR] Adult Addons {3}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, count, goto.replace('ing', 'ed')))
+        from resources.libs import update
+        update.force_update(True)
+    else:
+        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                           "[COLOR {0}]No Adult Addons Found[/COLOR]".format(CONFIG.COLOR2))
+
+
+def create_temp(plugin):
+    from resources.libs import tools
+
+    temp = os.path.join(CONFIG.PLUGIN, 'resources', 'tempaddon.xml')
+    r = tools.read_from_file(temp)
+    plugdir = os.path.join(CONFIG.ADDONS, plugin)
+    if not os.path.exists(plugdir):
+        os.makedirs(plugdir)
+
+    tools.write_to_file(os.path.join(plugdir, 'addon.xml'), r.replace('testid', plugin).replace('testversion', '0.0.1'))
+    logging.log("{0}: wrote addon.xml".format(plugin))
+
+
+def fix_metas():
+    from resources.libs import tools
+
+    idlist = []
+    for item in idlist:
+        fold = os.path.join(CONFIG.ADDOND, item)
+        if os.path.exists(fold):
+            storage = os.path.join(fold, '.storage')
+            if os.path.exists(storage):
+                tools.clean_house(storage)
+                tools.remove_folder(storage)
+
+
+def hide_password():
+    from resources.libs import gui
+    from resources.libs import tools
+    from resources.libs import logging
+
+    if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                        "[COLOR {0}]Would you like to [COLOR {1}]hide[/COLOR] all passwords when typing in the add-on settings menus?[/COLOR]".format(CONFIG.COLOR2),
+                        yeslabel="[B][COLOR springgreen]Hide Passwords[/COLOR][/B]",
+                        nolabel="[B][COLOR red]No Cancel[/COLOR][/B]"):
+        count = 0
+        for folder in glob.glob(os.path.join(CONFIG.ADDONS, '*/')):
+            sett = os.path.join(folder, 'resources', 'settings.xml')
+            if os.path.exists(sett):
+                f = tools.read_from_file(sett)
+                match = tools.parse_dom(f, 'addon', ret='id')
+                for line in match:
+                    if 'pass' in line:
+                        if 'option="hidden"' not in line:
+                            try:
+                                change = line.replace('/', 'option="hidden" /')
+                                f.replace(line, change)
+                                count += 1
+                                logging.log("[Hide Passwords] found in {0} on {1}".format(sett.replace(CONFIG.HOME, ''), line))
+                            except:
+                                pass
+                tools.write_to_file(sett, f)
+        logging.log_notify("[COLOR {0}]Hide Passwords[/COLOR]".format(CONFIG.COLOR1),
+                           "[COLOR {0}]{1} items changed[/COLOR]".format(CONFIG.COLOR2, count))
+        logging.log("[Hide Passwords] {0} items changed".format(count), level=xbmc.LOGNOTICE)
+    else:
+        logging.log("[Hide Passwords] Cancelled", level=xbmc.LOGNOTICE)
+
+
+def unhide_password():
+    from resources.libs import gui
+    from resources.libs import tools
+    from resources.libs import logging
+
+    if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                        "[COLOR {0}]Would you like to [COLOR {1}]unhide[/COLOR] all passwords when typing in the add-on settings menus?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1),
+                        yeslabel="[B][COLOR springgreen]Unhide Passwords[/COLOR][/B]",
+                        nolabel="[B][COLOR red]No Cancel[/COLOR][/B]"):
+        count = 0
+        for folder in glob.glob(os.path.join(CONFIG.ADDONS, '*/')):
+            sett = os.path.join(folder, 'resources', 'settings.xml')
+            if os.path.exists(sett):
+                f = tools.read_from_file(sett)
+                match = tools.parse_dom(f, 'addon', ret='id')
+                for line in match:
+                    if 'pass' in line:
+                        if 'option="hidden"' in line:
+                            try:
+                                change = line.replace('option="hidden"', '')
+                                f.replace(line, change)
+                                count += 1
+                                logging.log("[Unhide Passwords] found in {0} on {1}".format(sett.replace(CONFIG.HOME, ''), line))
+                            except:
+                                pass
+                tools.write_to_file(sett, f)
+        logging.log_notify("[COLOR {0}]Unhide Passwords[/COLOR]".format(CONFIG.COLOR1),
+                           "[COLOR {0}]{1} items changed[/COLOR]".format(CONFIG.COLOR2, count))
+        logging.log("[Unhide Passwords] {0} items changed".format(count), level=xbmc.LOGNOTICE)
+    else:
+        logging.log("[Unhide Passwords] Cancelled", level=xbmc.LOGNOTICE)

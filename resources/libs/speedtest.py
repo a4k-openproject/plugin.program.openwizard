@@ -625,6 +625,40 @@ def speedtest(
             ping,
             curserver,
             )
+
+def net_info():
+    import json
+    infoLabel = ['Network.IPAddress',
+                 'Network.MacAddress',]
+    data      = []; x = 0
+    for info in infoLabel:
+        temp = getInfo(info)
+        y = 0
+        while temp == "Busy" and y < 10:
+            temp = getInfo(info); y += 1; log("%s sleep %s" % (info, str(y))); xbmc.sleep(200)
+        data.append(temp)
+        x += 1
+    try:
+        url = 'http://extreme-ip-lookup.com/json/'
+        req = urllib2.Request(url)
+        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+        response = urllib2.urlopen(req)
+        geo = json.load(response)
+    except:
+        url = 'http://ip-api.com/json'
+        req = urllib2.Request(url)
+        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+        response = urllib2.urlopen(req)
+        geo = json.load(response)
+    mac = data[1]
+    inter_ip = data[0]
+    ip=geo['query']
+    isp=geo['org']
+    city = geo['city']
+    country=geo['country']
+    state=geo['region']
+    return mac,inter_ip,ip,city,state,country,isp
+
 def main():
     try:
         speedtest()

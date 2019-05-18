@@ -6,13 +6,18 @@ import random
 import re
 import shutil
 import string
+import sys
 
 try:  # Python 3
     from urllib.request import urlopen
     from urllib.request import Request
-except ImportError:  # Python 3
+    from urllib.parse import quote
+    from html.parser import HTMLParser
+except ImportError:  # Python 2
     from urllib2 import urlopen
     from urllib2 import Request
+    from urllib import quote
+    import HTMLParser
 
 from resources.libs.config import CONFIG
 
@@ -22,8 +27,8 @@ from resources.libs.config import CONFIG
 #########################
 
 
-def read_from_file(file):
-    f = open(file)
+def read_from_file(file, mode='r'):
+    f = open(file, mode)
     a = f.read()
     f.close()
     return a
@@ -133,6 +138,17 @@ def copytree(src, dst, symlinks=False, ignore=None):
         errors.extend((src, dst, str(why)))
     if errors:
         raise Exception
+
+
+def file_count(home, excludes=True):
+    item = []
+    for base, dirs, files in os.walk(home):
+        if excludes:
+            dirs[:] = [d for d in dirs if d not in CONFIG.BAD_DIRS]
+            files[:] = [f for f in files if f not in CONFIG.BAD_FILES]
+        for file in files:
+            item.append(file)
+    return len(item)
 
 #########################
 #  Utility Functions    #
@@ -348,6 +364,200 @@ def reload_profile(profile=None):
 def chunks(s, n):
     for start in range(0, len(s), n):
         yield s[start:start+n]
+
+
+def convert_special(url, over=False):
+    from resources.libs import gui
+    from resources.libs import logging
+
+    total = file_count(url)
+    start = 0
+    gui.DP.create(CONFIG.ADDONTITLE,
+                  "[COLOR {0}]Changing Physical Paths To Special".format(CONFIG.COLOR2),
+                  "",
+                  "Please Wait[/COLOR]")
+    for root, dirs, files in os.walk(url):
+        for file in files:
+            start += 1
+            perc = int(percentage(start, total))
+            if file.endswith(".xml") or file.endswith(".hash") or file.endswith("properies"):
+                gui.DP.update(perc,
+                              "[COLOR {0}]Scanning: [COLOR {1}]{2}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, root.replace(CONFIG.HOME, '')),
+                              "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, file),
+                              "Please Wait[/COLOR]")
+                a = open(os.path.join(root, file)).read()
+                encodedpath = quote(CONFIG.HOME)
+                encodedpath2 = quote(CONFIG.HOME).replace('%3A', '%3a').replace('%5C', '%5c')
+                b = a.replace(CONFIG.HOME, 'special://home/').replace(encodedpath, 'special://home/').replace(encodedpath2, 'special://home/')
+                write_to_file(os.path.join(root, file), str(b))
+
+                if gui.DP.iscanceled():
+                    gui.DP.close()
+                    logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                                       "[COLOR {0}]Convert Path Cancelled[/COLOR]".format(CONFIG.COLOR2))
+                    sys.exit()
+    gui.DP.close()
+    logging.log("[Convert Paths to Special] Complete", level=xbmc.LOGNOTICE)
+    if not over:
+        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                           "[COLOR {0}]Convert Paths to Special: Complete![/COLOR]".format(CONFIG.COLOR2))
+
+
+def redo_thumbs():
+    if not os.path.exists(CONFIG.THUMBS):
+        os.makedirs(CONFIG.THUMBS)
+    thumbfolders = '0123456789abcdef'
+    videos = os.path.join(CONFIG.THUMBS, 'Video', 'Bookmarks')
+    for item in thumbfolders:
+        foldname = os.path.join(CONFIG.THUMBS, item)
+        if not os.path.exists(foldname):
+            os.makedirs(foldname)
+    if not os.path.exists(videos):
+        os.makedirs(videos)
+
+
+def reload_fix(default=None):
+    from resources.libs import db
+    from resources.libs import gui
+    from resources.libs import logging
+    from resources.libs import skin
+    from resources.libs import update
+
+    gui.DIALOG.ok(CONFIG.ADDONTITLE,
+                  "[COLOR {0}]WARNING: Sometimes Reloading the Profile causes Kodi to crash. While Kodi is Reloading the Profile Please Do Not Press Any Buttons![/COLOR]".format(CONFIG.COLOR2))
+    if not os.path.exists(CONFIG.PACKAGES):
+        os.makedirs(CONFIG.PACKAGES)
+    if default is None:
+        skin.look_and_feel_data('save')
+    redo_thumbs()
+    xbmc.executebuiltin('ActivateWindow(Home)')
+    reload_profile()
+    xbmc.sleep(10000)
+    if CONFIG.KODIV >= 17:
+        db.kodi_17_fix()
+    if default is None:
+        logging.log("Switching to: {0}".format(CONFIG.get_setting('defaultskin')))
+        gotoskin = CONFIG.get_setting('defaultskin')
+        skin.swap_skins(gotoskin)
+        skin.look_and_feel_data('restore')
+    update.addon_updates('reset')
+    update.force_update()
+    xbmc.executebuiltin("ReloadSkin()")
+
+
+def data_type(str):
+    datatype = type(str).__name__
+    return datatype
+
+
+def replace_html_codes(txt):
+    txt = re.sub("(&#[0-9]+)([^;^0-9]+)", "\\1;\\2", txt)
+    txt = HTMLParser.HTMLParser().unescape(txt)
+    txt = txt.replace("&quot;", "\"")
+    txt = txt.replace("&amp;", "&")
+    return txt
+
+
+def ascii_check(use=None, over=False):
+    from resources.libs import gui
+    from resources.libs import logging
+
+    if use is None:
+        source = gui.DIALOG.browse(3,
+                                   '[COLOR {0}]Select the folder you want to scan[/COLOR]'.format(CONFIG.COLOR2),
+                                   'files', '', False, False, CONFIG.HOME)
+        if over:
+            yes = 1
+        else:
+            yes = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                                   '[COLOR {0}]Do you want to [COLOR {1}]delete[/COLOR] all filenames with special characters or would you rather just [COLOR {2}]scan and view[/COLOR] the results in the log?[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1),
+                                   yeslabel='[B][COLOR springgreen]Delete[/COLOR][/B]',
+                                   nolabel='[B][COLOR red]Scan[/COLOR][/B]')
+    else:
+        source = use
+        yes = 1
+
+    if source == "":
+        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                           "[COLOR {0}]ASCII Check: Cancelled[/COLOR]".format(CONFIG.COLOR2))
+        return
+
+    files_found = os.path.join(CONFIG.ADDONDATA, 'asciifiles.txt')
+    files_fails = os.path.join(CONFIG.ADDONDATA, 'asciifails.txt')
+    afiles = open(files_found, mode='w+')
+    afails = open(files_fails, mode='w+')
+    f1 = 0
+    f2 = 0
+    items = file_count(source)
+    msg = ''
+    prog = []
+    logging.log("Source file: ({0})".format(str(source)), level=xbmc.LOGNOTICE)
+
+    gui.DP.create(CONFIG.ADDONTITLE, 'Please wait...')
+    for base, dirs, files in os.walk(source):
+        dirs[:] = [d for d in dirs]
+        files[:] = [f for f in files]
+        for file in files:
+            prog.append(file)
+            prog2 = int(len(prog) / float(items) * 100)
+            gui.DP.update(prog2,
+                          "[COLOR {0}]Checking for non ASCII files".format(CONFIG.COLOR2),
+                          '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, d),
+                          'Please Wait[/COLOR]')
+            try:
+                file.encode('ascii')
+            except UnicodeEncodeError:
+                logging.log("[ASCII Check] Illegal character found in file: {0}".format(file))
+            except UnicodeDecodeError:
+                logging.log("[ASCII Check] Illegal character found in file: {0}".format(file))
+                badfile = os.path.join(base, file)
+                if yes:
+                    try:
+                        os.remove(badfile)
+                        for chunk in chunks(badfile, 75):
+                            afiles.write(chunk+'\n')
+                        afiles.write('\n')
+                        f1 += 1
+                        logging.log("[ASCII Check] File Removed: {0} ".format(badfile), level=xbmc.LOGERROR)
+                    except:
+                        for chunk in chunks(badfile, 75):
+                            afails.write(chunk+'\n')
+                        afails.write('\n')
+                        f2 += 1
+                        logging.log("[ASCII Check] File Failed: {0} ".format(badfile), level=xbmc.LOGERROR)
+                else:
+                    for chunk in chunks(badfile, 75):
+                        afiles.write(chunk+'\n')
+                    afiles.write('\n')
+                    f1 += 1
+                    logging.log("[ASCII Check] File Found: {0} ".format(badfile), level=xbmc.LOGERROR)
+                pass
+        if gui.DP.iscanceled():
+            gui.DP.close()
+            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                               "[COLOR {0}]ASCII Check Cancelled[/COLOR]".format(CONFIG.COLOR2))
+            sys.exit()
+    gui.DP.close()
+    afiles.close()
+    afails.close()
+    total = int(f1) + int(f2)
+    if total > 0:
+        if os.path.exists(files_found):
+            msg = read_from_file(files_found)
+        if os.path.exists(files_fails):
+            msg2 = read_from_file(files_fails)
+        if yes:
+            if use:
+                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                                 "[COLOR {0}]ASCII Check: {1} Removed / {2} Failed.[/COLOR]".format(CONFIG.COLOR2, f1, f2))
+            else:
+                gui.show_text_box(CONFIG.ADDONTITLE,
+                                  "[COLOR yellow][B]{0} Files Removed:[/B][/COLOR]\n {1}\n\n[COLOR yellow][B]{2} Files Failed:[B][/COLOR]\n {3}".format(f1, msg, f2, msg2))
+        else:
+            gui.show_text_box(CONFIG.ADDONTITLE, "[COLOR yellow][B]{0} Files Found:[/B][/COLOR]\n {1}".format(f1, msg))
+    else:
+        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                           "[COLOR {0}]ASCII Check: None Found.[/COLOR]".format(CONFIG.COLOR2))
 
 #########################
 #  Add-on Functions     #
