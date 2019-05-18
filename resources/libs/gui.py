@@ -2,6 +2,7 @@ import xbmc
 import xbmcgui
 
 import os
+import re
 
 try:  # Python 3
     from urllib.parse import quote_plus
@@ -39,6 +40,17 @@ def sep(middle=''):
     return ret[:40]
 
 
+def highlight_text(msg):
+    msg = msg.replace('\n', '[NL]')
+    matches = re.compile("-->Python callback/script returned the following error<--(.+?)-->End of Python script error report<--").findall(msg)
+    for item in matches:
+        string = '-->Python callback/script returned the following error<--{0}-->End of Python script error report<--'.format(item)
+        msg = msg.replace(string, '[COLOR red]{0}[/COLOR]'.format(string))
+    msg = msg.replace('WARNING', '[COLOR yellow]WARNING[/COLOR]').replace('ERROR', '[COLOR red]ERROR[/COLOR]').replace('[NL]', '\n').replace(': EXCEPTION Thrown (PythonToCppException) :', '[COLOR red]: EXCEPTION Thrown (PythonToCppException) :[/COLOR]')
+    msg = msg.replace('\\\\', '\\').replace(CONFIG.HOME, '')
+    return msg
+
+
 def get_artwork(file):
     if file == 'button':
         return os.path.join(CONFIG.SKIN, 'Button', 'button-focus_lightblue.png'),\
@@ -53,6 +65,25 @@ def get_artwork(file):
                os.path.join(CONFIG.SKIN, 'Slider', 'osd_slider_nibNF.png'),\
                os.path.join(CONFIG.SKIN, 'Slider', 'slider1.png'),\
                os.path.join(CONFIG.SKIN, 'Slider', 'slider1.png')
+
+
+def while_window(window, active=False, count=0, counter=15):
+    from resources.libs import logging
+
+    windowopen = xbmc.getCondVisibility('Window.IsActive({0})'.format(window))
+    logging.log("{0} is {1}".format(window, windowopen))
+    while not windowopen and count < counter:
+        logging.log("{0} is {1}({2})".format(window, windowopen, count))
+        windowopen = xbmc.getCondVisibility('Window.IsActive({0})'.format(window))
+        count += 1
+        xbmc.sleep(500)
+
+    while windowopen:
+        active = True
+        logging.log("{0} is {1}".format(window, windowopen))
+        windowopen = xbmc.getCondVisibility('Window.IsActive({0})'.format(window))
+        xbmc.sleep(250)
+    return active
 
 
 def show_text_box(title, msg):

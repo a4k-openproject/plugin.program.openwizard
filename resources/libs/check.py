@@ -1,5 +1,6 @@
 import xbmc
 
+import os
 import re
 
 try:
@@ -127,3 +128,176 @@ def check_wizard(ret):
                 return CONFIG.ADDON_ID, version, zip
     else:
         return False
+
+
+def check_sources():
+    from resources.libs import gui
+    from resources.libs import logging
+    from resources.libs import tools
+
+    if not os.path.exists(CONFIG.SOURCES):
+        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                           "[COLOR {0}]No sources.xml File Found![/COLOR]".format(CONFIG.COLOR2))
+        return False
+    x = 0
+    bad = []
+    remove = []
+    a = tools.read_from_file(CONFIG.SOURCES)
+    temp = a.replace('\r', '').replace('\n', '').replace('\t', '')
+    match = re.compile('<files>.+?</files>').findall(temp)
+
+    if len(match) > 0:
+        match2 = re.compile('<source>.+?<name>(.+?)</name>.+?<path pathversion="1">(.+?)</path>.+?<allowsharing>(.+?)</allowsharing>.+?</source>').findall(match[0])
+        gui.DP.create(CONFIG.ADDONTITLE, "[COLOR {0}]Scanning Sources for Broken links[/COLOR]".format(CONFIG.COLOR2))
+        for name, path, sharing in match2:
+            x += 1
+            perc = int(tools.percentage(x, len(match2)))
+            gui.DP.update(perc,
+                          '',
+                          "[COLOR {0}]Checking [COLOR {1}]{2}[/COLOR]:[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, name),
+                          "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, path))
+            if 'http' in path:
+                working = check_url(path)
+                if not working:
+                    bad.append([name, path, sharing, working])
+
+        logging.log("Bad Sources: {0}".format(len(bad)), level=xbmc.LOGNOTICE)
+        if len(bad) > 0:
+            choice = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                                      "[COLOR {0}]{1}[/COLOR][COLOR {2}] Source(s) have been found Broken".format(CONFIG.COLOR1, len(bad), CONFIG.COLOR2),
+                                      "Would you like to Remove all or choose one by one?[/COLOR]",
+                                      yeslabel="[B][COLOR springgreen]Remove All[/COLOR][/B]",
+                                      nolabel="[B][COLOR red]Choose to Delete[/COLOR][/B]")
+            if choice == 1:
+                remove = bad
+            else:
+                for name, path, sharing, working in bad:
+                    logging.log("{0} sources: {1}, {2}".format(name, path, working), level=xbmc.LOGNOTICE)
+                    if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                                        "[COLOR {0}]{1}[/COLOR][COLOR {2}] was reported as non working".format(CONFIG.COLOR1, name, CONFIG.COLOR2),
+                                        "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, path),
+                                        "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, working),
+                                        yeslabel="[B][COLOR springgreen]Remove Source[/COLOR][/B]",
+                                        nolabel="[B][COLOR red]Keep Source[/COLOR][/B]"):
+                        remove.append([name, path, sharing, working])
+                        logging.log("Removing Source {0}".format(name), level=xbmc.LOGNOTICE)
+                    else:
+                        logging.log("Source {0} was not removed".format(name), level=xbmc.LOGNOTICE)
+            if len(remove) > 0:
+                for name, path, sharing, working in remove:
+                    a = a.replace('\n<source>\n<name>{0}</name>\n<path pathversion="1">{1}</path>\n<allowsharing>{2}</allowsharing>\n</source>'.format(name, path, sharing), '')
+                    logging.log("Removing Source {0}".format(name), level=xbmc.LOGNOTICE)
+
+                tools.write_to_file(CONFIG.SOURCES, str(a))
+                alive = len(match) - len(bad)
+                kept = len(bad) - len(remove)
+                removed = len(remove)
+                gui.DIALOG.ok(CONFIG.ADDONTITLE,
+                              "[COLOR {0}]Checking sources for broken paths has been completed".format(CONFIG.COLOR2),
+                              "Working: [COLOR {0}]{1}[/COLOR] | Kept: [COLOR {2}]{3}[/COLOR] | Removed: [COLOR {4}]{5}[/COLOR][/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, alive, CONFIG.COLOR1, kept, CONFIG.COLOR1, removed))
+            else:
+                logging.log("No Bad Sources to be removed.", level=xbmc.LOGNOTICE)
+        else:
+            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                               "[COLOR {0}]All Sources Are Working[/COLOR]".format(CONFIG.COLOR2))
+    else:
+        logging.log("No Sources Found", level=xbmc.LOGNOTICE)
+
+
+def check_repos():
+    from resources.libs import gui
+    from resources.libs import logging
+    from resources.libs import tools
+
+    gui.DP.create(CONFIG.ADDONTITLE, '[COLOR {0}]Checking Repositories...[/COLOR]'.format(CONFIG.COLOR2))
+    badrepos = []
+    xbmc.executebuiltin('UpdateAddonRepos')
+    repolist = glob.glob(os.path.join(CONFIG.ADDONS, 'repo*'))
+    if len(repolist) == 0:
+        gui.DP.close()
+        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                           "[COLOR {0}]No Repositories Found![/COLOR]".format(CONFIG.COLOR2))
+        return
+    sleeptime = len(repolist)
+    start = 0
+    while start < sleeptime:
+        start += 1
+        if gui.DP.iscanceled():
+            break
+        perc = int(tools.percentage(start, sleeptime))
+        gui.DP.update(perc,
+                      '',
+                      '[COLOR {0}]Checking: [/COLOR][COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, repolist[start-1].replace(CONFIG.ADDONS, '')[1:]))
+        xbmc.sleep(1000)
+    if gui.DP.iscanceled():
+        gui.DP.close()
+        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                           "[COLOR {0}]Enabling Addons Cancelled[/COLOR]".format(CONFIG.COLOR2))
+        sys.exit()
+    gui.DP.close()
+    logfile = logging.grab_log(False)
+    fails = re.compile('CRepositoryUpdateJob(.+?)failed').findall(logfile)
+    for item in fails:
+        logging.log("Bad Repository: {0} ".format(item), level=xbmc.LOGNOTICE)
+        brokenrepo = item.replace('[', '').replace(']', '').replace(' ', '').replace('/', '').replace('\\', '')
+        if brokenrepo not in badrepos:
+            badrepos.append(brokenrepo)
+    if len(badrepos) > 0:
+        msg = "[COLOR {0}]Below is a list of Repositories that did not resolve.  This does not mean that they are Depreciated, sometimes hosts go down for a short period of time.  Please do serveral scans of your repository list before removing a repository just to make sure it is broken.[/COLOR][CR][CR][COLOR {1}]".format(CONFIG.COLOR2, CONFIG.COLOR1)
+        msg += '[CR]'.join(badrepos)
+        msg += '[/COLOR]'
+        gui.show_text_box("{0}: Bad Repositories".format(CONFIG.ADDONTITLE), msg)
+    else:
+        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                           "[COLOR {0}]All Repositories Working![/COLOR]".format(CONFIG.COLOR2))
+
+
+def build_count():
+    from resources.libs import tools
+
+    link = tools.open_url(CONFIG.BUILDFILE).replace('\n', '').replace('\r', '').replace('\t', '')
+    match = re.compile('name="(.+?)".+?odi="(.+?)".+?dult="(.+?)"').findall(link)
+    total = 0
+    count17 = 0
+    count18 = 0
+    hidden = 0
+    adultcount = 0
+    if len(match) > 0:
+        for name, kodi, adult in match:
+            if not CONFIG.SHOWADULT == 'true' and adult.lower() == 'yes':
+                hidden += 1
+                adultcount += 1
+                continue
+            if not CONFIG.DEVELOPER == 'true' and tools.str_test(name):
+                hidden += 1
+                continue
+            kodi = int(float(kodi))
+            total += 1
+            if kodi == 18: count18 += 1
+            elif kodi == 17: count17 += 1
+    return total, count17, count18, adultcount, hidden
+
+
+def theme_count(name, count=True):
+    from resources.libs import tools
+
+    themefile = check_build(name, 'theme')
+    if themefile == 'http://' or not themefile:
+        return False
+    link = tools.open_url(themefile).replace('\n', '').replace('\r', '').replace('\t', '')
+    match = re.compile('name="(.+?)".+?dult="(.+?)"').findall(link)
+    if len(match) == 0:
+        return False
+    themes = []
+    for item, adult in match:
+        if not CONFIG.SHOWADULT == 'true' and adult.lower() == 'yes':
+            continue
+        themes.append(item)
+    if len(themes) > 0:
+        if count:
+            return len(themes)
+        else:
+            return themes
+    else:
+        return False
+
