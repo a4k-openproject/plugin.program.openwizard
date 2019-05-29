@@ -6,6 +6,31 @@ import timeit
 import threading
 import os
 import sys
+import hashlib
+
+import xml.etree.ElementTree as ET
+from xml.dom import minidom as DOM
+
+try:
+    from urllib.request import urlopen
+    from urllib.request import Request
+    from urllib.request import HTTPError
+    from urllib.request import URLError
+    from urllib.parse import urlparse
+    from urllib.parse import parse_qs
+    from http.client import HTTPConnection
+    from http.client import HTTPSConnection
+    from queue import Queue
+except ImportError:
+    from urllib2 import urlopen
+    from urllib2 import Request
+    from urllib2 import HTTPError
+    from urllib2 import URLError
+    from urlparse import urlparse
+    from urlparse import parse_qs
+    from httplib import HTTPConnection
+    from httplib import HTTPSConnection
+    from Queue import Queue
 
 from resources.libs.config import CONFIG
 
@@ -16,123 +41,6 @@ shutdown_event = None
 scheme = 'http'
 socket_socket = socket.socket
 
-try:
-    import xml.etree.cElementTree as ET
-except ImportError:
-    try:
-        import xml.etree.ElementTree as ET
-    except ImportError:
-        from xml.dom import minidom as DOM
-        ET = None
-try:
-    import xml.etree.cElementTree as ET
-    from xml.dom import minidom as DOM
-except ImportError:
-    try:
-        import xml.etree.ElementTree as ET
-    except ImportError:
-        from xml.dom import minidom as DOM
-        ET = None
-try:
-    from urllib2 import urlopen, Request, HTTPError, URLError
-except ImportError:
-    from urllib.request import urlopen, Request, HTTPError, URLError
-
-try:
-    from httplib import HTTPConnection, HTTPSConnection
-except ImportError:
-    e_http_py2 = sys.exc_info()
-    try:
-        from http.client import HTTPConnection, HTTPSConnection
-    except ImportError:
-        e_http_py3 = sys.exc_info()
-        raise SystemExit('''Your python installation is missing required HTTP client classes:
-
-Python 2: %s
-Python 3: %s'''
-                         % (e_http_py2[1], e_http_py3[1]))
-
-try:
-    from Queue import Queue
-except ImportError:
-    from queue import Queue
-
-try:
-    from urlparse import urlparse
-except ImportError:
-    from urllib.parse import urlparse
-
-try:
-    from urlparse import parse_qs
-except ImportError:
-    try:
-        from urllib.parse import parse_qs
-    except ImportError:
-        from cgi import parse_qs
-
-try:
-    from hashlib import md5
-except ImportError:
-    from md5 import md5
-
-try:
-    from argparse import ArgumentParser as ArgParser
-except ImportError:
-    from optparse import OptionParser as ArgParser
-
-try:
-    import builtins
-except ImportError:
-
-
-    def print_(*args, **kwargs):
-        fp = kwargs.pop('file', sys.stdout)
-        if fp is None:
-            return
-
-        def write(data):
-            if not isinstance(data, basestring):
-                data = str(data)
-            fp.write(data)
-
-        want_unicode = False
-        sep = kwargs.pop('sep', None)
-        if sep is not None:
-            if isinstance(sep, unicode):
-                want_unicode = True
-            elif not isinstance(sep, str):
-                raise TypeError('sep must be None or a string')
-        end = kwargs.pop('end', None)
-        if end is not None:
-            if isinstance(end, unicode):
-                want_unicode = True
-            elif not isinstance(end, str):
-                raise TypeError('end must be None or a string')
-        if kwargs:
-            raise TypeError('invalid keyword arguments to print()')
-        if not want_unicode:
-            for arg in args:
-                if isinstance(arg, unicode):
-                    want_unicode = True
-                    break
-        if want_unicode:
-            newline = unicode('\n')
-            space = unicode(' ')
-        else:
-            newline = '\n'
-            space = ' '
-        if sep is None:
-            sep = space
-        if end is None:
-            end = newline
-        for (i, arg) in enumerate(args):
-            if i:
-                write(sep)
-            write(arg)
-        write(end)
-else:
-    print_ = getattr(builtins, 'print')
-    del builtins
 class SpeedtestCliServerListError(Exception):
     """
 """
@@ -640,15 +548,15 @@ def net_info():
         x += 1
     try:
         url = 'http://extreme-ip-lookup.com/json/'
-        req = urllib2.Request(url)
+        req = Request(url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-        response = urllib2.urlopen(req)
+        response = urlopen(req)
         geo = json.load(response)
     except:
         url = 'http://ip-api.com/json'
-        req = urllib2.Request(url)
+        req = Request(url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-        response = urllib2.urlopen(req)
+        response = urlopen(req)
         geo = json.load(response)
     mac = data[1]
     inter_ip = data[0]
