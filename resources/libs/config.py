@@ -97,13 +97,13 @@ class Config:
                                'metadata.tvdb.com', 'service.xbmc.versioncheck']
         self.USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko)' \
                           'Chrome/35.0.1916.153 Safari/537.36 SE 2.X MetaSr 1.0'
-        self.BAD_FILES = ['onechannelcache.db', 'saltscache.db', 'saltscache.db-shm', 'saltscache.db-wal',
-                          'saltshd.lite.db', 'saltshd.lite.db-shm', 'saltshd.lite.db-wal', 'queue.db', 'commoncache.db',
-                          'access.log', 'trakt.db', 'video_cache.db', '.gitignore', '.DS_Store', 'advancedsettings.xml',
-                          'Textures13.db', 'Thumbs.db']
         self.DB_FILES = ['Addons', 'ADSP', 'Epg', 'MyMusic', 'MyVideos', 'Textures', 'TV', 'ViewModes']
-        self.BAD_DIRS = [self.ADDON_ID, 'cache', 'system', 'packages', 'Thumbnails', 'peripheral_data', 'temp', 'My_Builds',
-                         'library', 'keymaps']
+        self.EXCLUDE_FILES = ['onechannelcache.db', 'saltscache.db', 'saltscache.db-shm', 'saltscache.db-wal',
+                          'saltshd.lite.db', 'saltshd.lite.db-shm', 'saltshd.lite.db-wal', 'queue.db', 'commoncache.db',
+                          'access.log', 'trakt.db', 'video_cache.db', '.gitignore', '.DS_Store',
+                          'Textures13.db', 'Thumbs.db']
+        self.EXCLUDE_DIRS = [self.ADDON_ID, 'cache', 'system', 'packages', 'Thumbnails', 'peripheral_data', 'temp', 'My_Builds',
+                         'library', 'keymaps', 'cdm']
 
         # Default special paths
         self.XBMC = xbmc.translatePath('special://xbmc/')
