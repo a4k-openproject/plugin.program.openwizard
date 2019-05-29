@@ -32,723 +32,906 @@ try:  # Python 3
 except ImportError:  # Python 2
     from urllib import quote_plus
 
-
 from datetime import datetime
 
 from resources.libs.config import CONFIG
+from resources.libs import db
 from resources.libs import downloader
 from resources.libs import extract
+from resources.libs import gui
+from resources.libs import logging
+from resources.libs import tools
 
 if CONFIG.KODIV > 17:
-	from resources.libs import zfile as zipfile
+    from resources.libs import zfile as zipfile
 else:
-	import zipfile
+    import zipfile
 
 
-# MIGRATION: move into backup
-def cleanupBackup():
-	mybuilds = xbmc.translatePath(MYBUILDS)
-	folder = glob.glob(os.path.join(mybuilds, "*"))
-	list = []; filelist = []
-	if len(folder) == 0:
-		LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Backup Location: Empty[/COLOR]" % (COLOR2))
-		return
-	for item in sorted(folder, key=os.path.getmtime):
-		filelist.append(item)
-		base = item.replace(mybuilds, '')
-		if os.path.isdir(item):
-			list.append('/%s/' % base)
-		elif os.path.isfile(item):
-			list.append(base)
-	list = ['--- Remove All Items ---'] + list
-	selected = DIALOG.select("%s: Select the items to remove from 'MyBuilds'." % ADDONTITLE, list)
+def cleanup_backup():
+    folder = glob.glob(os.path.join(CONFIG.MYBUILDS, "*"))
+    list = []
+    filelist = []
 
-	if selected == -1:
-		LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Clean Up Cancelled![/COLOR]" % COLOR2)
-	elif selected == 0:
-		if DIALOG.yesno(ADDONTITLE, "[COLOR %s]Would you like to clean up all items in your 'My_Builds' folder?[/COLOR]" % COLOR2, "[COLOR %s]%s[/COLOR]" % (COLOR1, MYBUILDS), yeslabel="[B][COLOR springgreen]Clean Up[/COLOR][/B]", nolabel="[B][COLOR red]No Cancel[/COLOR][/B]"):
-			clearedfiles, clearedfolders = cleanHouse(xbmc.translatePath(MYBUILDS))
-			LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Removed Files: [COLOR %s]%s[/COLOR] / Folders:[/COLOR] [COLOR %s]%s[/COLOR]" % (COLOR2, COLOR1, clearedfiles, COLOR1, clearedfolders))
-		else:
-			LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Clean Up Cancelled![/COLOR]" % COLOR2)
-	else:
-		path = filelist[selected-1]; passed = False
-		if DIALOG.yesno(ADDONTITLE, "[COLOR %s]Would you like to remove [COLOR %s]%s[/COLOR] from 'My_Builds' folder?[/COLOR]" % (COLOR2, COLOR1, list[selected]), "[COLOR %s]%s[/COLOR]" % (COLOR1, path), yeslabel="[B][COLOR springgreen]Clean Up[/COLOR][/B]", nolabel="[B][COLOR red]No Cancel[/COLOR][/B]"):
-			if os.path.isfile(path):
-				try:
-					os.remove(path)
-					passed = True
-				except:
-					log("Unable to remove: %s" % path)
-			else:
-				cleanHouse(path)
-				try:
-					shutil.rmtree(path)
-					passed = True
-				except Exception as e:
-					log("Error removing %s" % path, xbmc.LOGNOTICE)
-			if passed: LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]%s Removed![/COLOR]" % (COLOR2, list[selected]))
-			else: LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Error Removing %s![/COLOR]" % (COLOR2, list[selected]))
-		else:
-			LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Clean Up Cancelled![/COLOR]" % COLOR2)
+    if len(folder) == 0:
+        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                           "[COLOR {0}]Backup Location: Empty[/COLOR]".format(CONFIG.COLOR2))
+        return
+    for item in sorted(folder, key=os.path.getmtime):
+        filelist.append(item)
+        base = item.replace(CONFIG.MYBUILDS, '')
+        if os.path.isdir(item):
+            list.append('/%s/' % base)
+        elif os.path.isfile(item):
+            list.append(base)
+    list = ['--- Remove All Items ---'] + list
+    selected = gui.DIALOG.select("{0}: Select the items to remove from the 'My_Builds' folder.".format(CONFIG.ADDONTITLE), list)
+
+    if selected == -1:
+        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                           "[COLOR {0}]Clean Up Cancelled![/COLOR]".format(CONFIG.COLOR2))
+    elif selected == 0:
+        if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                            "[COLOR {0}]Would you like to clean up all items in your 'My_Builds' folder?[/COLOR]".format(CONFIG.COLOR2),
+                            "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.MYBUILDS),
+                            yeslabel="[B][COLOR springgreen]Clean Up[/COLOR][/B]",
+                            nolabel="[B][COLOR red]No Cancel[/COLOR][/B]"):
+            clearedfiles, clearedfolders = tools.clean_house(CONFIG.MYBUILDS)
+            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                               "[COLOR {0}]Removed Files: [COLOR {1}]{2}[/COLOR] / Folders:[/COLOR] [COLOR {3}]{4}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, clearedfiles, CONFIG.COLOR1, clearedfolders))
+        else:
+            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                               "[COLOR {0}]Clean Up Cancelled![/COLOR]".format(CONFIG.COLOR2))
+    else:
+        path = filelist[selected-1]
+        passed = False
+
+        if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                            "[COLOR {0}]Would you like to remove [COLOR {1}]{2}[/COLOR] from the 'My_Builds' folder?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, list[selected]),
+                            "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, path),
+                            yeslabel="[B][COLOR springgreen]Clean Up[/COLOR][/B]",
+                            nolabel="[B][COLOR red]No Cancel[/COLOR][/B]"):
+            if os.path.isfile(path):
+                try:
+                    os.remove(path)
+                    passed = True
+                except:
+                    logging.log("Unable to remove: {0}".format(path))
+            else:
+                tools.clean_house(path)
+                try:
+                    shutil.rmtree(path)
+                    passed = True
+                except Exception as e:
+                    logging.log("Error removing {0}: {1}".format(path, e), level=xbmc.LOGNOTICE)
+            if passed:
+                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                                   "[COLOR {0}]{1} Removed![/COLOR]".format(CONFIG.COLOR2, list[selected]))
+            else:
+                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                                   "[COLOR {0}]Error Removing {1}![/COLOR]".format(CONFIG.COLOR2, list[selected]))
+        else:
+            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                               "[COLOR {0}]Clean Up Cancelled![/COLOR]".format(CONFIG.COLOR2))
 
 
-# MIGRATION: move into backup
+def addon_pack(name=""):
+    if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                        "[COLOR {0}]Are you sure you wish to create an Addon Pack?[/COLOR]".format(CONFIG.COLOR2),
+                        nolabel="[B][COLOR red]Cancel Backup[/COLOR][/B]",
+                        yeslabel="[B][COLOR springgreen]Create Pack[/COLOR][/B]"):
+        if name == "":
+            name = tools.get_keyboard("", "Please enter a name for the add-on pack zip")
+            if not name:
+                return False
+            name = quote_plus(name)
+        name = '{0}.zip'.format(name)
+        tempzipname = ''
+        zipname = os.path.join(CONFIG.MYBUILDS, name)
+        try:
+            zipf = zipfile.ZipFile(xbmc.translatePath(zipname), mode='w')
+        except:
+            try:
+                tempzipname = os.path.join(CONFIG.PACKAGES, '{0}.zip'.format(name))
+                zipf = zipfile.ZipFile(tempzipname, mode='w')
+            except:
+                logging.log("Unable to create {0}.zip".format(name), level=xbmc.LOGERROR)
+                if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                                    "[COLOR {0}]We are unable to write to the current backup directory, would you like to change the location?[/COLOR]".format(
+                                        CONFIG.COLOR2),
+                                    yeslabel="[B][COLOR springgreen]Change Directory[/COLOR][/B]",
+                                    nolabel="[B][COLOR red]Cancel[/COLOR][/B]"):
+                    CONFIG.open_settings()
+                    return
+                else:
+                    return
+        fold = glob.glob(os.path.join(CONFIG.ADDONS, '*/'))
+        addonnames = []
+        addonfolds = []
+        for folder in sorted(fold, key=lambda x: x):
+            foldername = os.path.split(folder[:-1])[1]
+            if foldername in CONFIG.EXCLUDES:
+                continue
+            elif foldername in CONFIG.DEFAULTPLUGINS:
+                continue
+            elif foldername == 'packages':
+                continue
+            xml = os.path.join(folder, 'addon.xml')
+            if os.path.exists(xml):
+                match = tools.parse_dom(tools.read_from_file(xml), 'addon', ret='name')
+                if len(match) > 0:
+                    addonnames.append(match[0])
+                    addonfolds.append(foldername)
+                else:
+                    addonnames.append(foldername)
+                    addonfolds.append(foldername)
+
+        selected = gui.DIALOG.multiselect(
+            "{0}: Select the add-ons you wish to add to the zip.".format(CONFIG.ADDONTITLE, addonnames))
+        if selected is None:
+            selected = []
+
+        logging.log(selected)
+        gui.DP.create(CONFIG.ADDONTITLE,
+                      '[COLOR {0}][B]Creating Zip File:[/B][/COLOR]'.format(CONFIG.COLOR2), '', 'Please Wait')
+        if len(selected) > 0:
+            added = []
+            for item in selected:
+                added.append(addonfolds[item])
+                gui.DP.update(0, "", "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, addonfolds[item]))
+                for base, dirs, files in os.walk(os.path.join(CONFIG.ADDONS, addonfolds[item])):
+                    files[:] = [f for f in files if f not in CONFIG.EXCLUDE_FILES]
+                    for file in files:
+                        if file.endswith('.pyo'):
+                            continue
+                        gui.DP.update(0, "", "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, addonfolds[item]),
+                                      "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, file))
+                        fn = os.path.join(base, file)
+                        zipf.write(fn, fn[len(CONFIG.ADDONS):], zipfile.ZIP_DEFLATED)
+                dep = os.path.join(CONFIG.ADDONS, addonfolds[item], 'addon.xml')
+                if os.path.exists(dep):
+                    match = tools.parse_dom(tools.read_from_file(dep), 'import', ret='addon')
+                    for depends in match:
+                        if 'xbmc.python' in depends:
+                            continue
+                        if depends in added:
+                            continue
+                        gui.DP.update(0, "", "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, depends))
+                        for base, dirs, files in os.walk(os.path.join(CONFIG.ADDONS, depends)):
+                            files[:] = [f for f in files if f not in CONFIG.EXCLUDE_FILES]
+                            for file in files:
+                                if file.endswith('.pyo'):
+                                    continue
+                                gui.DP.update(0, "", "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, depends),
+                                              "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, file))
+                                fn = os.path.join(base, file)
+                                zipf.write(fn, fn[len(CONFIG.ADDONS):], zipfile.ZIP_DEFLATED)
+                                added.append(depends)
+        gui.DIALOG.ok(CONFIG.ADDONTITLE,
+                      "[COLOR {0}]{1}[/COLOR] [COLOR {2}]Backup successful:[/COLOR]".format(CONFIG.COLOR1, name,
+                                                                                            CONFIG.COLOR2),
+                      "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, zipname))
+
+
+def build(name=""):
+    if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                        "[COLOR {0}]Are you sure you wish to backup the current build?[/COLOR]".format(CONFIG.COLOR2),
+                    nolabel="[B][COLOR red]Cancel Backup[/COLOR][/B]",
+                    yeslabel="[B][COLOR springgreen]Backup Build[/COLOR][/B]"):
+        if name == "":
+            name = tools.get_keyboard("", "Please enter a name for the build zip")
+            if not name:
+                return False
+            name = name.replace('\\', '').replace('/', '').replace(':', '').replace('*', '').replace('?', '').replace(
+                '"', '').replace('<', '').replace('>', '').replace('|', '')
+        name = quote_plus(name)
+        tempzipname = ''
+        zipname = os.path.join(CONFIG.MYBUILDS, '{0}.zip'.format(name))
+        for_progress = 0
+        ITEM = []
+        exclude_data = False
+        if not gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                                "[COLOR {0}]Do you want to include your addon_data folder?".format(CONFIG.COLOR2),
+                                "This contains [COLOR {0}]ALL[/COLOR] add-on settings including passwords but may also contain important information such as skin shortcuts. We recommend [COLOR {0}]MANUALLY[/COLOR] removing the addon_data folders that aren\'t required.".format(CONFIG.COLOR1, CONFIG.COLOR1),
+                                "[COLOR {0}]{1}[/COLOR] addon_data is ignored[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDON_ID),
+                            yeslabel='[B][COLOR springgreen]Include data[/COLOR][/B]',
+                            nolabel='[B][COLOR red]Don\'t Include[/COLOR][/B]'):
+            exclude_data = True
+        tools.convert_special(CONFIG.HOME, True)
+        tools.ascii_check(CONFIG.HOME, True)
+        extractsize = 0
+        try:
+            zipf = zipfile.ZipFile(xbmc.translatePath(zipname), mode='w')
+        except:
+            try:
+                tempzipname = os.path.join(CONFIG.PACKAGES, '{0}.zip'.format(name))
+                zipf = zipfile.ZipFile(tempzipname, mode='w')
+            except:
+                logging.log("Unable to create {0}.zip".format(name), level=xbmc.LOGERROR)
+                if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                                "[COLOR {0}]We are unable to write to the current backup directory, would you like to change the location?[/COLOR]".format(CONFIG.COLOR2),
+                                yeslabel="[B][COLOR springgreen]Change Directory[/COLOR][/B]",
+                                nolabel="[B][COLOR red]Cancel[/COLOR][/B]"):
+                    CONFIG.open_settings()
+                    return
+                else:
+                    return
+        gui.DP.create("[COLOR {0}]{1}[/COLOR][COLOR {2}]: Creating Zip[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+                  "[COLOR {0}]Creating backup zip".format(CONFIG.COLOR2), "", "Please Wait...[/COLOR]")
+        for base, dirs, files in os.walk(CONFIG.HOME):
+            dirs[:] = [d for d in dirs if d not in CONFIG.EXCLUDE_DIRS]
+            files[:] = [f for f in files if f not in CONFIG.EXCLUDE_FILES]
+            for file in files:
+                ITEM.append(file)
+        N_ITEM = len(ITEM)
+        picture = []
+        music = []
+        video = []
+        programs = []
+        repos = []
+        scripts = []
+        skins = []
+        fold = glob.glob(os.path.join(CONFIG.ADDONS, '*/'))
+        idlist = []
+        for folder in sorted(fold, key=lambda x: x):
+            foldername = os.path.split(folder[:-1])[1]
+            if foldername == 'packages':
+                continue
+            xml = os.path.join(folder, 'addon.xml')
+            if os.path.exists(xml):
+                a = tools.read_from_file(xml)
+                prov = re.compile("<provides>(.+?)</provides>").findall(a)
+                match = tools.parse_dom(prov, 'addon', ret='id')
+
+                addid = foldername if len(match) == 0 else match[0]
+                if addid in idlist:
+                    continue
+                idlist.append(addid)
+                try:
+                    add = xbmcaddon.Addon(id=addid)
+                    aname = add.getAddonInfo('name')
+                    aname = aname.replace('[', '<').replace(']', '>')
+                    aname = str(re.sub('<[^<]+?>', '', aname)).lstrip()
+                except:
+                    aname = foldername
+                if len(prov) == 0:
+                    if foldername.startswith('skin'):
+                        skins.append(aname)
+                    elif foldername.startswith('repo'):
+                        repos.append(aname)
+                    else:
+                        scripts.append(aname)
+                    continue
+                if not (prov[0]).find('executable') == -1:
+                    programs.append(aname)
+                if not (prov[0]).find('video') == -1:
+                    video.append(aname)
+                if not (prov[0]).find('audio') == -1:
+                    music.append(aname)
+                if not (prov[0]).find('image') == -1:
+                    picture.append(aname)
+        db.fix_metas()
+
+        for base, dirs, files in os.walk(CONFIG.HOME):
+            dirs[:] = [d for d in dirs if d not in CONFIG.EXCLUDE_DIRS]
+            files[:] = [f for f in files if f not in CONFIG.EXCLUDE_FILES]
+            for file in files:
+                try:
+                    for_progress += 1
+                    progress = tools.percentage(for_progress, N_ITEM)
+                    gui.DP.update(int(progress),
+                              '[COLOR {0}]Creating backup zip: [COLOR {1}]{2}[/COLOR] / [COLOR {3}]{4}[/COLOR]'.format(
+                              CONFIG.COLOR2, CONFIG.COLOR1, for_progress, CONFIG.COLOR1, N_ITEM),
+                                  '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, file), '')
+                    fn = os.path.join(base, file)
+                    if file in CONFIG.LOGFILES:
+                        logging.log("[Back Up] Type = build: Ignore {0} - Log File".format(file), level=xbmc.LOGNOTICE)
+                        continue
+                    elif os.path.join(base, file) in CONFIG.EXCLUDE_FILES:
+                        logging.log("[Back Up] Type = build: Ignore {0} - Excluded File".format(file), level=xbmc.LOGNOTICE)
+                        continue
+                    elif os.path.join('addons', 'packages') in fn:
+                        logging.log("[Back Up] Type = build: Ignore {0} - Packages Folder".format(file), level=xbmc.LOGNOTICE)
+                        continue
+                    elif os.path.join(CONFIG.ADDONS, 'inputstream.adaptive') in fn:
+                        logging.log("[Back Up] Type = build: Ignore {0} - Binary Add-on".format(file), levvel=xbmc.LOGNOTICE)
+                        continue
+                    elif file.endswith('.csv'):
+                        logging.log("[Back Up] Type = build: Ignore {0} - CSV File".format(file), level=xbmc.LOGNOTICE)
+                        continue
+                    elif file.endswith('.pyo'):
+                        continue
+                    elif file.endswith('.db') and 'Database' in base:
+                        temp = file.replace('.db', '')
+                        temp = ''.join([i for i in temp if not i.isdigit()])
+                        if temp in CONFIG.DB_FILES:
+                            if not file == db.latest_db(temp):
+                                logging.log("[Back Up] Type = build: Ignore {0} - DB File".format(file), level=xbmc.LOGNOTICE)
+                                continue
+                    try:
+                        zipf.write(fn, fn[len(CONFIG.HOME):], zipfile.ZIP_DEFLATED)
+                        extractsize += os.path.getsize(fn)
+                    except Exception as e:
+                        logging.log("[Back Up] Type = build: Unable to backup {0}".format(file), level=xbmc.LOGNOTICE)
+                        logging.log("{0} / {1}".format(Exception, e))
+                    if gui.DP.iscanceled():
+                        gui.DP.close()
+                        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                                  "[COLOR {0}]Backup Cancelled[/COLOR]".format(CONFIG.COLOR2))
+                        sys.exit()
+                except Exception as e:
+                    logging.log("[Back Up] Type = build: Unable to backup {0}".format(file), level=xbmc.LOGNOTICE)
+                    logging.log("Build Backup Error: {0}".format(str(e)), level=xbmc.LOGNOTICE)
+        if exclude_data:
+            match = glob.glob(os.path.join(CONFIG.ADDON_DATA, 'skin.*', ''))
+            for fold in match:
+                fd = os.path.split(fold[:-1])[1]
+                if not fd in ['skin.confluence', 'skin.re-touch', 'skin.estuary', 'skin.estouchy']:
+                    for base, dirs, files in os.walk(os.path.join(CONFIG.ADDON_DATA, fold)):
+                        files[:] = [f for f in files if f not in CONFIG.EXCLUDE_FILES]
+                        for file in files:
+                            fn = os.path.join(base, file)
+                            zipf.write(fn, fn[len(CONFIG.HOME):], zipfile.ZIP_DEFLATED)
+                            extractsize += os.path.getsize(fn)
+                    xml = os.path.join(CONFIG.ADDONS, fd, 'addon.xml')
+                    if os.path.exists(xml):
+                        matchxml = parse_dom(tools.read_from_file(xml), 'import', ret='addon')
+                        if 'script.skinshortcuts' in matchxml:
+                            for base, dirs, files in os.walk(os.path.join(CONFIG.ADDON_DATA, 'script.skinshortcuts')):
+                                files[:] = [f for f in files if f not in CONFIG.EXCLUDE_FILES]
+                                for file in files:
+                                    fn = os.path.join(base, file)
+                                    zipf.write(fn, fn[len(CONFIG.HOME):], zipfile.ZIP_DEFLATED)
+                                    extractsize += os.path.getsize(fn)
+        zipf.close()
+        xbmc.sleep(500)
+        gui.DP.close()
+
+        backUpOptions('guifix', name)
+
+        if not tempzipname == '':
+            success = xbmcvfs.rename(tempzipname, zipname)
+            if success == 0:
+                xbmcvfs.copy(tempzipname, zipname)
+                xbmcvfs.delete(tempzipname)
+
+        info(name, extractsize, programs, video, music, picture, repos, scripts)
+
+        gui.DIALOG.ok(CONFIG.ADDONTITLE,
+                      "[COLOR {0}]{1}[/COLOR] [COLOR {2}]Backup successful:[/COLOR]".format(CONFIG.COLOR1, name, CONFIG.COLOR2),
+                      "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, zipname))
+
+
+def info(name, extractsize, programs, video, music, picture, repos, scripts):
+    info = zipname.replace('.zip', '.txt')
+    f = open(info, 'w')
+    f.close()
+    with open(info, 'a') as f:
+        f.write('name="{0}"\n'.format(name))
+        f.write('extracted="{0}"\n'.format(extractsize))
+        f.write('zipsize="{0}"\n'.format(os.path.getsize(xbmc.translatePath(zipname))))
+        f.write('skin="{0}"\n'.format(CONFIG.SKIN))
+        f.write('created="{0}"\n'.format(tools.get_date(now=True)))
+        f.write('programs="{0}"\n'.format(', '.join(programs)) if len(programs) > 0 else 'programs="none"\n')
+        f.write('video="{0}"\n'.format(', '.join(video)) if len(video) > 0 else 'video="none"\n')
+        f.write('music="{0}"\n'.format(', '.join(music)) if len(music) > 0 else 'music="none"\n')
+        f.write('picture="{0}"\n'.format(', '.join(picture)) if len(picture) > 0 else 'picture="none"\n')
+        f.write('repos="{0}"\n'.format(', '.join(repos)) if len(repos) > 0 else 'repos="none"\n')
+        f.write('scripts="{0}"\n'.format(', '.join(scripts)) if len(scripts) > 0 else 'scripts="none"\n')
+
+
+def guifix(name=""):
+    if name == "":
+        guiname = tools.get_keyboard("", "Please enter a name for the GUI Fix zip")
+        if not guiname:
+            return False
+        tools.convert_special(CONFIG.USERDATA, True)
+        tools.ascii_check(CONFIG.USERDATA, True)
+    else:
+        guiname = name
+    guiname = quote_plus(guiname)
+    tempguizipname = ''
+    guizipname = os.path.join(CONFIG.MYBUILDS, '{0}_guisettings.zip'.format(guiname))
+    if os.path.exists(CONFIG.GUISETTINGS):
+        try:
+            zipf = zipfile.ZipFile(guizipname, mode='w')
+        except:
+            try:
+                tempguizipname = os.path.join(CONFIG.PACKAGES, '{0}_guisettings.zip'.format(guiname))
+                zipf = zipfile.ZipFile(tempguizipname, mode='w')
+            except:
+                logging.log("Unable to create {0}_guisettings.zip".format(guiname), level=xbmc.LOGERROR)
+                if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                                "[COLOR {0}]We are unable to write to the current backup directory, would you like to change the location?[/COLOR]".format(CONFIG.COLOR2),
+                                yeslabel="[B][COLOR springgreen]Change Directory[/COLOR][/B]",
+                                nolabel="[B][COLOR red]Cancel[/COLOR][/B]"):
+                    CONFIG.open_settings()
+                    return
+                else:
+                    return
+        try:
+            zipf.write(CONFIG.GUISETTINGS, 'guisettings.xml', zipfile.ZIP_DEFLATED)
+            zipf.write(CONFIG.PROFILES, 'profiles.xml', zipfile.ZIP_DEFLATED)
+            match = glob.glob(os.path.join(CONFIG.ADDON_DATA, 'skin.*', ''))
+            for fold in match:
+                fd = os.path.split(fold[:-1])[1]
+                if fd not in ['skin.confluence', 'skin.re-touch', 'skin.estuary', 'skin.estouchy']:
+                    if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                                    "[COLOR {0}]Would you like to add the following skin folder to the GUI Fix Zip File?[/COLOR]".format(CONFIG.COLOR2),
+                                    "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, fd),
+                                    yeslabel="[B][COLOR springgreen]Add Skin[/COLOR][/B]",
+                                    nolabel="[B][COLOR red]Skip Skin[/COLOR][/B]"):
+                        for base, dirs, files in os.walk(os.path.join(CONFIG.ADDON_DATA, fold)):
+                            files[:] = [f for f in files if f not in CONFIG.EXCLUDE_FILES]
+                            for file in files:
+                                fn = os.path.join(base, file)
+                                zipf.write(fn, fn[len(CONFIG.USERDATA):], zipfile.ZIP_DEFLATED)
+                        xml = os.path.join(CONFIG.ADDONS, fd, 'addon.xml')
+                        if os.path.exists(xml):
+                            matchxml = tools.parse_dom(tools.read_from_file(xml), 'import', ret='addon')
+                            if 'script.skinshortcuts' in matchxml:
+                                for base, dirs, files in os.walk(os.path.join(CONFIG.ADDON_DATA, 'script.skinshortcuts')):
+                                    files[:] = [f for f in files if f not in CONFIG.EXCLUDE_FILES]
+                                    for file in files:
+                                        fn = os.path.join(base, file)
+                                        zipf.write(fn, fn[len(CONFIG.USERDATA):], zipfile.ZIP_DEFLATED)
+                    else:
+                        logging.log("[Back Up] Type = guifix: {0} ignored".format(fold), level=xbmc.LOGNOTICE)
+        except Exception as e:
+            logging.log("[Back Up] Type = guifix: {0}".format(e), level=xbmc.LOGNOTICE)
+            pass
+        zipf.close()
+        if not tempguizipname == '':
+            success = xbmcvfs.rename(tempguizipname, guizipname)
+            if success == 0:
+                xbmcvfs.copy(tempguizipname, guizipname)
+                xbmcvfs.delete(tempguizipname)
+    else:
+        logging.log("[Back Up] Type = guifix: guisettings.xml not found", level=xbmc.LOGNOTICE)
+    if name == "":
+        gui.DIALOG.ok(CONFIG.ADDONTITLE, "[COLOR {0}]GUI Fix backup successful:[/COLOR]".format(CONFIG.COLOR2),
+                  "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, guizipname))
+
+
+def theme(name=""):
+    if not gui.DIALOG.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+                        "[COLOR {0}]Would you like to create a theme backup?[/COLOR]".format(CONFIG.COLOR2),
+                        yeslabel="[B][COLOR springgreen]Continue[/COLOR][/B]",
+                        nolabel="[B][COLOR red]No Cancel[/COLOR][/B]"):
+        logging.log_notify("Theme Backup", "Cancelled!")
+        return False
+    if name == "":
+        themename = tools.get_keyboard("", "Please enter a name for the theme zip")
+        if not themename:
+            return False
+    else:
+        themename = name
+    themename = quote_plus(themename)
+    tempzipname = ''
+    zipname = os.path.join(CONFIG.MYBUILDS, '{0}.zip'.format(themename))
+    try:
+        zipf = zipfile.ZipFile(xbmc.translatePath(zipname), mode='w')
+    except:
+        try:
+            tempzipname = os.path.join(CONFIG.PACKAGES, '{0}.zip'.format(themename))
+            zipf = zipfile.ZipFile(tempzipname, mode='w')
+        except:
+            logging.log("Unable to create {0}.zip".format(themename), level=xbmc.LOGERROR)
+            if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                            "[COLOR {0}]We are unable to write to the current backup directory, would you like to change the location?[/COLOR]".format(CONFIG.COLOR2),
+                            yeslabel="[B][COLOR springgreen]Change Directory[/COLOR][/B]",
+                            nolabel="[B][COLOR red]Cancel[/COLOR][/B]"):
+                CONFIG.open_settings()
+                return
+            else:
+                return
+    tools.convert_special(CONFIG.USERDATA, True)
+    tools.ascii_check(CONFIG.USERDATA, True)
+    try:
+        if not CONFIG.SKIN == 'skin.confluence':
+            skinfold = os.path.join(CONFIG.ADDONS, CONFIG.SKIN, 'media')
+            match2 = glob.glob(os.path.join(skinfold, '*.xbt'))
+            if len(match2) > 1:
+                if gui.DIALOG.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+                                "[COLOR {0}]Would you like to go through the Texture Files for?[/COLOR]".format(CONFIG.COLOR2),
+                                "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.SKIN),
+                                yeslabel="[B][COLOR springgreen]Add Textures[/COLOR][/B]",
+                                nolabel="[B][COLOR red]Skip Textures[/COLOR][/B]"):
+                    for xbt in match2:
+                        if gui.DIALOG.yesno(
+                                '[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+                                "[COLOR {0}]Would you like to add the Texture File [COLOR {1}]{2}[/COLOR]?".format(
+                                CONFIG.COLOR1, CONFIG.COLOR2, xbt.replace(skinfold, "")[1:]),
+                                "from [COLOR {0}]{1}[/COLOR][/COLOR]".format(CONFIG.COLOR1, CONFIG.SKIN),
+                                yeslabel="[B][COLOR springgreen]Add Textures[/COLOR][/B]",
+                                nolabel="[B][COLOR red]Skip Textures[/COLOR][/B]"):
+                            fn = xbt
+                            fn2 = fn.replace(CONFIG.HOME, "")
+                            zipf.write(fn, fn2, zipfile.ZIP_DEFLATED)
+            else:
+                for xbt in match2:
+                    if gui.DIALOG.yesno(
+                            '[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+                            "[COLOR {0}]Would you like to add the Texture File [COLOR {1}]{2}[/COLOR]?".format(
+                            CONFIG.COLOR2, CONFIG.COLOR1, xbt.replace(skinfold, "")[1:]),
+                            "from [COLOR {0}]{1}[/COLOR][/COLOR]".format(CONFIG.COLOR1, CONFIG.SKIN),
+                            yeslabel="[B][COLOR springgreen]Add Textures[/COLOR][/B]",
+                            nolabel="[B][COLOR red]Skip Textures[/COLOR][/B]"):
+                        fn = xbt
+                        fn2 = fn.replace(CONFIG.HOME, "")
+                        zipf.write(fn, fn2, zipfile.ZIP_DEFLATED)
+            ad_skin = os.path.join(CONFIG.ADDON_DATA, CONFIG.SKIN, 'settings.xml')
+            if os.path.exists(ad_skin):
+                if gui.DIALOG.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+                                "[COLOR {0}]Would you like to go add the [COLOR {1}]settings.xml[/COLOR] in [COLOR {2}]/addon_data/[/COLOR] for?".format(
+                                CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1), "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.SKIN),
+                                yeslabel="[B][COLOR springgreen]Add Settings[/COLOR][/B]",
+                                nolabel="[B][COLOR red]Skip Settings[/COLOR][/B]"):
+                    zipf.write(ad_skin, ad_skin.replace(CONFIG.HOME, ""), zipfile.ZIP_DEFLATED)
+            match = tools.parse_dom(tools.read_from_file(os.path.join(ADDONS, SKIN, 'addon.xml')), 'import', ret='addon')
+            if 'script.skinshortcuts' in match:
+                if gui.DIALOG.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+                                "[COLOR {0}]Would you like to go add the [COLOR {1}]settings.xml[/COLOR] for [COLOR {2}]script.skinshortcuts[/COLOR]?".format(
+                                CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1),
+                                    yeslabel="[B][COLOR springgreen]Add Settings[/COLOR][/B]",
+                                nolabel="[B][COLOR red]Skip Settings[/COLOR][/B]"):
+                    for base, dirs, files in os.walk(os.path.join(CONFIG.ADDON_DATA, 'script.skinshortcuts')):
+                        files[:] = [f for f in files if f not in CONFIG.EXCLUDE_FILES]
+                        for file in files:
+                            fn = os.path.join(base, file)
+                            zipf.write(fn, fn[len(CONFIG.HOME):], zipfile.ZIP_DEFLATED)
+        if gui.DIALOG.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+                        "[COLOR {0}]Would you like to include a [COLOR {1}]Backgrounds[/COLOR] folder?[/COLOR]".format(
+                        CONFIG.COLOR2, CONFIG.COLOR1),
+                            yeslabel="[B][COLOR springgreen]Yes Include[/COLOR][/B]",
+                        nolabel="[B][COLOR red]No Continue[/COLOR][/B]"):
+            fn = gui.DIALOG.browse(0, 'Select location of backgrounds', 'files', '', True, False, CONFIG.HOME, False)
+            if not fn == CONFIG.HOME:
+                for base, dirs, files in os.walk(fn):
+                    dirs[:] = [d for d in dirs if d not in CONFIG.EXCLUDE_DIRS]
+                    files[:] = [f for f in files if f not in CONFIG.EXCLUDE_FILES]
+                    for file in files:
+                        try:
+                            fn2 = os.path.join(base, file)
+                            zipf.write(fn2, fn2[len(CONFIG.HOME):], zipfile.ZIP_DEFLATED)
+                        except Exception as e:
+                            logging.log("[Back Up] Type = theme: Unable to backup {0}".format(file), level=xbmc.LOGNOTICE)
+                            logging.log("Backup Error: {0}".format(str(e)), level=xbmc.LOGNOTICE)
+            text = db.latest_db('Textures')
+            if gui.DIALOG.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+                            "[COLOR {0}]Would you like to include the [COLOR {1}]{2}[/COLOR]?[/COLOR]".format(
+                            CONFIG.COLOR2, CONFIG.COLOR1, text),
+                                yeslabel="[B][COLOR springgreen]Yes Include[/COLOR][/B]",
+                            nolabel="[B][COLOR red]No Continue[/COLOR][/B]"):
+                zipf.write(os.path.join(CONFIG.DATABASE, text), '/userdata/Database/{0}'.format(text), zipfile.ZIP_DEFLATED)
+        if gui.DIALOG.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+                        "[COLOR {0}]Would you like to include any addons?[/COLOR]".format(CONFIG.COLOR2),
+                        yeslabel="[B][COLOR springgreen]Yes Include[/COLOR][/B]",
+                        nolabel="[B][COLOR red]No Continue[/COLOR][/B]"):
+            fold = glob.glob(os.path.join(CONFIG.ADDONS, '*/'))
+            addonnames = []
+            addonfolds = []
+            for folder in sorted(fold, key=lambda x: x):
+                foldername = os.path.split(folder[:-1])[1]
+                if foldername in CONFIG.EXCLUDES:
+                    continue
+                elif foldername in CONFIG.DEFAULTPLUGINS:
+                    continue
+                elif foldername == 'packages':
+                    continue
+                xml = os.path.join(folder, 'addon.xml')
+                if os.path.exists(xml):
+                    match = tools.parse_dom(tools.read_from_file(xml), 'addon', ret='name')
+                    if len(match) > 0:
+                        addonnames.append(match[0])
+                        addonfolds.append(foldername)
+                    else:
+                        addonnames.append(foldername)
+                        addonfolds.append(foldername)
+            selected = gui.DIALOG.multiselect("{0}: Select the add-ons you wish to add to the zip.".format(CONFIG.ADDONTITLE), addonnames)
+            if selected is None:
+                selected = []
+            if len(selected) > 0:
+                added = []
+                for item in selected:
+                    added.append(addonfolds[item])
+                    for base, dirs, files in os.walk(os.path.join(CONFIG.ADDONS, addonfolds[item])):
+                        files[:] = [f for f in files if f not in CONFIG.EXCLUDE_FILES]
+                        for file in files:
+                            if file.endswith('.pyo'):
+                                continue
+                            fn = os.path.join(base, file)
+                            zipf.write(fn, fn[len(CONFIG.HOME):], zipfile.ZIP_DEFLATED)
+                    dep = os.path.join(CONFIG.ADDONS, addonfolds[item], 'addon.xml')
+                    if os.path.exists(dep):
+                        match = tools.parse_dom(tools.read_from_file(dep), 'import', ret='addon')
+                        for depends in match:
+                            if 'xbmc.python' in depends:
+                                continue
+                            if depends in added:
+                                continue
+                            for base, dirs, files in os.walk(os.path.join(CONFIG.ADDONS, depends)):
+                                files[:] = [f for f in files if f not in CONFIG.EXCLUDE_FILES]
+                                for file in files:
+                                    if file.endswith('.pyo'):
+                                        continue
+                                    fn = os.path.join(base, file)
+                                    zipf.write(fn, fn[len(CONFIG.HOME):], zipfile.ZIP_DEFLATED)
+                                    added.append(depends)
+        if gui.DIALOG.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+                        "[COLOR {0}]Would you like to include the [COLOR {1}]guisettings.xml[/COLOR]?[/COLOR]".format(
+                        CONFIG.COLOR2, CONFIG.COLOR1),
+                            yeslabel="[B][COLOR springgreen]Yes Include[/COLOR][/B]",
+                        nolabel="[B][COLOR red]No Continue[/COLOR][/B]"):
+            zipf.write(CONFIG.GUISETTINGS, '/userdata/guisettings.xml', zipfile.ZIP_DEFLATED)
+    except Exception as e:
+        zipf.close()
+        logging.log("[Back Up] Type = theme: {0}".format(str(e)), level=xbmc.LOGNOTICE)
+        gui.DIALOG.ok(CONFIG.ADDONTITLE, "[COLOR {0}]{1}[/COLOR][COLOR {2}] theme zip failed:[/COLOR]".format(CONFIG.COLOR1, themename, CONFIG.COLOR2),
+                  "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, str(e)))
+        if not tempzipname == '':
+            try:
+                os.remove(xbmc.translatePath(tempzipname))
+            except Exception as e:
+                logging.log(str(e))
+        else:
+            try:
+                os.remove(xbmc.translatePath(zipname))
+            except Exception as e:
+                logging.log(str(e))
+        return
+    zipf.close()
+    if not tempzipname == '':
+        success = xbmcvfs.rename(tempzipname, zipname)
+        if success == 0:
+            xbmcvfs.copy(tempzipname, zipname)
+            xbmcvfs.delete(tempzipname)
+    gui.DIALOG.ok(CONFIG.ADDONTITLE, "[COLOR {0}]{1}[/COLOR][COLOR {2}] theme zip successful:[/COLOR]".format(CONFIG.COLOR1, themename, CONFIG.COLOR2),
+              "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, zipname))
+
+
+def addon_data(name=""):
+    if gui.DIALOG.yesno(CONFIG.ADDONTITLE, "[COLOR {0}]Are you sure you wish to backup the current addon_data?[/COLOR]".format(CONFIG.COLOR2),
+                    nolabel="[B][COLOR red]Cancel Backup[/COLOR][/B]",
+                    yeslabel="[B][COLOR springgreen]Backup Addon_Data[/COLOR][/B]"):
+        if name == "":
+            name = tools.get_keyboard("", "Please enter a name for the addon_data zip")
+            if not name:
+                return False
+            name = quote_plus(name)
+        name = '{0}_addondata.zip'.format(name)
+        tempzipname = ''
+        zipname = os.path.join(CONFIG.MYBUILDS, name)
+        try:
+            zipf = zipfile.ZipFile(xbmc.translatePath(zipname), mode='w')
+        except:
+            try:
+                tempzipname = os.path.join(CONFIG.PACKAGES, '{0}.zip'.format(name))
+                zipf = zipfile.ZipFile(tempzipname, mode='w')
+            except:
+                logging.log("Unable to create {0}_addondata.zip".format(name), level=xbmc.LOGERROR)
+                if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                                "[COLOR {0}]We are unable to write to the current backup directory, would you like to change the location?[/COLOR]".format(CONFIG.COLOR2),
+                                yeslabel="[B][COLOR springgreen]Change Directory[/COLOR][/B]",
+                                nolabel="[B][COLOR red]Cancel[/COLOR][/B]"):
+                    CONFIG.open_settings()
+                    return
+                else:
+                    return
+        for_progress = 0
+        ITEM = []
+        tools.convert_special(CONFIG.ADDON_DATA, True)
+        tools.ascii_check(CONFIG.ADDON_DATA, True)
+        gui.DP.create("[COLOR {0}]{1}[/COLOR][COLOR {2}]: Creating Zip[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+                  "[COLOR {0}]Creating back up zip".format(CONFIG.COLOR2), "", "Please Wait...[/COLOR]")
+        for base, dirs, files in os.walk(CONFIG.ADDON_DATA):
+            dirs[:] = [d for d in dirs if d not in CONFIG.EXCLUDE_DIRS]
+            files[:] = [f for f in files if f not in CONFIG.EXCLUDE_FILES]
+            for file in files:
+                ITEM.append(file)
+        N_ITEM = len(ITEM)
+
+        bad_files = [
+            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'cache.db')),
+            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'cache.meta.5.db')),
+            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'cache.providers.13.db')),
+            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.db')),
+            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.meta.5.db')),
+            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.providers.13.db')),
+            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'cache.db')),
+            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'cache.meta.5.db')),
+            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'cache.providers.13.db')),
+            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'cache.db')),
+            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'cache.meta.5.db')),
+            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'cache.providers.13.db')),
+            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.scrubsv2', 'cache.db')),
+            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.scrubsv2', 'cache.meta.5.db')),
+            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.scrubsv2', 'cache.providers.13.db')),
+            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.gaia', 'cache.db')),
+            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.gaia', 'meta.db')),
+            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.seren', 'cache.db')),
+            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.seren', 'torrentScrape.db')),
+            (os.path.join(CONFIG.ADDON_DATA, 'script.module.simplecache', 'simplecache.db'))]
+
+        for base, dirs, files in os.walk(CONFIG.ADDON_DATA):
+            dirs[:] = [d for d in dirs if d not in CONFIG.EXCLUDE_DIRS]
+            files[:] = [f for f in files if f not in CONFIG.EXCLUDE_FILES]
+            for file in files:
+                try:
+                    for_progress += 1
+                    progress = tools.percentage(for_progress, N_ITEM)
+                    gui.DP.update(int(progress),
+                              '[COLOR {0}]Creating back up zip: [COLOR{1}]{2}[/COLOR] / [COLOR{3}]{4}[/COLOR]'.format(
+                              CONFIG.COLOR2, CONFIG.COLOR1, for_progress, CONFIG.COLOR1, N_ITEM),
+                                  '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, file),
+                              '')
+                    fn = os.path.join(base, file)
+                    if file in CONFIG.LOGFILES:
+                        logging.log("[Back Up] Type = addon_data: Ignore {0} - Log Files".format(file), level=xbmc.LOGNOTICE)
+                        continue
+                    elif os.path.join(base, file) in bad_files:
+                        logging.log("[Back Up] Type = addon_data: Ignore {0} - Cache Files".format(file), level=xbmc.LOGNOTICE)
+                        continue
+                    elif os.path.join('addons', 'packages') in fn:
+                        logging.log("[Back Up] Type = addon_data: Ignore {0} - Packages Folder".format(file), level=xbmc.LOGNOTICE)
+                        continue
+                    elif file.endswith('.csv'):
+                        logging.log("[Back Up] Type = addon_data: Ignore {0} - CSV File".format(file), level=xbmc.LOGNOTICE)
+                        continue
+                    elif file.endswith('.db') and 'Database' in base:
+                        temp = file.replace('.db', '')
+                        temp = ''.join([i for i in temp if not i.isdigit()])
+                        if temp in CONFIG.DB_FILES:
+                            if not file == db.latest_db(temp):
+                                logging.log("[Back Up] Type = addon_data: Ignore {0} - Database Files".format(file), level=xbmc.LOGNOTICE)
+                                continue
+                    try:
+                        zipf.write(fn, fn[len(CONFIG.ADDON_DATA):], zipfile.ZIP_DEFLATED)
+                    except Exception as e:
+                        logging.log("[Back Up] Type = addon_data: Unable to backup {0}".format(file), level=xbmc.LOGNOTICE)
+                        logging.log("Backup Error: {0}".format(str(e)), level=xbmc.LOGNOTICE)
+                except Exception as e:
+                    logging.log("[Back Up] Type = addon_data: Unable to backup {0}".format(file), level=xbmc.LOGNOTICE)
+                    logging.log("Backup Error: {0}".format(str(e)), level=xbmc.LOGNOTICE)
+        zipf.close()
+        if not tempzipname == '':
+            success = xbmcvfs.rename(tempzipname, zipname)
+            if success == 0:
+                xbmcvfs.copy(tempzipname, zipname)
+                xbmcvfs.delete(tempzipname)
+        gui.DP.close()
+        gui.DIALOG.ok(CONFIG.ADDONTITLE, "[COLOR {0}]{1}[/COLOR] [COLOR {2}]backup successful:[/COLOR]".format(CONFIG.COLOR1, name, CONFIG.COLOR2),
+                  "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, zipname))
+
+
 def backUpOptions(type, name=""):
-	exclude_dirs  = [ADDON_ID, 'cache', 'system', 'Thumbnails', 'peripheral_data', 'temp', 'My_Builds', 'keymaps', 'cdm']
-	exclude_files = ['Textures13.db', '.DS_Store', 'advancedsettings.xml', 'Thumbs.db', '.gitignore']
-	## TODO: fix these
-	bad_files     = [
-					(os.path.join(ADDOND, 'plugin.video.placenta', 'cache.db')),
-					(os.path.join(ADDOND, 'plugin.video.placenta', 'cache.meta.5.db')),
-					(os.path.join(ADDOND, 'plugin.video.placenta', 'cache.providers.13.db')),
-					(os.path.join(ADDOND, 'plugin.video.exodusredux', 'cache.db')),
-					(os.path.join(ADDOND, 'plugin.video.exodusredux', 'cache.meta.5.db')),
-					(os.path.join(ADDOND, 'plugin.video.exodusredux', 'cache.providers.13.db')),
-					(os.path.join(ADDOND, 'plugin.video.overeasy', 'cache.db')),
-					(os.path.join(ADDOND, 'plugin.video.overeasy', 'cache.meta.5.db')),
-					(os.path.join(ADDOND, 'plugin.video.overeasy', 'cache.providers.13.db')),
-					(os.path.join(ADDOND, 'plugin.video.yoda', 'cache.db')),
-					(os.path.join(ADDOND, 'plugin.video.yoda', 'cache.meta.5.db')),
-					(os.path.join(ADDOND, 'plugin.video.yoda', 'cache.providers.13.db')),
-					(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'cache.db')),
-					(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'cache.meta.5.db')),
-					(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'cache.providers.13.db')),
-					(os.path.join(ADDOND, 'plugin.video.gaia', 'cache.db')),
-					(os.path.join(ADDOND, 'plugin.video.gaia', 'meta.db')),
-					(os.path.join(ADDOND, 'plugin.video.seren', 'cache.db')),
-					(os.path.join(ADDOND, 'plugin.video.seren', 'torrentScrape.db')),
-					(os.path.join(ADDOND, 'script.module.simplecache', 'simplecache.db'))]
+    try:
+        if not os.path.exists(CONFIG.BACKUPLOCATION):
+            xbmcvfs.mkdirs(CONFIG.BACKUPLOCATION)
+        if not os.path.exists(CONFIG.MYBUILDS):
+            xbmcvfs.mkdirs(CONFIG.MYBUILDS)
+    except Exception as e:
+        gui.DIALOG.ok(CONFIG.ADDONTITLE,
+                      "[COLOR {0}]Error making Back Up directories:[/COLOR]".format(CONFIG.COLOR2),
+                      "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, str(e)))
+        return
+    if type == "addon_pack":
+        addon_pack()
+    elif type == "build":
+        build()
+    elif type == "guifix":
+        guifix()
+    elif type == "theme":
+        theme()
+    elif type == "addon_data":
+        addon_data()
 
-	backup   = xbmc.translatePath(BACKUPLOCATION)
-	mybuilds = xbmc.translatePath(MYBUILDS)
-	try:
-		if not os.path.exists(backup): xbmcvfs.mkdirs(backup)
-		if not os.path.exists(mybuilds): xbmcvfs.mkdirs(mybuilds)
-	except Exception as e:
-		DIALOG.ok(ADDONTITLE, "[COLOR %s]Error making Back Up directories:[/COLOR]" % (COLOR2), "[COLOR %s]%s[/COLOR]" % (COLOR1, str(e)))
-		return
-	if type == "addon pack":
-		if DIALOG.yesno(ADDONTITLE, "[COLOR %s]Are you sure you wish to create an Addon Pack?[/COLOR]" % COLOR2, nolabel="[B][COLOR red]Cancel Backup[/COLOR][/B]", yeslabel="[B][COLOR springgreen]Create Pack[/COLOR][/B]"):
-			if name == "":
-				name = getKeyboard("","Please enter a name for the %s zip" % type)
-				if not name: return False
-				name = quote_plus(name)
-			name = '%s.zip' % name; tempzipname = ''
-			zipname = os.path.join(mybuilds, name)
-			try:
-				zipf = zipfile.ZipFile(xbmc.translatePath(zipname), mode='w')
-			except:
-				try:
-					tempzipname = os.path.join(PACKAGES, '%s.zip' % name)
-					zipf = zipfile.ZipFile(tempzipname, mode='w')
-				except:
-					log("Unable to create %s.zip" % name, xbmc.LOGERROR)
-					if DIALOG.yesno(ADDONTITLE, "[COLOR %s]We are unable to write to the current backup directory, would you like to change the location?[/COLOR]" % COLOR2, yeslabel="[B][COLOR springgreen]Change Directory[/COLOR][/B]", nolabel="[B][COLOR red]Cancel[/COLOR][/B]"):
-						openS()
-						return
-					else:
-						return
-			fold = glob.glob(os.path.join(ADDONS, '*/'))
-			addonnames = []; addonfolds = []
-			for folder in sorted(fold, key = lambda x: x):
-				foldername = os.path.split(folder[:-1])[1]
-				if foldername in EXCLUDES: continue
-				elif foldername in DEFAULTPLUGINS: continue
-				elif foldername == 'packages': continue
-				xml = os.path.join(folder, 'addon.xml')
-				if os.path.exists(xml):
-					f      = open(xml)
-					a      = f.read()
-					match  = parseDOM(a, 'addon', ret='name')
-					if len(match) > 0:
-						addonnames.append(match[0])
-						addonfolds.append(foldername)
-					else:
-						addonnames.append(foldername)
-						addonfolds.append(foldername)
-			if KODIV > 16:
-				selected = DIALOG.multiselect("%s: Select the addons you wish to add to the zip." % ADDONTITLE, addonnames)
-				if selected is None: selected = []
-			else:
-				selected = []; choice = 0
-				tempaddonnames = ["-- Click here to Continue --"] + addonnames
-				while not choice == -1:
-					choice = DIALOG.select("%s: Select the addons you wish to add to the zip." % ADDONTITLE, tempaddonnames)
-					if choice == -1: break
-					elif choice == 0: break
-					else:
-						choice2 = (choice-1)
-						if choice2 in selected:
-							selected.remove(choice2)
-							tempaddonnames[choice] = addonnames[choice2]
-						else:
-							selected.append(choice2)
-							tempaddonnames[choice] = "[B][COLOR %s]%s[/COLOR][/B]" % (COLOR1, addonnames[choice2])
-			log(selected)
-			DP.create(ADDONTITLE,'[COLOR %s][B]Creating Zip File:[/B][/COLOR]' % COLOR2,'', 'Please Wait')
-			if len(selected) > 0:
-				added = []
-				for item in selected:
-					added.append(addonfolds[item])
-					DP.update(0, "", "[COLOR %s]%s[/COLOR]" % (COLOR1, addonfolds[item]))
-					for base, dirs, files in os.walk(os.path.join(ADDONS,addonfolds[item])):
-						files[:] = [f for f in files if f not in exclude_files]
-						for file in files:
-							if file.endswith('.pyo'): continue
-							DP.update(0, "", "[COLOR %s]%s[/COLOR]" % (COLOR1, addonfolds[item]), "[COLOR %s]%s[/COLOR]" % (COLOR1, file))
-							fn = os.path.join(base, file)
-							zipf.write(fn, fn[len(ADDONS):], zipfile.ZIP_DEFLATED)
-					dep=os.path.join(ADDONS,addonfolds[item],'addon.xml')
-					if os.path.exists(dep):
-						source = open(dep,mode='r'); link = source.read(); source.close();
-						match  = parseDOM(link, 'import', ret='addon')
-						for depends in match:
-							if 'xbmc.python' in depends: continue
-							if depends in added: continue
-							DP.update(0, "", "[COLOR %s]%s[/COLOR]" % (COLOR1, depends))
-							for base, dirs, files in os.walk(os.path.join(ADDONS,depends)):
-								files[:] = [f for f in files if f not in exclude_files]
-								for file in files:
-									if file.endswith('.pyo'): continue
-									DP.update(0, "", "[COLOR %s]%s[/COLOR]" % (COLOR1, depends), "[COLOR %s]%s[/COLOR]" % (COLOR1, file))
-									fn = os.path.join(base, file)
-									zipf.write(fn, fn[len(ADDONS):], zipfile.ZIP_DEFLATED)
-									added.append(depends)
-			DIALOG.ok(ADDONTITLE, "[COLOR %s]%s[/COLOR] [COLOR %s]backup successful:[/COLOR]" % (COLOR1, name, COLOR2), "[COLOR %s]%s[/COLOR]" % (COLOR1, zipname))
-	elif type == "build":
-		if DIALOG.yesno(ADDONTITLE, "[COLOR %s]Are you sure you wish to backup the current build?[/COLOR]" % COLOR2, nolabel="[B][COLOR red]Cancel Backup[/COLOR][/B]", yeslabel="[B][COLOR springgreen]Backup Build[/COLOR][/B]"):
-			if name == "":
-				name = getKeyboard("","Please enter a name for the %s zip" % type)
-				if not name: return False
-				name = name.replace('\\', '').replace('/', '').replace(':', '').replace('*', '').replace('?', '').replace('"', '').replace('<', '').replace('>', '').replace('|', '')
-			name = quote_plus(name); tempzipname = ''
-			zipname = os.path.join(mybuilds, '%s.zip' % name)
-			for_progress  = 0
-			ITEM          = []
-			if not DIALOG.yesno(ADDONTITLE, "[COLOR %s]Do you want to include your addon_data folder?" % COLOR2, 'This contains [COLOR %s]ALL[/COLOR] addon settings including passwords but may also contain important information such as skin shortcuts. We recommend [COLOR %s]MANUALLY[/COLOR] removing the addon_data folders that aren\'t required.' % (COLOR1, COLOR1), '[COLOR %s]%s[/COLOR] addon_data is ignored[/COLOR]' % (COLOR1, ADDON_ID), yeslabel='[B][COLOR springgreen]Include data[/COLOR][/B]',nolabel='[B][COLOR red]Don\'t Include[/COLOR][/B]'):
-				exclude_dirs.append('addon_data')
-			convertSpecial(HOME, True)
-			asciiCheck(HOME, True)
-			extractsize = 0
-			try:
-				zipf = zipfile.ZipFile(xbmc.translatePath(zipname), mode='w')
-			except:
-				try:
-					tempzipname = os.path.join(PACKAGES, '%s.zip' % name)
-					zipf = zipfile.ZipFile(tempzipname, mode='w')
-				except:
-					log("Unable to create %s.zip" % name, xbmc.LOGERROR)
-					if DIALOG.yesno(ADDONTITLE, "[COLOR %s]We are unable to write to the current backup directory, would you like to change the location?[/COLOR]" % COLOR2, yeslabel="[B][COLOR springgreen]Change Directory[/COLOR][/B]", nolabel="[B][COLOR red]Cancel[/COLOR][/B]"):
-						openS()
-						return
-					else:
-						return
-			DP.create("[COLOR %s]%s[/COLOR][COLOR %s]: Creating Zip[/COLOR]" % (COLOR1, ADDONTITLE,COLOR2), "[COLOR %s]Creating back up zip" % COLOR2, "", "Please Wait...[/COLOR]")
-			for base, dirs, files in os.walk(HOME):
-				dirs[:] = [d for d in dirs if d not in exclude_dirs]
-				files[:] = [f for f in files if f not in exclude_files]
-				for file in files:
-					ITEM.append(file)
-			N_ITEM = len(ITEM)
-			picture = []; music = []; video = []; programs = []; repos = []; scripts = []; skins = []
-			fold = glob.glob(os.path.join(ADDONS, '*/'))
-			idlist = []
-			for folder in sorted(fold, key = lambda x: x):
-				foldername = os.path.split(folder[:-1])[1]
-				if foldername == 'packages': continue
-				xml = os.path.join(folder, 'addon.xml')
-				if os.path.exists(xml):
-					f      = open(xml)
-					a      = f.read()
-					prov   = re.compile("<provides>(.+?)</provides>").findall(a)
-					match  = parseDOM(a, 'addon', ret='id')
 
-					addid  = foldername if len(match) == 0 else match[0]
-					if addid in idlist:
-						continue
-					idlist.append(addid)
-					try:
-						add   = xbmcaddon.Addon(id=addid)
-						aname = add.getAddonInfo('name')
-						aname = aname.replace('[', '<').replace(']', '>')
-						aname = str(re.sub('<[^<]+?>', '', aname)).lstrip()
-					except:
-						aname = foldername
-					if len(prov) == 0:
-						if   foldername.startswith('skin'): skins.append(aname)
-						elif foldername.startswith('repo'): repos.append(aname)
-						else: scripts.append(aname)
-						continue
-					if not (prov[0]).find('executable') == -1: programs.append(aname)
-					if not (prov[0]).find('video') == -1: video.append(aname)
-					if not (prov[0]).find('audio') == -1: music.append(aname)
-					if not (prov[0]).find('image') == -1: picture.append(aname)
-			fixmetas()
-			for base, dirs, files in os.walk(HOME):
-				dirs[:] = [d for d in dirs if d not in exclude_dirs]
-				files[:] = [f for f in files if f not in exclude_files]
-				for file in files:
-					try:
-						for_progress += 1
-						progress = percentage(for_progress, N_ITEM)
-						DP.update(int(progress), '[COLOR %s]Creating back up zip: [COLOR%s]%s[/COLOR] / [COLOR%s]%s[/COLOR]' % (COLOR2, COLOR1, for_progress, COLOR1, N_ITEM), '[COLOR %s]%s[/COLOR]' % (COLOR1, file), '')
-						fn = os.path.join(base, file)
-						if file in LOGFILES: log("[Back Up] Type = '%s': Ignore %s" % (type, file), xbmc.LOGNOTICE); continue
-						elif os.path.join(base, file) in bad_files: log("[Back Up] Type = '%s': Ignore %s" % (type, file), xbmc.LOGNOTICE); continue
-						elif os.path.join('addons', 'packages') in fn: log("[Back Up] Type = '%s': Ignore %s" % (type, file), xbmc.LOGNOTICE); continue
-						elif os.path.join(ADDONS, 'inputstream.adaptive') in fn: log("[Back Up] Type = '%s': Ignore %s" % (type, file), xbmc.LOGNOTICE); continue
-						elif file.endswith('.csv'): log("[Back Up] Type = '%s': Ignore %s" % (type, file), xbmc.LOGNOTICE); continue
-						elif file.endswith('.pyo'): continue
-						elif file.endswith('.db') and 'Database' in base:
-							temp = file.replace('.db', '')
-							temp = ''.join([i for i in temp if not i.isdigit()])
-							if temp in ['Addons', 'ADSP', 'Epg', 'MyMusic', 'MyVideos', 'Textures', 'TV', 'ViewModes']:
-								if not file == latestDB(temp):  log("[Back Up] Type = '%s': Ignore %s" % (type, file), xbmc.LOGNOTICE); continue
-						try:
-							zipf.write(fn, fn[len(HOME):], zipfile.ZIP_DEFLATED)
-							extractsize += os.path.getsize(fn)
-						except Exception as e:
-							log("[Back Up] Type = '%s': Unable to backup %s" % (type, file), xbmc.LOGNOTICE)
-							log("%s / %s" % (Exception, e))
-						if DP.iscanceled():
-							DP.close()
-							LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Backup Cancelled[/COLOR]" % COLOR2)
-							sys.exit()
-					except Exception as e:
-						log("[Back Up] Type = '%s': Unable to backup %s" % (type, file), xbmc.LOGNOTICE)
-						log("Build Backup Error: %s" % str(e), xbmc.LOGNOTICE)
-			if 'addon_data' in exclude_dirs:
-				match = glob.glob(os.path.join(ADDOND,'skin.*', ''))
-				for fold in match:
-					fd = os.path.split(fold[:-1])[1]
-					if not fd in ['skin.confluence', 'skin.re-touch', 'skin.estuary', 'skin.estouchy']:
-						for base, dirs, files in os.walk(os.path.join(ADDOND,fold)):
-							files[:] = [f for f in files if f not in exclude_files]
-							for file in files:
-								fn = os.path.join(base, file)
-								zipf.write(fn, fn[len(HOME):], zipfile.ZIP_DEFLATED)
-								extractsize += os.path.getsize(fn)
-						xml   = os.path.join(ADDONS, fd, 'addon.xml')
-						if os.path.exists(xml):
-							source   = open(xml,mode='r'); link = source.read(); source.close();
-							matchxml = parseDOM(link, 'import', ret='addon')
-							if 'script.skinshortcuts' in matchxml:
-								for base, dirs, files in os.walk(os.path.join(ADDOND,'script.skinshortcuts')):
-									files[:] = [f for f in files if f not in exclude_files]
-									for file in files:
-										fn = os.path.join(base, file)
-										zipf.write(fn, fn[len(HOME):], zipfile.ZIP_DEFLATED)
-										extractsize += os.path.getsize(fn)
-			zipf.close()
-			xbmc.sleep(500)
-			DP.close()
-			backUpOptions('guifix', name)
-			if not tempzipname == '':
-				success = xbmcvfs.rename(tempzipname, zipname)
-				if success == 0:
-					xbmcvfs.copy(tempzipname, zipname)
-					xbmcvfs.delete(tempzipname)
-			info = zipname.replace('.zip', '.txt')
-			f = open(info, 'w'); f.close()
-			with open(info, 'a') as f:
-				f.write('name="%s"\n' % name)
-				f.write('extracted="%s"\n' % extractsize)
-				f.write('zipsize="%s"\n' % os.path.getsize(xbmc.translatePath(zipname)))
-				f.write('skin="%s"\n' % currSkin())
-				f.write('created="%s"\n' % datetime.now().date())
-				f.write('programs="%s"\n' % ', '.join(programs) if len(programs) > 0 else 'programs="none"\n')
-				f.write('video="%s"\n' % ', '.join(video) if len(video) > 0 else 'video="none"\n')
-				f.write('music="%s"\n' % ', '.join(music) if len(music) > 0 else 'music="none"\n')
-				f.write('picture="%s"\n' % ', '.join(picture) if len(picture) > 0 else 'picture="none"\n')
-				f.write('repos="%s"\n' % ', '.join(repos) if len(repos) > 0 else 'repos="none"\n')
-				f.write('scripts="%s"\n' % ', '.join(scripts) if len(scripts) > 0 else 'scripts="none"\n')
-			DIALOG.ok(ADDONTITLE, "[COLOR %s]%s[/COLOR] [COLOR %s]backup successful:[/COLOR]" % (COLOR1, name, COLOR2), "[COLOR %s]%s[/COLOR]" % (COLOR1, zipname))
-	elif type == "guifix":
-		if name == "":
-			guiname = getKeyboard("","Please enter a name for the %s zip" % type)
-			if not guiname: return False
-			convertSpecial(USERDATA, True)
-			asciiCheck(USERDATA, True)
-		else: guiname = name
-		guiname = quote_plus(guiname); tempguizipname = ''
-		guizipname = xbmc.translatePath(os.path.join(mybuilds, '%s_guisettings.zip' % guiname))
-		if os.path.exists(GUISETTINGS):
-			try:
-				zipf = zipfile.ZipFile(guizipname, mode='w')
-			except:
-				try:
-					tempguizipname = os.path.join(PACKAGES, '%s_guisettings.zip' % guiname)
-					zipf = zipfile.ZipFile(tempguizipname, mode='w')
-				except:
-					log("Unable to create %s_guisettings.zip" % guiname, xbmc.LOGERROR)
-					if DIALOG.yesno(ADDONTITLE, "[COLOR %s]We are unable to write to the current backup directory, would you like to change the location?[/COLOR]" % COLOR2, yeslabel="[B][COLOR springgreen]Change Directory[/COLOR][/B]", nolabel="[B][COLOR red]Cancel[/COLOR][/B]"):
-						openS()
-						return
-					else:
-						return
-			try:
-				zipf.write(GUISETTINGS, 'guisettings.xml', zipfile.ZIP_DEFLATED)
-				zipf.write(PROFILES,    'profiles.xml',    zipfile.ZIP_DEFLATED)
-				match = glob.glob(os.path.join(ADDOND,'skin.*', ''))
-				for fold in match:
-					fd = os.path.split(fold[:-1])[1]
-					if not fd in ['skin.confluence', 'skin.re-touch', 'skin.estuary', 'skin.estouchy']:
-						if DIALOG.yesno(ADDONTITLE, "[COLOR %s]Would you like to add the following skin folder to the GuiFix Zip File?[/COLOR]" % COLOR2, "[COLOR %s]%s[/COLOR]" % (COLOR1, fd), yeslabel="[B][COLOR springgreen]Add Skin[/COLOR][/B]", nolabel="[B][COLOR red]Skip Skin[/COLOR][/B]"):
-							for base, dirs, files in os.walk(os.path.join(ADDOND,fold)):
-								files[:] = [f for f in files if f not in exclude_files]
-								for file in files:
-									fn = os.path.join(base, file)
-									zipf.write(fn, fn[len(USERDATA):], zipfile.ZIP_DEFLATED)
-							xml   = os.path.join(ADDONS, fd, 'addon.xml')
-							if os.path.exists(xml):
-								source   = open(xml,mode='r'); link = source.read(); source.close();
-								matchxml = parseDOM(link, 'import', ret='addon')
-								if 'script.skinshortcuts' in matchxml:
-									for base, dirs, files in os.walk(os.path.join(ADDOND,'script.skinshortcuts')):
-										files[:] = [f for f in files if f not in exclude_files]
-										for file in files:
-											fn = os.path.join(base, file)
-											zipf.write(fn, fn[len(USERDATA):], zipfile.ZIP_DEFLATED)
-						else: log("[Back Up] Type = '%s': %s ignored" % (type, fold), xbmc.LOGNOTICE)
-			except Exception as e:
-				log("[Back Up] Type = '%s': %s" % (type, e), xbmc.LOGNOTICE)
-				pass
-			zipf.close()
-			if not tempguizipname == '':
-				success = xbmcvfs.rename(tempguizipname, guizipname)
-				if success == 0:
-					xbmcvfs.copy(tempguizipname, guizipname)
-					xbmcvfs.delete(tempguizipname)
-		else: log("[Back Up] Type = '%s': guisettings.xml not found" % type, xbmc.LOGNOTICE)
-		if name == "":
-			DIALOG.ok(ADDONTITLE, "[COLOR %s]GuiFix backup successful:[/COLOR]" % (COLOR2), "[COLOR %s]%s[/COLOR]" % (COLOR1, guizipname))
-	elif type == "theme":
-		if not DIALOG.yesno('[COLOR %s]%s[/COLOR][COLOR %s]: Theme Backup[/COLOR]' % (COLOR1, ADDONTITLE, COLOR2), "[COLOR %s]Would you like to create a theme backup?[/COLOR]" % COLOR2, yeslabel="[B][COLOR springgreen]Continue[/COLOR][/B]", nolabel="[B][COLOR red]No Cancel[/COLOR][/B]"): LogNotify("Theme Backup", "Cancelled!"); return False
-		if name == "":
-			themename = getKeyboard("","Please enter a name for the %s zip" % type)
-			if not themename: return False
-		else: themename = name
-		themename = quote_plus(themename); tempzipname = ''
-		zipname = os.path.join(mybuilds, '%s.zip' % themename)
-		try:
-			zipf = zipfile.ZipFile(xbmc.translatePath(zipname), mode='w')
-		except:
-			try:
-				tempzipname = os.path.join(PACKAGES, '%s.zip' % themename)
-				zipf = zipfile.ZipFile(tempzipname, mode='w')
-			except:
-				log("Unable to create %s.zip" % themename, xbmc.LOGERROR)
-				if DIALOG.yesno(ADDONTITLE, "[COLOR %s]We are unable to write to the current backup directory, would you like to change the location?[/COLOR]" % COLOR2, yeslabel="[B][COLOR springgreen]Change Directory[/COLOR][/B]", nolabel="[B][COLOR red]Cancel[/COLOR][/B]"):
-					openS()
-					return
-				else:
-					return
-		convertSpecial(USERDATA, True)
-		asciiCheck(USERDATA, True)
-		try:
-			if not SKIN == 'skin.confluence':
-				skinfold = os.path.join(ADDONS, SKIN, 'media')
-				match2 = glob.glob(os.path.join(skinfold,'*.xbt'))
-				if len(match2) > 1:
-					if DIALOG.yesno('[COLOR %s]%s[/COLOR][COLOR %s]: Theme Backup[/COLOR]' % (COLOR1, ADDONTITLE, COLOR2), "[COLOR %s]Would you like to go through the Texture Files for?[/COLOR]" % COLOR2, "[COLOR %s]%s[/COLOR]" % (COLOR1, SKIN), yeslabel="[B][COLOR springgreen]Add Textures[/COLOR][/B]", nolabel="[B][COLOR red]Skip Textures[/COLOR][/B]"):
-						skinfold = os.path.join(ADDONS, SKIN, 'media')
-						match2 = glob.glob(os.path.join(skinfold,'*.xbt'))
-						for xbt in match2:
-							if DIALOG.yesno('[COLOR %s]%s[/COLOR][COLOR %s]: Theme Backup[/COLOR]' % (COLOR1, ADDONTITLE, COLOR2), "[COLOR %s]Would you like to add the Texture File [COLOR %s]%s[/COLOR]?" % (COLOR1, COLOR2, xbt.replace(skinfold, "")[1:]), "from [COLOR %s]%s[/COLOR][/COLOR]" % (COLOR1, SKIN), yeslabel="[B][COLOR springgreen]Add Textures[/COLOR][/B]", nolabel="[B][COLOR red]Skip Textures[/COLOR][/B]"):
-								fn  = xbt
-								fn2 = fn.replace(HOME, "")
-								zipf.write(fn, fn2, zipfile.ZIP_DEFLATED)
-				else:
-					for xbt in match2:
-						if DIALOG.yesno('[COLOR %s]%s[/COLOR][COLOR %s]: Theme Backup[/COLOR]' % (COLOR1, ADDONTITLE, COLOR2), "[COLOR %s]Would you like to add the Texture File [COLOR %s]%s[/COLOR]?" % (COLOR2, COLOR1, xbt.replace(skinfold, "")[1:]), "from [COLOR %s]%s[/COLOR][/COLOR]" % (COLOR1, SKIN), yeslabel="[B][COLOR springgreen]Add Textures[/COLOR][/B]", nolabel="[B][COLOR red]Skip Textures[/COLOR][/B]"):
-							fn  = xbt
-							fn2 = fn.replace(HOME, "")
-							zipf.write(fn, fn2, zipfile.ZIP_DEFLATED)
-				ad_skin = os.path.join(ADDOND, SKIN, 'settings.xml')
-				if os.path.exists(ad_skin):
-					if DIALOG.yesno('[COLOR %s]%s[/COLOR][COLOR %s]: Theme Backup[/COLOR]' % (COLOR1, ADDONTITLE, COLOR2), "[COLOR %s]Would you like to go add the [COLOR %s]settings.xml[/COLOR] in [COLOR %s]/addon_data/[/COLOR] for?" % (COLOR2, COLOR1, COLOR1), "[COLOR %s]%s[/COLOR]"  % (COLOR1, SKIN), yeslabel="[B][COLOR springgreen]Add Settings[/COLOR][/B]", nolabel="[B][COLOR red]Skip Settings[/COLOR][/B]"):
-						skinfold = os.path.join(ADDOND, SKIN)
-						zipf.write(ad_skin, ad_skin.replace(HOME, ""), zipfile.ZIP_DEFLATED)
-				f = open(os.path.join(ADDONS, SKIN, 'addon.xml')); r = f.read(); f.close()
-				match  = parseDOM(r, 'import', ret='addon')
-				if 'script.skinshortcuts' in match:
-					if DIALOG.yesno('[COLOR %s]%s[/COLOR][COLOR %s]: Theme Backup[/COLOR]' % (COLOR1, ADDONTITLE, COLOR2), "[COLOR %s]Would you like to go add the [COLOR %s]settings.xml[/COLOR] for [COLOR %s]script.skinshortcuts[/COLOR]?" % (COLOR2, COLOR1, COLOR1), yeslabel="[B][COLOR springgreen]Add Settings[/COLOR][/B]", nolabel="[B][COLOR red]Skip Settings[/COLOR][/B]"):
-						for base, dirs, files in os.walk(os.path.join(ADDOND,'script.skinshortcuts')):
-							files[:] = [f for f in files if f not in exclude_files]
-							for file in files:
-								fn = os.path.join(base, file)
-								zipf.write(fn, fn[len(HOME):], zipfile.ZIP_DEFLATED)
-			if DIALOG.yesno('[COLOR %s]%s[/COLOR][COLOR %s]: Theme Backup[/COLOR]' % (COLOR1, ADDONTITLE, COLOR2), "[COLOR %s]Would you like to include a [COLOR %s]Backgrounds[/COLOR] folder?[/COLOR]" % (COLOR2, COLOR1), yeslabel="[B][COLOR springgreen]Yes Include[/COLOR][/B]", nolabel="[B][COLOR red]No Continue[/COLOR][/B]"):
-				fn = DIALOG.browse(0, 'Select location of backgrounds', 'files', '', True, False, HOME, False)
-				if not fn == HOME:
-					for base, dirs, files in os.walk(fn):
-						dirs[:] = [d for d in dirs if d not in exclude_dirs]
-						files[:] = [f for f in files if f not in exclude_files]
-						for file in files:
-							try:
-								fn2 = os.path.join(base, file)
-								zipf.write(fn2, fn2[len(HOME):], zipfile.ZIP_DEFLATED)
-							except Exception as e:
-								log("[Back Up] Type = '%s': Unable to backup %s" % (type, file), xbmc.LOGNOTICE)
-								log("Backup Error: %s" % str(e), xbmc.LOGNOTICE)
-				text = latestDB('Textures')
-				if DIALOG.yesno('[COLOR %s]%s[/COLOR][COLOR %s]: Theme Backup[/COLOR]' % (COLOR1, ADDONTITLE, COLOR2), "[COLOR %s]Would you like to include the [COLOR %s]%s[/COLOR]?[/COLOR]" % (COLOR2, COLOR1, text), yeslabel="[B][COLOR springgreen]Yes Include[/COLOR][/B]", nolabel="[B][COLOR red]No Continue[/COLOR][/B]"):
-					zipf.write(os.path.join(DATABASE, text), '/userdata/Database/%s' % text, zipfile.ZIP_DEFLATED)
-			if DIALOG.yesno('[COLOR %s]%s[/COLOR][COLOR %s]: Theme Backup[/COLOR]' % (COLOR1, ADDONTITLE, COLOR2), "[COLOR %s]Would you like to include any addons?[/COLOR]" % (COLOR2), yeslabel="[B][COLOR springgreen]Yes Include[/COLOR][/B]", nolabel="[B][COLOR red]No Continue[/COLOR][/B]"):
-				fold = glob.glob(os.path.join(ADDONS, '*/'))
-				addonnames = []; addonfolds = []
-				for folder in sorted(fold, key = lambda x: x):
-					foldername = os.path.split(folder[:-1])[1]
-					if foldername in EXCLUDES: continue
-					elif foldername in DEFAULTPLUGINS: continue
-					elif foldername == 'packages': continue
-					xml = os.path.join(folder, 'addon.xml')
-					if os.path.exists(xml):
-						f      = open(xml)
-						a      = f.read()
-						match  = parseDOM(a, 'addon', ret='name')
-						if len(match) > 0:
-							addonnames.append(match[0])
-							addonfolds.append(foldername)
-						else:
-							addonnames.append(foldername)
-							addonfolds.append(foldername)
-				if KODIV > 16:
-					selected = DIALOG.multiselect("%s: Select the addons you wish to add to the zip." % ADDONTITLE, addonnames)
-					if selected == None: selected = []
-				else:
-					selected = []; choice = 0
-					tempaddonnames = ["-- Click here to Continue --"] + addonnames
-					while not choice == -1:
-						choice = DIALOG.select("%s: Select the addons you wish to add to the zip." % ADDONTITLE, tempaddonnames)
-						if choice == -1: break
-						elif choice == 0: break
-						else:
-							choice2 = (choice-1)
-							if choice2 in selected:
-								selected.remove(choice2)
-								tempaddonnames[choice] = addonnames[choice2]
-							else:
-								selected.append(choice2)
-								tempaddonnames[choice] = "[B][COLOR %s]%s[/COLOR][/B]" % (COLOR1, addonnames[choice2])
-				if len(selected) > 0:
-					added = []
-					for item in selected:
-						added.append(addonfolds[item])
-						for base, dirs, files in os.walk(os.path.join(ADDONS,addonfolds[item])):
-							files[:] = [f for f in files if f not in exclude_files]
-							for file in files:
-								if file.endswith('.pyo'): continue
-								fn = os.path.join(base, file)
-								zipf.write(fn, fn[len(HOME):], zipfile.ZIP_DEFLATED)
-						dep=os.path.join(ADDONS,addonfolds[item],'addon.xml')
-						if os.path.exists(dep):
-							source = open(dep,mode='r'); link = source.read(); source.close();
-							match  = parseDOM(link, 'import', ret='addon')
-							for depends in match:
-								if 'xbmc.python' in depends: continue
-								if depends in added: continue
-								for base, dirs, files in os.walk(os.path.join(ADDONS,depends)):
-									files[:] = [f for f in files if f not in exclude_files]
-									for file in files:
-										if file.endswith('.pyo'): continue
-										fn = os.path.join(base, file)
-										zipf.write(fn, fn[len(HOME):], zipfile.ZIP_DEFLATED)
-										added.append(depends)
-			if DIALOG.yesno('[COLOR %s]%s[/COLOR][COLOR %s]: Theme Backup[/COLOR]' % (COLOR1, ADDONTITLE, COLOR2), "[COLOR %s]Would you like to include the [COLOR %s]guisettings.xml[/COLOR]?[/COLOR]" % (COLOR2, COLOR1), yeslabel="[B][COLOR springgreen]Yes Include[/COLOR][/B]", nolabel="[B][COLOR red]No Continue[/COLOR][/B]"):
-				zipf.write(GUISETTINGS, '/userdata/guisettings.xml', zipfile.ZIP_DEFLATED)
-		except Exception as e:
-			zipf.close()
-			log("[Back Up] Type = '%s': %s" % (type, str(e)), xbmc.LOGNOTICE)
-			DIALOG.ok(ADDONTITLE, "[COLOR %s]%s[/COLOR][COLOR %s] theme zip failed:[/COLOR]" % (COLOR1, themename, COLOR2), "[COLOR %s]%s[/COLOR]" % (COLOR1, str(e)))
-			if not tempzipname == '':
-				try: os.remove(xbmc.translatePath(tempzipname))
-				except Exception as e: log(str(e))
-			else:
-				try: os.remove(xbmc.translatePath(zipname))
-				except Exception as e: log(str(e))
-			return
-		zipf.close()
-		if not tempzipname == '':
-			success = xbmcvfs.rename(tempzipname, zipname)
-			if success == 0:
-				xbmcvfs.copy(tempzipname, zipname)
-				xbmcvfs.delete(tempzipname)
-		DIALOG.ok(ADDONTITLE, "[COLOR %s]%s[/COLOR][COLOR %s] theme zip successful:[/COLOR]" % (COLOR1, themename, COLOR2), "[COLOR %s]%s[/COLOR]" % (COLOR1, zipname))
-	elif type == "addondata":
-		if DIALOG.yesno(ADDONTITLE, "[COLOR %s]Are you sure you wish to backup the current addon_data?[/COLOR]" % COLOR2, nolabel="[B][COLOR red]Cancel Backup[/COLOR][/B]", yeslabel="[B][COLOR springgreen]Backup Addon_Data[/COLOR][/B]"):
-			if name == "":
-				name = getKeyboard("","Please enter a name for the %s zip" % type)
-				if not name: return False
-				name = quote_plus(name)
-			name = '%s_addondata.zip' % name; tempzipname = ''
-			zipname = os.path.join(mybuilds, name)
-			try:
-				zipf = zipfile.ZipFile(xbmc.translatePath(zipname), mode='w')
-			except:
-				try:
-					tempzipname = os.path.join(PACKAGES, '%s.zip' % name)
-					zipf = zipfile.ZipFile(tempzipname, mode='w')
-				except:
-					log("Unable to create %s_addondata.zip" % name, xbmc.LOGERROR)
-					if DIALOG.yesno(ADDONTITLE, "[COLOR %s]We are unable to write to the current backup directory, would you like to change the location?[/COLOR]" % COLOR2, yeslabel="[B][COLOR springgreen]Change Directory[/COLOR][/B]", nolabel="[B][COLOR red]Cancel[/COLOR][/B]"):
-						openS()
-						return
-					else:
-						return
-			for_progress  = 0
-			ITEM          = []
-			convertSpecial(ADDOND, True)
-			asciiCheck(ADDOND, True)
-			DP.create("[COLOR %s]%s[/COLOR][COLOR %s]: Creating Zip[/COLOR]" % (COLOR1, ADDONTITLE,COLOR2), "[COLOR %s]Creating back up zip" % COLOR2, "", "Please Wait...[/COLOR]")
-			for base, dirs, files in os.walk(ADDOND):
-				dirs[:] = [d for d in dirs if d not in exclude_dirs]
-				files[:] = [f for f in files if f not in exclude_files]
-				for file in files:
-					ITEM.append(file)
-			N_ITEM = len(ITEM)
-			for base, dirs, files in os.walk(ADDOND):
-				dirs[:] = [d for d in dirs if d not in exclude_dirs]
-				files[:] = [f for f in files if f not in exclude_files]
-				for file in files:
-					try:
-						for_progress += 1
-						progress = percentage(for_progress, N_ITEM)
-						DP.update(int(progress), '[COLOR %s]Creating back up zip: [COLOR%s]%s[/COLOR] / [COLOR%s]%s[/COLOR]' % (COLOR2, COLOR1, for_progress, COLOR1, N_ITEM), '[COLOR %s]%s[/COLOR]' % (COLOR1, file), '')
-						fn = os.path.join(base, file)
-						if file in LOGFILES: log("[Back Up] Type = '%s': Ignore %s" % (type, file), xbmc.LOGNOTICE); continue
-						elif os.path.join(base, file) in bad_files: log("[Back Up] Type = '%s': Ignore %s" % (type, file), xbmc.LOGNOTICE); continue
-						elif os.path.join('addons', 'packages') in fn: log("[Back Up] Type = '%s': Ignore %s" % (type, file), xbmc.LOGNOTICE); continue
-						elif file.endswith('.csv'): log("[Back Up] Type = '%s': Ignore %s" % (type, file), xbmc.LOGNOTICE); continue
-						elif file.endswith('.db') and 'Database' in base:
-							temp = file.replace('.db', '')
-							temp = ''.join([i for i in temp if not i.isdigit()])
-							if temp in ['Addons', 'ADSP', 'Epg', 'MyMusic', 'MyVideos', 'Textures', 'TV', 'ViewModes']:
-								if not file == latestDB(temp):  log("[Back Up] Type = '%s': Ignore %s" % (type, file), xbmc.LOGNOTICE); continue
-						try:
-							zipf.write(fn, fn[len(ADDOND):], zipfile.ZIP_DEFLATED)
-						except Exception as e:
-							log("[Back Up] Type = '%s': Unable to backup %s" % (type, file), xbmc.LOGNOTICE)
-							log("Backup Error: %s" % str(e), xbmc.LOGNOTICE)
-					except Exception as e:
-						log("[Back Up] Type = '%s': Unable to backup %s" % (type, file), xbmc.LOGNOTICE)
-						log("Backup Error: %s" % str(e), xbmc.LOGNOTICE)
-			zipf.close()
-			if not tempzipname == '':
-				success = xbmcvfs.rename(tempzipname, zipname)
-				if success == 0:
-					xbmcvfs.copy(tempzipname, zipname)
-					xbmcvfs.delete(tempzipname)
-			DP.close()
-			DIALOG.ok(ADDONTITLE, "[COLOR %s]%s[/COLOR] [COLOR %s]backup successful:[/COLOR]" % (COLOR1, name, COLOR2), "[COLOR %s]%s[/COLOR]" % (COLOR1, zipname))
-
-# MIGRATION: move into backup
 def restoreLocal(type):
-	backup   = xbmc.translatePath(BACKUPLOCATION)
-	mybuilds = xbmc.translatePath(MYBUILDS)
-	try:
-		if not os.path.exists(backup): xbmcvfs.mkdirs(backup)
-		if not os.path.exists(mybuilds): xbmcvfs.mkdirs(mybuilds)
-	except Exception as e:
-		DIALOG.ok(ADDONTITLE, "[COLOR %s]Error making Back Up directories:[/COLOR]" % (COLOR2), "[COLOR %s]%s[/COLOR]" % (COLOR1, str(e)))
-		return
-	file = DIALOG.browse(1, '[COLOR %s]Select the backup file you want to restore[/COLOR]' % COLOR2, 'files', '.zip', False, False, mybuilds)
-	log("[RESTORE BACKUP %s] File: %s " % (type.upper(), file), xbmc.LOGNOTICE)
-	if file == "" or not file.endswith('.zip'):
-		LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Local Restore: Cancelled[/COLOR]" % COLOR2)
-		return
-	DP.create(ADDONTITLE,'[COLOR %s]Installing Local Backup' % COLOR2,'', 'Please Wait[/COLOR]')
-	if not os.path.exists(USERDATA): os.makedirs(USERDATA)
-	if not os.path.exists(ADDOND): os.makedirs(ADDOND)
-	if not os.path.exists(PACKAGES): os.makedirs(PACKAGES)
-	if type == "gui": loc = USERDATA
-	elif type == "addondata":
-		loc = ADDOND
-	else : loc = HOME
-	log("Restoring to %s" % loc, xbmc.LOGNOTICE)
-	display = os.path.split(file)
-	fn = display[1]
-	try:
-		zipfile.ZipFile(file,  'r')
-	except:
-		DP.update(0, '[COLOR %s]Unable to read zipfile from current location.' % COLOR2, 'Copying file to packages')
-		pack = os.path.join('special://home', 'addons', 'packages', fn)
-		xbmcvfs.copy(file, pack)
-		file = xbmc.translatePath(pack)
-		DP.update(0, '', 'Copying file to packages: Complete')
-		zipfile.ZipFile(file, 'r')
-	percent, errors, error = extract.all(file,loc,DP)
-	fixmetas()
-	clearS('build')
-	DP.close()
-	defaultSkin()
-	lookandFeelData('save')
-	if not file.find('packages') == -1:
-		try: os.remove(file)
-		except: pass
-	if int(errors) >= 1:
-		yes=DIALOG.yesno(ADDONTITLE, '[COLOR %s][COLOR %s]%s[/COLOR]' % (COLOR2, COLOR1, fn), 'Completed: [COLOR %s]%s%s[/COLOR] [Errors:[COLOR %s]%s[/COLOR]]' % (COLOR1, percent, '%', COLOR1, errors), 'Would you like to view the errors?[/COLOR]', nolabel='[B][COLOR red]No Thanks[/COLOR][/B]',yeslabel='[B][COLOR springgreen]View Errors[/COLOR][/B]')
-		if yes:
-			if isinstance(errors, unicode):
-				error = error.encode('utf-8')
-			TextBox(ADDONTITLE, error.replace('\t',''))
-	setS('installed', 'true')
-	setS('extract', str(percent))
-	setS('errors', str(errors))
-	if INSTALLMETHOD == 1: todo = 1
-	elif INSTALLMETHOD == 2: todo = 0
-	else: todo = DIALOG.yesno(ADDONTITLE, "[COLOR %s]Would you like to [COLOR %s]Force close[/COLOR] kodi or [COLOR %s]Reload Profile[/COLOR]?[/COLOR]" % (COLOR2, COLOR1, COLOR1), yeslabel="[B][COLOR red]Reload Profile[/COLOR][/B]", nolabel="[B][COLOR springgreen]Force Close[/COLOR][/B]")
-	if todo == 1: reloadFix()
-	else: killxbmc(True)
+    backup   = xbmc.translatePath(BACKUPLOCATION)
+    mybuilds = xbmc.translatePath(MYBUILDS)
+    try:
+        if not os.path.exists(backup): xbmcvfs.mkdirs(backup)
+        if not os.path.exists(mybuilds): xbmcvfs.mkdirs(mybuilds)
+    except Exception as e:
+        DIALOG.ok(ADDONTITLE, "[COLOR %s]Error making Back Up directories:[/COLOR]" % (COLOR2), "[COLOR %s]%s[/COLOR]" % (COLOR1, str(e)))
+        return
+    file = DIALOG.browse(1, '[COLOR %s]Select the backup file you want to restore[/COLOR]' % COLOR2, 'files', '.zip', False, False, mybuilds)
+    log("[RESTORE BACKUP %s] File: %s " % (type.upper(), file), xbmc.LOGNOTICE)
+    if file == "" or not file.endswith('.zip'):
+        LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Local Restore: Cancelled[/COLOR]" % COLOR2)
+        return
+    DP.create(ADDONTITLE,'[COLOR %s]Installing Local Backup' % COLOR2,'', 'Please Wait[/COLOR]')
+    if not os.path.exists(USERDATA): os.makedirs(USERDATA)
+    if not os.path.exists(ADDOND): os.makedirs(ADDOND)
+    if not os.path.exists(PACKAGES): os.makedirs(PACKAGES)
+    if type == "gui": loc = USERDATA
+    elif type == "addondata":
+        loc = ADDOND
+    else : loc = HOME
+    log("Restoring to %s" % loc, xbmc.LOGNOTICE)
+    display = os.path.split(file)
+    fn = display[1]
+    try:
+        zipfile.ZipFile(file,  'r')
+    except:
+        DP.update(0, '[COLOR %s]Unable to read zipfile from current location.' % COLOR2, 'Copying file to packages')
+        pack = os.path.join('special://home', 'addons', 'packages', fn)
+        xbmcvfs.copy(file, pack)
+        file = xbmc.translatePath(pack)
+        DP.update(0, '', 'Copying file to packages: Complete')
+        zipfile.ZipFile(file, 'r')
+    percent, errors, error = extract.all(file,loc,DP)
+    fixmetas()
+    clearS('build')
+    DP.close()
+    defaultSkin()
+    lookandFeelData('save')
+    if not file.find('packages') == -1:
+        try: os.remove(file)
+        except: pass
+    if int(errors) >= 1:
+        yes=DIALOG.yesno(ADDONTITLE, '[COLOR %s][COLOR %s]%s[/COLOR]' % (COLOR2, COLOR1, fn), 'Completed: [COLOR %s]%s%s[/COLOR] [Errors:[COLOR %s]%s[/COLOR]]' % (COLOR1, percent, '%', COLOR1, errors), 'Would you like to view the errors?[/COLOR]', nolabel='[B][COLOR red]No Thanks[/COLOR][/B]',yeslabel='[B][COLOR springgreen]View Errors[/COLOR][/B]')
+        if yes:
+            if isinstance(errors, unicode):
+                error = error.encode('utf-8')
+            TextBox(ADDONTITLE, error.replace('\t',''))
+    setS('installed', 'true')
+    setS('extract', str(percent))
+    setS('errors', str(errors))
+    if INSTALLMETHOD == 1: todo = 1
+    elif INSTALLMETHOD == 2: todo = 0
+    else: todo = DIALOG.yesno(ADDONTITLE, "[COLOR %s]Would you like to [COLOR %s]Force close[/COLOR] kodi or [COLOR %s]Reload Profile[/COLOR]?[/COLOR]" % (COLOR2, COLOR1, COLOR1), yeslabel="[B][COLOR red]Reload Profile[/COLOR][/B]", nolabel="[B][COLOR springgreen]Force Close[/COLOR][/B]")
+    if todo == 1: reloadFix()
+    else: killxbmc(True)
 
-# MIGRATION: move into backup
+
 def restoreExternal(type):
-	source = DIALOG.browse(1, '[COLOR %s]Select the backup file you want to restore[/COLOR]' % COLOR2, 'files', '.zip', False, False)
-	if source == "" or not source.endswith('.zip'):
-		LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]External Restore: Cancelled[/COLOR]" % COLOR2)
-		return
-	if not source.startswith('http'):
-		LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]External Restore: Invalid URL[/COLOR]" % COLOR2)
-		return
-	try:
-		work = workingURL(source)
-	except:
-		LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]External Restore: Error Valid URL[/COLOR]" % COLOR2)
-		log("Not a working url, if source was local then use local restore option", xbmc.LOGNOTICE)
-		log("External Source: %s" % source, xbmc.LOGNOTICE)
-		return
-	log("[RESTORE EXT BACKUP %s] File: %s " % (type.upper(), source), xbmc.LOGNOTICE)
-	zipit = os.path.split(source); zname = zipit[1]
-	DP.create(ADDONTITLE,'[COLOR %s]Downloading Zip file' % COLOR2,'', 'Please Wait[/COLOR]')
-	if type == "gui": loc = USERDATA
-	elif type == "addondata": loc = ADDOND
-	else : loc = HOME
-	if not os.path.exists(USERDATA): os.makedirs(USERDATA)
-	if not os.path.exists(ADDOND): os.makedirs(ADDOND)
-	if not os.path.exists(PACKAGES): os.makedirs(PACKAGES)
-	file = os.path.join(PACKAGES, zname)
-	downloader.download(source, file, DP)
-	DP.update(0,'Installing External Backup','', 'Please Wait')
-	percent, errors, error = extract.all(file,loc,DP)
-	fixmetas()
-	clearS('build')
-	DP.close()
-	defaultSkin()
-	lookandFeelData('save')
-	if int(errors) >= 1:
-		yes=DIALOG.yesno(ADDONTITLE, '[COLOR %s][COLOR %s]%s[/COLOR]' % (COLOR2, COLOR1, zname), 'Completed: [COLOR %s]%s%s[/COLOR] [Errors:[COLOR %s]%s[/COLOR]]' % (COLOR1, percent, '%', COLOR1, errors), 'Would you like to view the errors?[/COLOR]', nolabel='[B][COLOR red]No Thanks[/COLOR][/B]',yeslabel='[B][COLOR springgreen]View Errors[/COLOR][/B]')
-		if yes:
-			TextBox(ADDONTITLE, error.replace('\t',''))
-	setS('installed', 'true')
-	setS('extract', str(percent))
-	setS('errors', str(errors))
-	try: os.remove(file)
-	except: pass
-	if INSTALLMETHOD == 1: todo = 1
-	elif INSTALLMETHOD == 2: todo = 0
-	else: todo = DIALOG.yesno(ADDONTITLE, "[COLOR %s]Would you like to [COLOR %s]Force close[/COLOR] kodi or [COLOR %s]Reload Profile[/COLOR]?[/COLOR]" % (COLOR2, COLOR1, COLOR1), yeslabel="[B][COLOR red]Reload Profile[/COLOR][/B]", nolabel="[B][COLOR springgreen]Force Close[/COLOR][/B]")
-	if todo == 1: reloadFix()
-	else: killxbmc(True)
+    source = DIALOG.browse(1, '[COLOR %s]Select the backup file you want to restore[/COLOR]' % COLOR2, 'files', '.zip', False, False)
+    if source == "" or not source.endswith('.zip'):
+        LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]External Restore: Cancelled[/COLOR]" % COLOR2)
+        return
+    if not source.startswith('http'):
+        LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]External Restore: Invalid URL[/COLOR]" % COLOR2)
+        return
+    try:
+        work = workingURL(source)
+    except:
+        LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]External Restore: Error Valid URL[/COLOR]" % COLOR2)
+        log("Not a working url, if source was local then use local restore option", xbmc.LOGNOTICE)
+        log("External Source: %s" % source, xbmc.LOGNOTICE)
+        return
+    log("[RESTORE EXT BACKUP %s] File: %s " % (type.upper(), source), xbmc.LOGNOTICE)
+    zipit = os.path.split(source); zname = zipit[1]
+    DP.create(ADDONTITLE,'[COLOR %s]Downloading Zip file' % COLOR2,'', 'Please Wait[/COLOR]')
+    if type == "gui": loc = USERDATA
+    elif type == "addondata": loc = ADDOND
+    else : loc = HOME
+    if not os.path.exists(USERDATA): os.makedirs(USERDATA)
+    if not os.path.exists(ADDOND): os.makedirs(ADDOND)
+    if not os.path.exists(PACKAGES): os.makedirs(PACKAGES)
+    file = os.path.join(PACKAGES, zname)
+    downloader.download(source, file, DP)
+    DP.update(0,'Installing External Backup','', 'Please Wait')
+    percent, errors, error = extract.all(file,loc,DP)
+    fixmetas()
+    clearS('build')
+    DP.close()
+    defaultSkin()
+    lookandFeelData('save')
+    if int(errors) >= 1:
+        yes=DIALOG.yesno(ADDONTITLE, '[COLOR %s][COLOR %s]%s[/COLOR]' % (COLOR2, COLOR1, zname), 'Completed: [COLOR %s]%s%s[/COLOR] [Errors:[COLOR %s]%s[/COLOR]]' % (COLOR1, percent, '%', COLOR1, errors), 'Would you like to view the errors?[/COLOR]', nolabel='[B][COLOR red]No Thanks[/COLOR][/B]',yeslabel='[B][COLOR springgreen]View Errors[/COLOR][/B]')
+        if yes:
+            TextBox(ADDONTITLE, error.replace('\t',''))
+    setS('installed', 'true')
+    setS('extract', str(percent))
+    setS('errors', str(errors))
+    try: os.remove(file)
+    except: pass
+    if INSTALLMETHOD == 1: todo = 1
+    elif INSTALLMETHOD == 2: todo = 0
+    else: todo = DIALOG.yesno(ADDONTITLE, "[COLOR %s]Would you like to [COLOR %s]Force close[/COLOR] kodi or [COLOR %s]Reload Profile[/COLOR]?[/COLOR]" % (COLOR2, COLOR1, COLOR1), yeslabel="[B][COLOR red]Reload Profile[/COLOR][/B]", nolabel="[B][COLOR springgreen]Force Close[/COLOR][/B]")
+    if todo == 1: reloadFix()
+    else: killxbmc(True)
 
 
