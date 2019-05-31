@@ -326,6 +326,14 @@ def platform():
         return 'ios'
 
 
+def KodiVer():
+    if KODIV >= 16.0 and KODIV <= 16.9:vername = 'Jarvis'
+    elif KODIV >= 17.0 and KODIV <= 17.9:vername = 'Krypton'
+    elif KODIV >= 18.0 and KODIV <= 18.9:vername = 'Leia'
+    else: vername = "Unknown"
+    return vername
+
+
 def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 

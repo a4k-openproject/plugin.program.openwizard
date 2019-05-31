@@ -567,6 +567,21 @@ def net_info():
     state=geo['region']
     return mac,inter_ip,ip,city,state,country,isp
 
+
+# MIGRATION: move to speedtest
+def getIP():
+    site  = 'http://whatismyipaddress.com/'
+    if not wiz.workingURL(site): return 'Unknown', 'Unknown', 'Unknown'
+    page  = wiz.openURL(site).replace('\n','').replace('\r','')
+    if not 'Access Denied' in page:
+        ipmatch   = re.compile('whatismyipaddress.com/ip/(.+?)"').findall(page)
+        ipfinal   = ipmatch[0] if (len(ipmatch) > 0) else 'Unknown'
+        details   = re.compile('"font-size:14px;">(.+?)</td>').findall(page)
+        provider  = details[0] if (len(details) > 0) else 'Unknown'
+        location  = details[1]+', '+details[2]+', '+details[3] if (len(details) > 2) else 'Unknown'
+        return ipfinal, provider, location
+    else: return 'Unknown', 'Unknown', 'Unknown'
+
 def main():
     try:
         speedtest()
