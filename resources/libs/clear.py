@@ -395,3 +395,123 @@ def force_text():
     tools.clean_house(CONFIG.TEXTCACHE)
     logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                        '[COLOR {0}]Text Files Flushed![/COLOR]'.format(CONFIG.COLOR2))
+
+
+# MIGRATION: move to cache
+def toggleCache(state):
+    cachelist = ['includevideo', 'includeall', 'includeexodusredux', 'includegaia', 'includeovereasy', 'includeplacenta', 'includescrubs', 'includeseren', 'includevenom', 'includeyoda']
+    titlelist = ['Include Video Addons', 'Include All Addons', 'Include Exodus Redux', 'Include Gaia', 'Include Overeasy', 'Include Placenta', 'Include Scrubs v2', 'Include Seren', 'Include Venom', 'Include Yoda']
+    if state in ['true', 'false']:
+        for item in cachelist:
+            wiz.setS(item, state)
+    else:
+        if not state in ['includevideo', 'includeall'] and wiz.getS('includeall') == 'true':
+            try:
+                item = titlelist[cachelist.index(state)]
+                DIALOG.ok(ADDONTITLE, "[COLOR %s]You will need to turn off [COLOR %s]Include All Addons[/COLOR] to disable[/COLOR] [COLOR %s]%s[/COLOR]" % (COLOR2, COLOR1, COLOR1, item))
+            except:
+                wiz.LogNotify("[COLOR %s]Toggle Cache[/COLOR]" % COLOR1, "[COLOR %s]Invalid id: %s[/COLOR]" % (COLOR2, state))
+        else:
+            new = 'true' if wiz.getS(state) == 'false' else 'false'
+            wiz.setS(state, new)
+
+
+#############################
+###DELETE CACHE##############
+####THANKS GUYS @ NaN #######
+# MIGRATION: move to cache
+def clearCache():
+    if DIALOG.yesno(ADDONTITLE, '[COLOR %s]Would you like to clear cache?[/COLOR]' % COLOR2,
+                    nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
+                    yeslabel='[B][COLOR springgreen]Clear Cache[/COLOR][/B]'):
+        wiz.clearCache()
+
+
+# MIGRATION: move to cache
+def clearFunctionCache():
+    if DIALOG.yesno(ADDONTITLE, '[COLOR %s]Would you like to clear resolver function caches?[/COLOR]' % COLOR2,
+                    nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
+                    yeslabel='[B][COLOR springgreen]Clear Cache[/COLOR][/B]'):
+        wiz.clearFunctionCache()
+
+
+# MIGRATION: move to cache
+def clearArchive():
+    if DIALOG.yesno(ADDONTITLE, '[COLOR %s]Would you like to clear the \'Archive_Cache\' folder?[/COLOR]' % COLOR2,
+                    nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
+                    yeslabel='[B][COLOR springgreen]Yes Clear[/COLOR][/B]'):
+        wiz.clearArchive()
+
+
+# MIGRATION: move to cache
+def totalClean():
+    if DIALOG.yesno(ADDONTITLE, '[COLOR %s]Would you like to clear cache, packages and thumbnails?[/COLOR]' % COLOR2,
+                    nolabel='[B][COLOR red]Cancel Process[/COLOR][/B]',
+                    yeslabel='[B][COLOR springgreen]Clean All[/COLOR][/B]'):
+        wiz.clearCache()
+        wiz.clearFunctionCache()
+        wiz.clearPackages('total')
+        clearThumb('total')
+
+
+# MIGRATION: move to cache
+def clearThumb(type=None):
+    thumb_locations = {THUMBS,
+                       os.path.join(ADDOND, 'script.module.metadatautils', 'animatedgifs'),
+                       os.path.join(ADDOND, 'script.extendedinfo', 'images')}
+
+    latest = wiz.latestDB('Textures')
+    if not type == None:
+        choice = 1
+    else:
+        choice = DIALOG.yesno(ADDONTITLE, '[COLOR %s]Would you like to delete the %s and related thumbnail folders?' % (
+        COLOR2, latest), "They will repopulate on the next startup[/COLOR]",
+                              nolabel='[B][COLOR red]Don\'t Delete[/COLOR][/B]',
+                              yeslabel='[B][COLOR springgreen]Delete Thumbs[/COLOR][/B]')
+    if choice == 1:
+        try:
+            wiz.removeFile(os.join(DATABASE, latest))
+        except:
+            wiz.log('Failed to delete, Purging DB.'); wiz.purgeDb(latest)
+        for i in thumb_locations:
+            wiz.removeFolder(i)
+        # if not type == 'total': wiz.killxbmc()
+    else:
+        wiz.log('Clear thumbnames cancelled')
+    wiz.redoThumbs()
+
+# MIGRATION: move to cache?
+def removeAddonData(addon, name=None, over=False):
+    if addon == 'all':
+        if DIALOG.yesno(ADDONTITLE, '[COLOR %s]Would you like to remove [COLOR %s]ALL[/COLOR] addon data stored in you Userdata folder?[/COLOR]' % (COLOR2, COLOR1), yeslabel='[B][COLOR springgreen]Remove Data[/COLOR][/B]', nolabel='[B][COLOR red]Don\'t Remove[/COLOR][/B]'):
+            wiz.cleanHouse(ADDOND)
+        else: wiz.LogNotify('[COLOR %s]Remove Addon Data[/COLOR]' % COLOR1, '[COLOR %s]Cancelled![/COLOR]' % COLOR2)
+    elif addon == 'uninstalled':
+        if DIALOG.yesno(ADDONTITLE, '[COLOR %s]Would you like to remove [COLOR %s]ALL[/COLOR] addon data stored in you Userdata folder for uninstalled addons?[/COLOR]' % (COLOR2, COLOR1), yeslabel='[B][COLOR springgreen]Remove Data[/COLOR][/B]', nolabel='[B][COLOR red]Don\'t Remove[/COLOR][/B]'):
+            total = 0
+            for folder in glob.glob(os.path.join(ADDOND, '*')):
+                foldername = folder.replace(ADDOND, '').replace('\\', '').replace('/', '')
+                if foldername in EXCLUDES: pass
+                elif os.path.exists(os.path.join(ADDONS, foldername)): pass
+                else: wiz.cleanHouse(folder); total += 1; wiz.log(folder); shutil.rmtree(folder)
+            wiz.LogNotify('[COLOR %s]Clean up Uninstalled[/COLOR]' % COLOR1, '[COLOR %s]%s Folders(s) Removed[/COLOR]' % (COLOR2, total))
+        else: wiz.LogNotify('[COLOR %s]Remove Addon Data[/COLOR]' % COLOR1, '[COLOR %s]Cancelled![/COLOR]' % COLOR2)
+    elif addon == 'empty':
+        if DIALOG.yesno(ADDONTITLE, '[COLOR %s]Would you like to remove [COLOR %s]ALL[/COLOR] empty addon data folders in you Userdata folder?[/COLOR]' % (COLOR2, COLOR1), yeslabel='[B][COLOR springgreen]Remove Data[/COLOR][/B]', nolabel='[B][COLOR red]Don\'t Remove[/COLOR][/B]'):
+            total = wiz.emptyfolder(ADDOND)
+            wiz.LogNotify('[COLOR %s]Remove Empty Folders[/COLOR]' % COLOR1, '[COLOR %s]%s Folders(s) Removed[/COLOR]' % (COLOR2, total))
+        else: wiz.LogNotify('[COLOR %s]Remove Empty Folders[/COLOR]' % COLOR1, '[COLOR %s]Cancelled![/COLOR]' % COLOR2)
+    else:
+        addon_data = os.path.join(USERDATA, 'addon_data', addon)
+        if addon in EXCLUDES:
+            wiz.LogNotify("[COLOR %s]Protected Plugin[/COLOR]" % COLOR1, "[COLOR %s]Not allowed to remove Addon_Data[/COLOR]" % COLOR2)
+        elif os.path.exists(addon_data):
+            if DIALOG.yesno(ADDONTITLE, '[COLOR %s]Would you also like to remove the addon data for:[/COLOR]' % COLOR2, '[COLOR %s]%s[/COLOR]' % (COLOR1, addon), yeslabel='[B][COLOR springgreen]Remove Data[/COLOR][/B]', nolabel='[B][COLOR red]Don\'t Remove[/COLOR][/B]'):
+                wiz.cleanHouse(addon_data)
+                try:
+                    shutil.rmtree(addon_data)
+                except:
+                    wiz.log("Error deleting: %s" % addon_data)
+            else:
+                wiz.log('Addon data for %s was not removed' % addon)
+    wiz.refresh()
