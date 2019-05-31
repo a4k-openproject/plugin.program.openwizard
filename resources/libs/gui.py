@@ -498,72 +498,81 @@ def show_notification(msg='', test=False):
 
 
 # MIGRATION: move to gui
-def LogViewer(default=None):
+def show_log_viewer(default=None):
+    from resources.libs import logging
+
     class LogViewer(xbmcgui.WindowXMLDialog):
-        def __init__(self,*args,**kwargs):
+        def __init__(self, *args, **kwargs):
             self.default = kwargs['default']
 
         def onInit(self):
-            self.title      = 101
-            self.msg        = 102
-            self.scrollbar  = 103
-            self.upload     = 201
-            self.kodi       = 202
-            self.kodiold    = 203
-            self.wizard     = 204
-            self.okbutton   = 205
-            f = open(self.default, 'r')
-            self.logmsg = f.read()
-            f.close()
-            self.titlemsg = "%s: %s" % (ADDONTITLE, self.default.replace(LOG, '').replace(ADDONDATA, ''))
-            self.showdialog()
+            self.title = 101
+            self.msg = 102
+            self.scrollbar = 103
+            self.upload = 201
+            self.kodi = 202
+            self.kodiold = 203
+            self.wizard = 204
+            self.okbutton = 205
 
-        def showdialog(self):
+            from resources.libs import tools
+            self.logmsg = tools.read_from_file(self.default)
+
+            self.titlemsg = "{0}: {1}".format(CONFIG.ADDONTITLE,
+                                              self.default.replace(CONFIG.LOG, '').replace(CONFIG.ADDON_DATA, ''))
+            self.show_dialog()
+
+        def show_dialog(self):
             self.getControl(self.title).setLabel(self.titlemsg)
-            self.getControl(self.msg).setText(wiz.highlightText(self.logmsg))
+            self.getControl(self.msg).setText(highlight_text(self.logmsg))
             self.setFocusId(self.scrollbar)
 
         def onClick(self, controlId):
-            if   controlId == self.okbutton: self.close()
-            elif controlId == self.upload: self.close(); logging.upload_log()
+            if controlId == self.okbutton:
+                self.close()
+            elif controlId == self.upload:
+                self.close()
+                logging.upload_log()
             elif controlId == self.kodi:
-                newmsg = wiz.Grab_Log(False)
-                filename = wiz.Grab_Log(True)
-                if newmsg == False:
-                    self.titlemsg = "%s: View Log Error" % ADDONTITLE
+                newmsg = logging.grab_log(False)
+                filename = logging.grab_log(True)
+                if not newmsg:
+                    self.titlemsg = "{0}: View Log Error".format(CONFIG.ADDONTITLE)
                     self.getControl(self.msg).setText("Log File Does Not Exists!")
                 else:
-                    self.titlemsg = "%s: %s" % (ADDONTITLE, filename.replace(LOG, ''))
+                    self.titlemsg = "{0}: {1}".format(CONFIG.ADDONTITLE, filename.replace(CONFIG.LOG, ''))
                     self.getControl(self.title).setLabel(self.titlemsg)
-                    self.getControl(self.msg).setText(wiz.highlightText(newmsg))
+                    self.getControl(self.msg).setText(highlight_text(newmsg))
                     self.setFocusId(self.scrollbar)
             elif controlId == self.kodiold:
-                newmsg = wiz.Grab_Log(False, True)
-                filename = wiz.Grab_Log(True, True)
-                if newmsg == False:
-                    self.titlemsg = "%s: View Log Error" % ADDONTITLE
+                newmsg = logging.grab_log(False, True)
+                filename = logging.grab_log(True, True)
+                if not newmsg:
+                    self.titlemsg = "{0}: View Log Error".format(CONFIG.ADDONTITLE)
                     self.getControl(self.msg).setText("Log File Does Not Exists!")
                 else:
-                    self.titlemsg = "%s: %s" % (ADDONTITLE, filename.replace(LOG, ''))
+                    self.titlemsg = "{0}: {1}".format(CONFIG.ADDONTITLE, filename.replace(CONFIG.LOG, ''))
                     self.getControl(self.title).setLabel(self.titlemsg)
-                    self.getControl(self.msg).setText(wiz.highlightText(newmsg))
+                    self.getControl(self.msg).setText(highlight_text(newmsg))
                     self.setFocusId(self.scrollbar)
             elif controlId == self.wizard:
-                newmsg = wiz.Grab_Log(False, False, True)
-                filename = wiz.Grab_Log(True, False, True)
-                if newmsg == False:
-                    self.titlemsg = "%s: View Log Error" % ADDONTITLE
+                newmsg = logging.grab_log(False, False, True)
+                filename = logging.grab_log(True, False, True)
+                if not newmsg:
+                    self.titlemsg = "{0}: View Log Error".format(CONFIG.ADDONTITLE)
                     self.getControl(self.msg).setText("Log File Does Not Exists!")
                 else:
-                    self.titlemsg = "%s: %s" % (ADDONTITLE, filename.replace(ADDONDATA, ''))
+                    self.titlemsg = "{0}: {1}".format(CONFIG.ADDONTITLE, filename.replace(CONFIG.ADDON_DATA, ''))
                     self.getControl(self.title).setLabel(self.titlemsg)
-                    self.getControl(self.msg).setText(wiz.highlightText(newmsg))
+                    self.getControl(self.msg).setText(highlight_text(newmsg))
                     self.setFocusId(self.scrollbar)
 
         def onAction(self, action):
-            if   action == ACTION_PREVIOUS_MENU: self.close()
-            elif action == ACTION_NAV_BACK: self.close()
-    if default == None: default = wiz.Grab_Log(True)
-    lv = LogViewer( "LogViewer.xml" , ADDON.getAddonInfo('path'), 'DefaultSkin', default=default)
+            if action == ACTION_PREVIOUS_MENU or action == ACTION_NAV_BACK:
+                self.close()
+
+    if default is None:
+        default = logging.grab_log(True)
+    lv = LogViewer("LogViewer.xml", CONFIG.ADDON_PATH, 'DefaultSkin', default=default)
     lv.doModal()
     del lv
