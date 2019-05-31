@@ -550,3 +550,36 @@ def _getfullAlgoCode(mainFunName, recDepth=0):
         return '\n' + funBody + '\n'
     
     return funBody
+
+# MIGRATION: move to yt
+def playVideo(url):
+    if 'watch?v=' in url:
+        a, b = url.split('?')
+        find = b.split('&')
+        for item in find:
+            if item.startswith('v='):
+                url = item[2:]
+                break
+            else: continue
+    elif 'embed' in url or 'youtu.be' in url:
+        a = url.split('/')
+        if len(a[-1]) > 5:
+            url = a[-1]
+        elif len(a[-2]) > 5:
+            url = a[-2]
+    wiz.log("YouTube URL: %s" % url)
+    if wiz.getCond('System.HasAddon(plugin.video.youtube)') == 1:
+        url = 'plugin://plugin.video.youtube/play/?video_id=%s' % url
+        xbmc.Player().play(url)
+    xbmc.sleep(2000)
+    if xbmc.Player().isPlayingVideo() == 0:
+        yt.PlayVideo(url)
+
+
+# MIGRATION: move to yt
+def buildVideo(name):
+    if wiz.workingURL(BUILDFILE) == True:
+        videofile = wiz.checkBuild(name, 'preview')
+        if videofile and not videofile == 'http://': playVideo(videofile)
+        else: wiz.log("[%s]Unable to find url for video preview" % name)
+    else: wiz.log("Build text file not working: %s" % WORKINGURL)

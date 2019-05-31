@@ -339,4 +339,69 @@ def show_result(message, url=None):
         confirm = gui.DIALOG.ok(CONFIG.ADDONTITLE, "[COLOR %s]%s[/COLOR]" % (CONFIG.COLOR2, message))
 
 
+# MIGRATION: move to logging
+def viewLogFile():
+    mainlog = wiz.Grab_Log(True)
+    oldlog  = wiz.Grab_Log(True, True)
+    which = 0; logtype = mainlog
+    if not oldlog == False and not mainlog == False:
+        which = DIALOG.select(ADDONTITLE, ["View %s" % mainlog.replace(LOG, ""), "View %s" % oldlog.replace(LOG, "")])
+        if which == -1: wiz.LogNotify('[COLOR %s]View Log[/COLOR]' % COLOR1, '[COLOR %s]View Log Cancelled![/COLOR]' % COLOR2); return
+    elif mainlog == False and oldlog == False:
+        wiz.LogNotify('[COLOR %s]View Log[/COLOR]' % COLOR1, '[COLOR %s]No Log File Found![/COLOR]' % COLOR2)
+        return
+    elif not mainlog == False: which = 0
+    elif not oldlog == False: which = 1
 
+    logtype = mainlog if which == 0 else oldlog
+    msg     = wiz.Grab_Log(False) if which == 0 else wiz.Grab_Log(False, True)
+
+    wiz.TextBox("%s - %s" % (ADDONTITLE, logtype), msg)
+
+# MIGRATION: move to logging
+def errorList(file):
+    errors = []
+    a=open(file).read()
+    b=a.replace('\n','[CR]').replace('\r','')
+    match = re.compile("-->Python callback/script returned the following error<--(.+?)-->End of Python script error report<--").findall(b)
+    for item in match:
+        errors.append(item)
+    return errors
+
+# MIGRATION: move to logging
+def errorChecking(log=None, count=None, last=None):
+    errors = []; error1 = []; error2 = [];
+    if log == None:
+        curr = wiz.Grab_Log(True, False)
+        old = wiz.Grab_Log(True, True)
+        if old == False and curr == False:
+            if count == None:
+                wiz.LogNotify('[COLOR %s]View Error Log[/COLOR]' % COLOR1, '[COLOR %s]No Log File Found![/COLOR]' % COLOR2)
+                return
+            else:
+                return 0
+        if not curr == False:
+            error1 = errorList(curr)
+        if not old == False:
+            error2 = errorList(old)
+        if len(error2) > 0:
+            for item in error2: errors = [item] + errors
+        if len(error1) > 0:
+            for item in error1: errors = [item] + errors
+    else:
+        error1 = errorList(log)
+        if len(error1) > 0:
+            for item in error1: errors = [item] + errors
+    if not count == None:
+        return len(errors)
+    elif len(errors) > 0:
+        if last == None:
+            i = 0; string = ''
+            for item in errors:
+                i += 1
+                string += "[B][COLOR red]ERROR NUMBER %s:[/B][/COLOR]%s\n" % (str(i), item.replace(HOME, '/').replace('                                        ', ''))
+        else:
+            string = "[B][COLOR red]Last Error in Log:[/B][/COLOR]%s\n" % (errors[0].replace(HOME, '/').replace('                                        ', ''))
+        wiz.TextBox("%s: Errors in Log" % ADDONTITLE, string)
+    else:
+        wiz.LogNotify('[COLOR %s]View Error Log[/COLOR]' % COLOR1, '[COLOR %s]No Errors Found![/COLOR]' % COLOR2)

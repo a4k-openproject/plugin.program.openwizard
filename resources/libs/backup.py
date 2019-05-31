@@ -375,7 +375,7 @@ def build(name=""):
                             extractsize += os.path.getsize(fn)
                     xml = os.path.join(CONFIG.ADDONS, fd, 'addon.xml')
                     if os.path.exists(xml):
-                        matchxml = parse_dom(tools.read_from_file(xml), 'import', ret='addon')
+                        matchxml = tools.parse_dom(tools.read_from_file(xml), 'import', ret='addon')
                         if 'script.skinshortcuts' in matchxml:
                             for base, dirs, files in os.walk(os.path.join(CONFIG.ADDON_DATA, 'script.skinshortcuts')):
                                 files[:] = [f for f in files if f not in CONFIG.EXCLUDE_FILES]
@@ -387,7 +387,7 @@ def build(name=""):
         xbmc.sleep(500)
         gui.DP.close()
 
-        backUpOptions('guifix', name)
+        backup('guifix', name)
 
         if not tempzipname == '':
             success = xbmcvfs.rename(tempzipname, zipname)
@@ -403,13 +403,13 @@ def build(name=""):
 
 
 def info(name, extractsize, programs, video, music, picture, repos, scripts):
-    info = zipname.replace('.zip', '.txt')
+    info = name.replace('.zip', '.txt')
     f = open(info, 'w')
     f.close()
     with open(info, 'a') as f:
         f.write('name="{0}"\n'.format(name))
         f.write('extracted="{0}"\n'.format(extractsize))
-        f.write('zipsize="{0}"\n'.format(os.path.getsize(xbmc.translatePath(zipname))))
+        f.write('zipsize="{0}"\n'.format(os.path.getsize(xbmc.translatePath(name))))
         f.write('skin="{0}"\n'.format(CONFIG.SKIN))
         f.write('created="{0}"\n'.format(tools.get_date(now=True)))
         f.write('programs="{0}"\n'.format(', '.join(programs)) if len(programs) > 0 else 'programs="none"\n')
@@ -568,7 +568,7 @@ def theme(name=""):
                                 yeslabel="[B][COLOR springgreen]Add Settings[/COLOR][/B]",
                                 nolabel="[B][COLOR red]Skip Settings[/COLOR][/B]"):
                     zipf.write(ad_skin, ad_skin.replace(CONFIG.HOME, ""), zipfile.ZIP_DEFLATED)
-            match = tools.parse_dom(tools.read_from_file(os.path.join(ADDONS, SKIN, 'addon.xml')), 'import', ret='addon')
+            match = tools.parse_dom(tools.read_from_file(os.path.join(CONFIG.SKIN, 'addon.xml')), 'import', ret='addon')
             if 'script.skinshortcuts' in match:
                 if gui.DIALOG.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
                                 "[COLOR {0}]Would you like to go add the [COLOR {1}]settings.xml[/COLOR] for [COLOR {2}]script.skinshortcuts[/COLOR]?".format(
@@ -804,7 +804,7 @@ def addon_data(name=""):
                   "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, zipname))
 
 
-def backUpOptions(type, name=""):
+def backup(type):
     try:
         if not os.path.exists(CONFIG.BACKUPLOCATION):
             xbmcvfs.mkdirs(CONFIG.BACKUPLOCATION)
@@ -827,111 +827,182 @@ def backUpOptions(type, name=""):
         addon_data()
 
 
-def restoreLocal(type):
-    backup   = xbmc.translatePath(BACKUPLOCATION)
-    mybuilds = xbmc.translatePath(MYBUILDS)
+def restore_local(type):
     try:
-        if not os.path.exists(backup): xbmcvfs.mkdirs(backup)
-        if not os.path.exists(mybuilds): xbmcvfs.mkdirs(mybuilds)
+        if not os.path.exists(CONFIG.BACKUPLOCATION):
+            xbmcvfs.mkdirs(CONFIG.BACKUPLOCATION)
+        if not os.path.exists(CONFIG.MYBUILDS):
+            xbmcvfs.mkdirs(CONFIG.MYBUILDS)
     except Exception as e:
-        DIALOG.ok(ADDONTITLE, "[COLOR %s]Error making Back Up directories:[/COLOR]" % (COLOR2), "[COLOR %s]%s[/COLOR]" % (COLOR1, str(e)))
+        gui.DIALOG.ok(CONFIG.ADDONTITLE,
+                      "[COLOR {0}]Error making Back Up directories:[/COLOR]".format(CONFIG.COLOR2),
+                      "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, str(e)))
         return
-    file = DIALOG.browse(1, '[COLOR %s]Select the backup file you want to restore[/COLOR]' % COLOR2, 'files', '.zip', False, False, mybuilds)
-    log("[RESTORE BACKUP %s] File: %s " % (type.upper(), file), xbmc.LOGNOTICE)
+    file = gui.DIALOG.browse(1, '[COLOR {0}]Select the backup file you want to restore[/COLOR]'.format(CONFIG.COLOR2),
+                             'files', '.zip', False, False, CONFIG.MYBUILDS)
+    logging.log("[RESTORE BACKUP {0}] File: {1} ".format(type.upper(), file), level=xbmc.LOGNOTICE)
     if file == "" or not file.endswith('.zip'):
-        LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Local Restore: Cancelled[/COLOR]" % COLOR2)
+        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                           "[COLOR {0}]Local Restore: Cancelled[/COLOR]".format(CONFIG.COLOR2))
         return
-    DP.create(ADDONTITLE,'[COLOR %s]Installing Local Backup' % COLOR2,'', 'Please Wait[/COLOR]')
-    if not os.path.exists(USERDATA): os.makedirs(USERDATA)
-    if not os.path.exists(ADDOND): os.makedirs(ADDOND)
-    if not os.path.exists(PACKAGES): os.makedirs(PACKAGES)
-    if type == "gui": loc = USERDATA
-    elif type == "addondata":
-        loc = ADDOND
-    else : loc = HOME
-    log("Restoring to %s" % loc, xbmc.LOGNOTICE)
+    gui.DP.create(CONFIG.ADDONTITLE, '[COLOR {0}]Installing Local Backup'.format(CONFIG.COLOR2), '', 'Please Wait[/COLOR]')
+    if not os.path.exists(CONFIG.USERDATA):
+        os.makedirs(CONFIG.USERDATA)
+    if not os.path.exists(CONFIG.ADDON_DATA):
+        os.makedirs(CONFIG.ADDON_DATA)
+    if not os.path.exists(CONFIG.PACKAGES):
+        os.makedirs(CONFIG.PACKAGES)
+    if type == "gui":
+        loc = CONFIG.USERDATA
+    elif type == "addon_data":
+        loc = CONFIG.ADDON_DATA
+    else:
+        loc = CONFIG.HOME
+    logging.log("Restoring to {0}".format(loc), level=xbmc.LOGNOTICE)
     display = os.path.split(file)
     fn = display[1]
     try:
         zipfile.ZipFile(file,  'r')
     except:
-        DP.update(0, '[COLOR %s]Unable to read zipfile from current location.' % COLOR2, 'Copying file to packages')
-        pack = os.path.join('special://home', 'addons', 'packages', fn)
+        gui.DP.update(0, '[COLOR {0}]Unable to read zipfile from current location.'.format(CONFIG.COLOR2), 'Copying file to packages')
+        pack = os.path.join(CONFIG.PACKAGES, fn)
         xbmcvfs.copy(file, pack)
         file = xbmc.translatePath(pack)
-        DP.update(0, '', 'Copying file to packages: Complete')
+        gui.DP.update(0, '', 'Copying file to packages: Complete')
         zipfile.ZipFile(file, 'r')
-    percent, errors, error = extract.all(file,loc,DP)
-    fixmetas()
-    clearS('build')
-    DP.close()
-    defaultSkin()
-    lookandFeelData('save')
+    percent, errors, error = extract.all(file, loc, gui.DP)
+    db.fix_metas()
+    CONFIG.clear_setting('build')
+    gui.DP.close()
+    from resources.libs import skin
+    skin.skin_to_default()
+    skin.look_and_feel_data('save')
     if not file.find('packages') == -1:
-        try: os.remove(file)
-        except: pass
+        try:
+            os.remove(file)
+        except:
+            pass
     if int(errors) >= 1:
-        yes=DIALOG.yesno(ADDONTITLE, '[COLOR %s][COLOR %s]%s[/COLOR]' % (COLOR2, COLOR1, fn), 'Completed: [COLOR %s]%s%s[/COLOR] [Errors:[COLOR %s]%s[/COLOR]]' % (COLOR1, percent, '%', COLOR1, errors), 'Would you like to view the errors?[/COLOR]', nolabel='[B][COLOR red]No Thanks[/COLOR][/B]',yeslabel='[B][COLOR springgreen]View Errors[/COLOR][/B]')
-        if yes:
+        if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                            '[COLOR {0}][COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, fn),
+                            'Completed: [COLOR {0}]{1}{2}[/COLOR] [Errors:[COLOR {3}]{4}[/COLOR]]'.format(CONFIG.COLOR1, percent, '%', CONFIG.COLOR1, errors),
+                            'Would you like to view the errors?[/COLOR]',
+                            nolabel='[B][COLOR red]No Thanks[/COLOR][/B]',
+                            yeslabel='[B][COLOR springgreen]View Errors[/COLOR][/B]'):
             if isinstance(errors, unicode):
                 error = error.encode('utf-8')
-            TextBox(ADDONTITLE, error.replace('\t',''))
-    setS('installed', 'true')
-    setS('extract', str(percent))
-    setS('errors', str(errors))
-    if INSTALLMETHOD == 1: todo = 1
-    elif INSTALLMETHOD == 2: todo = 0
-    else: todo = DIALOG.yesno(ADDONTITLE, "[COLOR %s]Would you like to [COLOR %s]Force close[/COLOR] kodi or [COLOR %s]Reload Profile[/COLOR]?[/COLOR]" % (COLOR2, COLOR1, COLOR1), yeslabel="[B][COLOR red]Reload Profile[/COLOR][/B]", nolabel="[B][COLOR springgreen]Force Close[/COLOR][/B]")
-    if todo == 1: reloadFix()
-    else: killxbmc(True)
+            gui.show_text_box(CONFIG.ADDONTITLE, error.replace('\t',''))
+    CONFIG.set_setting('installed', 'true')
+    CONFIG.set_setting('extract', str(percent))
+    CONFIG.set_setting('errors', str(errors))
+
+    if CONFIG.INSTALLMETHOD == 1:
+        todo = 1
+    elif CONFIG.INSTALLMETHOD == 2:
+        todo = 0
+    else:
+        todo = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                                "[COLOR {0}]Would you like to [COLOR {1}]Force close[/COLOR] kodi or [COLOR {2}]Reload Profile[/COLOR]?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1),
+                                yeslabel="[B][COLOR red]Reload Profile[/COLOR][/B]",
+                                nolabel="[B][COLOR springgreen]Force Close[/COLOR][/B]")
+
+    if todo == 1:
+        tools.reload_fix()
+    else:
+        tools.kill_kodi(True)
 
 
-def restoreExternal(type):
-    source = DIALOG.browse(1, '[COLOR %s]Select the backup file you want to restore[/COLOR]' % COLOR2, 'files', '.zip', False, False)
+def restore_external(type):
+    source = gui.DIALOG.browse(1,
+                               '[COLOR {0}]Select the backup file you want to restore[/COLOR]'.format(CONFIG.COLOR2),
+                               'files', '.zip', False, False)
     if source == "" or not source.endswith('.zip'):
-        LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]External Restore: Cancelled[/COLOR]" % COLOR2)
+        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                           "[COLOR {0}]External Restore: Cancelled[/COLOR]".format(CONFIG.COLOR2))
         return
     if not source.startswith('http'):
-        LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]External Restore: Invalid URL[/COLOR]" % COLOR2)
+        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                           "[COLOR {0}]External Restore: Invalid URL[/COLOR]".format(CONFIG.COLOR2))
         return
     try:
-        work = workingURL(source)
+        from resources.libs import check
+        work = check.check_url(source)
     except:
-        LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]External Restore: Error Valid URL[/COLOR]" % COLOR2)
-        log("Not a working url, if source was local then use local restore option", xbmc.LOGNOTICE)
-        log("External Source: %s" % source, xbmc.LOGNOTICE)
+        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                           "[COLOR {0}]External Restore: Error Valid URL[/COLOR]".format(CONFIG.COLOR2))
+        logging.log("Not a working url, if source was local then use local restore option", level=xbmc.LOGNOTICE)
+        logging.log("External Source: {0}".format(source), level=xbmc.LOGNOTICE)
         return
-    log("[RESTORE EXT BACKUP %s] File: %s " % (type.upper(), source), xbmc.LOGNOTICE)
-    zipit = os.path.split(source); zname = zipit[1]
-    DP.create(ADDONTITLE,'[COLOR %s]Downloading Zip file' % COLOR2,'', 'Please Wait[/COLOR]')
-    if type == "gui": loc = USERDATA
-    elif type == "addondata": loc = ADDOND
-    else : loc = HOME
-    if not os.path.exists(USERDATA): os.makedirs(USERDATA)
-    if not os.path.exists(ADDOND): os.makedirs(ADDOND)
-    if not os.path.exists(PACKAGES): os.makedirs(PACKAGES)
-    file = os.path.join(PACKAGES, zname)
-    downloader.download(source, file, DP)
-    DP.update(0,'Installing External Backup','', 'Please Wait')
-    percent, errors, error = extract.all(file,loc,DP)
-    fixmetas()
-    clearS('build')
-    DP.close()
-    defaultSkin()
-    lookandFeelData('save')
+    logging.log("[RESTORE EXT BACKUP {0}] File: {1} ".format(type.upper(), source), level=xbmc.LOGNOTICE)
+    zipit = os.path.split(source)
+    zname = zipit[1]
+    gui.DP.create(CONFIG.ADDONTITLE, '[COLOR {0}]Downloading Zip file'.format(CONFIG.COLOR2), '', 'Please Wait[/COLOR]')
+    if type == "gui":
+        loc = CONFIG.USERDATA
+    elif type == "addon_data":
+        loc = CONFIG.ADDON_DATA
+    else:
+        loc = CONFIG.HOME
+    if not os.path.exists(CONFIG.USERDATA):
+        os.makedirs(CONFIG.USERDATA)
+    if not os.path.exists(CONFIG.ADDON_DATA):
+        os.makedirs(CONFIG.ADDON_DATA)
+    if not os.path.exists(CONFIG.PACKAGES):
+        os.makedirs(CONFIG.PACKAGES)
+    file = os.path.join(CONFIG.PACKAGES, zname)
+    downloader.download(source, file, gui.DP)
+    gui.DP.update(0, 'Installing External Backup', '', 'Please Wait')
+    percent, errors, error = extract.all(file, loc, gui.DP)
+    db.fix_metas()
+    CONFIG.clear_setting('build')
+    gui.DP.close()
+    from resources.libs import skin
+    skin.skin_to_default()
+    skin.look_and_feel_data('save')
     if int(errors) >= 1:
-        yes=DIALOG.yesno(ADDONTITLE, '[COLOR %s][COLOR %s]%s[/COLOR]' % (COLOR2, COLOR1, zname), 'Completed: [COLOR %s]%s%s[/COLOR] [Errors:[COLOR %s]%s[/COLOR]]' % (COLOR1, percent, '%', COLOR1, errors), 'Would you like to view the errors?[/COLOR]', nolabel='[B][COLOR red]No Thanks[/COLOR][/B]',yeslabel='[B][COLOR springgreen]View Errors[/COLOR][/B]')
-        if yes:
-            TextBox(ADDONTITLE, error.replace('\t',''))
-    setS('installed', 'true')
-    setS('extract', str(percent))
-    setS('errors', str(errors))
-    try: os.remove(file)
-    except: pass
-    if INSTALLMETHOD == 1: todo = 1
-    elif INSTALLMETHOD == 2: todo = 0
-    else: todo = DIALOG.yesno(ADDONTITLE, "[COLOR %s]Would you like to [COLOR %s]Force close[/COLOR] kodi or [COLOR %s]Reload Profile[/COLOR]?[/COLOR]" % (COLOR2, COLOR1, COLOR1), yeslabel="[B][COLOR red]Reload Profile[/COLOR][/B]", nolabel="[B][COLOR springgreen]Force Close[/COLOR][/B]")
-    if todo == 1: reloadFix()
-    else: killxbmc(True)
+        if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                            '[COLOR {0}][COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, zname),
+                            'Completed: [COLOR {0}]{1}{2}[/COLOR] [Errors:[COLOR {3}]{4}[/COLOR]]'.format(CONFIG.COLOR1, percent, '%', CONFIG.COLOR1, errors),
+                            'Would you like to view the errors?[/COLOR]',
+                            nolabel='[B][COLOR red]No Thanks[/COLOR][/B]',
+                            yeslabel='[B][COLOR springgreen]View Errors[/COLOR][/B]'):
+            gui.show_text_box(CONFIG.ADDONTITLE, error.replace('\t',''))
+    CONFIG.set_setting('installed', 'true')
+    CONFIG.set_setting('extract', str(percent))
+    CONFIG.set_setting('errors', str(errors))
+    try:
+        os.remove(file)
+    except:
+        pass
+
+    if CONFIG.INSTALLMETHOD == 1:
+        todo = 1
+    elif CONFIG.INSTALLMETHOD == 2:
+        todo = 0
+    else:
+        todo = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                                "[COLOR {0}]Would you like to [COLOR {1}]Force close[/COLOR] kodi or [COLOR {2}]Reload Profile[/COLOR]?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1),
+                                yeslabel="[B][COLOR red]Reload Profile[/COLOR][/B]",
+                                nolabel="[B][COLOR springgreen]Force Close[/COLOR][/B]")
+
+    if todo == 1:
+        tools.reload_fix()
+    else:
+        tools.kill_kodi(True)
 
 
+# MIGRATION: move to backup
+def restoreit(type):
+    if type == 'build':
+        x = freshStart('restore')
+        if x == False: wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Local Restore Cancelled[/COLOR]" % COLOR2); return
+    if not wiz.currSkin() in ['skin.confluence', 'skin.estuary']:
+        wiz.skinToDefault('Restore Backup')
+    wiz.restoreLocal(type)
+
+# MIGRATION: move to backup
+def restoreextit(type):
+    if type == 'build':
+        x = freshStart('restore')
+        if x == False: wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]External Restore Cancelled[/COLOR]" % COLOR2); return
+    wiz.restoreExternal(type)

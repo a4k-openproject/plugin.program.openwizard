@@ -89,6 +89,7 @@ class Config:
 
     def init_paths(self):
         # Static variables
+        self.INSTALLMETHODS = ['Always Ask', 'Reload Profile', 'Force Close']
         self.LOGFILES = ['log', 'xbmc.old.log', 'kodi.log', 'kodi.old.log', 'spmc.log', 'spmc.old.log', 'tvmc.log',
                          'tvmc.old.log', 'dmp']
         self.DEFAULTPLUGINS = ['metadata.album.universal', 'metadata.artists.universal',
@@ -104,6 +105,8 @@ class Config:
                           'Textures13.db', 'Thumbs.db']
         self.EXCLUDE_DIRS = [self.ADDON_ID, 'cache', 'system', 'packages', 'Thumbnails', 'peripheral_data', 'temp', 'My_Builds',
                          'library', 'keymaps', 'cdm']
+        self.MODURL = 'http://tribeca.tvaddons.ag/tools/maintenance/modules/'
+        self.MODURL2 = 'http://mirrors.kodi.tv/addons/jarvis/'
 
         # Default special paths
         self.XBMC = xbmc.translatePath('special://xbmc/')
@@ -162,8 +165,6 @@ class Config:
         self.EXTERROR = self.get_setting('errors')
         
         # View variables
-        self.SHOW15 = self.get_setting('show15')
-        self.SHOW16 = self.get_setting('show16')
         self.SHOW17 = self.get_setting('show17')
         self.SHOW18 = self.get_setting('show18')
         self.SHOWADULT = self.get_setting('adult')
