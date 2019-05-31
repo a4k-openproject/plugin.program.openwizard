@@ -1,46 +1,67 @@
-# MIGRATION: move to menu
-def testTheme(path):
+from resources.libs.config import CONFIG
+
+if CONFIG.KODIV > 17:
+    from resources.libs import zfile as zipfile
+else:
+    import zipfile
+
+
+def test_theme(path):
+    from resources.libs import logging
+
     zfile = zipfile.ZipFile(path)
     for item in zfile.infolist():
-        wiz.log(str(item.filename))
+        logging.log(str(item.filename))
         if '/settings.xml' in item.filename:
             return True
     return False
 
-# MIGRATION: move to menu
-def testGui(path):
+
+def test_gui(path):
     zfile = zipfile.ZipFile(path)
     for item in zfile.infolist():
         if '/guisettings.xml' in item.filename:
             return True
     return False
 
-##########################
-### DEVELOPER MENU #######
-##########################
-# MIGRATION: move to test
-def testnotify():
-    url = wiz.workingURL(NOTIFICATION)
-    if url == True:
+
+def test_notify():
+    from resources.libs import check
+    from resources.libs import gui
+    from resources.libs import logging
+
+    if check.check_url(CONFIG.NOTIFICATION):
         try:
-            id, msg = wiz.splitNotify(NOTIFICATION)
-            if id == False: wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Notification: Not Formated Correctly[/COLOR]" % COLOR2); return
-            notify.notification(msg, True)
-        except Exception, e:
-            wiz.log("Error on Notifications Window: %s" % str(e), xbmc.LOGERROR)
-    else: wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Invalid URL for Notification[/COLOR]" % COLOR2)
-
-# MIGRATION: move to test
-def testupdate():
-    if BUILDNAME == "":
-        notify.updateWindow()
+            id, msg = gui.split_notify(CONFIG.NOTIFICATION)
+            if not id:
+                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                                   "[COLOR {0}]Notification: Not Formatted Correctly[/COLOR]".format(CONFIG.COLOR2))
+                return
+            gui.show_notification(msg, True)
+        except Exception as e:
+            logging.log("Error on Notifications Window: {0}".format(str(e)), level=xbmc.LOGERROR)
     else:
-        notify.updateWindow(BUILDNAME, BUILDVERSION, BUILDLATEST, wiz.checkBuild(BUILDNAME, 'icon'), wiz.checkBuild(BUILDNAME, 'fanart'))
+        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                           "[COLOR {0}]Invalid URL for Notification[/COLOR]".format(CONFIG.COLOR2))
 
-# MIGRATION: move to test
-def testfirst():
-    notify.firstRun()
 
-# MIGRATION: move to test
-def testfirstRun():
-    notify.firstRunSettings()oi
+def test_update():
+    from resources.libs import check
+    from resources.libs import gui
+
+    if CONFIG.BUILDNAME == "":
+        gui.show_update_window()
+    else:
+        gui.show_update_window(CONFIG.BUILDNAME, CONFIG.BUILDVERSION, CONFIG.BUILDLATEST, check.check_build(CONFIG.BUILDNAME, 'icon'), check.check_build(CONFIG.BUILDNAME, 'fanart'))
+
+
+def test_first_run():
+    from resources.libs import gui
+
+    gui.show_build_prompt()
+
+
+def test_save_data_settings():
+    from resources.libs import gui
+
+    gui.show_save_data_settings()
