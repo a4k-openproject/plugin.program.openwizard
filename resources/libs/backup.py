@@ -991,18 +991,29 @@ def restore_external(type):
         tools.kill_kodi(True)
 
 
-# MIGRATION: move to backup
-def restoreit(type):
+def restore_it(type):
     if type == 'build':
-        x = freshStart('restore')
-        if x == False: wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Local Restore Cancelled[/COLOR]" % COLOR2); return
-    if not wiz.currSkin() in ['skin.confluence', 'skin.estuary']:
-        wiz.skinToDefault('Restore Backup')
-    wiz.restoreLocal(type)
+        from resources.libs import install
 
-# MIGRATION: move to backup
-def restoreextit(type):
+        x = install.freshStart('restore')
+        if not x:
+            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                               "[COLOR {0}]Local Restore Cancelled[/COLOR]".format(CONFIG.COLOR2)
+            return
+    if CONFIG.SKIN not in ['skin.confluence', 'skin.estuary']:
+        from resources.libs import skin
+
+        skin.skin_to_default('Restore Backup')
+    restore_local(type)
+
+
+def restore_it_external(type):
     if type == 'build':
-        x = freshStart('restore')
-        if x == False: wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]External Restore Cancelled[/COLOR]" % COLOR2); return
-    wiz.restoreExternal(type)
+        from resources.libs import install
+
+        x = install.fresh_start('restore')
+        if not x:
+            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                               "[COLOR {0}]External Restore Cancelled[/COLOR]".format(CONFIG.COLOR2)
+            return
+    restore_external(type)

@@ -497,7 +497,6 @@ def show_notification(msg='', test=False):
     del notify
 
 
-# MIGRATION: move to gui
 def show_log_viewer(default=None):
     from resources.libs import logging
 
