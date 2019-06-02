@@ -1,3 +1,4 @@
+import xbmc
 import xbmcgui
 
 import math
@@ -5,8 +6,8 @@ import socket
 import timeit
 import threading
 import os
+import re
 import sys
-import hashlib
 
 import xml.etree.ElementTree as ET
 from xml.dom import minidom as DOM
@@ -534,53 +535,68 @@ def speedtest(
             curserver,
             )
 
+
 def net_info():
     import json
+    from resources.libs import logging
+    from resources.libs import tools
+
     infoLabel = ['Network.IPAddress',
-                 'Network.MacAddress',]
-    data      = []; x = 0
+                 'Network.MacAddress']
+    data = []
+    x = 0
     for info in infoLabel:
-        temp = getInfo(info)
+        temp = tools.get_info_label(info)
         y = 0
         while temp == "Busy" and y < 10:
-            temp = getInfo(info); y += 1; log("%s sleep %s" % (info, str(y))); xbmc.sleep(200)
+            temp = tools.get_info_label(info)
+            y += 1
+            logging.log("{0} sleep {1}".format(info, str(y)))
+            xbmc.sleep(200)
         data.append(temp)
         x += 1
     try:
         url = 'http://extreme-ip-lookup.com/json/'
         req = Request(url)
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+        req.add_header('User-Agent',
+                       'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
         response = urlopen(req)
         geo = json.load(response)
     except:
         url = 'http://ip-api.com/json'
         req = Request(url)
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+        req.add_header('User-Agent',
+                       'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
         response = urlopen(req)
         geo = json.load(response)
     mac = data[1]
     inter_ip = data[0]
-    ip=geo['query']
-    isp=geo['org']
+    ip = geo['query']
+    isp = geo['org']
     city = geo['city']
-    country=geo['country']
-    state=geo['region']
-    return mac,inter_ip,ip,city,state,country,isp
+    country = geo['country']
+    state = geo['region']
+    return mac, inter_ip, ip, city, state, country, isp
 
 
-# MIGRATION: move to speedtest
-def getIP():
-    site  = 'http://whatismyipaddress.com/'
-    if not wiz.workingURL(site): return 'Unknown', 'Unknown', 'Unknown'
-    page  = wiz.openURL(site).replace('\n','').replace('\r','')
-    if not 'Access Denied' in page:
-        ipmatch   = re.compile('whatismyipaddress.com/ip/(.+?)"').findall(page)
-        ipfinal   = ipmatch[0] if (len(ipmatch) > 0) else 'Unknown'
-        details   = re.compile('"font-size:14px;">(.+?)</td>').findall(page)
-        provider  = details[0] if (len(details) > 0) else 'Unknown'
-        location  = details[1]+', '+details[2]+', '+details[3] if (len(details) > 2) else 'Unknown'
+def get_ip():
+    from resources.libs import check
+    from resources.libs import tools
+
+    site = 'http://whatismyipaddress.com/'
+    if not check.check_url(site):
+        return 'Unknown', 'Unknown', 'Unknown'
+    page = tools.open_url(site).replace('\n', '').replace('\r', '')
+    if 'Access Denied' not in page:
+        ipmatch = re.compile('whatismyipaddress.com/ip/(.+?)"').findall(page)
+        ipfinal = ipmatch[0] if (len(ipmatch) > 0) else 'Unknown'
+        details = re.compile('"font-size:14px;">(.+?)</td>').findall(page)
+        provider = details[0] if (len(details) > 0) else 'Unknown'
+        location = details[1]+', '+details[2]+', '+details[3] if (len(details) > 2) else 'Unknown'
         return ipfinal, provider, location
-    else: return 'Unknown', 'Unknown', 'Unknown'
+    else:
+        return 'Unknown', 'Unknown', 'Unknown'
+
 
 def main():
     try:
@@ -589,5 +605,7 @@ def main():
         print_('\nCancelling...')
         dp.close()
         sys.exit()
+
+
 if __name__ == '__main__':
     main()

@@ -43,6 +43,7 @@
 #        120: "hd720",
 #        121: "hd1080"
 
+import xbmc
 import xbmcgui
 
 import re
@@ -55,6 +56,8 @@ try:
     import simplejson as json
 except ImportError:
     import json
+
+from resources.libs.config import CONFIG
 
 dp            =  xbmcgui.DialogProgress()
 MAX_REC_DEPTH = 5
@@ -551,8 +554,8 @@ def _getfullAlgoCode(mainFunName, recDepth=0):
     
     return funBody
 
-# MIGRATION: move to yt
-def playVideo(url):
+
+def play_video(url):
     if 'watch?v=' in url:
         a, b = url.split('?')
         find = b.split('&')
@@ -560,26 +563,35 @@ def playVideo(url):
             if item.startswith('v='):
                 url = item[2:]
                 break
-            else: continue
+            else:
+                continue
     elif 'embed' in url or 'youtu.be' in url:
         a = url.split('/')
         if len(a[-1]) > 5:
             url = a[-1]
         elif len(a[-2]) > 5:
             url = a[-2]
-    wiz.log("YouTube URL: %s" % url)
-    if wiz.getCond('System.HasAddon(plugin.video.youtube)') == 1:
-        url = 'plugin://plugin.video.youtube/play/?video_id=%s' % url
+
+    from resources.libs import logging
+    logging.log("YouTube URL: {0}".format(url))
+
+    if xbmc.getCondVisibility('System.HasAddon(plugin.video.youtube)') == 1:
+        url = 'plugin://plugin.video.youtube/play/?video_id={0}'.format(url)
         xbmc.Player().play(url)
     xbmc.sleep(2000)
     if xbmc.Player().isPlayingVideo() == 0:
-        yt.PlayVideo(url)
+        PlayVideo(url)
 
 
-# MIGRATION: move to yt
-def buildVideo(name):
-    if wiz.workingURL(BUILDFILE) == True:
-        videofile = wiz.checkBuild(name, 'preview')
-        if videofile and not videofile == 'http://': playVideo(videofile)
-        else: wiz.log("[%s]Unable to find url for video preview" % name)
-    else: wiz.log("Build text file not working: %s" % WORKINGURL)
+def build_video(name):
+    from resources.libs import check
+    from resources.libs import logging
+
+    if check.check_url(CONFIG.BUILDFILE):
+        videofile = check.check_build(name, 'preview')
+        if videofile and not videofile == 'http://':
+            play_video(videofile)
+        else:
+            logging.log("[{0}]Unable to find url for video preview".format(name))
+    else:
+        logging.log("Build text file not working: {0}".format(CONFIG.BUILDFILE))

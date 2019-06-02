@@ -293,7 +293,7 @@ def email_log(email, results, file):
     params = urlencode(data)
 
     try:
-        result     = LogURLopener().open(URL, params)
+        result = LogURLopener().open(URL, params)
         returninfo = result.read()
         log(str(returninfo), level=xbmc.LOGNOTICE)
     except Exception as e:
@@ -339,69 +339,93 @@ def show_result(message, url=None):
         confirm = gui.DIALOG.ok(CONFIG.ADDONTITLE, "[COLOR %s]%s[/COLOR]" % (CONFIG.COLOR2, message))
 
 
-# MIGRATION: move to logging
-def viewLogFile():
-    mainlog = wiz.Grab_Log(True)
-    oldlog  = wiz.Grab_Log(True, True)
-    which = 0; logtype = mainlog
-    if not oldlog == False and not mainlog == False:
-        which = DIALOG.select(ADDONTITLE, ["View %s" % mainlog.replace(LOG, ""), "View %s" % oldlog.replace(LOG, "")])
-        if which == -1: wiz.LogNotify('[COLOR %s]View Log[/COLOR]' % COLOR1, '[COLOR %s]View Log Cancelled![/COLOR]' % COLOR2); return
-    elif mainlog == False and oldlog == False:
-        wiz.LogNotify('[COLOR %s]View Log[/COLOR]' % COLOR1, '[COLOR %s]No Log File Found![/COLOR]' % COLOR2)
+def view_log_file():
+    from resources.libs import gui
+
+    mainlog = grab_log(True)
+    oldlog = grab_log(True, True)
+    which = 0
+
+    if oldlog and mainlog:
+
+        which = gui.DIALOG.select(CONFIG.ADDONTITLE,
+                                  ["View {0}".format(mainlog.replace(CONFIG.LOG, "")), "View {0}".format(oldlog.replace(CONFIG.LOG, ""))])
+        if which == -1:
+            log_notify('[COLOR {0}]View Log[/COLOR]'.format(CONFIG.COLOR1),
+                       '[COLOR {0}]View Log Cancelled![/COLOR]'.format(CONFIG.COLOR2))
+            return
+    elif not mainlog and not oldlog:
+        log_notify('[COLOR {0}]View Log[/COLOR]'.format(CONFIG.COLOR1),
+                   '[COLOR {0}]No Log File Found![/COLOR]'.format(CONFIG.COLOR2))
         return
-    elif not mainlog == False: which = 0
-    elif not oldlog == False: which = 1
+    elif mainlog:
+        which = 0
+    elif oldlog:
+        which = 1
 
     logtype = mainlog if which == 0 else oldlog
-    msg     = wiz.Grab_Log(False) if which == 0 else wiz.Grab_Log(False, True)
+    msg = grab_log(False) if which == 0 else grab_log(False, True)
 
-    wiz.TextBox("%s - %s" % (ADDONTITLE, logtype), msg)
+    gui.show_text_box("{0} - {1}".format(CONFIG.ADDONTITLE, logtype), msg)
 
-# MIGRATION: move to logging
-def errorList(file):
+
+def error_list(file):
+    from resources.libs import tools
+
     errors = []
-    a=open(file).read()
-    b=a.replace('\n','[CR]').replace('\r','')
+    b = tools.read_from_file(file).replace('\n', '[CR]').replace('\r', '')
+
     match = re.compile("-->Python callback/script returned the following error<--(.+?)-->End of Python script error report<--").findall(b)
     for item in match:
         errors.append(item)
     return errors
 
-# MIGRATION: move to logging
-def errorChecking(log=None, count=None, last=None):
-    errors = []; error1 = []; error2 = [];
-    if log == None:
-        curr = wiz.Grab_Log(True, False)
-        old = wiz.Grab_Log(True, True)
-        if old == False and curr == False:
-            if count == None:
-                wiz.LogNotify('[COLOR %s]View Error Log[/COLOR]' % COLOR1, '[COLOR %s]No Log File Found![/COLOR]' % COLOR2)
+
+def error_checking(log=None, count=None, last=None):
+    errors = []
+    error1 = []
+    error2 = []
+    if log is None:
+        curr = grab_log(True, False)
+        old = grab_log(True, True)
+        if not old  and not curr:
+            if count is None:
+                log_notify('[COLOR {0}]View Error Log[/COLOR]'.format(CONFIG.COLOR1),
+                           '[COLOR {0}]No Log File Found![/COLOR]'.format(CONFIG.COLOR2))
                 return
             else:
                 return 0
-        if not curr == False:
-            error1 = errorList(curr)
-        if not old == False:
-            error2 = errorList(old)
+        if curr:
+            error1 = error_list(curr)
+        if old:
+            error2 = error_list(old)
         if len(error2) > 0:
-            for item in error2: errors = [item] + errors
+            for item in error2:
+                errors = [item] + errors
         if len(error1) > 0:
-            for item in error1: errors = [item] + errors
+            for item in error1:
+                errors = [item] + errors
     else:
-        error1 = errorList(log)
+        error1 = error_list(log)
         if len(error1) > 0:
-            for item in error1: errors = [item] + errors
-    if not count == None:
+            for item in error1:
+                errors = [item] + errors
+
+    if count is not None:
         return len(errors)
     elif len(errors) > 0:
-        if last == None:
-            i = 0; string = ''
+        if last is None:
+            i = 0
+            string = ''
             for item in errors:
                 i += 1
-                string += "[B][COLOR red]ERROR NUMBER %s:[/B][/COLOR]%s\n" % (str(i), item.replace(HOME, '/').replace('                                        ', ''))
+                string += "[B][COLOR red]ERROR NUMBER {0}:[/B][/COLOR] {1}\n".format(str(i), item.replace(CONFIG.HOME, '/').replace('                                        ', ''))
         else:
-            string = "[B][COLOR red]Last Error in Log:[/B][/COLOR]%s\n" % (errors[0].replace(HOME, '/').replace('                                        ', ''))
-        wiz.TextBox("%s: Errors in Log" % ADDONTITLE, string)
+            string = "[B][COLOR red]Last Error in Log:[/B][/COLOR] {0}\n".format(errors[0].replace(CONFIG.HOME, '/').replace('                                        ', ''))
+
+        from resources.libs import gui
+        gui.show_text_box("{0}: Errors in Log".format(CONFIG.ADDONTITLE), string)
     else:
-        wiz.LogNotify('[COLOR %s]View Error Log[/COLOR]' % COLOR1, '[COLOR %s]No Errors Found![/COLOR]' % COLOR2)
+        log_notify('[COLOR {0}]View Error Log[/COLOR]'.format(CONFIG.COLOR1),
+                   '[COLOR {0}]No Errors Found![/COLOR]'.format(CONFIG.COLOR2))
+
