@@ -1,4 +1,5 @@
 import xbmc
+import xbmcvfs
 
 import glob
 import os
@@ -67,7 +68,7 @@ def latest_db(db):
         return False
 
 
-def purge_db(name):
+def purge_db_file(name):
     logging.log('Purging DB {0}.'.format(name), level=xbmc.LOGNOTICE)
     if os.path.exists(name):
         try:
@@ -97,12 +98,12 @@ def purge_db(name):
                        "[COLOR {0}]{1} Complete[/COLOR]".format(CONFIG.COLOR2, show[len(show)-1]))
 
 
-# MIGRATION: move to db?
-def dependsList(plugin):
-    addonxml = os.path.join(ADDONS, plugin, 'addon.xml')
+def depends_list(plugin):
+    addonxml = os.path.join(CONFIG.ADDONS, plugin, 'addon.xml')
     if os.path.exists(addonxml):
-        source = open(addonxml,mode='r'); link = source.read(); source.close();
-        match  = wiz.parseDOM(link, 'import', ret='addon')
+        from resources.libs import tools
+
+        match  = tools.parse_dom(tools.read_from_file(addonxml), 'import', ret='addon')
         items  = []
         for depends in match:
             if not 'xbmc.python' in depends:
@@ -111,26 +112,27 @@ def dependsList(plugin):
     return []
 
 
-# MIGRATION: move to db
-def purgeDb():
-    DB = []; display = []
-    for dirpath, dirnames, files in os.walk(HOME):
+def purge_db():
+    from resources.libs import gui
+
+    DB = []
+    display = []
+    for dirpath, dirnames, files in os.walk(CONFIG.HOME):
+        import fnmatch
+
         for f in fnmatch.filter(files, '*.db'):
             if f != 'Thumbs.db':
                 found = os.path.join(dirpath, f)
                 DB.append(found)
                 dir = found.replace('\\', '/').split('/')
-                display.append('(%s) %s' % (dir[len(dir)-2], dir[len(dir)-1]))
-    if KODIV >= 16:
-        choice = DIALOG.multiselect("[COLOR %s]Select DB File to Purge[/COLOR]" % COLOR2, display)
-        if choice == None: wiz.LogNotify("[COLOR %s]Purge Database[/COLOR]" % COLOR1, "[COLOR %s]Cancelled[/COLOR]" % COLOR2)
-        elif len(choice) == 0: wiz.LogNotify("[COLOR %s]Purge Database[/COLOR]" % COLOR1, "[COLOR %s]Cancelled[/COLOR]" % COLOR2)
-        else:
-            for purge in choice: wiz.purgeDb(DB[purge])
+                display.append('({0}) {1}'.format(dir[len(dir)-2], dir[len(dir)-1]))
+    choice = gui.DIALOG.multiselect("[COLOR {0}]Select DB File to Purge[/COLOR]".format(CONFIG.COLOR2), display)
+    if choice is None or len(choice) == 0:
+        logging.log_notify("[COLOR {0}]Purge Database[/COLOR]".format(CONFIG.COLOR1),
+                           "[COLOR {0}]Cancelled[/COLOR]".format(CONFIG.COLOR2))
     else:
-        choice = DIALOG.select("[COLOR %s]Select DB File to Purge[/COLOR]" % COLOR2, display)
-        if choice == -1: wiz.LogNotify("[COLOR %s]Purge Database[/COLOR]" % COLOR1, "[COLOR %s]Cancelled[/COLOR]" % COLOR2)
-        else: wiz.purgeDb(DB[purge])
+        for purge in choice:
+            purge_db_file(DB[purge])
 
 
 def kodi_17_fix():
@@ -345,90 +347,36 @@ def unhide_password():
         logging.log("[Unhide Passwords] Cancelled", level=xbmc.LOGNOTICE)
 
 
-# MIGRATION: move to db
-def fixUpdate():
-    if KODIV < 17:
-        dbfile = os.path.join(DATABASE, wiz.latestDB('Addons'))
-        try:
-            os.remove(dbfile)
-        except Exception, e:
-            wiz.log("Unable to remove %s, Purging DB" % dbfile)
-            wiz.purgeDb(dbfile)
+def fix_update():
+    if os.path.exists(os.path.join(CONFIG.USERDATA, 'autoexec.py')):
+        temp = os.path.join(CONFIG.USERDATA, 'autoexec_temp.py')
+        if os.path.exists(temp):
+            xbmcvfs.delete(temp)
+        xbmcvfs.rename(os.path.join(CONFIG.USERDATA, 'autoexec.py'), temp)
+    xbmcvfs.copy(os.path.join(CONFIG.PLUGIN, 'resources', 'libs', 'autoexec.py'),
+                 os.path.join(CONFIG.USERDATA, 'autoexec.py'))
+    dbfile = os.path.join(CONFIG.DATABASE, latest_db('Addons'))
+    try:
+        os.remove(dbfile)
+    except:
+        logging.log("Unable to remove {0}, Purging DB".format(dbfile))
+        purge_db_file(dbfile)
+
+    from resources.libs import tools
+    tools.kill_kodi(over=True)
+
+
+def grab_addons(path):
+    if CONFIG.KODIV > 17:
+        from resources.libs import zfile as zipfile
     else:
-        if os.path.exists(os.path.join(USERDATA, 'autoexec.py')):
-            temp = os.path.join(USERDATA, 'autoexec_temp.py')
-            if os.path.exists(temp): xbmcvfs.delete(temp)
-            xbmcvfs.rename(os.path.join(USERDATA, 'autoexec.py'), temp)
-        xbmcvfs.copy(os.path.join(PLUGIN, 'resources', 'libs', 'autoexec.py'), os.path.join(USERDATA, 'autoexec.py'))
-        dbfile = os.path.join(DATABASE, wiz.latestDB('Addons'))
-        try:
-            os.remove(dbfile)
-        except Exception, e:
-            wiz.log("Unable to remove %s, Purging DB" % dbfile)
-            wiz.purgeDb(dbfile)
-        wiz.killxbmc(True)
+        import zipfile
 
-# MIGRATION: move to db
-def enableAddons():
-    addFile("[I][B][COLOR red]!!Notice: Disabling Some Addons Can Cause Issues!![/COLOR][/B][/I]", '', icon=ICONMAINT)
-    fold = glob.glob(os.path.join(ADDONS, '*/'))
-    x = 0
-    for folder in sorted(fold, key = lambda x: x):
-        foldername = os.path.split(folder[:-1])[1]
-        if foldername in EXCLUDES: continue
-        if foldername in DEFAULTPLUGINS: continue
-        addonxml = os.path.join(folder, 'addon.xml')
-        if os.path.exists(addonxml):
-            x += 1
-            fold   = folder.replace(ADDONS, '')[1:-1]
-            f      = open(addonxml)
-            a      = f.read().replace('\n','').replace('\r','').replace('\t','')
-            match  = wiz.parseDOM(a, 'addon', ret='id')
-            match2 = wiz.parseDOM(a, 'addon', ret='name')
-            try:
-                pluginid = match[0]
-                name = match2[0]
-            except:
-                continue
-            try:
-                add    = xbmcaddon.Addon(id=pluginid)
-                state  = "[COLOR springgreen][Enabled][/COLOR]"
-                goto   = "false"
-            except:
-                state  = "[COLOR red][Disabled][/COLOR]"
-                goto   = "true"
-                pass
-            icon   = os.path.join(folder, 'icon.png') if os.path.exists(os.path.join(folder, 'icon.png')) else ICON
-            fanart = os.path.join(folder, 'fanart.jpg') if os.path.exists(os.path.join(folder, 'fanart.jpg')) else FANART
-            addFile("%s %s" % (state, name), 'toggleaddon', fold, goto, icon=icon, fanart=fanart)
-            f.close()
-    if x == 0:
-        addFile("No Addons Found to Enable or Disable.", '', icon=ICONMAINT)
-    setView('files', 'viewType')
-
-# MIGRATION: move to db?
-def removeAddon(addon, name, over=False):
-    if not over == False:
-        yes = 1
-    else:
-        yes = DIALOG.yesno(ADDONTITLE, '[COLOR %s]Are you sure you want to delete the addon:'% COLOR2, 'Name: [COLOR %s]%s[/COLOR]' % (COLOR1, name), 'ID: [COLOR %s]%s[/COLOR][/COLOR]' % (COLOR1, addon), yeslabel='[B][COLOR springgreen]Remove Addon[/COLOR][/B]', nolabel='[B][COLOR red]Don\'t Remove[/COLOR][/B]')
-    if yes == 1:
-        folder = os.path.join(ADDONS, addon)
-        wiz.log("Removing Addon %s" % addon)
-        wiz.cleanHouse(folder)
-        xbmc.sleep(200)
-        try: shutil.rmtree(folder)
-        except Exception ,e: wiz.log("Error removing %s" % addon, xbmc.LOGNOTICE)
-        removeAddonData(addon, name, over)
-    if over == False:
-        wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]%s Removed[/COLOR]" % (COLOR2, name))
-
-# MIGRATION: move to db?
-def grabAddons(path):
     zfile = zipfile.ZipFile(path)
     addonlist = []
     for item in zfile.infolist():
-        if str(item.filename).find('addon.xml') == -1: continue
+        if str(item.filename).find('addon.xml') == -1:
+            continue
         info = str(item.filename).split('/')
         if not info[-2] in addonlist:
             addonlist.append(info[-2])

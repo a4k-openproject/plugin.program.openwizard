@@ -105,6 +105,7 @@ class Config:
                           'Textures13.db', 'Thumbs.db']
         self.EXCLUDE_DIRS = [self.ADDON_ID, 'cache', 'system', 'packages', 'Thumbnails', 'peripheral_data', 'temp', 'My_Builds',
                          'library', 'keymaps', 'cdm']
+        self.XMLS = ['advancedsettings.xml', 'sources.xml', 'favourites.xml', 'profiles.xml', 'playercorefactory.xml']
         self.MODURL = 'http://tribeca.tvaddons.ag/tools/maintenance/modules/'
         self.MODURL2 = 'http://mirrors.kodi.tv/addons/jarvis/'
 
