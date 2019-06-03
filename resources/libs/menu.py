@@ -799,6 +799,75 @@ def loginMenu():
     setView('files', 'viewType')
 
 
+def enable_addons():
+    addFile("[I][B][COLOR red]!!Notice: Disabling Some Addons Can Cause Issues!![/COLOR][/B][/I]", '', icon=ICONMAINT)
+    fold = glob.glob(os.path.join(ADDONS, '*/'))
+    x = 0
+    for folder in sorted(fold, key = lambda x: x):
+        foldername = os.path.split(folder[:-1])[1]
+        if foldername in EXCLUDES: continue
+        if foldername in DEFAULTPLUGINS: continue
+        addonxml = os.path.join(folder, 'addon.xml')
+        if os.path.exists(addonxml):
+            x += 1
+            fold   = folder.replace(ADDONS, '')[1:-1]
+            f      = open(addonxml)
+            a      = f.read().replace('\n','').replace('\r','').replace('\t','')
+            match  = wiz.parseDOM(a, 'addon', ret='id')
+            match2 = wiz.parseDOM(a, 'addon', ret='name')
+            try:
+                pluginid = match[0]
+                name = match2[0]
+            except:
+                continue
+            try:
+                add    = xbmcaddon.Addon(id=pluginid)
+                state  = "[COLOR springgreen][Enabled][/COLOR]"
+                goto   = "false"
+            except:
+                state  = "[COLOR red][Disabled][/COLOR]"
+                goto   = "true"
+                pass
+            icon   = os.path.join(folder, 'icon.png') if os.path.exists(os.path.join(folder, 'icon.png')) else ICON
+            fanart = os.path.join(folder, 'fanart.jpg') if os.path.exists(os.path.join(folder, 'fanart.jpg')) else FANART
+            addFile("%s %s" % (state, name), 'toggleaddon', fold, goto, icon=icon, fanart=fanart)
+            f.close()
+    if x == 0:
+        addFile("No Addons Found to Enable or Disable.", '', icon=ICONMAINT)
+    setView('files', 'viewType')
+
+def advanced_window(url=None):
+    if not CONFIG.ADVANCEDFILE == 'http://':
+        from resources.libs import clear
+        from resources.libs import check
+        from resources.libs import menu
+
+        if url is None:
+            TEMPADVANCEDFILE = clear.text_cache(CONFIG.ADVANCEDFILE)
+            if not TEMPADVANCEDFILE:
+                ADVANCEDWORKING = check.check_url(CONFIG.ADVANCEDFILE)
+        else:
+            TEMPADVANCEDFILE = clear.text_cache(url)
+            if not TEMPADVANCEDFILE:
+                ADVANCEDWORKING = check.check_url(url)
+        menu.addFile('Quick Configure AdvancedSettings.xml', 'autoadvanced', icon=ICONMAINT, themeit=THEME3)
+        if os.path.exists(ADVANCED):
+            addFile('View Current AdvancedSettings.xml', 'currentsettings', icon=ICONMAINT, themeit=THEME3)
+            addFile('Remove Current AdvancedSettings.xml', 'removeadvanced',  icon=ICONMAINT, themeit=THEME3)
+        if not TEMPADVANCEDFILE == False:
+            if HIDESPACERS == 'No': addFile(wiz.sep(), '', icon=ICONMAINT, themeit=THEME3)
+            link = TEMPADVANCEDFILE.replace('\n','').replace('\r','').replace('\t','')
+            match = re.compile('name="(.+?)".+?ection="(.+?)".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?escription="(.+?)"').findall(link)
+            if len(match) > 0:
+                for name, section, url, icon, fanart, description in match:
+                    if section.lower() == "yes":
+                        addDir ("[B]%s[/B]" % name, 'advancedsetting', url, description=description, icon=icon, fanart=fanart, themeit=THEME3)
+                    else:
+                        addFile(name, 'writeadvanced', name, url, description=description, icon=icon, fanart=fanart, themeit=THEME2)
+            else: wiz.log("[Advanced Settings] ERROR: Invalid Format.")
+        else: wiz.log("[Advanced Settings] URL not working: %s" % ADVANCEDWORKING)
+    else: wiz.log("[Advanced Settings] not Enabled")
+
 # MIGRATION: move to menu
 def removeAddonMenu():
     fold = glob.glob(os.path.join(ADDONS, '*/'))
