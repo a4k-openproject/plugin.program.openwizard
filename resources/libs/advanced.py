@@ -478,65 +478,55 @@ def QautoConfig(msg='', TxtColor='0xFFFFFFFF', Font='font10', BorderWidth=10):
     del TempWindow
 
 
-# MIGRATION: move to advanced
-def advancedWindow(url=None):
-    if not ADVANCEDFILE == 'http://':
-        if url == None:
-            TEMPADVANCEDFILE = wiz.textCache(uservar.ADVANCEDFILE)
-            if TEMPADVANCEDFILE == False: ADVANCEDWORKING  = wiz.workingURL(uservar.ADVANCEDFILE)
+def write_advanced(name, url):
+    from resources.libs import check
+    from resources.libs import gui
+    from resources.libs import tools
+    from resources.libs import logging
+
+    if check.check_url(url):
+        if os.path.exists(CONFIG.ADVANCED):
+            choice = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                                      "[COLOR {0}]Would you like to overwrite your current Advanced Settings with [COLOR {1}]{}[/COLOR]?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, name),
+                                      yeslabel="[B][COLOR springgreen]Overwrite[/COLOR][/B]",
+                                      nolabel="[B][COLOR red]Cancel[/COLOR][/B]")
         else:
-            TEMPADVANCEDFILE = wiz.textCache(url)
-            if TEMPADVANCEDFILE == False: ADVANCEDWORKING  = wiz.workingURL(url)
-        addFile('Quick Configure AdvancedSettings.xml', 'autoadvanced', icon=ICONMAINT, themeit=THEME3)
-        if os.path.exists(ADVANCED):
-            addFile('View Current AdvancedSettings.xml', 'currentsettings', icon=ICONMAINT, themeit=THEME3)
-            addFile('Remove Current AdvancedSettings.xml', 'removeadvanced',  icon=ICONMAINT, themeit=THEME3)
-        if not TEMPADVANCEDFILE == False:
-            if HIDESPACERS == 'No': addFile(wiz.sep(), '', icon=ICONMAINT, themeit=THEME3)
-            link = TEMPADVANCEDFILE.replace('\n','').replace('\r','').replace('\t','')
-            match = re.compile('name="(.+?)".+?ection="(.+?)".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?escription="(.+?)"').findall(link)
-            if len(match) > 0:
-                for name, section, url, icon, fanart, description in match:
-                    if section.lower() == "yes":
-                        addDir ("[B]%s[/B]" % name, 'advancedsetting', url, description=description, icon=icon, fanart=fanart, themeit=THEME3)
-                    else:
-                        addFile(name, 'writeadvanced', name, url, description=description, icon=icon, fanart=fanart, themeit=THEME2)
-            else: wiz.log("[Advanced Settings] ERROR: Invalid Format.")
-        else: wiz.log("[Advanced Settings] URL not working: %s" % ADVANCEDWORKING)
-    else: wiz.log("[Advanced Settings] not Enabled")
-
-
-# MIGRATION: move to advanced
-def writeAdvanced(name, url):
-    ADVANCEDWORKING = wiz.workingURL(url)
-    if ADVANCEDWORKING == True:
-        if os.path.exists(ADVANCED): choice = DIALOG.yesno(ADDONTITLE, "[COLOR %s]Would you like to overwrite your current Advanced Settings with [COLOR %s]%s[/COLOR]?[/COLOR]" % (COLOR2, COLOR1, name), yeslabel="[B][COLOR springgreen]Overwrite[/COLOR][/B]", nolabel="[B][COLOR red]Cancel[/COLOR][/B]")
-        else: choice = DIALOG.yesno(ADDONTITLE, "[COLOR %s]Would you like to download and install [COLOR %s]%s[/COLOR]?[/COLOR]" % (COLOR2, COLOR1, name), yeslabel="[B][COLOR springgreen]Install[/COLOR][/B]", nolabel="[B][COLOR red]Cancel[/COLOR][/B]")
+            choice = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                                      "[COLOR {0}]Would you like to download and install [COLOR {1}]{2}[/COLOR]?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, name),
+                                      yeslabel="[B][COLOR springgreen]Install[/COLOR][/B]",
+                                      nolabel="[B][COLOR red]Cancel[/COLOR][/B]")
 
         if choice == 1:
-            file = wiz.openURL(url)
-            f = open(ADVANCED, 'w');
-            f.write(file)
-            f.close()
-            DIALOG.ok(ADDONTITLE, '[COLOR %s]AdvancedSettings.xml file has been successfully written.  Once you click okay it will force close kodi.[/COLOR]' % COLOR2)
-            wiz.killxbmc(True)
-        else: wiz.log("[Advanced Settings] install canceled"); wiz.LogNotify('[COLOR %s]%s[/COLOR]' % (COLOR1, ADDONTITLE), "[COLOR %s]Write Cancelled![/COLOR]" % COLOR2); return
-    else: wiz.log("[Advanced Settings] URL not working: %s" % ADVANCEDWORKING); wiz.LogNotify('[COLOR %s]%s[/COLOR]' % (COLOR1, ADDONTITLE), "[COLOR %s]URL Not Working[/COLOR]" % COLOR2)
+            file = tools.open_url(url)
+            tools.write_to_file(CONFIG.ADVANCED, file)
+            gui.DIALOG.ok(CONFIG.ADDONTITLE,
+                          '[COLOR {0}]AdvancedSettings.xml file has been successfully written. Once you click okay it will force close kodi.[/COLOR]'.format(CONFIG.COLOR2))
+            tools.kill_kodi(True)
+        else:
+            logging.log("[Advanced Settings] install canceled")
+            logging.log_notify('[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                               "[COLOR {0}]Write Cancelled![/COLOR]".format(CONFIG.COLOR2))
+            return
+    else:
+        logging.log("[Advanced Settings] URL not working: {0}".format(url))
+        logging.log_notify('[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                           "[COLOR {0}]URL Not Working[/COLOR]".format(CONFIG.COLOR2))
 
 
-# MIGRATION: move to advanced
-def viewAdvanced():
-    f = open(ADVANCED)
-    a = f.read().replace('\t', '    ')
-    wiz.TextBox(ADDONTITLE, a)
-    f.close()
+def view_advanced():
+    from resources.libs import gui
+    from resources.libs import tools
 
-# MIGRATION: move to advanced
-def removeAdvanced():
-    if os.path.exists(ADVANCED):
-        wiz.removeFile(ADVANCED)
-    else: LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]AdvancedSettings.xml not found[/COLOR]")
+    gui.show_text_box(CONFIG.ADDONTITLE, tools.read_from_file(CONFIG.ADVANCED).replace('\t', '    '))
 
-# MIGRATION: move to advanced
-def showAutoAdvanced():
-    notify.autoConfig()
+
+def remove_advanced():
+    from resources.libs import tools
+    from resources.libs import logging
+
+    if os.path.exists(CONFIG.ADVANCED):
+        tools.remove_file(CONFIG.ADVANCED)
+    else:
+        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                           "[COLOR {0}]AdvancedSettings.xml not found[/COLOR]".format(CONFIG.COLOR2))
+
