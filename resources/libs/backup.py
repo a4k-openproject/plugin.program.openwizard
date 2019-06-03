@@ -995,7 +995,7 @@ def restore_it(type):
     if type == 'build':
         from resources.libs import install
 
-        x = install.freshStart('restore')
+        x = install.fresh_start('restore')
         if not x:
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                "[COLOR {0}]Local Restore Cancelled[/COLOR]".format(CONFIG.COLOR2)
