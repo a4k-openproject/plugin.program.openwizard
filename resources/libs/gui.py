@@ -30,16 +30,6 @@ ACTION_MOUSE_LEFT_CLICK = 100
 ACTION_MOUSE_LONG_CLICK = 108
 
 
-def sep(middle=''):
-    char = CONFIG.SPACER
-    ret = char * 40
-    if not middle == '':
-        middle = '[ {0} ]'.format(middle)
-        fluff = int((40 - len(middle))/2)
-        ret = "{0}{1}{2}".format(ret[:fluff], middle, ret[:fluff+2])
-    return ret[:40]
-
-
 def highlight_text(msg):
     msg = msg.replace('\n', '[NL]')
     matches = re.compile("-->Python callback/script returned the following error<--(.+?)-->End of Python script error report<--").findall(msg)
