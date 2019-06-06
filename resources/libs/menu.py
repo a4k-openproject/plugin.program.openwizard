@@ -1,368 +1,472 @@
-###########################
-###### Menu Items   #######
-###########################
-#addDir (display,mode,name=None,url=None,menu=None,overwrite=True,fanart=FANART,icon=ICON, themeit=None)
-#addFile(display,mode,name=None,url=None,menu=None,overwrite=True,fanart=FANART,icon=ICON, themeit=None)
+import xbmc
+import xbmcaddon
+import xbmcgui
+import xbmcplugin
 
-# MIGRATION: move to menu
-def index():
-    errors = int(errorChecking(count=True))
+import glob
+import os
+import re
+import sys
+
+try:  # Python 3
+    from urllib.parse import quote_plus
+    from urllib.parse import urljoin
+    from urllib.request import urlretrieve
+except ImportError:  # Python 2
+    from urllib import quote_plus
+    from urllib import urlretrieve
+    from urlparse import urljoin
+
+from resources.libs.config import CONFIG
+
+###########################
+#      Menu Items         #
+###########################
+
+
+def main_menu():
+    from resources.libs import check
+    from resources.libs import clear
+    from resources.libs import logging
+    from resources.libs import tools
+
+    errors = int(logging.error_checking(count=True))
     errorsfound = str(errors) + ' Error(s) Found' if errors > 0 else 'None Found'
 
-    if AUTOUPDATE == 'Yes':
-        wizfile = wiz.textCache(WIZARDFILE)
-        if not wizfile == False:
-            ver = wiz.checkWizard('version')
-            if ver > VERSION: addFile('%s [v%s] [COLOR red][B][UPDATE v%s][/B][/COLOR]' % (ADDONTITLE, VERSION, ver), 'wizardupdate', themeit=THEME2)
-            else: addFile('%s [v%s]' % (ADDONTITLE, VERSION), '', themeit=THEME2)
-        else: addFile('%s [v%s]' % (ADDONTITLE, VERSION), '', themeit=THEME2)
-    else: addFile('%s [v%s]' % (ADDONTITLE, VERSION), '', themeit=THEME2)
-    if len(BUILDNAME) > 0:
-        version = wiz.checkBuild(BUILDNAME, 'version')
-        build = '%s (v%s)' % (BUILDNAME, BUILDVERSION)
-        if version > BUILDVERSION: build = '%s [COLOR red][B][UPDATE v%s][/B][/COLOR]' % (build, version)
-        addDir(build,'viewbuild', BUILDNAME, themeit=THEME4)
-        themefile = wiz.themeCount(BUILDNAME)
-        if not themefile == False:
-            addFile('None' if BUILDTHEME == "" else BUILDTHEME, 'theme', BUILDNAME, themeit=THEME5)
-    else: addDir('None', 'builds', themeit=THEME4)
-    if HIDESPACERS == 'No': addFile(wiz.sep(), '', themeit=THEME3)
-    addDir ('Builds', 'builds',   icon=ICONBUILDS,   themeit=THEME1)
-    addDir ('Maintenance', 'maint',    icon=ICONMAINT,    themeit=THEME1)
-    if wiz.platform() == 'android' or DEVELOPER == 'true': addDir ('Apk Installer' ,'apk', icon=ICONAPK, themeit=THEME1)
-    if not ADDONFILE == 'http://': addDir ('Addon Installer' ,'addons', icon=ICONADDONS, themeit=THEME1)
-    if not YOUTUBEFILE == 'http://' and not YOUTUBETITLE == '': addDir (YOUTUBETITLE ,'youtube', icon=ICONYOUTUBE, themeit=THEME1)
-    addDir ('Save Data', 'savedata', icon=ICONSAVE,     themeit=THEME1)
-    if HIDECONTACT == 'No': addFile('Contact' ,'contact', icon=ICONCONTACT,  themeit=THEME1)
-    if HIDESPACERS == 'No': addFile(wiz.sep(), '', themeit=THEME3)
-    addFile('Upload Log File', 'uploadlog',       icon=ICONMAINT, themeit=THEME1)
-    addFile('View Errors in Log: %s' % (errorsfound), 'viewerrorlog', icon=ICONMAINT, themeit=THEME1)
-    if errors > 0: addFile('View Last Error In Log', 'viewerrorlast', icon=ICONMAINT, themeit=THEME1)
-    if HIDESPACERS == 'No': addFile(wiz.sep(), '', themeit=THEME3)
-    addFile('Settings', 'settings', icon=ICONSETTINGS, themeit=THEME1)
-    addFile('Force Update Text Files', 'forcetext', icon=ICONMAINT, themeit=THEME1)
-    if DEVELOPER == 'true': addDir('Developer Menu', 'developer', icon=ICON, themeit=THEME1)
-    setView('files', 'viewType')
+    if CONFIG.AUTOUPDATE == 'Yes':
+        wizfile = clear.text_cache(CONFIG.BUILDFILE)
+        if wizfile:
+            ver = check.check_wizard('version')
+            if ver > CONFIG.VERSION:
+                add_file('{0} [v{1}] [COLOR red][B][UPDATE v{2}][/B][/COLOR]'.format(CONFIG.ADDONTITLE, CONFIG.VERSION, ver), 'wizardupdate', themeit=CONFIG.THEME2)
+            else:
+                add_file('{0} [v{1}]'.format(CONFIG.ADDONTITLE, CONFIG.VERSION), '', themeit=CONFIG.THEME2)
+        else:
+            add_file('{0} [v{1}]'.format(CONFIG.ADDONTITLE, CONFIG.VERSION), '', themeit=CONFIG.THEME2)
+    else:
+        add_file('{0} [v{1}]'.format(CONFIG.ADDONTITLE, CONFIG.VERSION), '', themeit=CONFIG.THEME2)
+    if len(CONFIG.BUILDNAME) > 0:
+        version = check.check_build(CONFIG.BUILDNAME, 'version')
+        build = '{0} (v{1})'.format(CONFIG.BUILDNAME, CONFIG.BUILDVERSION)
+        if version > CONFIG.BUILDVERSION:
+            build = '{0} [COLOR red][B][UPDATE v{1}][/B][/COLOR]'.format(build, version)
+        add_dir(build, 'viewbuild', CONFIG.BUILDNAME, themeit=CONFIG.THEME4)
+        themefile = check.theme_count(CONFIG.BUILDNAME)
+        if themefile:
+            add_file('None' if CONFIG.BUILDTHEME == "" else CONFIG.BUILDTHEME, 'theme', CONFIG.BUILDNAME, themeit=CONFIG.THEME5)
+    else:
+        add_dir('None', 'builds', themeit=CONFIG.THEME4)
+    add_separator()
+    add_dir('Builds', 'builds', icon=CONFIG.ICONBUILDS, themeit=CONFIG.THEME1)
+    add_dir('Maintenance', 'maint', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
+    if (tools.platform() == 'android' or CONFIG.DEVELOPER == 'true') and CONFIG.KODIV < 18:
+        add_dir('Apk Installer','apk', icon=CONFIG.ICONAPK, themeit=CONFIG.THEME1)
+    if not CONFIG.ADDONFILE == 'http://':
+        add_dir('Addon Installer', 'addons', icon=CONFIG.ICONADDONS, themeit=CONFIG.THEME1)
+    if not CONFIG.YOUTUBEFILE == 'http://' and not CONFIG.YOUTUBETITLE == '':
+        add_dir (CONFIG.YOUTUBETITLE, 'youtube', icon=CONFIG.ICONYOUTUBE, themeit=CONFIG.THEME1)
+    add_dir('Save Data', 'savedata', icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME1)
+    if CONFIG.HIDECONTACT == 'No':
+        add_file('Contact', 'contact', icon=CONFIG.ICONCONTACT, themeit=CONFIG.THEME1)
+    add_separator()
+    add_file('Upload Log File', 'uploadlog', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
+    add_file('View Errors in Log: {0}'.format(errorsfound), 'viewerrorlog', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
+    if errors > 0:
+        add_file('View Last Error In Log', 'viewerrorlast', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
+    add_separator()
+    add_file('Settings', 'settings', icon=CONFIG.ICONSETTINGS, themeit=CONFIG.THEME1)
+    add_file('Force Update Text Files', 'forcetext', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
+    if CONFIG.DEVELOPER == 'true':
+        add_dir('Developer Menu', 'developer', icon=CONFIG.ICON, themeit=CONFIG.THEME1)
+    set_view()
 
 
-# MIGRATION: move to menu
-def buildMenu():
-    bf = wiz.textCache(BUILDFILE)
-    if bf == False:
-        WORKINGURL = wiz.workingURL(BUILDFILE)
-        addFile('%s Version: %s' % (MCNAME, KODIV), '', icon=ICONBUILDS, themeit=THEME3)
-        addDir ('Save Data Menu'       ,'savedata', icon=ICONSAVE,     themeit=THEME3)
-        if HIDESPACERS == 'No': addFile(wiz.sep(), '', themeit=THEME3)
-        addFile('Url for txt file not valid', '', icon=ICONBUILDS, themeit=THEME3)
-        addFile('%s' % WORKINGURL, '', icon=ICONBUILDS, themeit=THEME3)
+def build_menu():
+    from resources.libs import check
+    from resources.libs import clear
+    from resources.libs import test
+
+    bf = clear.text_cache(CONFIG.BUILDFILE)
+    if not bf:
+        add_file('Kodi Version: {0}'.format(CONFIG.KODIV), '', icon=CONFIG.ICONBUILDS, themeit=CONFIG.THEME3)
+        add_dir('Save Data Menu', 'savedata', icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME3)
+        add_separator()
+        add_file('URL for txt file not valid', '', icon=CONFIG.ICONBUILDS, themeit=CONFIG.THEME3)
+        add_file('{0}'.format(CONFIG.BUILDFILE), '', icon=CONFIG.ICONBUILDS, themeit=CONFIG.THEME3)
         return
-    total, count15, count16, count17, count18, adultcount, hidden = wiz.buildCount()
-    third = False; addin = []
-    if THIRDPARTY == 'true':
-        if not THIRD1NAME == '' and not THIRD1URL == '': third = True; addin.append('1')
-        if not THIRD2NAME == '' and not THIRD2URL == '': third = True; addin.append('2')
-        if not THIRD3NAME == '' and not THIRD3URL == '': third = True; addin.append('3')
-    link  = bf.replace('\n','').replace('\r','').replace('\t','').replace('gui=""', 'gui="http://"').replace('theme=""', 'theme="http://"').replace('adult=""', 'adult="no"')
+
+    total, count17, count18, adultcount, hidden = check.build_count()
+    link = bf.replace('\n', '').replace('\r', '').replace('\t', '').replace('gui=""', 'gui="http://"').replace('theme=""', 'theme="http://"').replace('adult=""', 'adult="no"')
     match = re.compile('name="(.+?)".+?ersion="(.+?)".+?rl="(.+?)".+?ui="(.+?)".+?odi="(.+?)".+?heme="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"').findall(link)
-    if total == 1 and third == False:
+    if total == 1:
         for name, version, url, gui, kodi, theme, icon, fanart, adult, description in match:
-            if not SHOWADULT == 'true' and adult.lower() == 'yes': continue
-            if not DEVELOPER == 'true' and wiz.strTest(name): continue
-            viewBuild(match[0][0])
+            if not CONFIG.SHOWADULT == 'true' and adult.lower() == 'yes':
+                continue
+            if not CONFIG.DEVELOPER == 'true' and test.str_test(name):
+                continue
+            view_build(match[0][0])
             return
-    addFile('%s Version: %s' % (MCNAME, KODIV), '', icon=ICONBUILDS, themeit=THEME3)
-    addDir ('Save Data Menu'       ,'savedata', icon=ICONSAVE,     themeit=THEME3)
-    if HIDESPACERS == 'No': addFile(wiz.sep(), '', themeit=THEME3)
-    if third == True:
-        for item in addin:
-            name = eval('THIRD%sNAME' % item)
-            addDir ("[B]%s[/B]" % name, 'viewthirdparty', item, icon=ICONBUILDS, themeit=THEME3)
+    add_file('Kodi Version: {0}'.format(CONFIG.KODIV), '', icon=CONFIG.ICONBUILDS, themeit=CONFIG.THEME3)
+    add_dir('Save Data Menu', 'savedata', icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME3)
+    add_separator()
     if len(match) >= 1:
-        if SEPERATE == 'true':
+        if CONFIG.SEPERATE == 'true':
             for name, version, url, gui, kodi, theme, icon, fanart, adult, description in match:
-                if not SHOWADULT == 'true' and adult.lower() == 'yes': continue
-                if not DEVELOPER == 'true' and wiz.strTest(name): continue
-                menu = createMenu('install', '', name)
-                addDir('[%s] %s (v%s)' % (float(kodi), name, version), 'viewbuild', name, description=description, fanart=fanart,icon=icon, menu=menu, themeit=THEME2)
+                if not CONFIG.SHOWADULT == 'true' and adult.lower() == 'yes':
+                    continue
+                if not CONFIG.DEVELOPER == 'true' and test.str_test(name):
+                    continue
+                menu = create_install_menu(name)
+                add_dir('[{0}] {1} (v{2})'.format(float(kodi), name, version), 'viewbuild', name, description=description, fanart=fanart, icon=icon, menu=menu, themeit=CONFIG.THEME2)
         else:
             if count18 > 0:
-                state = '+' if SHOW18 == 'false' else '-'
-                addFile('[B]%s Leia Builds(%s)[/B]' % (state, count18), 'togglesetting',  'show17', themeit=THEME3)
-                if SHOW18 == 'true':
+                state = '+' if CONFIG.SHOW18 == 'false' else '-'
+                add_file('[B]{0} Leia Builds ({1})[/B]'.format(state, count18), 'togglesetting',  'show18', themeit=CONFIG.THEME3)
+                if CONFIG.SHOW18 == 'true':
                     for name, version, url, gui, kodi, theme, icon, fanart, adult, description in match:
-                        if not SHOWADULT == 'true' and adult.lower() == 'yes': continue
-                        if not DEVELOPER == 'true' and wiz.strTest(name): continue
-                        kodiv = int(float(kodi))
-                        if kodiv == 18:
-                            menu = createMenu('install', '', name)
-                            addDir('[%s] %s (v%s)' % (float(kodi), name, version), 'viewbuild', name, description=description, fanart=fanart,icon=icon, menu=menu, themeit=THEME2)
+                        if not CONFIG.SHOWADULT == 'true' and adult.lower() == 'yes':
+                            continue
+                        if not CONFIG.DEVELOPER == 'true' and test.str_test(name):
+                            continue
+                        if CONFIG.KODIV >= 18:
+                            menu = create_install_menu(name)
+                            add_dir('[{0}] {1} (v{2})'.format(float(kodi), name, version), 'viewbuild', name, description=description, fanart=fanart, icon=icon, menu=menu, themeit=CONFIG.THEME2)
             if count17 > 0:
-                state = '+' if SHOW17 == 'false' else '-'
-                addFile('[B]%s Krypton Builds(%s)[/B]' % (state, count17), 'togglesetting',  'show17', themeit=THEME3)
-                if SHOW17 == 'true':
+                state = '+' if CONFIG.SHOW17 == 'false' else '-'
+                add_file('[B]{0} Krypton Builds ({1})[/B]'.format(state, count17), 'togglesetting',  'show17', themeit=CONFIG.THEME3)
+                if CONFIG.SHOW17 == 'true':
                     for name, version, url, gui, kodi, theme, icon, fanart, adult, description in match:
-                        if not SHOWADULT == 'true' and adult.lower() == 'yes': continue
-                        if not DEVELOPER == 'true' and wiz.strTest(name): continue
-                        kodiv = int(float(kodi))
-                        if kodiv == 17:
-                            menu = createMenu('install', '', name)
-                            addDir('[%s] %s (v%s)' % (float(kodi), name, version), 'viewbuild', name, description=description, fanart=fanart,icon=icon, menu=menu, themeit=THEME2)
-            if count16 > 0:
-                state = '+' if SHOW16 == 'false' else '-'
-                addFile('[B]%s Jarvis Builds(%s)[/B]' % (state, count16), 'togglesetting',  'show16', themeit=THEME3)
-                if SHOW16 == 'true':
-                    for name, version, url, gui, kodi, theme, icon, fanart, adult, description in match:
-                        if not SHOWADULT == 'true' and adult.lower() == 'yes': continue
-                        if not DEVELOPER == 'true' and wiz.strTest(name): continue
-                        kodiv = int(float(kodi))
-                        if kodiv == 16:
-                            menu = createMenu('install', '', name)
-                            addDir('[%s] %s (v%s)' % (float(kodi), name, version), 'viewbuild', name, description=description, fanart=fanart,icon=icon, menu=menu, themeit=THEME2)
-            if count15 > 0:
-                state = '+' if SHOW15 == 'false' else '-'
-                addFile('[B]%s Isengard and Below Builds(%s)[/B]' % (state, count15), 'togglesetting',  'show15', themeit=THEME3)
-                if SHOW15 == 'true':
-                    for name, version, url, gui, kodi, theme, icon, fanart, adult, description in match:
-                        if not SHOWADULT == 'true' and adult.lower() == 'yes': continue
-                        if not DEVELOPER == 'true' and wiz.strTest(name): continue
-                        kodiv = int(float(kodi))
-                        if kodiv <= 15:
-                            menu = createMenu('install', '', name)
-                            addDir('[%s] %s (v%s)' % (float(kodi), name, version), 'viewbuild', name, description=description, fanart=fanart,icon=icon, menu=menu, themeit=THEME2)
+                        if not CONFIG.SHOWADULT == 'true' and adult.lower() == 'yes':
+                            continue
+                        if not CONFIG.DEVELOPER == 'true' and test.str_test(name):
+                            continue
+                        if CONFIG.KODIV >= 17:
+                            menu = create_install_menu(name)
+                            add_dir('[{0}] {1} (v{2})'.format(float(kodi), name, version), 'viewbuild', name, description=description, fanart=fanart, icon=icon, menu=menu, themeit=CONFIG.THEME2)
     elif hidden > 0:
         if adultcount > 0:
-            addFile('There is currently only Adult builds', '', icon=ICONBUILDS, themeit=THEME3)
-            addFile('Enable Show Adults in Addon Settings > Misc', '', icon=ICONBUILDS, themeit=THEME3)
+            add_file('There is currently only Adult builds', '', icon=CONFIG.ICONBUILDS, themeit=CONFIG.THEME3)
+            add_file('Enable Show Adults in Addon Settings > Misc', '', icon=CONFIG.ICONBUILDS, themeit=CONFIG.THEME3)
         else:
-            addFile('Currently No Builds Offered from %s' % ADDONTITLE, '', icon=ICONBUILDS, themeit=THEME3)
-    else: addFile('Text file for builds not formated correctly.', '', icon=ICONBUILDS, themeit=THEME3)
-    setView('files', 'viewType')
+            add_file('Currently No Builds Offered from {0}'.format(CONFIG.ADDONTITLE), '', icon=CONFIG.ICONBUILDS, themeit=CONFIG.THEME3)
+    else:
+        add_file('Text file for builds not formatted correctly.', '', icon=CONFIG.ICONBUILDS, themeit=CONFIG.THEME3)
+
+    set_view()
 
 
-# MIGRATION: move to menu
-def viewBuild(name):
-    bf = wiz.textCache(BUILDFILE)
-    if bf == False:
-        WORKINGURL = wiz.workingURL(BUILDFILE)
-        addFile('Url for txt file not valid', '', themeit=THEME3)
-        addFile('%s' % WORKINGURL, '', themeit=THEME3)
+def view_build(name):
+    from resources.libs import check
+    from resources.libs import clear
+
+    bf = clear.text_cache(CONFIG.BUILDFILE)
+    if not bf:
+        add_file('URL for txt file not valid', '', themeit=CONFIG.THEME3)
+        add_file('{0}'.format(CONFIG.BUILDFILE), '', themeit=CONFIG.THEME3)
         return
-    if wiz.checkBuild(name, 'version') == False:
-        addFile('Error reading the txt file.', '', themeit=THEME3)
-        addFile('%s was not found in the builds list.' % name, '', themeit=THEME3)
+    if not check.check_build(name, 'version'):
+        add_file('Error reading the txt file.', '', themeit=CONFIG.THEME3)
+        add_file('{0} was not found in the builds list.'.format(name), '', themeit=CONFIG.THEME3)
         return
-    link = bf.replace('\n','').replace('\r','').replace('\t','').replace('gui=""', 'gui="http://"').replace('theme=""', 'theme="http://"')
+    link = bf.replace('\n', '').replace('\r', '').replace('\t', '').replace('gui=""', 'gui="http://"').replace('theme=""', 'theme="http://"')
     match = re.compile('name="%s".+?ersion="(.+?)".+?rl="(.+?)".+?inor="(.+?)".+?ui="(.+?)".+?odi="(.+?)".+?heme="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?review="(.+?)".+?dult="(.+?)".+?nfo="(.+?)".+?escription="(.+?)"' % name).findall(link)
     for version, url, minor, gui, kodi, themefile, icon, fanart, preview, adult, info, description in match:
-        icon        = icon
-        fanart      = fanart
-        build       = '%s (v%s)' % (name, version)
-        if BUILDNAME == name and version > BUILDVERSION:
-            build = '%s [COLOR red][CURRENT v%s][/COLOR]' % (build, BUILDVERSION)
-        addFile(build, '', description=description, fanart=fanart, icon=icon, themeit=THEME4)
-        if HIDESPACERS == 'No': addFile(wiz.sep(), '', themeit=THEME3)
-        addDir ('Save Data Menu',       'savedata', icon=ICONSAVE,     themeit=THEME3)
-        addFile('Build Information',    'buildinfo', name, description=description, fanart=fanart, icon=icon, themeit=THEME3)
-        if not preview == "http://": addFile('View Video Preview', 'buildpreview', name, description=description, fanart=fanart, icon=icon, themeit=THEME3)
-        temp1 = int(float(KODIV)); temp2 = int(float(kodi))
+        icon = icon
+        fanart = fanart
+        build = '{0} (v{1})'.format(name, version)
+        if CONFIG.BUILDNAME == name and version > CONFIG.BUILDVERSION:
+            build = '{0} [COLOR red][CURRENT v{1}][/COLOR]'.format(build, CONFIG.BUILDVERSION)
+        add_file(build, '', description=description, fanart=fanart, icon=icon, themeit=CONFIG.THEME4)
+        add_separator()
+        add_dir('Save Data Menu', 'savedata', icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME3)
+        add_file('Build Information', 'buildinfo', name, description=description, fanart=fanart, icon=icon, themeit=CONFIG.THEME3)
+        if not preview == "http://":
+            add_file('View Video Preview', 'buildpreview', name, description=description, fanart=fanart, icon=icon, themeit=CONFIG.THEME3)
+        temp1 = int(float(CONFIG.KODIV))
+        temp2 = int(float(kodi))
         if not temp1 == temp2:
-            if temp1 == 16 and temp2 <= 15: warning = False
-            else: warning = True
-        else: warning = False
-        if warning == True:
-            addFile('[I]Build designed for kodi version %s(installed: %s)[/I]' % (str(kodi), str(KODIV)), '', fanart=fanart, icon=icon, themeit=THEME3)
-        addFile(wiz.sep('INSTALL'), '', fanart=fanart, icon=icon, themeit=THEME3)
-        addFile('Fresh Install'   , 'install', name, 'fresh'  , description=description, fanart=fanart, icon=icon, themeit=THEME1)
-        addFile('Standard Install', 'install', name, 'normal' , description=description, fanart=fanart, icon=icon, themeit=THEME1)
-        if not gui == 'http://': addFile('Apply guiFix'    , 'install', name, 'gui'     , description=description, fanart=fanart, icon=icon, themeit=THEME1)
+            warning = True
+        else:
+            warning = False
+        if warning:
+            add_file('[I]Build designed for Kodi v{0} (installed: v{1})[/I]'.format(str(kodi), str(CONFIG.KODIV)), '', fanart=fanart, icon=icon, themeit=CONFIG.THEME3)
+        add_separator('INSTALL')
+        add_file('Fresh Install', 'install', name, 'fresh', description=description, fanart=fanart, icon=icon, themeit=CONFIG.THEME1)
+        add_file('Standard Install', 'install', name, 'normal', description=description, fanart=fanart, icon=icon, themeit=CONFIG.THEME1)
+        if not gui == 'http://':
+            add_file('Apply guiFix', 'install', name, 'gui', description=description, fanart=fanart, icon=icon, themeit=CONFIG.THEME1)
         if not themefile == 'http://':
-            themecheck = wiz.textCache(themefile)
-            if not themecheck == False:
-                addFile(wiz.sep('THEMES'), '', fanart=fanart, icon=icon, themeit=THEME3)
-                link  = themecheck.replace('\n','').replace('\r','').replace('\t','')
+            themecheck = clear.text_cache(themefile)
+            if themecheck:
+                add_separator('THEMES', fanart=fanart, icon=icon)
+                link = themecheck.replace('\n', '').replace('\r', '').replace('\t', '')
                 match = re.compile('name="(.+?)".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"').findall(link)
                 for themename, themeurl, themeicon, themefanart, themeadult, description in match:
-                    if not SHOWADULT == 'true' and themeadult.lower() == 'yes': continue
-                    themeicon   = themeicon   if themeicon   == 'http://' else icon
+                    if CONFIG.SHOWADULT != 'true' and themeadult.lower() == 'yes':
+                        continue
+                    themeicon = themeicon if themeicon == 'http://' else icon
                     themefanart = themefanart if themefanart == 'http://' else fanart
-                    addFile(themename if not themename == BUILDTHEME else "[B]%s (Installed)[/B]" % themename, 'theme', name, themename, description=description, fanart=themefanart, icon=themeicon, themeit=THEME3)
-    setView('files', 'viewType')
+                    add_file(themename if not themename == CONFIG.BUILDTHEME else "[B]{0} (Installed)[/B]".format(themename), 'theme', name, themename, description=description, fanart=themefanart, icon=themeicon, themeit=CONFIG.THEME3)
+
+    set_view()
 
 
+# commented lines in this method are for x64 apks
+def apk_scraper():
+    from resources.libs import logging
+    from resources.libs import tools
 
-# MIGRATION: move to menu?
-def apkScraper(name=""):
-    if name == 'kodi':
-        kodiurl1 = 'http://mirrors.kodi.tv/releases/android/arm/'
-        kodiurl2 = 'http://mirrors.kodi.tv/releases/android/arm/old/'
-        url1 = wiz.openURL(kodiurl1).replace('\n', '').replace('\r', '').replace('\t', '')
-        url2 = wiz.openURL(kodiurl2).replace('\n', '').replace('\r', '').replace('\t', '')
-        x = 0
-        match1 = re.compile('<tr><td><a href="(.+?)".+?>(.+?)</a></td><td>(.+?)</td><td>(.+?)</td></tr>').findall(url1)
-        match2 = re.compile('<tr><td><a href="(.+?)".+?>(.+?)</a></td><td>(.+?)</td><td>(.+?)</td></tr>').findall(url2)
+    kodiurl1 = 'https://mirrors.kodi.tv/releases/android/arm/'
+    kodiurl2 = 'https://mirrors.kodi.tv/releases/android/arm/old/'
+    # kodiurl3 = 'https://mirrors.kodi.tv/releases/android/arm64-v8a/'
+    # kodiurl4 = 'https://mirrors.kodi.tv/releases/android/arm64-v8a/old/'
 
-        addFile("Official Kodi Apk\'s", themeit=THEME1)
-        rc = False
-        for url, name, size, date in match1:
-            if url in ['../', 'old/']: continue
-            if not url.endswith('.apk'): continue
-            if not url.find('_') == -1 and rc == True: continue
-            try:
-                tempname = name.split('-')
-                if not url.find('_') == -1:
-                    rc = True
-                    name2, v2 = tempname[2].split('_')
-                else:
-                    name2 = tempname[2]
-                    v2 = ''
-                title = "[COLOR %s]%s v%s%s %s[/COLOR] [COLOR %s]%s[/COLOR] [COLOR %s]%s[/COLOR]" % (COLOR1, tempname[0].title(), tempname[1], v2.upper(), name2, COLOR2, size.replace(' ', ''), COLOR1, date)
-                download = urljoin(kodiurl1, url)
-                addFile(title, 'apkinstall', "%s v%s%s %s" % (tempname[0].title(), tempname[1], v2.upper(), name2), download)
-                x += 1
-            except:
-                wiz.log("Error on: %s" % name)
+    url1 = tools.open_url(kodiurl1).replace('\n', '').replace('\r', '').replace('\t', '')
+    url2 = tools.open_url(kodiurl2).replace('\n', '').replace('\r', '').replace('\t', '')
+    # url3 = tools.open_url(kodiurl3).replace('\n', '').replace('\r', '').replace('\t', '')
+    # url4 = tools.open_url(kodiurl4).replace('\n', '').replace('\r', '').replace('\t', '')
 
-        for url, name, size, date in match2:
-            if url in ['../', 'old/']: continue
-            if not url.endswith('.apk'): continue
-            if not url.find('_') == -1: continue
-            try:
-                tempname = name.split('-')
-                title = "[COLOR %s]%s v%s %s[/COLOR] [COLOR %s]%s[/COLOR] [COLOR %s]%s[/COLOR]" % (COLOR1, tempname[0].title(), tempname[1], tempname[2], COLOR2, size.replace(' ', ''), COLOR1, date)
-                download = urljoin(kodiurl2, url)
-                addFile(title, 'apkinstall', "%s v%s %s" % (tempname[0].title(), tempname[1], tempname[2]), download)
-                x += 1
-            except:
-                wiz.log("Error on: %s" % name)
-        if x == 0: addFile("Error Kodi Scraper Is Currently Down.")
+    x = 0
+    match1 = re.compile('<tr><td><a href="(.+?)".+?>(.+?)</a></td><td>(.+?)</td><td>(.+?)</td></tr>').findall(url1)
+    match2 = re.compile('<tr><td><a href="(.+?)".+?>(.+?)</a></td><td>(.+?)</td><td>(.+?)</td></tr>').findall(url2)
+    # match3 = re.compile('<tr><td><a href="(.+?)".+?>(.+?)</a></td><td>(.+?)</td><td>(.+?)</td></tr>').findall(url3)
+    # match4 = re.compile('<tr><td><a href="(.+?)".+?>(.+?)</a></td><td>(.+?)</td><td>(.+?)</td></tr>').findall(url4)
 
-# MIGRATION: move to menu
-def apkMenu(name=None, url=None):
-    if url == None:
-        addDir ('Official Kodi Apk\'s', 'apkscrape', 'kodi', icon=ICONAPK, themeit=THEME1)
-        if HIDESPACERS == 'No': addFile(wiz.sep(), '', themeit=THEME3)
-    if not APKFILE == 'http://':
-        if url == None:
-            TEMPAPKFILE = wiz.textCache(uservar.APKFILE)
-            if TEMPAPKFILE == False: APKWORKING  = wiz.workingURL(uservar.APKFILE)
+    add_file("Official Kodi Apk\'s", themeit=CONFIG.THEME1)
+    rc = False
+    for url, name, size, date in match1:
+        if url in ['../', 'old/']:
+            continue
+        if not url.endswith('.apk'):
+            continue
+        if not url.find('_') == -1 and rc:
+            continue
+        try:
+            tempname = name.split('-')
+            if not url.find('_') == -1:
+                rc = True
+                name2, v2 = tempname[2].split('_')
+            else:
+                name2 = tempname[2]
+                v2 = ''
+            title = "[COLOR {0}]{1} v{2}{3} {4}[/COLOR] [COLOR {5}]{6}[/COLOR] [COLOR {7}]{8}[/COLOR]".format(CONFIG.COLOR1, tempname[0].title(), tempname[1], v2.upper(), name2, CONFIG.COLOR2, size.replace(' ', ''), CONFIG.COLOR1, date)
+            download = urljoin(kodiurl1, url)
+            add_file(title, 'apkinstall', "{0} v{1}{2} {3}".format(tempname[0].title(), tempname[1], v2.upper(), name2), download)
+            x += 1
+        except Exception as e:
+            logging.log("Error on APK scraping: {0}".format(str(e)))
+
+    for url, name, size, date in match2:
+        if url in ['../', 'old/']:
+            continue
+        if not url.endswith('.apk'):
+            continue
+        if not url.find('_') == -1:
+            continue
+        try:
+            tempname = name.split('-')
+            title = "[COLOR {0}]{1} v{2} {3}[/COLOR] [COLOR {4}]{5}[/COLOR] [COLOR {6}]{7}[/COLOR]".format(CONFIG.COLOR1, tempname[0].title(), tempname[1], tempname[2], CONFIG.COLOR2, size.replace(' ', ''), CONFIG.COLOR1, date)
+            download = urljoin(kodiurl2, url)
+            add_file(title, 'apkinstall', "{0} v{1} {2}".format(tempname[0].title(), tempname[1], tempname[2]), download)
+            x += 1
+        except Exception as e:
+            logging.log("Error on APK  scraping: {0}".format(str(e)))
+
+    # for url, name, size, date in match3:
+    #     if url in ['../', 'old/']:
+    #         continue
+    #     if not url.endswith('.apk'):
+    #         continue
+    #     if not url.find('_') == -1:
+    #         continue
+    #     try:
+    #         tempname = name.split('-')
+    #         title = "[COLOR {0}]{1} v{2} {3}[/COLOR] [COLOR {4}]{5}[/COLOR] [COLOR {6}]{7}[/COLOR]".format(CONFIG.COLOR1, tempname[0].title(), tempname[1], tempname[2], CONFIG.COLOR2, size.replace(' ', ''), CONFIG.COLOR1, date)
+    #         download = urljoin(kodiurl2, url)
+    #         add_file(title, 'apkinstall', "{0} v{1} {2}".format(tempname[0].title(), tempname[1], tempname[2]), download)
+    #         x += 1
+    #     except Exception as e:
+    #         logging.log("Error on APK  scraping: {0}".format(str(e)))
+    #
+    # for url, name, size, date in match4:
+    #     if url in ['../', 'old/']:
+    #         continue
+    #     if not url.endswith('.apk'):
+    #         continue
+    #     if not url.find('_') == -1:
+    #         continue
+    #     try:
+    #         tempname = name.split('-')
+    #         title = "[COLOR {0}]{1} v{2} {3}[/COLOR] [COLOR {4}]{5}[/COLOR] [COLOR {6}]{7}[/COLOR]".format(CONFIG.COLOR1, tempname[0].title(), tempname[1], tempname[2], CONFIG.COLOR2, size.replace(' ', ''), CONFIG.COLOR1, date)
+    #         download = urljoin(kodiurl2, url)
+    #         add_file(title, 'apkinstall', "{0} v{1} {2}".format(tempname[0].title(), tempname[1], tempname[2]), download)
+    #         x += 1
+    #     except Exception as e:
+    #         logging.log("Error on APK  scraping: {0}".format(str(e)))
+
+    if x == 0:
+        add_file("Error Kodi Scraper Is Currently Down.")
+
+
+def apk_menu(url=None):
+    from resources.libs import clear
+    from resources.libs import check
+    from resources.libs import logging
+
+    if not url:
+        add_dir('Official Kodi Apk\'s', 'apkscrape', 'kodi', icon=CONFIG.ICONAPK, themeit=CONFIG.THEME1)
+        add_separator()
+    if not CONFIG.APKFILE == 'http://':
+        if not url:
+            TEMPAPKFILE = clear.text_cache(CONFIG.APKFILE)
+            if not TEMPAPKFILE:
+                APKWORKING = check.check_url(CONFIG.APKFILE)
         else:
-            TEMPAPKFILE = wiz.textCache(url)
-            if TEMPAPKFILE == False: APKWORKING  = wiz.workingURL(url)
-        if not TEMPAPKFILE == False:
-            link = TEMPAPKFILE.replace('\n','').replace('\r','').replace('\t','')
+            TEMPAPKFILE = clear.text_cache(url)
+            if not TEMPAPKFILE:
+                APKWORKING = check.check_url(url)
+        if TEMPAPKFILE:
+            link = TEMPAPKFILE.replace('\n', '').replace('\r', '').replace('\t', '')
             match = re.compile('name="(.+?)".+?ection="(.+?)".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"').findall(link)
             if len(match) > 0:
                 x = 0
                 for aname, section, url, icon, fanart, adult, description in match:
-                    if not SHOWADULT == 'true' and adult.lower() == 'yes': continue
+                    if not CONFIG.SHOWADULT == 'true' and adult.lower() == 'yes':
+                        continue
                     if section.lower() == 'yes':
                         x += 1
-                        addDir ("[B]%s[/B]" % aname, 'apk', aname, url, description=description, icon=icon, fanart=fanart, themeit=THEME3)
-                    elif section.lower() == 'yes':
-                        x += 1
-                        # addFile(aname, 'rominstall', aname, url, description=description, icon=icon, fanart=fanart, themeit=THEME2)
+                        add_dir("[B]{0}[/B]".format(aname), 'apk', aname, url, description=description, icon=icon, fanart=fanart, themeit=CONFIG.THEME3)
                     else:
                         x += 1
-                        addFile(aname, 'apkinstall', aname, url, description=description, icon=icon, fanart=fanart, themeit=THEME2)
+                        add_file(aname, 'apkinstall', aname, url, description=description, icon=icon, fanart=fanart, themeit=CONFIG.THEME2)
                     if x == 0:
-                        addFile("No addons adde0d to this menu yet!", '', themeit=THEME2)
-            else: wiz.log("[APK Menu] ERROR: Invalid Format.", xbmc.LOGERROR)
+                        add_file("No addons added to this menu yet!", '', themeit=CONFIG.THEME2)
+            else:
+                logging.log("[APK Menu] ERROR: Invalid Format.", level=xbmc.LOGERROR)
         else:
-            wiz.log("[APK Menu] ERROR: URL for apk list not working.", xbmc.LOGERROR)
-            addFile('Url for txt file not valid', '', themeit=THEME3)
-            addFile('%s' % APKWORKING, '', themeit=THEME3)
+            logging.log("[APK Menu] ERROR: URL for apk list not working.", level=xbmc.LOGERROR)
+            add_file('Url for txt file not valid', '', themeit=CONFIG.THEME3)
+            add_file('{0}'.format(CONFIG.APKFILE), '', themeit=CONFIG.THEME3)
         return
-    else: wiz.log("[APK Menu] No APK list added.")
-    setView('files', 'viewType')
+    else:
+        logging.log("[APK Menu] No APK list added.")
 
-# MIGRATION: move to menu
-def addonMenu(name=None, url=None):
-    if not ADDONFILE == 'http://':
-        if url == None:
-            TEMPADDONFILE = wiz.textCache(uservar.ADDONFILE)
-            if TEMPADDONFILE == False: ADDONWORKING  = wiz.workingURL(uservar.ADDONFILE)
+    set_view()
+
+
+def addon_menu(url=None):
+    from resources.libs import clear
+    from resources.libs import check
+    from resources.libs import logging
+
+    if not CONFIG.ADDONFILE == 'http://':
+        if not url:
+            TEMPADDONFILE = clear.text_cache(CONFIG.ADDONFILE)
+            if not TEMPADDONFILE:
+                ADDONWORKING = check.check_url(CONFIG.ADDONFILE)
         else:
-            TEMPADDONFILE = wiz.textCache(url)
-            if TEMPADDONFILE == False: ADDONWORKING  = wiz.workingURL(url)
-        if not TEMPADDONFILE == False:
-            link = TEMPADDONFILE.replace('\n','').replace('\r','').replace('\t','').replace('repository=""', 'repository="none"').replace('repositoryurl=""', 'repositoryurl="http://"').replace('repositoryxml=""', 'repositoryxml="http://"')
+            TEMPADDONFILE = clear.text_cache(url)
+            if not TEMPADDONFILE:
+                ADDONWORKING = check.check_url(url)
+        if TEMPADDONFILE:
+            link = TEMPADDONFILE.replace('\n', '').replace('\r', '').replace('\t', '').replace('repository=""', 'repository="none"').replace('repositoryurl=""', 'repositoryurl="http://"').replace('repositoryxml=""', 'repositoryxml="http://"')
             match = re.compile('name="(.+?)".+?lugin="(.+?)".+?rl="(.+?)".+?epository="(.+?)".+?epositoryxml="(.+?)".+?epositoryurl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"').findall(link)
             if len(match) > 0:
                 x = 0
                 for aname, plugin, aurl, repository, repositoryxml, repositoryurl, icon, fanart, adult, description in match:
                     if plugin.lower() == 'section':
                         x += 1
-                        addDir ("[B]%s[/B]" % aname, 'addons', aname, aurl, description=description, icon=icon, fanart=fanart, themeit=THEME3)
+                        add_dir("[B]{0}[/B]".format(aname), 'addons', aname, aurl, description=description, icon=icon, fanart=fanart, themeit=CONFIG.THEME3)
                     elif plugin.lower() == 'skin':
-                        if not SHOWADULT == 'true' and adult.lower() == 'yes': continue
+                        if not CONFIG.SHOWADULT == 'true' and adult.lower() == 'yes':
+                            continue
                         x += 1
-                        addFile("[B]%s[/B]" % aname, 'skinpack', aname, aurl, description=description, icon=icon, fanart=fanart, themeit=THEME2)
+                        add_file("[B]{0}[/B]".format(aname), 'skinpack', aname, aurl, description=description, icon=icon, fanart=fanart, themeit=CONFIG.THEME2)
                     elif plugin.lower() == 'pack':
-                        if not SHOWADULT == 'true' and adult.lower() == 'yes': continue
+                        if not CONFIG.SHOWADULT == 'true' and adult.lower() == 'yes':
+                            continue
                         x += 1
-                        addFile("[B]%s[/B]" % aname, 'addonpack', aname, aurl, description=description, icon=icon, fanart=fanart, themeit=THEME2)
+                        add_file("[B]{0}[/B]".format(aname), 'addonpack', aname, aurl, description=description, icon=icon, fanart=fanart, themeit=CONFIG.THEME2)
                     else:
-                        if not SHOWADULT == 'true' and adult.lower() == 'yes': continue
+                        if not CONFIG.SHOWADULT == 'true' and adult.lower() == 'yes':
+                            continue
                         try:
-                            add    = xbmcaddon.Addon(id=plugin).getAddonInfo('path')
+                            add = xbmcaddon.Addon(id=plugin).getAddonInfo('path')
                             if os.path.exists(add):
-                                aname   = "[COLOR springgreen][Installed][/COLOR] %s" % aname
+                                aname = "[COLOR springgreen][Installed][/COLOR] {0}".format(aname)
                         except:
                             pass
                         x += 1
-                        addFile(aname, 'addoninstall', plugin, url, description=description, icon=icon, fanart=fanart, themeit=THEME2)
+                        add_file(aname, 'addoninstall', plugin, url, description=description, icon=icon, fanart=fanart, themeit=CONFIG.THEME2)
                     if x < 1:
-                        addFile("No addons added to this menu yet!", '', themeit=THEME2)
+                        add_file("No addons added to this menu yet!", '', themeit=CONFIG.THEME2)
             else:
-                addFile('Text File not formated correctly!', '', themeit=THEME3)
-                wiz.log("[Addon Menu] ERROR: Invalid Format.")
+                add_file('Text File not formated correctly!', '', themeit=CONFIG.THEME3)
+                logging.log("[Addon Menu] ERROR: Invalid Format.")
         else:
-            wiz.log("[Addon Menu] ERROR: URL for Addon list not working.")
-            addFile('Url for txt file not valid', '', themeit=THEME3)
-            addFile('%s' % ADDONWORKING, '', themeit=THEME3)
-    else: wiz.log("[Addon Menu] No Addon list added.")
-    setView('files', 'viewType')
+            logging.log("[Addon Menu] ERROR: URL for Addon list not working.")
+            add_file('Url for txt file not valid', '', themeit=CONFIG.THEME3)
+            add_file('{0}'.format(CONFIG.ADDONFILE), '', themeit=CONFIG.THEME3)
+    else:
+        logging.log("[Addon Menu] No Addon list added.")
 
-# MIGRATION: move to menu
-def youtubeMenu(name=None, url=None):
-    if not YOUTUBEFILE == 'http://':
-        if url == None:
-            TEMPYOUTUBEFILE = wiz.textCache(uservar.YOUTUBEFILE)
-            if TEMPYOUTUBEFILE == False: YOUTUBEWORKING  = wiz.workingURL(uservar.YOUTUBEFILE)
+    set_view()
+
+
+def youtube_menu(url=None):
+    from resources.libs import clear
+    from resources.libs import check
+    from resources.libs import logging
+
+    if not CONFIG.YOUTUBEFILE == 'http://':
+        if not url:
+            TEMPYOUTUBEFILE = clear.text_cache(CONFIG.YOUTUBEFILE)
+            if not TEMPYOUTUBEFILE:
+                YOUTUBEWORKING = check.check_url(CONFIG.YOUTUBEFILE)
         else:
-            TEMPYOUTUBEFILE = wiz.textCache(url)
-            if TEMPYOUTUBEFILE == False: YOUTUBEWORKING  = wiz.workingURL(url)
-        if not TEMPYOUTUBEFILE == False:
-            link = TEMPYOUTUBEFILE.replace('\n','').replace('\r','').replace('\t','')
+            TEMPYOUTUBEFILE = clear.text_cache(url)
+            if not TEMPYOUTUBEFILE:
+                YOUTUBEWORKING = check.check_url(url)
+        if TEMPYOUTUBEFILE:
+            link = TEMPYOUTUBEFILE.replace('\n', '').replace('\r', '').replace('\t', '')
             match = re.compile('name="(.+?)".+?ection="(.+?)".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?escription="(.+?)"').findall(link)
             if len(match) > 0:
                 for name, section, url, icon, fanart, description in match:
                     if section.lower() == "yes":
-                        addDir ("[B]%s[/B]" % name, 'youtube', name, url, description=description, icon=icon, fanart=fanart, themeit=THEME3)
+                        add_dir("[B]{0}[/B]".format(name), 'youtube', name, url, description=description, icon=icon, fanart=fanart, themeit=CONFIG.THEME3)
                     else:
-                        addFile(name, 'viewVideo', url=url, description=description, icon=icon, fanart=fanart, themeit=THEME2)
-            else: wiz.log("[YouTube Menu] ERROR: Invalid Format.")
+                        add_file(name, 'viewVideo', url=url, description=description, icon=icon, fanart=fanart, themeit=CONFIG.THEME2)
+            else:
+                logging.log("[YouTube Menu] ERROR: Invalid Format.")
         else:
-            wiz.log("[YouTube Menu] ERROR: URL for YouTube list not working.")
-            addFile('Url for txt file not valid', '', themeit=THEME3)
-            addFile('%s' % YOUTUBEWORKING, '', themeit=THEME3)
-    else: wiz.log("[YouTube Menu] No YouTube list added.")
-    setView('files', 'viewType')
+            logging.log("[YouTube Menu] ERROR: URL for YouTube list not working.")
+            add_file('Url for txt file not valid', '', themeit=CONFIG.THEME3)
+            add_file('{0}'.format(CONFIG.YOUTUBEFILE), '', themeit=CONFIG.THEME3)
+    else:
+        logging.log("[YouTube Menu] No YouTube list added.")
 
-# MIGRATION: move to menu
-def maintMenu(view=None):
-    on = '[B][COLOR springgreen]ON[/COLOR][/B]'; off = '[B][COLOR red]OFF[/COLOR][/B]'
-    autoclean   = 'true' if AUTOCLEANUP    == 'true' else 'false'
-    cache       = 'true' if AUTOCACHE      == 'true' else 'false'
-    packages    = 'true' if AUTOPACKAGES   == 'true' else 'false'
-    thumbs      = 'true' if AUTOTHUMBS     == 'true' else 'false'
-    maint       = 'true' if SHOWMAINT      == 'true' else 'false'
-    includevid  = 'true' if INCLUDEVIDEO   == 'true' else 'false'
-    includeall  = 'true' if INCLUDEALL     == 'true' else 'false'
-    thirdparty  = 'true' if THIRDPARTY     == 'true' else 'false'
-    errors = int(errorChecking(count=True))
+    set_view()
+
+
+def maint_menu(view=None):
+    from resources.libs import clear
+    from resources.libs import logging
+    from resources.libs import tools
+
+    on = '[B][COLOR springgreen]ON[/COLOR][/B]'
+    off = '[B][COLOR red]OFF[/COLOR][/B]'
+
+    autoclean = 'true' if CONFIG.AUTOCLEANU == 'true' else 'false'
+    cache = 'true' if CONFIG.AUTOCACHE == 'true' else 'false'
+    packages = 'true' if CONFIG.AUTOPACKAGES == 'true' else 'false'
+    thumbs = 'true' if CONFIG.AUTOTHUMBS == 'true' else 'false'
+    maint = 'true' if CONFIG.SHOWMAINT == 'true' else 'false'
+    includevid = 'true' if CONFIG.INCLUDEVIDEO == 'true' else 'false'
+    includeall = 'true' if CONFIG.INCLUDEALL == 'true' else 'false'
+    errors = int(logging.error_checking(count=True))
     errorsfound = str(errors) + ' Error(s) Found' if errors > 0 else 'None Found'
-    wizlogsize = ': [COLOR red]Not Found[/COLOR]' if not os.path.exists(WIZLOG) else ": [COLOR springgreen]%s[/COLOR]" % wiz.convertSize(os.path.getsize(WIZLOG))
+    wizlogsize = ': [COLOR red]Not Found[/COLOR]' if not os.path.exists(CONFIG.WIZLOG) else ": [COLOR springgreen]%s[/COLOR]".format(tools.convert_size(os.path.getsize(CONFIG.WIZLOG)))
+
     if includeall == 'true':
         includeplacenta = 'true'
         includegaia = 'true'
@@ -373,350 +477,390 @@ def maintMenu(view=None):
         includescrubs = 'true'
         includeseren = 'true'
     else:
-        includeexodusredux = 'true' if INCLUDEEXODUSREDUX     == 'true' else 'false'
-        includeovereasy = 'true' if INCLUDEOVEREASY     == 'true' else 'false'
-        includeplacenta = 'true' if INCLUDEPLACENTA == 'true' else 'false'
-        includegaia = 'true' if INCLUDEGAIA   == 'true' else 'false'
-        includeyoda = 'true' if INCLUDEYODA   == 'true' else 'false'
-        includevenom = 'true' if INCLUDEVENOM == 'true' else 'false'
-        includescrubs = 'true' if INCLUDESCRUBS == 'true' else 'false'
-        includeseren = 'true' if INCLUDESEREN   == 'true' else 'false'
-    sizepack   = wiz.getSize(PACKAGES)
-    sizethumb  = wiz.getSize(THUMBS)
-    archive    = wiz.getSize(ARCHIVE_CACHE)
-    sizecache  = (wiz.getCacheSize())-archive
-    totalsize  = sizepack+sizethumb+sizecache
-    feq        = ['Always', 'Daily', '3 Days', 'Weekly']
-    addDir ('[B]Cleaning Tools[/B]'       ,'maint', 'clean',  icon=ICONMAINT, themeit=THEME1)
-    if view == "clean" or SHOWMAINT == 'true':
-        addFile('Total Clean Up: [COLOR springgreen][B]%s[/B][/COLOR]' % wiz.convertSize(totalsize),    'fullclean',       icon=ICONMAINT, themeit=THEME3)
-        addFile('Clear Cache: [COLOR springgreen][B]%s[/B][/COLOR]' % wiz.convertSize(sizecache),       'clearcache',      icon=ICONMAINT, themeit=THEME3)
-        if (xbmc.getCondVisibility('System.HasAddon(script.module.urlresolver)') or xbmc.getCondVisibility('System.HasAddon(script.module.resolveurl)')): addFile('Clear Resolver Function Caches',       'clearfunctioncache',      icon=ICONMAINT, themeit=THEME3)
-        addFile('Clear Packages: [COLOR springgreen][B]%s[/B][/COLOR]' % wiz.convertSize(sizepack),     'clearpackages',   icon=ICONMAINT, themeit=THEME3)
-        addFile('Clear Thumbnails: [COLOR springgreen][B]%s[/B][/COLOR]' % wiz.convertSize(sizethumb),  'clearthumb',      icon=ICONMAINT, themeit=THEME3)
-        if os.path.exists(ARCHIVE_CACHE): addFile('Clear Archive_Cache: [COLOR springgreen][B]%s[/B][/COLOR]' % wiz.convertSize(archive), 'cleararchive',    icon=ICONMAINT, themeit=THEME3)
-        addFile('Clear Old Thumbnails', 'oldThumbs',      icon=ICONMAINT, themeit=THEME3)
-        addFile('Clear Crash Logs',               'clearcrash',      icon=ICONMAINT, themeit=THEME3)
-        addFile('Purge Databases',                'purgedb',         icon=ICONMAINT, themeit=THEME3)
-        addFile('Fresh Start',                    'freshstart',      icon=ICONMAINT, themeit=THEME3)
-    addDir ('[B]Addon Tools[/B]',       'maint', 'addon',  icon=ICONMAINT, themeit=THEME1)
-    if view == "addon" or SHOWMAINT == 'true':
-        addFile('Remove Addons',                  'removeaddons',    icon=ICONMAINT, themeit=THEME3)
-        addDir ('Remove Addon Data',              'removeaddondata', icon=ICONMAINT, themeit=THEME3)
-        addDir ('Enable/Disable Addons',          'enableaddons',    icon=ICONMAINT, themeit=THEME3)
-        addFile('Enable/Disable Adult Addons',    'toggleadult',     icon=ICONMAINT, themeit=THEME3)
-        addFile('Force Update Addons',            'forceupdate',     icon=ICONMAINT, themeit=THEME3)
+        includeexodusredux = 'true' if CONFIG.INCLUDEEXODUSREDUX == 'true' else 'false'
+        includegaia = 'true' if CONFIG.INCLUDEGAIA == 'true' else 'false'
+        includeovereasy = 'true' if CONFIG.INCLUDEOVEREASY == 'true' else 'false'
+        includeplacenta = 'true' if CONFIG.INCLUDEPLACENTA == 'true' else 'false'
+        includeyoda = 'true' if CONFIG.INCLUDEYODA == 'true' else 'false'
+        includevenom = 'true' if CONFIG.INCLUDEVENOM == 'true' else 'false'
+        includescrubs = 'true' if CONFIG.INCLUDESCRUBS == 'true' else 'false'
+        includeseren = 'true' if CONFIG.INCLUDESEREN == 'true' else 'false'
+
+    sizepack = tools.get_size(CONFIG.PACKAGES)
+    sizethumb = tools.get_size(CONFIG.THUMBS)
+    archive = tools.get_size(CONFIG.ARCHIVE_CACHE)
+    sizecache = (clear.get_cache_size())-archive
+    totalsize = sizepack+sizethumb+sizecache
+
+    add_dir('[B]Cleaning Tools[/B]', 'maint', 'clean', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
+    if view == "clean" or CONFIG.SHOWMAINT == 'true':
+        add_file('Total Clean Up: [COLOR springgreen][B]{0}[/B][/COLOR]'.format(tools.convert_size(totalsize)), 'fullclean', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('Clear Cache: [COLOR springgreen][B]{0}[/B][/COLOR]'.format(tools.convert_size(sizecache)), 'clearcache', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        if (xbmc.getCondVisibility('System.HasAddon(script.module.urlresolver)') or xbmc.getCondVisibility('System.HasAddon(script.module.resolveurl)')):
+            add_file('Clear Resolver Function Caches', 'clearfunctioncache', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('Clear Packages: [COLOR springgreen][B]{0}[/B][/COLOR]'.format(tools.convert_size(sizepack)), 'clearpackages', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('Clear Thumbnails: [COLOR springgreen][B]{0}[/B][/COLOR]'.format(tools.convert_size(sizethumb)), 'clearthumb', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        if os.path.exists(CONFIG.ARCHIVE_CACHE):
+            add_file('Clear Archive_Cache: [COLOR springgreen][B]{0}[/B][/COLOR]'.format(tools.convert_size(archive)), 'cleararchive', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('Clear Old Thumbnails', 'oldThumbs', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('Clear Crash Logs', 'clearcrash', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('Purge Databases', 'purgedb', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('Fresh Start', 'freshstart', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_dir('[B]Addon Tools[/B]', 'maint', 'addon',  icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
+    if view == "addon" or CONFIG.SHOWMAINT == 'true':
+        add_file('Remove Addons', 'removeaddons', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_dir('Remove Addon Data', 'removeaddondata', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_dir('Enable/Disable Addons', 'enableaddons', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('Enable/Disable Adult Addons', 'toggleadult', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('Force Update Addons', 'forceupdate', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         # addFile('Hide Passwords On Keyboard Entry',   'hidepassword',   icon=ICONMAINT, themeit=THEME3)
         # addFile('Unhide Passwords On Keyboard Entry', 'unhidepassword', icon=ICONMAINT, themeit=THEME3)
-    addDir ('[B]Misc Maintenance[/B]'     ,'maint', 'misc',   icon=ICONMAINT, themeit=THEME1)
-    if view == "misc" or SHOWMAINT == 'true':
-        addFile('Kodi 17 Fix',                    'kodi17fix',       icon=ICONMAINT, themeit=THEME3)
-        addDir ('Speed Test',                     'speedtest',       icon=ICONMAINT, themeit=THEME3)
-        addFile('Enable Unknown Sources',         'unknownsources',  icon=ICONMAINT, themeit=THEME3)
-        addFile('Reload Skin',                    'forceskin',       icon=ICONMAINT, themeit=THEME3)
-        addFile('Reload Profile',                 'forceprofile',    icon=ICONMAINT, themeit=THEME3)
-        addFile('Force Close Kodi',               'forceclose',      icon=ICONMAINT, themeit=THEME3)
-        addFile('Upload Log File', 'uploadlog',       icon=ICONMAINT, themeit=THEME3)
-        addFile('View Errors in Log: %s' % (errorsfound), 'viewerrorlog', icon=ICONMAINT, themeit=THEME3)
-        if errors > 0: addFile('View Last Error In Log', 'viewerrorlast', icon=ICONMAINT, themeit=THEME3)
-        addFile('View Log File',                  'viewlog',         icon=ICONMAINT, themeit=THEME3)
-        addFile('View Wizard Log File',           'viewwizlog',      icon=ICONMAINT, themeit=THEME3)
-        addFile('Clear Wizard Log File%s' % wizlogsize,'clearwizlog',     icon=ICONMAINT, themeit=THEME3)
-    addDir ('[B]Back up/Restore[/B]'     ,'maint', 'backup',   icon=ICONMAINT, themeit=THEME1)
-    if view == "backup" or SHOWMAINT == 'true':
-        addFile('Clean Up Back Up Folder',        'clearbackup',     icon=ICONMAINT,   themeit=THEME3)
-        addFile('Back Up Location: [COLOR %s]%s[/COLOR]' % (COLOR2, MYBUILDS),'settings', 'Maintenance', icon=ICONMAINT, themeit=THEME3)
-        #addFile('Extract a ZipFile',              'extractazip',     icon=ICONMAINT,   themeit=THEME3)
-        addFile('[Back Up]: Build',               'backupbuild',     icon=ICONMAINT,   themeit=THEME3)
-        addFile('[Back Up]: GuiFix',              'backupgui',       icon=ICONMAINT,   themeit=THEME3)
-        addFile('[Back Up]: Theme',               'backuptheme',     icon=ICONMAINT,   themeit=THEME3)
-        addFile('[Back Up]: Addon Pack',          'backupaddonpack', icon=ICONMAINT,   themeit=THEME3)
-        addFile('[Back Up]: Addon_data',          'backupaddon',     icon=ICONMAINT,   themeit=THEME3)
-        addFile('[Restore]: Local Build',         'restorezip',      icon=ICONMAINT,   themeit=THEME3)
-        addFile('[Restore]: Local GuiFix',        'restoregui',      icon=ICONMAINT,   themeit=THEME3)
-        addFile('[Restore]: Local Addon_data',    'restoreaddon',    icon=ICONMAINT,   themeit=THEME3)
-        addFile('[Restore]: External Build',      'restoreextzip',   icon=ICONMAINT,   themeit=THEME3)
-        addFile('[Restore]: External GuiFix',     'restoreextgui',   icon=ICONMAINT,   themeit=THEME3)
-        addFile('[Restore]: External Addon_data', 'restoreextaddon', icon=ICONMAINT,   themeit=THEME3)
-    addDir ('[B]System Tweaks/Fixes[/B]',       'maint', 'tweaks', icon=ICONMAINT, themeit=THEME1)
-    if view == "tweaks" or SHOWMAINT == 'true':
-        if not ADVANCEDFILE == 'http://' and not ADVANCEDFILE == '':
-            addDir ('Advanced Settings',            'advancedsetting',  icon=ICONMAINT, themeit=THEME3)
+    add_dir('[B]Misc Maintenance[/B]', 'maint', 'misc', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
+    if view == "misc" or CONFIG.SHOWMAINT == 'true':
+        add_file('Kodi 17 Fix', 'kodi17fix', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_dir('Speed Test', 'speedtest', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('Enable Unknown Sources', 'unknownsources', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('Reload Skin', 'forceskin', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('Reload Profile', 'forceprofile', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('Force Close Kodi', 'forceclose', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('Upload Log File', 'uploadlog', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('View Errors in Log: [COLOR springgreen][B]{0}[/B][/COLOR]'.format(errorsfound), 'viewerrorlog', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        if errors > 0:
+            add_file('View Last Error In Log', 'viewerrorlast', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('View Log File', 'viewlog', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('View Wizard Log File', 'viewwizlog', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('Clear Wizard Log File: [COLOR springgreen][B]{0}[/B][/COLOR]'.format(wizlogsize), 'clearwizlog', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_dir('[B]Back up/Restore[/B]', 'maint', 'backup', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
+    if view == "backup" or CONFIG.SHOWMAINT == 'true':
+        add_file('Clean Up Back Up Folder', 'clearbackup', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('Back Up Location: [COLOR {0]]{1}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.MYBUILDS), 'settings', 'Maintenance', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('[Back Up]: Build', 'backupbuild', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('[Back Up]: GuiFix', 'backupgui', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('[Back Up]: Theme', 'backuptheme', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('[Back Up]: Addon Pack', 'backupaddonpack', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('[Back Up]: Addon_data', 'backupaddon', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('[Restore]: Local Build', 'restorezip', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('[Restore]: Local GuiFix', 'restoregui', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('[Restore]: Local Addon_data', 'restoreaddon', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('[Restore]: External Build', 'restoreextzip', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('[Restore]: External GuiFix', 'restoreextgui', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('[Restore]: External Addon_data', 'restoreextaddon', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_dir('[B]System Tweaks/Fixes[/B]', 'maint', 'tweaks', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
+    if view == "tweaks" or CONFIG.SHOWMAINT == 'true':
+        if not CONFIG.ADVANCEDFILE == 'http://' and not CONFIG.ADVANCEDFILE == '':
+            add_dir('Advanced Settings', 'advancedsetting', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         else:
-            if os.path.exists(ADVANCED):
-                addFile('View Current AdvancedSettings.xml',   'currentsettings', icon=ICONMAINT, themeit=THEME3)
-                addFile('Remove Current AdvancedSettings.xml', 'removeadvanced',  icon=ICONMAINT, themeit=THEME3)
-            addFile('Quick Configure AdvancedSettings.xml',    'autoadvanced',    icon=ICONMAINT, themeit=THEME3)
-        addFile('Scan Sources for broken links',  'checksources',    icon=ICONMAINT, themeit=THEME3)
-        addFile('Scan For Broken Repositories',   'checkrepos',      icon=ICONMAINT, themeit=THEME3)
-        addFile('Fix Addons Not Updating',        'fixaddonupdate',  icon=ICONMAINT, themeit=THEME3)
-        addFile('Remove Non-Ascii filenames',     'asciicheck',      icon=ICONMAINT, themeit=THEME3)
-        addFile('Convert Paths to special',       'convertpath',     icon=ICONMAINT, themeit=THEME3)
-        addDir ('System Information',             'systeminfo',      icon=ICONMAINT, themeit=THEME3)
-    addFile('Show All Maintenance: %s' % maint.replace('true',on).replace('false',off) ,'togglesetting', 'showmaint', icon=ICONMAINT, themeit=THEME2)
-    addDir ('[I]<< Return to Main Menu[/I]', icon=ICONMAINT, themeit=THEME2)
-    addFile('Third Party Wizards: %s' % thirdparty.replace('true',on).replace('false',off) ,'togglesetting', 'enable3rd', fanart=FANART, icon=ICONMAINT, themeit=THEME1)
-    if thirdparty == 'true':
-        first = THIRD1NAME if not THIRD1NAME == '' else 'Not Set'
-        secon = THIRD2NAME if not THIRD2NAME == '' else 'Not Set'
-        third = THIRD3NAME if not THIRD3NAME == '' else 'Not Set'
-        addFile('Edit Third Party Wizard 1: [COLOR %s]%s[/COLOR]' % (COLOR2, first), 'editthird', '1', icon=ICONMAINT, themeit=THEME3)
-        addFile('Edit Third Party Wizard 2: [COLOR %s]%s[/COLOR]' % (COLOR2, secon), 'editthird', '2', icon=ICONMAINT, themeit=THEME3)
-        addFile('Edit Third Party Wizard 3: [COLOR %s]%s[/COLOR]' % (COLOR2, third), 'editthird', '3', icon=ICONMAINT, themeit=THEME3)
-    addFile('Auto Clean', '', fanart=FANART, icon=ICONMAINT, themeit=THEME1)
-    addFile('Auto Clean Up On Startup: %s' % autoclean.replace('true',on).replace('false',off) ,'togglesetting', 'autoclean',   icon=ICONMAINT, themeit=THEME3)
+            if os.path.exists(CONFIG.ADVANCED):
+                add_file('View Current AdvancedSettings.xml', 'currentsettings', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+                add_file('Remove Current AdvancedSettings.xml', 'removeadvanced', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+            add_file('Quick Configure AdvancedSettings.xml', 'autoadvanced', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('Scan Sources for broken links', 'checksources', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('Scan For Broken Repositories', 'checkrepos', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('Fix Addons Not Updating', 'fixaddonupdate', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('Remove Non-Ascii filenames', 'asciicheck', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('Convert Paths to special', 'convertpath', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_dir('System Information', 'systeminfo', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('Show All Maintenance: {0}'.format(maint.replace('true', on).replace('false', off)), 'togglesetting', 'showmaint', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_dir('[I]<< Return to Main Menu[/I]', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('Auto Clean', '', fanart=CONFIG.FANART, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
+    add_file('Auto Clean Up On Startup: {0}'.format(autoclean.replace('true', on).replace('false', off)), 'togglesetting', 'autoclean', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
     if autoclean == 'true':
-        addFile('--- Auto Clean Fequency: [B][COLOR springgreen]%s[/COLOR][/B]' % feq[AUTOFEQ], 'changefeq', icon=ICONMAINT, themeit=THEME3)
-        addFile('--- Clear Cache on Startup: %s' % cache.replace('true',on).replace('false',off), 'togglesetting', 'clearcache', icon=ICONMAINT, themeit=THEME3)
-        addFile('--- Clear Packages on Startup: %s' % packages.replace('true',on).replace('false',off), 'togglesetting', 'clearpackages', icon=ICONMAINT, themeit=THEME3)
-        addFile('--- Clear Old Thumbs on Startup: %s' % thumbs.replace('true',on).replace('false',off), 'togglesetting', 'clearthumbs', icon=ICONMAINT, themeit=THEME3)
-    addFile('Clear Video Cache', '', fanart=FANART, icon=ICONMAINT, themeit=THEME1)
-    addFile('Include Video Cache in Clear Cache: %s' % includevid.replace('true',on).replace('false',off), 'togglecache', 'includevideo', icon=ICONMAINT, themeit=THEME3)
+        add_file('--- Auto Clean Frequency: [B][COLOR springgreen]{0}[/COLOR][/B]'.format(CONFIG.CLEANFREQ[CONFIG.AUTOFREQ]), 'changefeq', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('--- Clear Cache on Startup: {0}'.format(cache.replace('true', on).replace('false', off)), 'togglesetting', 'clearcache', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('--- Clear Packages on Startup: {0}'.format(packages.replace('true', on).replace('false', off)), 'togglesetting', 'clearpackages', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('--- Clear Old Thumbs on Startup: {0}'.format(thumbs.replace('true', on).replace('false', off)), 'togglesetting', 'clearthumbs', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('Clear Video Cache', '', fanart=CONFIG.FANART, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
+    add_file('Include Video Cache in Clear Cache: {0}'.format(includevid.replace('true', on).replace('false', off)), 'togglecache', 'includevideo', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
     if includevid == 'true':
-        addFile('--- Include All Video Addons: %s' % includeall.replace('true',on).replace('false',off), 'togglecache', 'includeall', icon=ICONMAINT, themeit=THEME3)
-        if xbmc.getCondVisibility('System.HasAddon(plugin.video.exodusredux)'): addFile('--- Include Exodus Redux: %s' % includeexodusredux.replace('true',on).replace('false',off), 'togglecache', 'includeexodusredux', icon=ICONMAINT, themeit=THEME3)
-        if xbmc.getCondVisibility('System.HasAddon(plugin.video.gaia)'): addFile('--- Include Gaia: %s' % includegaia.replace('true',on).replace('false',off), 'togglecache', 'includegaia', icon=ICONMAINT, themeit=THEME3)
-        if xbmc.getCondVisibility('System.HasAddon(plugin.video.overeasy)'): addFile('--- Include Overeasy: %s' % includeovereasy.replace('true',on).replace('false',off), 'togglecache', 'includeovereasy', icon=ICONMAINT, themeit=THEME3)
-        if xbmc.getCondVisibility('System.HasAddon(plugin.video.placenta)'): addFile('--- Include Placenta: %s' % includeplacenta.replace('true',on).replace('false',off), 'togglecache', 'includeplacenta', icon=ICONMAINT, themeit=THEME3)
-        if xbmc.getCondVisibility('System.HasAddon(plugin.video.scrubsv2)'): addFile( '--- Include Scrubs v2: %s' % includescrubs.replace('true', on).replace('false', off), 'togglecache', 'includescrubs', icon=ICONMAINT, themeit=THEME3)
-        if xbmc.getCondVisibility('System.HasAddon(plugin.video.seren)'): addFile('--- Include Seren: %s' % includeseren.replace('true',on).replace('false',off), 'togglecache', 'includeseren', icon=ICONMAINT, themeit=THEME3)
-        if xbmc.getCondVisibility('System.HasAddon(plugin.video.venom)'): addFile('--- Include Venom: %s' % includevenom.replace('true', on).replace('false', off), 'togglecache', 'includevenom', icon=ICONMAINT, themeit=THEME3)
-        if xbmc.getCondVisibility('System.HasAddon(plugin.video.yoda)'): addFile('--- Include Yoda: %s' % includeyoda.replace('true',on).replace('false',off), 'togglecache', 'includeyoda', icon=ICONMAINT, themeit=THEME3)
-        addFile('--- Enable All Video Addons', 'togglecache', 'true', icon=ICONMAINT, themeit=THEME3)
-        addFile('--- Disable All Video Addons', 'togglecache', 'false', icon=ICONMAINT, themeit=THEME3)
-    setView('files', 'viewType')
+        add_file('--- Include All Video Addons: {0}'.format(includeall.replace('true', on).replace('false', off)), 'togglecache', 'includeall', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        if xbmc.getCondVisibility('System.HasAddon(plugin.video.exodusredux)'):
+            add_file('--- Include Exodus Redux: {0}'.format(includeexodusredux.replace('true', on).replace('false', off)), 'togglecache', 'includeexodusredux', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        if xbmc.getCondVisibility('System.HasAddon(plugin.video.gaia)'):
+            add_file('--- Include Gaia: {0}'.format(includegaia.replace('true', on).replace('false', off)), 'togglecache', 'includegaia', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        if xbmc.getCondVisibility('System.HasAddon(plugin.video.overeasy)'):
+            add_file('--- Include Overeasy: {0}'.format(includeovereasy.replace('true', on).replace('false', off)), 'togglecache', 'includeovereasy', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        if xbmc.getCondVisibility('System.HasAddon(plugin.video.placenta)'):
+            add_file('--- Include Placenta: {0}'.format(includeplacenta.replace('true', on).replace('false', off)), 'togglecache', 'includeplacenta', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        if xbmc.getCondVisibility('System.HasAddon(plugin.video.scrubsv2)'):
+            add_file( '--- Include Scrubs v2: {0}'.format(includescrubs.replace('true', on).replace('false', off)), 'togglecache', 'includescrubs', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        if xbmc.getCondVisibility('System.HasAddon(plugin.video.seren)'):
+            add_file('--- Include Seren: {0}'.format(includeseren.replace('true', on).replace('false', off)), 'togglecache', 'includeseren', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        if xbmc.getCondVisibility('System.HasAddon(plugin.video.venom)'):
+            add_file('--- Include Venom: {0}'.format(includevenom.replace('true', on).replace('false', off)), 'togglecache', 'includevenom', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        if xbmc.getCondVisibility('System.HasAddon(plugin.video.yoda)'):
+            add_file('--- Include Yoda: {0}'.format(includeyoda.replace('true', on).replace('false', off)), 'togglecache', 'includeyoda', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('--- Enable All Video Addons', 'togglecache', 'true', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('--- Disable All Video Addons', 'togglecache', 'false', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
 
+    set_view()
 
 #########################################NET TOOLS#############################################
 
-# MIGRATION: move to menu
+
 def net_tools(view=None):
-    addDir ('Speed Tester' ,'speedtestM', icon=ICONAPK, themeit=THEME1)
-    if HIDESPACERS == 'No': addFile(wiz.sep(), '', themeit=THEME3)
-    addDir ('View IP Address & MAC Address',        'viewIP',    icon=ICONMAINT, themeit=THEME1)
-    setView('files', 'viewType')
+    add_dir('Speed Tester', 'speedtestM', icon=CONFIG.ICONSPEED, themeit=CONFIG.THEME1)
+    if CONFIG.HIDESPACERS == 'No':
+        add_separator()
+    add_dir('View IP Address & MAC Address', 'viewIP', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
 
-# MIGRATION: move to menu
-def viewIP():
-    mac,inter_ip,ip,city,state,country,isp = wiz.net_info()
-    addFile('[COLOR %s]Mac:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, mac), '', icon=ICONMAINT, themeit=THEME2)
-    addFile('[COLOR %s]Internal IP: [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, inter_ip), '', icon=ICONMAINT, themeit=THEME2)
-    addFile('[COLOR %s]External IP:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, ip), '', icon=ICONMAINT, themeit=THEME2)
-    addFile('[COLOR %s]City:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, city), '', icon=ICONMAINT, themeit=THEME2)
-    addFile('[COLOR %s]State:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, state), '', icon=ICONMAINT, themeit=THEME2)
-    addFile('[COLOR %s]Country:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, country), '', icon=ICONMAINT, themeit=THEME2)
-    addFile('[COLOR %s]ISP:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, isp), '', icon=ICONMAINT, themeit=THEME2)
-    setView('files', 'viewType')
+    set_view()
 
-# MIGRATION: move to menu
-def speedTest():
-    addFile('Run Speed Test',             'runspeedtest',      icon=ICONMAINT, themeit=THEME3)
-    if os.path.exists(SPEEDTESTFOLD):
-        speedimg = glob.glob(os.path.join(SPEEDTESTFOLD, '*.png'))
+
+def view_ip():
+    from resources.libs import speedtest
+
+    mac, inter_ip, ip, city, state, country, isp = speedtest.net_info()
+    add_file('[COLOR {0}]MAC:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, mac), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]Internal IP: [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, inter_ip), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]External IP:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, ip), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]City:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, city), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]State:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, state), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]Country:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, country), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]ISP:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, isp), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+
+    set_view()
+
+
+def speed_test():
+    import datetime
+
+    add_file('Run Speed Test', 'runspeedtest', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    if os.path.exists(CONFIG.SPEEDTESTFOLD):
+        speedimg = glob.glob(os.path.join(CONFIG.SPEEDTESTFOLD, '*.png'))
         speedimg.sort(key=lambda f: os.path.getmtime(f), reverse=True)
         if len(speedimg) > 0:
-            addFile('Clear Results',          'clearspeedtest',    icon=ICONMAINT, themeit=THEME3)
-            addFile(wiz.sep('Previous Runs'), '', icon=ICONMAINT, themeit=THEME3)
+            add_file('Clear Results', 'clearspeedtest', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+            add_separator('Previous Runs', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
             for item in speedimg:
                 created = datetime.fromtimestamp(os.path.getmtime(item)).strftime('%m/%d/%Y %H:%M:%S')
-                img = item.replace(os.path.join(SPEEDTESTFOLD, ''), '')
-                addFile('[B]%s[/B]: [I]Ran %s[/I]' % (img, created), 'viewspeedtest', img, icon=ICONMAINT, themeit=THEME3)
+                img = item.replace(os.path.join(CONFIG.SPEEDTESTFOLD, ''), '')
+                add_file('[B]{0}[/B]: [I]Ran {1}[/I]'.format(img, created), 'viewspeedtest', img, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
 
-# MIGRATION: move to menu
-def clearSpeedTest():
-    speedimg = glob.glob(os.path.join(SPEEDTESTFOLD, '*.png'))
+
+def clear_speed_test():
+    from resources.libs import tools
+
+    speedimg = glob.glob(os.path.join(CONFIG.SPEEDTESTFOLD, '*.png'))
     for file in speedimg:
-        wiz.removeFile(file)
+        tools.remove_file(file)
 
-# MIGRATION: move to menu
-def viewSpeedTest(img=None):
-    img = os.path.join(SPEEDTESTFOLD, img)
-    notify.speedTest(img)
 
-# MIGRATION: move to speedtest?
-def runSpeedTest():
+def view_speed_test(img=None):
+    from resources.libs import gui
+
+    img = os.path.join(CONFIG.SPEEDTESTFOLD, img)
+    gui.show_speed_test(img)
+
+
+def run_speed_test():
+    from resources.libs import logging
+    from resources.libs import speedtest
+
     try:
         found = speedtest.speedtest()
-        if not os.path.exists(SPEEDTESTFOLD): os.makedirs(SPEEDTESTFOLD)
+        if not os.path.exists(CONFIG.SPEEDTESTFOLD):
+            os.makedirs(CONFIG.SPEEDTESTFOLD)
         urlsplits = found[0].split('/')
-        dest = os.path.join(SPEEDTESTFOLD, urlsplits[-1])
-        urllib.urlretrieve(found[0], dest)
-        viewSpeedTest(urlsplits[-1])
+        dest = os.path.join(CONFIG.SPEEDTESTFOLD, urlsplits[-1])
+        urlretrieve(found[0], dest)
+        view_speed_test(urlsplits[-1])
     except:
-        wiz.log("[Speed Test] Error Running Speed Test")
+        logging.log("[Speed Test] Error Running Speed Test")
         pass
 
-# MIGRATION: move to tools and/or menu
-def systemInfo():
-    infoLabel = ['System.FriendlyName',
-                 'System.BuildVersion',
-                 'System.CpuUsage',
-                 'System.ScreenMode',
-                 'Network.IPAddress',
-                 'Network.MacAddress',
-                 'System.Uptime',
-                 'System.TotalUptime',
-                 'System.FreeSpace',
-                 'System.UsedSpace',
-                 'System.TotalSpace',
-                 'System.Memory(free)',
-                 'System.Memory(used)',
+
+def system_info():
+    from resources.libs import logging
+    from resources.libs import tools
+    from resources.libs import speedtest
+
+    infoLabel = ['System.FriendlyName', 'System.BuildVersion', 'System.CpuUsage', 'System.ScreenMode',
+                 'Network.IPAddress', 'Network.MacAddress', 'System.Uptime', 'System.TotalUptime', 'System.FreeSpace',
+                 'System.UsedSpace', 'System.TotalSpace', 'System.Memory(free)', 'System.Memory(used)',
                  'System.Memory(total)']
-    data      = []; x = 0
+    data = []
+    x = 0
     for info in infoLabel:
-        temp = wiz.getInfo(info)
+        temp = tools.get_info_label(info)
         y = 0
         while temp == "Busy" and y < 10:
-            temp = wiz.getInfo(info); y += 1; wiz.log("%s sleep %s" % (info, str(y))); xbmc.sleep(200)
+            temp = tools.get_info_label(info)
+            y += 1
+            logging.log("{0} sleep {1}".format(info, str(y)))
+            xbmc.sleep(200)
         data.append(temp)
         x += 1
-    storage_free  = data[8] if 'Una' in data[8] else wiz.convertSize(int(float(data[8][:-8]))*1024*1024)
-    storage_used  = data[9] if 'Una' in data[9] else wiz.convertSize(int(float(data[9][:-8]))*1024*1024)
-    storage_total = data[10] if 'Una' in data[10] else wiz.convertSize(int(float(data[10][:-8]))*1024*1024)
-    ram_free      = wiz.convertSize(int(float(data[11][:-2]))*1024*1024)
-    ram_used      = wiz.convertSize(int(float(data[12][:-2]))*1024*1024)
-    ram_total     = wiz.convertSize(int(float(data[13][:-2]))*1024*1024)
+    storage_free = data[8] if 'Una' in data[8] else tools.convert_size(int(float(data[8][:-8]))*1024*1024)
+    storage_used = data[9] if 'Una' in data[9] else tools.convert_size(int(float(data[9][:-8]))*1024*1024)
+    storage_total = data[10] if 'Una' in data[10] else tools.convert_size(int(float(data[10][:-8]))*1024*1024)
+    ram_free = tools.convert_size(int(float(data[11][:-2]))*1024*1024)
+    ram_used = tools.convert_size(int(float(data[12][:-2]))*1024*1024)
+    ram_total = tools.convert_size(int(float(data[13][:-2]))*1024*1024)
 
-    picture = []; music = []; video = []; programs = []; repos = []; scripts = []; skins = []
+    picture = []
+    music = []
+    video = []
+    programs = []
+    repos = []
+    scripts = []
+    skins = []
 
-    fold = glob.glob(os.path.join(ADDONS, '*/'))
+    fold = glob.glob(os.path.join(CONFIG.ADDONS, '*/'))
     for folder in sorted(fold, key = lambda x: x):
         foldername = os.path.split(folder[:-1])[1]
         if foldername == 'packages': continue
         xml = os.path.join(folder, 'addon.xml')
         if os.path.exists(xml):
-            f      = open(xml)
-            a      = f.read()
-            prov   = re.compile("<provides>(.+?)</provides>").findall(a)
+            prov = re.compile("<provides>(.+?)</provides>").findall(tools.read_from_file(xml))
             if len(prov) == 0:
-                if foldername.startswith('skin'): skins.append(foldername)
-                elif foldername.startswith('repo'): repos.append(foldername)
-                else: scripts.append(foldername)
-            elif not (prov[0]).find('executable') == -1: programs.append(foldername)
-            elif not (prov[0]).find('video') == -1: video.append(foldername)
-            elif not (prov[0]).find('audio') == -1: music.append(foldername)
-            elif not (prov[0]).find('image') == -1: picture.append(foldername)
+                if foldername.startswith('skin'):
+                    skins.append(foldername)
+                elif foldername.startswith('repo'):
+                    repos.append(foldername)
+                else:
+                    scripts.append(foldername)
+            elif not (prov[0]).find('executable') == -1:
+                programs.append(foldername)
+            elif not (prov[0]).find('video') == -1:
+                video.append(foldername)
+            elif not (prov[0]).find('audio') == -1:
+                music.append(foldername)
+            elif not (prov[0]).find('image') == -1:
+                picture.append(foldername)
 
-    addFile('[B]Media Center Info:[/B]', '', icon=ICONMAINT, themeit=THEME2)
-    addFile('[COLOR %s]Name:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, data[0]), '', icon=ICONMAINT, themeit=THEME3)
-    addFile('[COLOR %s]Version:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, data[1]), '', icon=ICONMAINT, themeit=THEME3)
-    addFile('[COLOR %s]Platform:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, wiz.platform().title()), '', icon=ICONMAINT, themeit=THEME3)
-    addFile('[COLOR %s]CPU Usage:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, data[2]), '', icon=ICONMAINT, themeit=THEME3)
-    addFile('[COLOR %s]Screen Mode:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, data[3]), '', icon=ICONMAINT, themeit=THEME3)
+    add_file('[B]Media Center Info:[/B]', '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]Name:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, data[0]), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('[COLOR {0}]Version:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, data[1]), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('[COLOR {0}]Platform:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, tools.platform().title()), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('[COLOR {0}]CPU Usage:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, data[2]), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('[COLOR {0}]Screen Mode:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, data[3]), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
 
-    addFile('[B]Uptime:[/B]', '', icon=ICONMAINT, themeit=THEME2)
-    addFile('[COLOR %s]Current Uptime:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, data[6]), '', icon=ICONMAINT, themeit=THEME2)
-    addFile('[COLOR %s]Total Uptime:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, data[7]), '', icon=ICONMAINT, themeit=THEME2)
+    add_file('[B]Uptime:[/B]', '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]Current Uptime:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, data[6]), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]Total Uptime:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, data[7]), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
 
-    addFile('[B]Local Storage:[/B]', '', icon=ICONMAINT, themeit=THEME2)
-    addFile('[COLOR %s]Used Storage:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, storage_used), '', icon=ICONMAINT, themeit=THEME2)
-    addFile('[COLOR %s]Free Storage:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, storage_free), '', icon=ICONMAINT, themeit=THEME2)
-    addFile('[COLOR %s]Total Storage:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, storage_total), '', icon=ICONMAINT, themeit=THEME2)
+    add_file('[B]Local Storage:[/B]', '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]Used Storage:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, storage_used), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]Free Storage:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, storage_free), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]Total Storage:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, storage_total), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
 
-    addFile('[B]Ram Usage:[/B]', '', icon=ICONMAINT, themeit=THEME2)
-    addFile('[COLOR %s]Used Memory:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, ram_free), '', icon=ICONMAINT, themeit=THEME2)
-    addFile('[COLOR %s]Free Memory:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, ram_used), '', icon=ICONMAINT, themeit=THEME2)
-    addFile('[COLOR %s]Total Memory:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, ram_total), '', icon=ICONMAINT, themeit=THEME2)
+    add_file('[B]Ram Usage:[/B]', '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]Used Memory:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, ram_free), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]Free Memory:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, ram_used), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]Total Memory:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, ram_total), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
 
-    addFile('[B]Network:[/B]', '', icon=ICONMAINT, themeit=THEME2)
-    mac,inter_ip,ip,city,state,country,isp = wiz.net_info()
-    addFile('[COLOR %s]Mac:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, mac), '', icon=ICONMAINT, themeit=THEME2)
-    addFile('[COLOR %s]Internal IP: [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, inter_ip), '', icon=ICONMAINT, themeit=THEME2)
-    addFile('[COLOR %s]External IP:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, ip), '', icon=ICONMAINT, themeit=THEME2)
-    addFile('[COLOR %s]City:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, city), '', icon=ICONMAINT, themeit=THEME2)
-    addFile('[COLOR %s]State:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, state), '', icon=ICONMAINT, themeit=THEME2)
-    addFile('[COLOR %s]Country:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, country), '', icon=ICONMAINT, themeit=THEME2)
-    addFile('[COLOR %s]ISP:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, isp), '', icon=ICONMAINT, themeit=THEME2)
+    mac, inter_ip, ip, city, state, country, isp = speedtest.net_info()
+    add_file('[B]Network:[/B]', '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]Mac:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, mac), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]Internal IP: [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, inter_ip), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]External IP:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, ip), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]City:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, city), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]State:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, state), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]Country:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, country), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]ISP:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, isp), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
 
     totalcount = len(picture) + len(music) + len(video) + len(programs) + len(scripts) + len(skins) + len(repos)
-    addFile('[B]Addons([COLOR %s]%s[/COLOR]):[/B]' % (COLOR1, totalcount), '', icon=ICONMAINT, themeit=THEME2)
-    addFile('[COLOR %s]Video Addons:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, str(len(video))), '', icon=ICONMAINT, themeit=THEME2)
-    addFile('[COLOR %s]Program Addons:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, str(len(programs))), '', icon=ICONMAINT, themeit=THEME2)
-    addFile('[COLOR %s]Music Addons:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, str(len(music))), '', icon=ICONMAINT, themeit=THEME2)
-    addFile('[COLOR %s]Picture Addons:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, str(len(picture))), '', icon=ICONMAINT, themeit=THEME2)
-    addFile('[COLOR %s]Repositories:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, str(len(repos))), '', icon=ICONMAINT, themeit=THEME2)
-    addFile('[COLOR %s]Skins:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, str(len(skins))), '', icon=ICONMAINT, themeit=THEME2)
-    addFile('[COLOR %s]Scripts/Modules:[/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR1, COLOR2, str(len(scripts))), '', icon=ICONMAINT, themeit=THEME2)
+    add_file('[B]Addons([COLOR {0}]{1}[/COLOR]):[/B]'.format(CONFIG.COLOR1, totalcount), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]Video Addons:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, str(len(video))), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]Program Addons:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, str(len(programs))), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]Music Addons:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, str(len(music))), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]Picture Addons:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, str(len(picture))), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]Repositories:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, str(len(repos))), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]Skins:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, str(len(skins))), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
+    add_file('[COLOR {0}]Scripts/Modules:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, str(len(scripts))), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
 
-# MIGRATION: move to menu
-def saveMenu():
-    on = '[COLOR springgreen]ON[/COLOR]'; off = '[COLOR red]OFF[/COLOR]'
-    trakt      = 'true' if KEEPTRAKT     == 'true' else 'false'
-    real       = 'true' if KEEPREAL      == 'true' else 'false'
-    login      = 'true' if KEEPLOGIN     == 'true' else 'false'
-    sources    = 'true' if KEEPSOURCES   == 'true' else 'false'
-    advanced   = 'true' if KEEPADVANCED  == 'true' else 'false'
-    profiles   = 'true' if KEEPPROFILES  == 'true' else 'false'
-    playercore = 'true' if KEEPPLAYERCORE == 'true' else 'false'
-    favourites = 'true' if KEEPFAVS      == 'true' else 'false'
-    repos      = 'true' if KEEPREPOS     == 'true' else 'false'
-    super      = 'true' if KEEPSUPER     == 'true' else 'false'
-    whitelist  = 'true' if KEEPWHITELIST == 'true' else 'false'
 
-    addDir ('Keep Trakt Data',               'trakt',                icon=ICONTRAKT, themeit=THEME1)
-    addDir ('Keep Debrid',              'realdebrid',           icon=ICONREAL,  themeit=THEME1)
-    addDir ('Keep Login Info',               'login',                icon=ICONLOGIN, themeit=THEME1)
-    addFile('Import Save Data',              'managedata', 'import', icon=ICONSAVE,  themeit=THEME1)
-    addFile('Export Save Data',              'managedata', 'export', icon=ICONSAVE,  themeit=THEME1)
-    addFile('- Click to toggle settings -', '', themeit=THEME3)
-    addFile('Save Trakt: %s' % trakt.replace('true',on).replace('false',off)                       ,'togglesetting', 'keeptrakt',      icon=ICONTRAKT, themeit=THEME1)
-    addFile('Save Debrid: %s' % real.replace('true',on).replace('false',off)                  ,'togglesetting', 'keepdebrid',     icon=ICONREAL,  themeit=THEME1)
-    addFile('Save Login Info: %s' % login.replace('true',on).replace('false',off)                  ,'togglesetting', 'keeplogin',      icon=ICONLOGIN, themeit=THEME1)
-    addFile('Keep \'Sources.xml\': %s' % sources.replace('true',on).replace('false',off)           ,'togglesetting', 'keepsources',    icon=ICONSAVE,  themeit=THEME1)
-    addFile('Keep \'Profiles.xml\': %s' % profiles.replace('true',on).replace('false',off)         ,'togglesetting', 'keepprofiles',   icon=ICONSAVE,  themeit=THEME1)
-    addFile('Keep \'playercorefactory.xml\': %s' % playercore.replace('true', on).replace('false', off), 'togglesetting', 'keepplayercore', icon=ICONSAVE, themeit=THEME1)
-    addFile('Keep \'Advancedsettings.xml\': %s' % advanced.replace('true',on).replace('false',off) ,'togglesetting', 'keepadvanced',   icon=ICONSAVE,  themeit=THEME1)
-    addFile('Keep \'Favourites.xml\': %s' % favourites.replace('true',on).replace('false',off)     ,'togglesetting', 'keepfavourites', icon=ICONSAVE,  themeit=THEME1)
-    addFile('Keep Super Favourites: %s' % super.replace('true',on).replace('false',off)            ,'togglesetting', 'keepsuper',      icon=ICONSAVE,  themeit=THEME1)
-    addFile('Keep Installed Repo\'s: %s' % repos.replace('true',on).replace('false',off)           ,'togglesetting', 'keeprepos',      icon=ICONSAVE,  themeit=THEME1)
-    addFile('Keep My \'WhiteList\': %s' % whitelist.replace('true',on).replace('false',off)        ,'togglesetting', 'keepwhitelist',  icon=ICONSAVE,  themeit=THEME1)
+def save_menu():
+    on = '[COLOR springgreen]ON[/COLOR]'
+    off = '[COLOR red]OFF[/COLOR]'
+
+    trakt = 'true' if CONFIG.KEEPTRAKT == 'true' else 'false'
+    debrid = 'true' if CONFIG.KEEPDEBRID == 'true' else 'false'
+    login = 'true' if CONFIG.KEEPLOGIN == 'true' else 'false'
+    sources = 'true' if CONFIG.KEEPSOURCES == 'true' else 'false'
+    advanced = 'true' if CONFIG.KEEPADVANCED == 'true' else 'false'
+    profiles = 'true' if CONFIG.KEEPPROFILES == 'true' else 'false'
+    playercore = 'true' if CONFIG.KEEPPLAYERCORE == 'true' else 'false'
+    favourites = 'true' if CONFIG.KEEPFAVS == 'true' else 'false'
+    repos = 'true' if CONFIG.KEEPREPOS == 'true' else 'false'
+    super = 'true' if CONFIG.KEEPSUPER == 'true' else 'false'
+    whitelist = 'true' if CONFIG.KEEPWHITELIST == 'true' else 'false'
+
+    add_dir('Keep Trakt Data', 'trakt', icon=CONFIG.ICONTRAKT, themeit=CONFIG.THEME1)
+    add_dir('Keep Debrid', 'realdebrid', icon=CONFIG.ICONDEBRID, themeit=CONFIG.THEME1)
+    add_dir('Keep Login Info', 'login', icon=CONFIG.ICONLOGIN, themeit=CONFIG.THEME1)
+    add_file('Import Save Data', 'managedata', 'import', icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME1)
+    add_file('Export Save Data', 'managedata', 'export', icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME1)
+    add_file('- Click to toggle settings -', '', themeit=CONFIG.THEME3)
+    add_file('Save Trakt: {0}'.format(trakt.replace('true', on).replace('false', off)),'togglesetting', 'keeptrakt', icon=CONFIG.ICONTRAKT, themeit=CONFIG.THEME1)
+    add_file('Save Debrid: {0}'.format(debrid.replace('true', on).replace('false', off)),'togglesetting', 'keepdebrid', icon=CONFIG.ICONDEBRID, themeit=CONFIG.THEME1)
+    add_file('Save Login Info: {0}'.format(login.replace('true', on).replace('false', off)),'togglesetting', 'keeplogin', icon=CONFIG.ICONLOGIN, themeit=CONFIG.THEME1)
+    add_file('Keep \'Sources.xml\': {0}'.format(sources.replace('true', on).replace('false', off)),'togglesetting', 'keepsources', icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME1)
+    add_file('Keep \'Profiles.xml\': {0}'.format(profiles.replace('true', on).replace('false', off)),'togglesetting', 'keepprofiles', icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME1)
+    add_file('Keep \'playercorefactory.xml\': {0}'.format(playercore.replace('true', on).replace('false', off)), 'togglesetting', 'keepplayercore', icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME1)
+    add_file('Keep \'Advancedsettings.xml\': {0}'.format(advanced.replace('true', on).replace('false', off)),'togglesetting', 'keepadvanced', icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME1)
+    add_file('Keep \'Favourites.xml\': {0}'.format(favourites.replace('true', on).replace('false', off)),'togglesetting', 'keepfavourites', icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME1)
+    add_file('Keep Super Favourites: {0}'.format(super.replace('true', on).replace('false', off)),'togglesetting', 'keepsuper', icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME1)
+    add_file('Keep Installed Repo\'s: {0}'.format(repos.replace('true', on).replace('false', off)),'togglesetting', 'keeprepos', icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME1)
+    add_file('Keep My \'WhiteList\': {0}'.format(whitelist.replace('true', on).replace('false', off)),'togglesetting', 'keepwhitelist', icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME1)
     if whitelist == 'true':
-        addFile('Edit My Whitelist',        'whitelist', 'edit',   icon=ICONSAVE,  themeit=THEME1)
-        addFile('View My Whitelist',        'whitelist', 'view',   icon=ICONSAVE,  themeit=THEME1)
-        addFile('Clear My Whitelist',       'whitelist', 'clear',  icon=ICONSAVE,  themeit=THEME1)
-        addFile('Import My Whitelist',      'whitelist', 'import', icon=ICONSAVE,  themeit=THEME1)
-        addFile('Export My Whitelist',      'whitelist', 'export', icon=ICONSAVE,  themeit=THEME1)
-    setView('files', 'viewType')
+        add_file('Edit My Whitelist', 'whitelist', 'edit', icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME1)
+        add_file('View My Whitelist', 'whitelist', 'view', icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME1)
+        add_file('Clear My Whitelist', 'whitelist', 'clear', icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME1)
+        add_file('Import My Whitelist', 'whitelist', 'import', icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME1)
+        add_file('Export My Whitelist', 'whitelist', 'export', icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME1)
 
-# MIGRATION: move to menu
-def traktMenu():
-    trakt = '[COLOR springgreen]ON[/COLOR]' if KEEPTRAKT == 'true' else '[COLOR red]OFF[/COLOR]'
-    last = str(TRAKTSAVE) if not TRAKTSAVE == '' else 'Trakt hasnt been saved yet.'
-    addFile('[I]Register FREE Account at http://trakt.tv[/I]', '', icon=ICONTRAKT, themeit=THEME3)
-    addFile('Save Trakt Data: %s' % trakt, 'togglesetting', 'keeptrakt', icon=ICONTRAKT, themeit=THEME3)
-    if KEEPTRAKT == 'true': addFile('Last Save: %s' % str(last), '', icon=ICONTRAKT, themeit=THEME3)
-    if HIDESPACERS == 'No': addFile(wiz.sep(), '', icon=ICONTRAKT, themeit=THEME3)
+    set_view()
+
+
+def trakt_menu():
+    from resources.libs import traktit
+
+    trakt = '[COLOR springgreen]ON[/COLOR]' if CONFIG.KEEPTRAKT == 'true' else '[COLOR red]OFF[/COLOR]'
+    last = str(CONFIG.TRAKTSAVE) if not CONFIG.TRAKTSAVE == '' else 'Trakt hasn\'t been saved yet.'
+    add_file('[I]Register FREE Account at https://www.trakt.tv/[/I]', '', icon=CONFIG.ICONTRAKT, themeit=CONFIG.THEME3)
+    add_file('Save Trakt Data: {0}'.format(trakt), 'togglesetting', 'keeptrakt', icon=CONFIG.ICONTRAKT, themeit=CONFIG.THEME3)
+    if CONFIG.KEEPTRAKT == 'true':
+        add_file('Last Save: {0}'.format(str(last)), '', icon=CONFIG.ICONTRAKT, themeit=CONFIG.THEME3)
+    add_separator(icon=CONFIG.ICONTRAKT, themeit=CONFIG.THEME3)
 
     for trakt in traktit.ORDER:
-        if xbmc.getCondVisibility('System.HasAddon(%s)' % TRAKTID[trakt]['plugin']):
-            name   = TRAKTID[trakt]['name']
-            path   = TRAKTID[trakt]['path']
-            saved  = TRAKTID[trakt]['saved']
-            file   = TRAKTID[trakt]['file']
-            user   = wiz.getS(saved)
-            auser  = traktit.traktUser(trakt)
-            icon   = TRAKTID[trakt]['icon']   if os.path.exists(path) else ICONTRAKT
-            fanart = TRAKTID[trakt]['fanart'] if os.path.exists(path) else FANART
-            menu = createMenu('saveaddon', 'Trakt', trakt)
-            menu2 = createMenu('save', 'Trakt', trakt)
-            menu.append((THEME2 % '%s Settings' % name,              'RunPlugin(plugin://%s/?mode=opensettings&name=%s&url=trakt)' %   (ADDON_ID, trakt)))
+        if xbmc.getCondVisibility('System.HasAddon({0})'.format(traktit.TRAKTID[trakt]['plugin'])):
+            name = traktit.TRAKTID[trakt]['name']
+            path = traktit.TRAKTID[trakt]['path']
+            saved = traktit.TRAKTID[trakt]['saved']
+            file = traktit.TRAKTID[trakt]['file']
+            user = CONFIG.get_setting(saved)
+            auser = traktit.traktUser(trakt)
+            icon = traktit.TRAKTID[trakt]['icon'] if os.path.exists(path) else CONFIG.ICONTRAKT
+            fanart = traktit.TRAKTID[trakt]['fanart'] if os.path.exists(path) else CONFIG.FANART
+            menu = create_addon_data_menu('Trakt', trakt)
+            menu2 = create_save_data_menu('Trakt', trakt)
+            menu.append((CONFIG.THEME2.format('{0} Settings'.format(name)), 'RunPlugin(plugin://{0}/?mode=opensettings&name={1}&url=trakt)'.format(CONFIG.ADDON_ID, trakt)))
 
-            addFile('[+]-> %s' % name,     '', icon=icon, fanart=fanart, themeit=THEME3)
-            if not os.path.exists(path): addFile('[COLOR red]Addon Data: Not Installed[/COLOR]', '', icon=icon, fanart=fanart, menu=menu)
-            elif not auser:              addFile('[COLOR red]Addon Data: Not Registered[/COLOR]','authtrakt', trakt, icon=icon, fanart=fanart, menu=menu)
-            else:                        addFile('[COLOR springgreen]Addon Data: %s[/COLOR]' % auser,'authtrakt', trakt, icon=icon, fanart=fanart, menu=menu)
+            add_file('[+]-> {0}'.format(name), '', icon=icon, fanart=fanart, themeit=CONFIG.THEME3)
+            if not os.path.exists(path):
+                add_file('[COLOR red]Addon Data: Not Installed[/COLOR]', '', icon=icon, fanart=fanart, menu=menu)
+            elif not auser:
+                add_file('[COLOR red]Addon Data: Not Registered[/COLOR]', 'authtrakt', trakt, icon=icon, fanart=fanart, menu=menu)
+            else:
+                add_file('[COLOR springgreen]Addon Data: {0}[/COLOR]'.format(auser), 'authtrakt', trakt, icon=icon, fanart=fanart, menu=menu)
             if user == "":
-                if os.path.exists(file): addFile('[COLOR red]Saved Data: Save File Found(Import Data)[/COLOR]','importtrakt', trakt, icon=icon, fanart=fanart, menu=menu2)
-                else :                   addFile('[COLOR red]Saved Data: Not Saved[/COLOR]','savetrakt', trakt, icon=icon, fanart=fanart, menu=menu2)
-            else:                        addFile('[COLOR springgreen]Saved Data: %s[/COLOR]' % user, '', icon=icon, fanart=fanart, menu=menu2)
+                if os.path.exists(file):
+                    add_file('[COLOR red]Saved Data: Save File Found(Import Data)[/COLOR]', 'importtrakt', trakt, icon=icon, fanart=fanart, menu=menu2)
+                else:
+                    add_file('[COLOR red]Saved Data: Not Saved[/COLOR]', 'savetrakt', trakt, icon=icon, fanart=fanart, menu=menu2)
+            else:
+                add_file('[COLOR springgreen]Saved Data: {0|[/COLOR]'.format(user), '', icon=icon, fanart=fanart, menu=menu2)
 
-    if HIDESPACERS == 'No': addFile(wiz.sep(), '', themeit=THEME3)
-    addFile('Save All Trakt Data',          'savetrakt',    'all', icon=ICONTRAKT,  themeit=THEME3)
-    addFile('Recover All Saved Trakt Data', 'restoretrakt', 'all', icon=ICONTRAKT,  themeit=THEME3)
-    addFile('Import Trakt Data',            'importtrakt',  'all', icon=ICONTRAKT,  themeit=THEME3)
-    addFile('Clear All Addon Trakt Data',         'addontrakt',   'all', icon=ICONTRAKT,  themeit=THEME3)
-    addFile('Clear All Saved Trakt Data',   'cleartrakt',   'all', icon=ICONTRAKT,  themeit=THEME3)
-    setView('files', 'viewType')
+    add_separator()
+    add_file('Save All Trakt Data', 'savetrakt', 'all', icon=CONFIG.ICONTRAKT, themeit=CONFIG.THEME3)
+    add_file('Recover All Saved Trakt Data', 'restoretrakt', 'all', icon=CONFIG.ICONTRAKT, themeit=CONFIG.THEME3)
+    add_file('Import Trakt Data', 'importtrakt', 'all', icon=CONFIG.ICONTRAKT, themeit=CONFIG.THEME3)
+    add_file('Clear All Addon Trakt Data', 'addontrakt', 'all', icon=CONFIG.ICONTRAKT, themeit=CONFIG.THEME3)
+    add_file('Clear All Saved Trakt Data', 'cleartrakt', 'all', icon=CONFIG.ICONTRAKT, themeit=CONFIG.THEME3)
+
+    set_view()
 
 # MIGRATION: move to menu
 def realMenu():
@@ -725,7 +869,7 @@ def realMenu():
     addFile('[I]http://real-debrid.com is a PAID service.[/I]', '', icon=ICONREAL, themeit=THEME3)
     addFile('Save Real Debrid Data: %s' % real, 'togglesetting', 'keepdebrid', icon=ICONREAL, themeit=THEME3)
     if KEEPREAL == 'true': addFile('Last Save: %s' % str(last), '', icon=ICONREAL, themeit=THEME3)
-    if HIDESPACERS == 'No': addFile(wiz.sep(), '', icon=ICONREAL, themeit=THEME3)
+    add_separator(icon=CONFIG.ICONREAL)
 
     for debrid in debridit.ORDER:
         if xbmc.getCondVisibility('System.HasAddon(%s)' % DEBRIDID[debrid]['plugin']):
@@ -836,11 +980,13 @@ def enable_addons():
         addFile("No Addons Found to Enable or Disable.", '', icon=ICONMAINT)
     setView('files', 'viewType')
 
+
 def advanced_window(url=None):
+    from resources.libs import logging
+
     if not CONFIG.ADVANCEDFILE == 'http://':
         from resources.libs import clear
         from resources.libs import check
-        from resources.libs import menu
 
         if url is None:
             TEMPADVANCEDFILE = clear.text_cache(CONFIG.ADVANCEDFILE)
@@ -850,23 +996,27 @@ def advanced_window(url=None):
             TEMPADVANCEDFILE = clear.text_cache(url)
             if not TEMPADVANCEDFILE:
                 ADVANCEDWORKING = check.check_url(url)
-        menu.addFile('Quick Configure AdvancedSettings.xml', 'autoadvanced', icon=ICONMAINT, themeit=THEME3)
-        if os.path.exists(ADVANCED):
-            addFile('View Current AdvancedSettings.xml', 'currentsettings', icon=ICONMAINT, themeit=THEME3)
-            addFile('Remove Current AdvancedSettings.xml', 'removeadvanced',  icon=ICONMAINT, themeit=THEME3)
-        if not TEMPADVANCEDFILE == False:
-            if HIDESPACERS == 'No': addFile(wiz.sep(), '', icon=ICONMAINT, themeit=THEME3)
-            link = TEMPADVANCEDFILE.replace('\n','').replace('\r','').replace('\t','')
+        add_file('Quick Configure advancedsettings.xml', 'autoadvanced', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        if os.path.exists(CONFIG.ADVANCED):
+            add_file('View Current advancedsettings.xml', 'currentsettings', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+            add_file('Remove Current advancedsettings.xml', 'removeadvanced',  icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        if TEMPADVANCEDFILE:
+            if CONFIG.HIDESPACERS == 'No':
+                add_file(sep(), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+            link = TEMPADVANCEDFILE.replace('\n', '').replace('\r', '').replace('\t', '')
             match = re.compile('name="(.+?)".+?ection="(.+?)".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?escription="(.+?)"').findall(link)
             if len(match) > 0:
                 for name, section, url, icon, fanart, description in match:
                     if section.lower() == "yes":
-                        addDir ("[B]%s[/B]" % name, 'advancedsetting', url, description=description, icon=icon, fanart=fanart, themeit=THEME3)
+                        add_dir("[B]{0}[/B]".format(name), 'advancedsetting', url, description=description, icon=icon, fanart=fanart, themeit=CONFIG.THEME3)
                     else:
-                        addFile(name, 'writeadvanced', name, url, description=description, icon=icon, fanart=fanart, themeit=THEME2)
-            else: wiz.log("[Advanced Settings] ERROR: Invalid Format.")
-        else: wiz.log("[Advanced Settings] URL not working: %s" % ADVANCEDWORKING)
-    else: wiz.log("[Advanced Settings] not Enabled")
+                        add_file(name, 'writeadvanced', name, url, description=description, icon=icon, fanart=fanart, themeit=CONFIG.THEME2)
+            else:
+                logging.log("[Advanced Settings] ERROR: Invalid Format.")
+        else:
+            logging.log("[Advanced Settings] URL not working: {0}".format(CONFIG.ADVANCEDFILE))
+    else:
+        logging.log("[Advanced Settings] not Enabled")
 
 # MIGRATION: move to menu
 def removeAddonMenu():
@@ -948,25 +1098,25 @@ def removeAddonDataMenu():
         addFile('No Addon data folder found.', '', themeit=THEME3)
     setView('files', 'viewType')
 
-# MIGRATION: move to menu
-def changeFeq():
-    feq        = ['Every Startup', 'Every Day', 'Every Three Days', 'Every Weekly']
-    change     = DIALOG.select("[COLOR %s]How often would you list to Auto Clean on Startup?[/COLOR]" % COLOR2, feq)
+
+def change_freq():
+    from resources.libs import gui
+    from resources.libs import logging
+
+    change = gui.DIALOG.select("[COLOR {0}]How often would you list to Auto Clean on Startup?[/COLOR]".format(CONFIG.COLOR2), CONFIG.CLEANFREQ)
     if not change == -1:
-        wiz.setS('autocleanfeq', str(change))
-        wiz.LogNotify('[COLOR %s]Auto Clean Up[/COLOR]' % COLOR1, '[COLOR %s]Fequency Now %s[/COLOR]' % (COLOR2, feq[change]))
+        CONFIG.set_setting('autocleanfeq', str(change))
+        logging.log_notify('[COLOR {0}]Auto Clean Up[/COLOR]'.format(CONFIG.COLOR1),
+                           '[COLOR {0}]Frequency Now {1}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.CLEANFREQ[change]))
 
-# MIGRATION: move to menu
+
 def developer():
-    # addFile('Convert Text Files to 0.1.7',         'converttext',           themeit=THEME1)
-    addFile('Create QR Code',                      'createqr',              themeit=THEME1)
-    addFile('Test Notifications',                  'testnotify',            themeit=THEME1)
-    addFile('Test Update',                         'testupdate',            themeit=THEME1)
-    addFile('Test First Run',                      'testfirst',             themeit=THEME1)
-    addFile('Test First Run Settings',             'testfirstrun',          themeit=THEME1)
-    setView('files', 'viewType')
-
-
+    add_file('Create QR Code', 'createqr', themeit=CONFIG.THEME1)
+    add_file('Test Notifications', 'testnotify', themeit=CONFIG.THEME1)
+    add_file('Test Update', 'testupdate', themeit=CONFIG.THEME1)
+    add_file('Test First Run', 'testfirst', themeit=CONFIG.THEME1)
+    add_file('Test First Run Settings', 'testfirstrun', themeit=CONFIG.THEME1)
+    set_view('files', 'viewType')
 
 ###########################
 ###### Build Install ######
@@ -1159,44 +1309,58 @@ def buildWizard(name, type, theme=None, over=False):
             wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), '[COLOR %s]Theme Install: Cancelled![/COLOR]' % COLOR2)
 
 ###########################
-###### Misc Functions######
+#      Misc Functions     #
 ###########################
 
-# MIGRATION: move to menu
-def createMenu(type, add, name):
-    if   type == 'saveaddon':
-        menu_items=[]
-        add2  = urllib.quote_plus(add.lower().replace(' ', ''))
-        add3  = add.replace('Debrid', 'Real Debrid')
-        name2 = urllib.quote_plus(name.lower().replace(' ', ''))
-        name = name.replace('url', 'URL Resolver')
-        menu_items.append((THEME2 % name.title(),             ' '))
-        menu_items.append((THEME3 % 'Save %s Data' % add3,               'RunPlugin(plugin://%s/?mode=save%s&name=%s)' %    (ADDON_ID, add2, name2)))
-        menu_items.append((THEME3 % 'Restore %s Data' % add3,            'RunPlugin(plugin://%s/?mode=restore%s&name=%s)' % (ADDON_ID, add2, name2)))
-        menu_items.append((THEME3 % 'Clear %s Data' % add3,              'RunPlugin(plugin://%s/?mode=clear%s&name=%s)' %   (ADDON_ID, add2, name2)))
-    elif type == 'save'    :
-        menu_items=[]
-        add2  = urllib.quote_plus(add.lower().replace(' ', ''))
-        add3  = add.replace('Debrid', 'Real Debrid')
-        name2 = urllib.quote_plus(name.lower().replace(' ', ''))
-        name = name.replace('url', 'URL Resolver')
-        menu_items.append((THEME2 % name.title(),             ' '))
-        menu_items.append((THEME3 % 'Register %s' % add3,                'RunPlugin(plugin://%s/?mode=auth%s&name=%s)' %    (ADDON_ID, add2, name2)))
-        menu_items.append((THEME3 % 'Save %s Data' % add3,               'RunPlugin(plugin://%s/?mode=save%s&name=%s)' %    (ADDON_ID, add2, name2)))
-        menu_items.append((THEME3 % 'Restore %s Data' % add3,            'RunPlugin(plugin://%s/?mode=restore%s&name=%s)' % (ADDON_ID, add2, name2)))
-        menu_items.append((THEME3 % 'Import %s Data' % add3,             'RunPlugin(plugin://%s/?mode=import%s&name=%s)' %  (ADDON_ID, add2, name2)))
-        menu_items.append((THEME3 % 'Clear Addon %s Data' % add3,        'RunPlugin(plugin://%s/?mode=addon%s&name=%s)' %   (ADDON_ID, add2, name2)))
-    elif type == 'install'  :
-        menu_items=[]
-        name2 = urllib.quote_plus(name)
-        menu_items.append((THEME2 % name,                                'RunAddon(%s, ?mode=viewbuild&name=%s)'  % (ADDON_ID, name2)))
-        menu_items.append((THEME3 % 'Fresh Install',                     'RunPlugin(plugin://%s/?mode=install&name=%s&url=fresh)'  % (ADDON_ID, name2)))
-        menu_items.append((THEME3 % 'Normal Install',                    'RunPlugin(plugin://%s/?mode=install&name=%s&url=normal)' % (ADDON_ID, name2)))
-        menu_items.append((THEME3 % 'Apply guiFix',                      'RunPlugin(plugin://%s/?mode=install&name=%s&url=gui)'    % (ADDON_ID, name2)))
-        menu_items.append((THEME3 % 'Build Information',                 'RunPlugin(plugin://%s/?mode=buildinfo&name=%s)'  % (ADDON_ID, name2)))
-    menu_items.append((THEME2 % '%s Settings' % ADDONTITLE,              'RunPlugin(plugin://%s/?mode=settings)' % ADDON_ID))
+
+def create_install_menu(name):
+    menu_items = []
+
+    name2 = quote_plus(name)
+    menu_items.append(CONFIG.THEME2.format(name), 'RunAddon({0}, ?mode=viewbuild&name={1})'.format(CONFIG.ADDON_ID, name2))
+    menu_items.append(CONFIG.THEME3.format('Fresh Install'), 'RunPlugin(plugin://{0}/?mode=install&name={1}&url=fresh)'.format(CONFIG.ADDON_ID, name2))
+    menu_items.append(CONFIG.THEME3.format('Normal Install'), 'RunPlugin(plugin://{0}/?mode=install&name={1}&url=normal)'.format(CONFIG.ADDON_ID, name2))
+    menu_items.append(CONFIG.THEME3.format('Apply guiFix'), 'RunPlugin(plugin://{0}/?mode=install&name={1}&url=gui)'.format(CONFIG.ADDON_ID, name2))
+    menu_items.append(CONFIG.THEME3.format('Build Information'), 'RunPlugin(plugin://{0}/?mode=buildinfo&name={1})'.format(CONFIG.ADDON_ID, name2))
+    menu_items.append(CONFIG.THEME2.format('{0} Settings'.format(CONFIG.ADDONTITLE)), 'RunPlugin(plugin://{0}/?mode=settings)'.format(CONFIG.ADDON_ID))
+
     return menu_items
 
+
+def create_addon_data_menu(add='', name=''):
+    menu_items = []
+
+    add2 = quote_plus(add.lower().replace(' ', ''))
+    add3 = add.replace('Debrid', 'Real Debrid')
+    name2 = quote_plus(name.lower().replace(' ', ''))
+    name = name.replace('url', 'URL Resolver')
+    menu_items.append(CONFIG.THEME2.format(name.title()), ' ')
+    menu_items.append(CONFIG.THEME3.format('Save {0} Data'.format(add3)), 'RunPlugin(plugin://{0}/?mode=save{1}&name={2})'.format(CONFIG.ADDON_ID, add2, name2))
+    menu_items.append(CONFIG.THEME3.format('Restore {0} Data'.format(add3)), 'RunPlugin(plugin://{0}/?mode=restore{1}&name={2})'.format(CONFIG.ADDON_ID, add2, name2))
+    menu_items.append(CONFIG.THEME3.format('Clear {0} Data'.format(add3)), 'RunPlugin(plugin://{0}/?mode=clear{1}&name={2})'.format(CONFIG.ADDON_ID, add2, name2))
+
+    menu_items.append(CONFIG.THEME2.format('{0} Settings'.format(CONFIG.ADDONTITLE)), 'RunPlugin(plugin://{0}/?mode=settings)'.format(CONFIG.ADDON_ID))
+
+    return menu_items
+
+
+def create_save_data_menu(add='', name=''):
+    menu_items = []
+
+    add2 = quote_plus(add.lower().replace(' ', ''))
+    add3 = add.replace('Debrid', 'Real Debrid')
+    name2 = quote_plus(name.lower().replace(' ', ''))
+    name = name.replace('url', 'URL Resolver')
+    menu_items.append(CONFIG.THEME2.format(name.title()), ' ')
+    menu_items.append(CONFIG.THEME3.format('Register {0}'.format(add3)), 'RunPlugin(plugin://{0}/?mode=auth{1}&name={2})'.format(CONFIG.ADDON_ID, add2, name2))
+    menu_items.append(CONFIG.THEME3.format('Save {0} Data'.format(add3)), 'RunPlugin(plugin://{0}/?mode=save{1}&name={2})'.format(CONFIG.ADDON_ID, add2, name2))
+    menu_items.append(CONFIG.THEME3.format('Restore {0} Data'.format(add3)), 'RunPlugin(plugin://{0}/?mode=restore{1}&name={2})'.format(CONFIG.ADDON_ID, add2, name2))
+    menu_items.append(CONFIG.THEME3.format('Import {0} Data'.format(add3)), 'RunPlugin(plugin://{0}/?mode=import{1}&name={2})'.format(CONFIG.ADDON_ID, add2, name2))
+    menu_items.append(CONFIG.THEME3.format('Clear Addon {0} Data'.format(add3)), 'RunPlugin(plugin://{0}/?mode=addon{1}&name={2})'.format(CONFIG.ADDON_ID, add2, name2))
+
+    menu_items.append(CONFIG.THEME2.format('{0} Settings'.format(CONFIG.ADDONTITLE)), 'RunPlugin(plugin://{0}/?mode=settings)'.format(CONFIG.ADDON_ID))
+
+    return menu_items
 
 # MIGRATION: move to check?
 def buildInfo(name):
@@ -1244,45 +1408,56 @@ def buildInfo(name):
         else: wiz.log("Invalid Build Name!")
     else: wiz.log("Build text file not working: %s" % WORKINGURL)
 
-
 ###########################
-## Making the Directory####
+#  Making the Directory   #
 ###########################
 
-# MIGRATION: move to menu
-def addDir(display, mode=None, name=None, url=None, menu=None, description=ADDONTITLE, overwrite=True, fanart=FANART, icon=ICON, themeit=None):
+
+def add_separator(middle='', fanart=CONFIG.FANART, icon=CONFIG.ICON, themeit=CONFIG.THEME3):
+    if CONFIG.HIDESPACERS == 'No':
+        char = CONFIG.SPACER
+        ret = char * 40
+        if not middle == '':
+            middle = '[ {0} ]'.format(middle)
+            fluff = int((40 - len(middle))/2)
+            ret = "{0}{1}{2}".format(ret[:fluff], middle, ret[:fluff+2])
+
+            add_file(ret[:40], middle, fanart=fanart, icon=icon, themeit=themeit)
+
+
+def add_file(display, mode=None, name=None, url=None, menu=None, description=CONFIG.ADDONTITLE, overwrite=True, fanart=CONFIG.FANART, icon=CONFIG.ICON, themeit=None, isFolder=False):
+    add_menu_item(display, mode, name, url, menu, description, overwrite, fanart, icon, themeit, isFolder)
+
+
+def add_dir(display, mode=None, name=None, url=None, menu=None, description=CONFIG.ADDONTITLE, overwrite=True, fanart=CONFIG.FANART, icon=CONFIG.ICON, themeit=None, isFolder=True):
+    add_menu_item(display, mode, name, url, menu, description, overwrite, fanart, icon, themeit, isFolder)
+
+
+def add_menu_item(display, mode, name, url, menu, description, overwrite, fanart, icon, themeit, isFolder):
     u = sys.argv[0]
-    if not mode == None: u += "?mode=%s" % urllib.quote_plus(mode)
-    if not name == None: u += "&name="+urllib.quote_plus(name)
-    if not url == None: u += "&url="+urllib.quote_plus(url)
-    ok=True
-    if themeit: display = themeit % display
-    liz=xbmcgui.ListItem(display, iconImage="DefaultFolder.png", thumbnailImage=icon)
-    liz.setInfo( type="Video", infoLabels={ "Title": display, "Plot": description} )
-    liz.setProperty( "Fanart_Image", fanart )
-    if not menu == None: liz.addContextMenuItems(menu, replaceItems=overwrite)
-    ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=True)
+    if mode is not None:
+        u += "?mode={0}".format(quote_plus(mode))
+    if name is not None:
+        u += "&name={0}".format(quote_plus(name))
+    if url is not None:
+        u += "&url={0}".format(quote_plus(url))
+    ok = True
+    if themeit:
+        display = themeit.format(display)
+    liz = xbmcgui.ListItem(display, iconImage="DefaultFolder.png", thumbnailImage=icon)
+    liz.setInfo(type="Video", infoLabels={"Title": display, "Plot": description})
+    liz.setProperty("Fanart_Image", fanart)
+    if menu is not None:
+        liz.addContextMenuItems(menu, replaceItems=overwrite)
+    ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=isFolder)
     return ok
 
-# MIGRATION: move to menu
-def addFile(display, mode=None, name=None, url=None, menu=None, description=ADDONTITLE, overwrite=True, fanart=FANART, icon=ICON, themeit=None):
-    u = sys.argv[0]
-    if not mode == None: u += "?mode=%s" % urllib.quote_plus(mode)
-    if not name == None: u += "&name="+urllib.quote_plus(name)
-    if not url == None: u += "&url="+urllib.quote_plus(url)
-    ok=True
-    if themeit: display = themeit % display
-    liz=xbmcgui.ListItem(display, iconImage="DefaultFolder.png", thumbnailImage=icon)
-    liz.setInfo( type="Video", infoLabels={ "Title": display, "Plot": description} )
-    liz.setProperty( "Fanart_Image", fanart )
-    if not menu == None: liz.addContextMenuItems(menu, replaceItems=overwrite)
-    ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=False)
-    return ok
 
-# MIGRATION: move to menu
-def setView(content, viewType):
-    if wiz.getS('auto-view')=='true':
-        views = wiz.getS(viewType)
-        if views == '50' and KODIV >= 17 and SKIN == 'skin.estuary': views = '55'
-        if views == '500' and KODIV >= 17 and SKIN == 'skin.estuary': views = '50'
-        wiz.ebi("Container.SetViewMode(%s)" %  views)
+def set_view(viewtype='viewType'):
+    if CONFIG.get_setting('auto-view') == 'true':
+        views = CONFIG.get_setting(viewtype)
+        if views == '50' and CONFIG.SKIN == 'skin.estuary':
+            views = '55'
+        if views == '500' and CONFIG.SKIN == 'skin.estuary':
+            views = '50'
+        xbmc.executebuiltin("Container.SetViewMode({0})".format(views))
