@@ -6,6 +6,14 @@ else:
     import zipfile
 
 
+def str_test(teststr):
+    a = (teststr.lower()).split(' ')
+    if 'test' in a:
+        return True
+    else:
+        return False
+
+
 def test_theme(path):
     from resources.libs import logging
 

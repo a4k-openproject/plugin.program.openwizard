@@ -342,14 +342,6 @@ def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
 
-def str_test(teststr):
-    a = (teststr.lower()).split(' ')
-    if 'test' in a:
-        return True
-    else:
-        return False
-
-
 def kill_kodi(over=None):
     if over:
         choice = 1

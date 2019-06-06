@@ -61,6 +61,111 @@ def text_cache(url):
         return textfile
 
 
+def get_cache_size():
+    from resources.libs import tools
+
+    PROFILEADDONDATA = os.path.join(CONFIG.PROFILE, 'addon_data')
+
+    dbfiles = [
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'cache.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'cache.meta.5.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'cache.providers.13.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.meta.5.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.providers.13.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'cache.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'cache.meta.5.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'cache.providers.13.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'cache.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'cache.meta.5.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'cache.providers.13.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.gaia', 'cache.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.gaia', 'meta.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.seren', 'cache.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.seren', 'torrentScrape.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'script.module.simplecache', 'simplecache.db'))]
+    cachelist = [
+        (CONFIG.ADDON_DATA),
+        (os.path.join(CONFIG.HOME, 'cache')),
+        (os.path.join(CONFIG.HOME, 'temp')),
+        (os.path.join('/private/var/mobile/Library/Caches/AppleTV/Video/', 'Other')),
+        (os.path.join('/private/var/mobile/Library/Caches/AppleTV/Video/', 'LocalAndRental')),
+        (os.path.join(CONFIG.ADDON_DATA,'script.module.simple.downloader')),
+        (os.path.join(CONFIG.ADDON_DATA,'plugin.video.itv','Images')),
+        (os.path.join(CONFIG.ADDON_DATA, 'script.extendedinfo', 'images')),
+        (os.path.join(CONFIG.ADDON_DATA, 'script.extendedinfo', 'TheMovieDB')),
+        (os.path.join(CONFIG.ADDON_DATA, 'script.extendedinfo', 'YouTube')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.program.autocompletion', 'Google')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.program.autocompletion', 'Bing')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.openmeta', '.storage'))]
+    if not PROFILEADDONDATA == CONFIG.ADDON_DATA:
+        cachelist.append(os.path.join(PROFILEADDONDATA, 'script.module.simple.downloader'))
+        cachelist.append(os.path.join(PROFILEADDONDATA, 'plugin.video.itv','Images'))
+        cachelist.append(os.path.join(CONFIG.ADDON_DATA, 'script.extendedinfo', 'images'))
+        cachelist.append(os.path.join(CONFIG.ADDON_DATA, 'script.extendedinfo', 'TheMovieDB')),
+        cachelist.append(os.path.join(CONFIG.ADDON_DATA, 'script.extendedinfo', 'YouTube')),
+        cachelist.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.program.autocompletion', 'Google')),
+        cachelist.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.program.autocompletion', 'Bing')),
+        cachelist.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.openmeta', '.storage')),
+        cachelist.append(PROFILEADDONDATA)
+
+    totalsize = 0
+
+    for item in cachelist:
+        if not os.path.exists(item): continue
+        if item not in [CONFIG.ADDON_DATA, PROFILEADDONDATA]:
+            totalsize = tools.get_size(item, totalsize)
+        else:
+            for root, dirs, files in os.walk(item):
+                for d in dirs:
+                    if 'cache' in d.lower() and d.lower() not in ['meta_cache']:
+                        totalsize = tools.get_size(os.path.join(root, d), totalsize)
+
+    if CONFIG.INCLUDEVIDEO == 'true':
+        files = []
+        if CONFIG.INCLUDEALL == 'true':
+            files = dbfiles
+        else:
+            if CONFIG.INCLUDEEXODUSREDUX == 'true':
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'meta.5.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'providers.13.db'))
+            if CONFIG.INCLUDEPLACENTA == 'true':
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'cache.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'meta.5.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'providers.13.db'))
+            if CONFIG.INCLUDEYODA == 'true':
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'cache.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'meta.5.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'providers.13.db'))
+            if CONFIG.INCLUDEVENOM == 'true':
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.venom', 'cache.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.venom', 'meta.5.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.venom', 'providers.13.db'))
+            if CONFIG.INCLUDESCRUBS == 'true':
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.scrubsv2', 'cache.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.scrubsv2', 'meta.5.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.scrubsv2', 'providers.13.db'))
+            if CONFIG.INCLUDEGAIA == 'true':
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.gaia', 'cache.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.gaia', 'meta.db'))
+            if CONFIG.INCLUDESEREN == 'true':
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.seren', 'cache.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.seren', 'torrentScrape.db'))
+            if CONFIG.INCLUDEOVEREASY == 'true':
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'cache.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'meta.5.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'providers.13.db'))
+        if len(files) > 0:
+            for item in files:
+                if not os.path.exists(item): continue
+                totalsize += os.path.getsize(item)
+        else:
+            logging.log("Clear Cache: Clear Video Cache Not Enabled", level=xbmc.LOGNOTICE)
+
+    return totalsize
+
+
 def clear_packages(over=None):
     from resources.libs import tools
 

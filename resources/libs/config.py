@@ -68,7 +68,6 @@ class Config:
 
         # Auto Update For Those With No Repo
         self.AUTOUPDATE = uservar.AUTOUPDATE
-        self.WIZARDFILE = uservar.WIZARDFILE
 
         # Auto  Install Repo If Not Installed
         self.AUTOINSTALL = uservar.AUTOINSTALL
@@ -90,6 +89,7 @@ class Config:
     def init_paths(self):
         # Static variables
         self.INSTALLMETHODS = ['Always Ask', 'Reload Profile', 'Force Close']
+        self.CLEANFREQ = ['Every Startup', 'Every Day', 'Every Three Days', 'Every Weekly']
         self.LOGFILES = ['log', 'xbmc.old.log', 'kodi.log', 'kodi.old.log', 'spmc.log', 'spmc.old.log', 'tvmc.log',
                          'tvmc.old.log', 'dmp']
         self.DEFAULTPLUGINS = ['metadata.album.universal', 'metadata.artists.universal',
