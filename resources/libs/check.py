@@ -1,7 +1,9 @@
 import xbmc
 
+import glob
 import os
 import re
+import sys
 
 try:
     from urllib.request import urlopen
@@ -87,6 +89,57 @@ def check_info(name):
         return False
 
 
+def build_info(name):
+    from resources.libs import logging
+    from resources.libs import tools
+
+    if check_url(CONFIG.BUILDFILE):
+        if check_build(name, 'url'):
+            name, version, url, minor, gui, kodi, theme, icon, fanart, preview, adult, info, description = check_build(name, 'all')
+            adult = 'Yes' if adult.lower() == 'yes' else 'No'
+            extend = False
+            if not info == "http://":
+                try:
+                    tname, extracted, zipsize, skin, created, programs, video, music, picture, repos, scripts = check_info(info)
+                    extend = True
+                except:
+                    extend = False
+            if extend:
+                msg = "[COLOR {0}]Build Name:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, name)
+                msg += "[COLOR {0}]Build Version:[/COLOR] v[COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, version)
+                msg += "[COLOR {0}]Latest Update:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, created)
+                if not theme == "http://":
+                    themecount = theme_count(name, False)
+                    msg += "[COLOR {0}]Build Theme(s):[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, ', '.join(themecount))
+                msg += "[COLOR {0}]Kodi Version:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, kodi)
+                msg += "[COLOR {0}]Extracted Size:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, tools.convert_size(int(float(extracted))))
+                msg += "[COLOR {0}]Zip Size:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, tools.convert_size(int(float(zipsize))))
+                msg += "[COLOR {0}]Skin Name:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, skin)
+                msg += "[COLOR {0}]Adult Content:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, adult)
+                msg += "[COLOR {0}]Description:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, description)
+                msg += "[COLOR {0}]Programs:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, programs)
+                msg += "[COLOR {0}]Video:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, video)
+                msg += "[COLOR {0}]Music:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, music)
+                msg += "[COLOR {0}]Pictures:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, picture)
+                msg += "[COLOR {0}]Repositories:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, repos)
+                msg += "[COLOR {0}]Scripts:[/COLOR] [COLOR {1}]{}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, scripts)
+            else:
+                msg  = "[COLOR {0}]Build Name:[/COLOR] [COLOR {1}]{2}[/COLOR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, name)
+                msg += "[COLOR {0}]Build Version:[/COLOR] [COLOR {1}]{2}[/COLOR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, version)
+                if not theme == "http://":
+                    themecount = theme_count(name, False)
+                    msg += "[COLOR {0}]Build Theme(s):[/COLOR] [COLOR {1}]{2}[/COLOR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, ', '.join(themecount))
+                msg += "[COLOR {0}]Kodi Version:[/COLOR] [COLOR {1}]{2}[/COLOR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, kodi)
+                msg += "[COLOR {0}]Adult Content:[/COLOR] [COLOR {1}]{2}[/COLOR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, adult)
+                msg += "[COLOR {0}]Description:[/COLOR] [COLOR {1}]{2}[/COLOR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, description)
+
+            gui.show_text_box(CONFIG.ADDONTITLE, msg)
+        else:
+            logging.log("Invalid Build Name!")
+    else:
+        logging.log("Build text file not working: {0}".format(CONFIG.BUILDFILE))
+
+
 def check_theme(name, theme, ret):
     from resources.libs import tools
 
@@ -94,7 +147,7 @@ def check_theme(name, theme, ret):
     if not check_url(themeurl):
         return False
     link = tools.open_url(themeurl).replace('\n', '').replace('\r', '').replace('\t', '')
-    match = re.compile('name="%s".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult=(.+?).+?escription="(.+?)"' % theme).findall(link)
+    match = re.compile('name="{0}".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult=(.+?).+?escription="(.+?)"'.format(theme)).findall(link)
     if len(match) > 0:
         for url, icon, fanart, adult, description in match:
             if ret == 'url':
@@ -273,8 +326,10 @@ def build_count():
                 continue
             kodi = int(float(kodi))
             total += 1
-            if kodi == 18: count18 += 1
-            elif kodi == 17: count17 += 1
+            if kodi == 18:
+                count18 += 1
+            elif kodi == 17:
+                count17 += 1
     return total, count17, count18, adultcount, hidden
 
 
