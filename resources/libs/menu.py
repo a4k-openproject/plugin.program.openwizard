@@ -816,10 +816,10 @@ def save_menu():
 def trakt_menu():
     from resources.libs import traktit
 
-    trakt = '[COLOR springgreen]ON[/COLOR]' if CONFIG.KEEPTRAKT == 'true' else '[COLOR red]OFF[/COLOR]'
+    keep_trakt = '[COLOR springgreen]ON[/COLOR]' if CONFIG.KEEPTRAKT == 'true' else '[COLOR red]OFF[/COLOR]'
     last = str(CONFIG.TRAKTSAVE) if not CONFIG.TRAKTSAVE == '' else 'Trakt hasn\'t been saved yet.'
     add_file('[I]Register FREE Account at https://www.trakt.tv/[/I]', '', icon=CONFIG.ICONTRAKT, themeit=CONFIG.THEME3)
-    add_file('Save Trakt Data: {0}'.format(trakt), 'togglesetting', 'keeptrakt', icon=CONFIG.ICONTRAKT, themeit=CONFIG.THEME3)
+    add_file('Save Trakt Data: {0}'.format(keep_trakt), 'togglesetting', 'keeptrakt', icon=CONFIG.ICONTRAKT, themeit=CONFIG.THEME3)
     if CONFIG.KEEPTRAKT == 'true':
         add_file('Last Save: {0}'.format(str(last)), '', icon=CONFIG.ICONTRAKT, themeit=CONFIG.THEME3)
     add_separator(icon=CONFIG.ICONTRAKT, themeit=CONFIG.THEME3)
@@ -862,123 +862,147 @@ def trakt_menu():
 
     set_view()
 
-# MIGRATION: move to menu
-def realMenu():
-    real = '[COLOR springgreen]ON[/COLOR]' if KEEPREAL == 'true' else '[COLOR red]OFF[/COLOR]'
-    last = str(REALSAVE) if not REALSAVE == '' else 'Real Debrid hasnt been saved yet.'
-    addFile('[I]http://real-debrid.com is a PAID service.[/I]', '', icon=ICONREAL, themeit=THEME3)
-    addFile('Save Real Debrid Data: %s' % real, 'togglesetting', 'keepdebrid', icon=ICONREAL, themeit=THEME3)
-    if KEEPREAL == 'true': addFile('Last Save: %s' % str(last), '', icon=ICONREAL, themeit=THEME3)
-    add_separator(icon=CONFIG.ICONREAL)
+
+def debrid_menu():
+    from resources.libs import debridit
+
+    keep_debrid = '[COLOR springgreen]ON[/COLOR]' if CONFIG.KEEPDEBRID == 'true' else '[COLOR red]OFF[/COLOR]'
+    last = str(CONFIG.DEBRIDSAVE) if not CONFIG.DEBRIDSAVE == '' else 'Debrid authorizations haven\'t been saved yet.'
+    add_file('[I]https://www.real-debrid.com/ is a PAID service.[/I]', '', icon=CONFIG.ICONDEBRID, themeit=CONFIG.THEME3)
+    add_file('[I]https://www.premiumize.me/ is a PAID service.[/I]', '', icon=CONFIG.ICONDEBRID, themeit=CONFIG.THEME3)
+    add_file('Save Debrid Data: {0}'.format(keep_debrid), 'togglesetting', 'keepdebrid', icon=CONFIG.ICONDEBRID, themeit=CONFIG.THEME3)
+    if CONFIG.KEEPDEBRID == 'true':
+        add_file('Last Save: {0}'.format(str(last)), '', icon=CONFIG.ICONDEBRID, themeit=CONFIG.THEME3)
+    add_separator(icon=CONFIG.ICONDEBRID, themeit=CONFIG.THEME3)
 
     for debrid in debridit.ORDER:
-        if xbmc.getCondVisibility('System.HasAddon(%s)' % DEBRIDID[debrid]['plugin']):
-            name   = DEBRIDID[debrid]['name']
-            path   = DEBRIDID[debrid]['path']
-            saved  = DEBRIDID[debrid]['saved']
-            file   = DEBRIDID[debrid]['file']
-            user   = wiz.getS(saved)
-            auser  = debridit.debridUser(debrid)
-            icon   = DEBRIDID[debrid]['icon']   if os.path.exists(path) else ICONREAL
-            fanart = DEBRIDID[debrid]['fanart'] if os.path.exists(path) else FANART
-            menu = createMenu('saveaddon', 'Debrid', debrid)
-            menu2 = createMenu('save', 'Debrid', debrid)
-            menu.append((THEME2 % '%s Settings' % name,              'RunPlugin(plugin://%s/?mode=opensettings&name=%s&url=debrid)' %   (ADDON_ID, debrid)))
+        if xbmc.getCondVisibility('System.HasAddon({0})'.format(debridit.DEBRIDID[debrid]['plugin'])):
+            name = debridit.DEBRIDID[debrid]['name']
+            path = debridit.DEBRIDID[debrid]['path']
+            saved = debridit.DEBRIDID[debrid]['saved']
+            file = debridit.DEBRIDID[debrid]['file']
+            user = CONFIG.get_setting(saved)
+            auser = debridit.debridUser(debrid)
+            icon = debridit.DEBRIDID[debrid]['icon'] if os.path.exists(path) else CONFIG.ICONDEBRID
+            fanart = debridit.DEBRIDID[debrid]['fanart'] if os.path.exists(path) else CONFIG.FANART
+            menu = create_addon_data_menu('Debrid', debrid)
+            menu2 = create_save_data_menu('Debrid', debrid)
+            menu.append((CONFIG.THEME2.format('{0} Settings'.format(name)), 'RunPlugin(plugin://{0}/?mode=opensettings&name={1}&url=debrid)'.format(CONFIG.ADDON_ID, debrid)))
 
-            addFile('[+]-> %s' % name,     '', icon=icon, fanart=fanart, themeit=THEME3)
-            if not os.path.exists(path): addFile('[COLOR red]Addon Data: Not Installed[/COLOR]', '', icon=icon, fanart=fanart, menu=menu)
-            elif not auser:              addFile('[COLOR red]Addon Data: Not Registered[/COLOR]','authdebrid', debrid, icon=icon, fanart=fanart, menu=menu)
-            else:                        addFile('[COLOR springgreen]Addon Data: %s[/COLOR]' % auser,'authdebrid', debrid, icon=icon, fanart=fanart, menu=menu)
+            add_file('[+]-> {0}'.format(name), '', icon=icon, fanart=fanart, themeit=CONFIG.THEME3)
+            if not os.path.exists(path):
+                add_file('[COLOR red]Addon Data: Not Installed[/COLOR]', '', icon=icon, fanart=fanart, menu=menu)
+            elif not auser:
+                add_file('[COLOR red]Addon Data: Not Registered[/COLOR]', 'authdebrid', debrid, icon=icon, fanart=fanart, menu=menu)
+            else:
+                add_file('[COLOR springgreen]Addon Data: {0}[/COLOR]'.format(auser), 'authdebrid', debrid, icon=icon, fanart=fanart, menu=menu)
             if user == "":
-                if os.path.exists(file): addFile('[COLOR red]Saved Data: Save File Found(Import Data)[/COLOR]','importdebrid', debrid, icon=icon, fanart=fanart, menu=menu2)
-                else :                   addFile('[COLOR red]Saved Data: Not Saved[/COLOR]','savedebrid', debrid, icon=icon, fanart=fanart, menu=menu2)
-            else:                        addFile('[COLOR springgreen]Saved Data: %s[/COLOR]' % user, '', icon=icon, fanart=fanart, menu=menu2)
+                if os.path.exists(file):
+                    add_file('[COLOR red]Saved Data: Save File Found (Import Data)[/COLOR]', 'importdebrid', debrid, icon=icon, fanart=fanart, menu=menu2)
+                else:
+                    add_file('[COLOR red]Saved Data: Not Saved[/COLOR]', 'savedebrid', debrid, icon=icon, fanart=fanart, menu=menu2)
+            else:
+                add_file('[COLOR springgreen]Saved Data: {0}[/COLOR]'.format(user), '', icon=icon, fanart=fanart, menu=menu2)
 
-    if HIDESPACERS == 'No': addFile(wiz.sep(), '', themeit=THEME3)
-    addFile('Save All Debrid Data',          'savedebrid',    'all', icon=ICONREAL,  themeit=THEME3)
-    addFile('Recover All Saved Debrid Data', 'restoredebrid', 'all', icon=ICONREAL,  themeit=THEME3)
-    addFile('Import Debrid Data',            'importdebrid',  'all', icon=ICONREAL,  themeit=THEME3)
-    addFile('Clear All Addon Debrid Data',               'addondebrid',   'all', icon=ICONREAL,  themeit=THEME3)
-    addFile('Clear All Saved Debrid Data',   'cleardebrid',   'all', icon=ICONREAL,  themeit=THEME3)
-    setView('files', 'viewType')
+    add_separator(themeit=CONFIG.THEME3)
+    add_file('Save All Debrid Data', 'savedebrid', 'all', icon=CONFIG.ICONDEBRID, themeit=CONFIG.THEME3)
+    add_file('Recover All Saved Debrid Data', 'restoredebrid', 'all', icon=CONFIG.ICONDEBRID, themeit=CONFIG.THEME3)
+    add_file('Import Debrid Data', 'importdebrid',  'all', icon=CONFIG.ICONDEBRID, themeit=CONFIG.THEME3)
+    add_file('Clear All Addon Debrid Data', 'addondebrid', 'all', icon=CONFIG.ICONDEBRID, themeit=CONFIG.THEME3)
+    add_file('Clear All Saved Debrid Data', 'cleardebrid', 'all', icon=CONFIG.ICONDEBRID, themeit=CONFIG.THEME3)
 
-# MIGRATION: move to menu
-def loginMenu():
-    login = '[COLOR springgreen]ON[/COLOR]' if KEEPLOGIN == 'true' else '[COLOR red]OFF[/COLOR]'
-    last = str(LOGINSAVE) if not LOGINSAVE == '' else 'Login data hasnt been saved yet.'
-    addFile('[I]Several of these addons are PAID services.[/I]', '', icon=ICONLOGIN, themeit=THEME3)
-    addFile('Save API Keys: %s' % login, 'togglesetting', 'keeplogin', icon=ICONLOGIN, themeit=THEME3)
-    if KEEPLOGIN == 'true': addFile('Last Save: %s' % str(last), '', icon=ICONLOGIN, themeit=THEME3)
-    if HIDESPACERS == 'No': addFile(wiz.sep(), '', icon=ICONLOGIN, themeit=THEME3)
+    set_view()
+
+
+def login_menu():
+    from resources.libs import loginit
+
+    keep_login = '[COLOR springgreen]ON[/COLOR]' if CONFIG.EEPLOGIN == 'true' else '[COLOR red]OFF[/COLOR]'
+    last = str(CONFIG.LOGINSAVE) if not CONFIG.LOGINSAVE == '' else 'Login data hasn\'t been saved yet.'
+    add_file('[I]Several of these addons are PAID services.[/I]', '', icon=CONFIG.CONFIG.ICONLOGIN, themeit=CONFIG.THEME3)
+    add_file('Save API Keys: {0}'.format(keep_login), 'togglesetting', 'keeplogin', icon=CONFIG.ICONLOGIN, themeit=CONFIG.THEME3)
+    if CONFIG.KEEPLOGIN == 'true':
+        add_file('Last Save: {0}'.format(str(last)), '', icon=CONFIG.ICONLOGIN, themeit=CONFIG.THEME3)
+    add_separator(icon=CONFIG.ICONLOGIN, themeit=CONFIG.THEME3)
 
     for login in loginit.ORDER:
-        if xbmc.getCondVisibility('System.HasAddon(%s)' % LOGINID[login]['plugin']):
-            name   = LOGINID[login]['name']
-            path   = LOGINID[login]['path']
-            saved  = LOGINID[login]['saved']
-            file   = LOGINID[login]['file']
-            user   = wiz.getS(saved)
-            auser  = loginit.loginUser(login)
-            icon   = LOGINID[login]['icon']   if os.path.exists(path) else ICONLOGIN
-            fanart = LOGINID[login]['fanart'] if os.path.exists(path) else FANART
-            menu = createMenu('saveaddon', 'Login', login)
-            menu2 = createMenu('save', 'Login', login)
-            menu.append((THEME2 % '%s Settings' % name,              'RunPlugin(plugin://%s/?mode=opensettings&name=%s&url=login)' %   (ADDON_ID, login)))
+        if xbmc.getCondVisibility('System.HasAddon({0})'.format(loginit.LOGINID[login]['plugin'])):
+            name = loginit.LOGINID[login]['name']
+            path = loginit.LOGINID[login]['path']
+            saved = loginit.LOGINID[login]['saved']
+            file = loginit.LOGINID[login]['file']
+            user = CONFIG.get_setting(saved)
+            auser = loginit.loginUser(login)
+            icon = loginit.LOGINID[login]['icon'] if os.path.exists(path) else CONFIG.ICONLOGIN
+            fanart = loginit.LOGINID[login]['fanart'] if os.path.exists(path) else CONFIG.FANART
+            menu = create_addon_data_menu('Login', login)
+            menu2 = create_save_data_menu('Login', login)
+            menu.append((CONFIG.THEME2.format('{0} Settings'.format(name)), 'RunPlugin(plugin://{0}/?mode=opensettings&name={1}&url=login)'.format(CONFIG.ADDON_ID, login)))
 
-            addFile('[+]-> %s' % name,     '', icon=icon, fanart=fanart, themeit=THEME3)
-            if not os.path.exists(path): addFile('[COLOR red]Addon Data: Not Installed[/COLOR]', '', icon=icon, fanart=fanart, menu=menu)
-            elif not auser:              addFile('[COLOR red]Addon Data: Not Registered[/COLOR]','authlogin', login, icon=icon, fanart=fanart, menu=menu)
-            else:                        addFile('[COLOR springgreen]Addon Data: %s[/COLOR]' % auser,'authlogin', login, icon=icon, fanart=fanart, menu=menu)
+            add_file('[+]-> {0}'.format(name), '', icon=icon, fanart=fanart, themeit=CONFIG.THEME3)
+            if not os.path.exists(path):
+                add_file('[COLOR red]Addon Data: Not Installed[/COLOR]', '', icon=icon, fanart=fanart, menu=menu)
+            elif not auser:
+                add_file('[COLOR red]Addon Data: Not Registered[/COLOR]', 'authlogin', login, icon=icon, fanart=fanart, menu=menu)
+            else:
+                add_file('[COLOR springgreen]Addon Data: {0}[/COLOR]'.format(auser), 'authlogin', login, icon=icon, fanart=fanart, menu=menu)
             if user == "":
-                if os.path.exists(file): addFile('[COLOR red]Saved Data: Save File Found(Import Data)[/COLOR]','importlogin', login, icon=icon, fanart=fanart, menu=menu2)
-                else :                   addFile('[COLOR red]Saved Data: Not Saved[/COLOR]','savelogin', login, icon=icon, fanart=fanart, menu=menu2)
-            else:                        addFile('[COLOR springgreen]Saved Data: %s[/COLOR]' % user, '', icon=icon, fanart=fanart, menu=menu2)
+                if os.path.exists(file):
+                    add_file('[COLOR red]Saved Data: Save File Found (Import Data)[/COLOR]', 'importlogin', login, icon=icon, fanart=fanart, menu=menu2)
+                else:
+                    add_file('[COLOR red]Saved Data: Not Saved[/COLOR]', 'savelogin', login, icon=icon, fanart=fanart, menu=menu2)
+            else:
+                add_file('[COLOR springgreen]Saved Data: {0}[/COLOR]'.format(user), '', icon=icon, fanart=fanart, menu=menu2)
 
-    if HIDESPACERS == 'No': addFile(wiz.sep(), '', themeit=THEME3)
-    addFile('Save All Login Info',          'savelogin',    'all', icon=ICONLOGIN,  themeit=THEME3)
-    addFile('Recover All Saved Login Info', 'restorelogin', 'all', icon=ICONLOGIN,  themeit=THEME3)
-    addFile('Import Login Info',            'importlogin',  'all', icon=ICONLOGIN,  themeit=THEME3)
-    addFile('Clear All Addon Login Info',         'addonlogin',   'all', icon=ICONLOGIN,  themeit=THEME3)
-    addFile('Clear All Saved Login Info',   'clearlogin',   'all', icon=ICONLOGIN,  themeit=THEME3)
-    setView('files', 'viewType')
+    add_separator(themeit=CONFIG.THEME3)
+    add_file('Save All Login Info', 'savelogin', 'all', icon=CONFIG.ICONLOGIN, themeit=CONFIG.THEME3)
+    add_file('Recover All Saved Login Info', 'restorelogin', 'all', icon=CONFIG.ICONLOGIN, themeit=CONFIG.THEME3)
+    add_file('Import Login Info', 'importlogin', 'all', icon=CONFIG.ICONLOGIN, themeit=CONFIG.THEME3)
+    add_file('Clear All Addon Login Info', 'addonlogin', 'all', icon=CONFIG.ICONLOGIN, themeit=CONFIG.THEME3)
+    add_file('Clear All Saved Login Info', 'clearlogin', 'all', icon=CONFIG.ICONLOGIN, themeit=CONFIG.THEME3)
+
+    set_view()
 
 
 def enable_addons():
-    addFile("[I][B][COLOR red]!!Notice: Disabling Some Addons Can Cause Issues!![/COLOR][/B][/I]", '', icon=ICONMAINT)
-    fold = glob.glob(os.path.join(ADDONS, '*/'))
+    from resources.libs import tools
+
+    add_file("[I][B][COLOR red]!!Notice: Disabling Some Addons Can Cause Issues!![/COLOR][/B][/I]", '', icon=CONFIG.ICONMAINT)
+    fold = glob.glob(os.path.join(CONFIG.ADDONS, '*/'))
     x = 0
     for folder in sorted(fold, key = lambda x: x):
         foldername = os.path.split(folder[:-1])[1]
-        if foldername in EXCLUDES: continue
-        if foldername in DEFAULTPLUGINS: continue
+        if foldername in CONFIG.EXCLUDES:
+            continue
+        if foldername in CONFIG.DEFAULTPLUGINS:
+            continue
         addonxml = os.path.join(folder, 'addon.xml')
         if os.path.exists(addonxml):
             x += 1
-            fold   = folder.replace(ADDONS, '')[1:-1]
-            f      = open(addonxml)
-            a      = f.read().replace('\n','').replace('\r','').replace('\t','')
-            match  = wiz.parseDOM(a, 'addon', ret='id')
-            match2 = wiz.parseDOM(a, 'addon', ret='name')
+            fold = folder.replace(CONFIG.ADDONS, '')[1:-1]
+            a = tools.read_from_file(addonxml).replace('\n', '').replace('\r', '').replace('\t', '')
+            match = tools.parse_dom(a, 'addon', ret='id')
+            match2 = tools.parse_dom(a, 'addon', ret='name')
             try:
                 pluginid = match[0]
                 name = match2[0]
             except:
                 continue
             try:
-                add    = xbmcaddon.Addon(id=pluginid)
-                state  = "[COLOR springgreen][Enabled][/COLOR]"
-                goto   = "false"
+                add = xbmcaddon.Addon(id=pluginid)
+                state = "[COLOR springgreen][Enabled][/COLOR]"
+                goto = "false"
             except:
-                state  = "[COLOR red][Disabled][/COLOR]"
-                goto   = "true"
+                state = "[COLOR red][Disabled][/COLOR]"
+                goto = "true"
                 pass
-            icon   = os.path.join(folder, 'icon.png') if os.path.exists(os.path.join(folder, 'icon.png')) else ICON
-            fanart = os.path.join(folder, 'fanart.jpg') if os.path.exists(os.path.join(folder, 'fanart.jpg')) else FANART
-            addFile("%s %s" % (state, name), 'toggleaddon', fold, goto, icon=icon, fanart=fanart)
-            f.close()
+            icon = os.path.join(folder, 'icon.png') if os.path.exists(os.path.join(folder, 'icon.png')) else CONFIG.ICON
+            fanart = os.path.join(folder, 'fanart.jpg') if os.path.exists(os.path.join(folder, 'fanart.jpg')) else CONFIG.FANART
+            add_file("{0} {1}".format(state, name), 'toggleaddon', fold, goto, icon=icon, fanart=fanart)
     if x == 0:
-        addFile("No Addons Found to Enable or Disable.", '', icon=ICONMAINT)
-    setView('files', 'viewType')
+        add_file("No Addons Found to Enable or Disable.", '', icon=CONFIG.ICONMAINT)
+
+    set_view()
 
 
 def advanced_window(url=None):
@@ -1001,8 +1025,7 @@ def advanced_window(url=None):
             add_file('View Current advancedsettings.xml', 'currentsettings', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
             add_file('Remove Current advancedsettings.xml', 'removeadvanced',  icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         if TEMPADVANCEDFILE:
-            if CONFIG.HIDESPACERS == 'No':
-                add_file(sep(), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+            add_separator(icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
             link = TEMPADVANCEDFILE.replace('\n', '').replace('\r', '').replace('\t', '')
             match = re.compile('name="(.+?)".+?ection="(.+?)".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?escription="(.+?)"').findall(link)
             if len(match) > 0:
@@ -1018,85 +1041,37 @@ def advanced_window(url=None):
     else:
         logging.log("[Advanced Settings] not Enabled")
 
-# MIGRATION: move to menu
-def removeAddonMenu():
-    fold = glob.glob(os.path.join(ADDONS, '*/'))
-    addonnames = []; addonids = []
-    for folder in sorted(fold, key = lambda x: x):
-        foldername = os.path.split(folder[:-1])[1]
-        if foldername in EXCLUDES: continue
-        elif foldername in DEFAULTPLUGINS: continue
-        elif foldername == 'packages': continue
-        xml = os.path.join(folder, 'addon.xml')
-        if os.path.exists(xml):
-            f      = open(xml)
-            a      = f.read()
-            match  = wiz.parseDOM(a, 'addon', ret='id')
 
-            addid  = foldername if len(match) == 0 else match[0]
-            try:
-                add = xbmcaddon.Addon(id=addid)
-                addonnames.append(add.getAddonInfo('name'))
-                addonids.append(addid)
-            except:
-                pass
-    if len(addonnames) == 0:
-        wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]No Addons To Remove[/COLOR]" % COLOR2)
-        return
-    if KODIV > 16:
-        selected = DIALOG.multiselect("%s: Select the addons you wish to remove." % ADDONTITLE, addonnames)
-    else:
-        selected = []; choice = 0
-        tempaddonnames = ["-- Click here to Continue --"] + addonnames
-        while not choice == -1:
-            choice = DIALOG.select("%s: Select the addons you wish to remove." % ADDONTITLE, tempaddonnames)
-            if choice == -1: break
-            elif choice == 0: break
-            else:
-                choice2 = (choice-1)
-                if choice2 in selected:
-                    selected.remove(choice2)
-                    tempaddonnames[choice] = addonnames[choice2]
-                else:
-                    selected.append(choice2)
-                    tempaddonnames[choice] = "[B][COLOR %s]%s[/COLOR][/B]" % (COLOR1, addonnames[choice2])
-    if selected == None: return
-    if len(selected) > 0:
-        wiz.addonUpdates('set')
-        for addon in selected:
-            removeAddon(addonids[addon], addonnames[addon], True)
-
-        xbmc.sleep(500)
-
-        if INSTALLMETHOD == 1: todo = 1
-        elif INSTALLMETHOD == 2: todo = 0
-        else: todo = DIALOG.yesno(ADDONTITLE, "[COLOR %s]Would you like to [COLOR %s]Force close[/COLOR] kodi or [COLOR %s]Reload Profile[/COLOR]?[/COLOR]" % (COLOR2, COLOR1, COLOR1), yeslabel="[B][COLOR springgreen]Reload Profile[/COLOR][/B]", nolabel="[B][COLOR red]Force Close[/COLOR][/B]")
-        if todo == 1: wiz.reloadFix('remove addon')
-        else: wiz.addonUpdates('reset'); wiz.killxbmc(True)
-
-# MIGRATION: move to menu
-def removeAddonDataMenu():
-    if os.path.exists(ADDOND):
-        addFile('[COLOR red][B][REMOVE][/B][/COLOR] All Addon_Data', 'removedata', 'all', themeit=THEME2)
-        addFile('[COLOR red][B][REMOVE][/B][/COLOR] All Addon_Data for Uninstalled Addons', 'removedata', 'uninstalled', themeit=THEME2)
-        addFile('[COLOR red][B][REMOVE][/B][/COLOR] All Empty Folders in Addon_Data', 'removedata', 'empty', themeit=THEME2)
-        addFile('[COLOR red][B][REMOVE][/B][/COLOR] %s Addon_Data' % ADDONTITLE, 'resetaddon', themeit=THEME2)
-        if HIDESPACERS == 'No': addFile(wiz.sep(), '', themeit=THEME3)
-        fold = glob.glob(os.path.join(ADDOND, '*/'))
+def remove_addon_data_menu():
+    if os.path.exists(CONFIG.ADDON_DATA):
+        add_file('[COLOR red][B][REMOVE][/B][/COLOR] All Addon_Data', 'removedata', 'all', themeit=CONFIG.THEME2)
+        add_file('[COLOR red][B][REMOVE][/B][/COLOR] All Addon_Data for Uninstalled Addons', 'removedata', 'uninstalled', themeit=CONFIG.THEME2)
+        add_file('[COLOR red][B][REMOVE][/B][/COLOR] All Empty Folders in Addon_Data', 'removedata', 'empty', themeit=CONFIG.THEME2)
+        add_file('[COLOR red][B][REMOVE][/B][/COLOR] {0} Addon_Data'.format(CONFIG.ADDONTITLE), 'resetaddon', themeit=CONFIG.THEME2)
+        add_separator(themeit=CONFIG.THEME3)
+        fold = glob.glob(os.path.join(CONFIG.ADDON_DATA, '*/'))
         for folder in sorted(fold, key = lambda x: x):
-            foldername = folder.replace(ADDOND, '').replace('\\', '').replace('/', '')
-            icon = os.path.join(folder.replace(ADDOND, ADDONS), 'icon.png')
-            fanart = os.path.join(folder.replace(ADDOND, ADDONS), 'fanart.png')
+            foldername = folder.replace(CONFIG.ADDON_DATA, '').replace('\\', '').replace('/', '')
+            icon = os.path.join(folder.replace(CONFIG.ADDON_DATA, CONFIG.ADDONS), 'icon.png')
+            fanart = os.path.join(folder.replace(CONFIG.ADDON_DATA, CONFIG.ADDONS), 'fanart.png')
             folderdisplay = foldername
-            replace = {'audio.':'[COLOR orange][AUDIO] [/COLOR]', 'metadata.':'[COLOR cyan][METADATA] [/COLOR]', 'module.':'[COLOR orange][MODULE] [/COLOR]', 'plugin.':'[COLOR blue][PLUGIN] [/COLOR]', 'program.':'[COLOR orange][PROGRAM] [/COLOR]', 'repository.':'[COLOR gold][REPO] [/COLOR]', 'script.':'[COLOR springgreen][SCRIPT] [/COLOR]', 'service.':'[COLOR springgreen][SERVICE] [/COLOR]', 'skin.':'[COLOR dodgerblue][SKIN] [/COLOR]', 'video.':'[COLOR orange][VIDEO] [/COLOR]', 'weather.':'[COLOR yellow][WEATHER] [/COLOR]'}
+            replace = {'audio.': '[COLOR orange][AUDIO] [/COLOR]', 'metadata.': '[COLOR cyan][METADATA] [/COLOR]',
+                       'module.': '[COLOR orange][MODULE] [/COLOR]', 'plugin.': '[COLOR blue][PLUGIN] [/COLOR]',
+                       'program.': '[COLOR orange][PROGRAM] [/COLOR]', 'repository.': '[COLOR gold][REPO] [/COLOR]',
+                       'script.': '[COLOR springgreen][SCRIPT] [/COLOR]',
+                       'service.': '[COLOR springgreen][SERVICE] [/COLOR]', 'skin.': '[COLOR dodgerblue][SKIN] [/COLOR]',
+                       'video.': '[COLOR orange][VIDEO] [/COLOR]', 'weather.': '[COLOR yellow][WEATHER] [/COLOR]'}
             for rep in replace:
                 folderdisplay = folderdisplay.replace(rep, replace[rep])
-            if foldername in EXCLUDES: folderdisplay = '[COLOR springgreen][B][PROTECTED][/B][/COLOR] %s' % folderdisplay
-            else: folderdisplay = '[COLOR red][B][REMOVE][/B][/COLOR] %s' % folderdisplay
-            addFile(' %s' % folderdisplay, 'removedata', foldername, icon=icon, fanart=fanart, themeit=THEME2)
+            if foldername in CONFIG.EXCLUDES:
+                folderdisplay = '[COLOR springgreen][B][PROTECTED][/B][/COLOR] {0}'.format(folderdisplay)
+            else:
+                folderdisplay = '[COLOR red][B][REMOVE][/B][/COLOR] {0}'.format(folderdisplay)
+            add_file(' {0}'.format(folderdisplay), 'removedata', foldername, icon=icon, fanart=fanart, themeit=CONFIG.THEME2)
     else:
-        addFile('No Addon data folder found.', '', themeit=THEME3)
-    setView('files', 'viewType')
+        add_file('No Addon data folder found.', '', themeit=CONFIG.THEME3)
+
+    set_view()
 
 
 def change_freq():
@@ -1119,194 +1094,305 @@ def developer():
     set_view('files', 'viewType')
 
 ###########################
-###### Build Install ######
+#      Build Install      #
 ###########################
-# MIGRATION: move to menu
-def buildWizard(name, type, theme=None, over=False):
-    if over == False:
-        testbuild = wiz.checkBuild(name, 'url')
-        if testbuild == False:
-            wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Unabled to find build[/COLOR]" % COLOR2)
+
+
+def wizard_menu(name, type, theme=None, over=False):
+    from resources.libs import check
+    from resources.libs import db
+    from resources.libs import downloader
+    from resources.libs import extract
+    from resources.libs import gui
+    from resources.libs import install
+    from resources.libs import logging
+    from resources.libs import skin
+    from resources.libs import test
+    from resources.libs import tools
+    from resources.libs import update
+
+    if not over:
+        testbuild = check.check_build(name, 'url')
+        if not testbuild:
+            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                               "[COLOR {0}]Unable to find build[/COLOR]".format(CONFIG.COLOR2))
             return
-        testworking = wiz.workingURL(testbuild)
-        if testworking == False:
-            wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Build Zip Error: %s[/COLOR]" % (COLOR2, testworking))
+        testworking = check.check_url(testbuild)
+        if not testworking:
+            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                               "[COLOR {0}]Build Zip Error: {1}[/COLOR]".format(CONFIG.COLOR2, testbuild))
             return
     if type == 'gui':
-        if name == BUILDNAME:
-            if over == True: yes = 1
-            else: yes = DIALOG.yesno(ADDONTITLE, '[COLOR %s]Would you like to apply the guifix for:' % COLOR2, '[COLOR %s]%s[/COLOR]?[/COLOR]' % (COLOR1, name), nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',yeslabel='[B][COLOR springgreen]Apply Fix[/COLOR][/B]')
+        if name == CONFIG.BUILDNAME:
+            if over:
+                yes = 1
+            else:
+                yes = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                                       '[COLOR {0}]Would you like to apply the guifix for:'.format(CONFIG.COLOR2),
+                                       '[COLOR {0}]{1}[/COLOR]?[/COLOR]'.format(CONFIG.COLOR1, name),
+                                       nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
+                                       yeslabel='[B][COLOR springgreen]Apply Fix[/COLOR][/B]')
         else:
-            yes = DIALOG.yesno("%s - [COLOR red]WARNING!![/COLOR]" % ADDONTITLE, "[COLOR %s][COLOR %s]%s[/COLOR] community build is not currently installed." % (COLOR2, COLOR1, name), "Would you like to apply the guiFix anyways?.[/COLOR]", nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',yeslabel='[B][COLOR springgreen]Apply Fix[/COLOR][/B]')
+            yes = gui.DIALOG.yesno("{0} - [COLOR red]WARNING!![/COLOR]".format(CONFIG.ADDONTITLE),
+                                   "[COLOR {0}][COLOR {1}]{2}[/COLOR] community build is not currently installed.".format(CONFIG.COLOR2, CONFIG.COLOR1, name),
+                                   "Would you like to apply the guiFix anyways?.[/COLOR]",
+                                   nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
+                                   yeslabel='[B][COLOR springgreen]Apply Fix[/COLOR][/B]')
         if yes:
-            buildzip = wiz.checkBuild(name,'gui')
+            buildzip = check.check_build(name, 'gui')
             zipname = name.replace('\\', '').replace('/', '').replace(':', '').replace('*', '').replace('?', '').replace('"', '').replace('<', '').replace('>', '').replace('|', '')
-            if not wiz.workingURL(buildzip) == True: wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), '[COLOR %s]GuiFix: Invalid Zip Url![/COLOR]' % COLOR2); return
-            if not os.path.exists(PACKAGES): os.makedirs(PACKAGES)
-            DP.create(ADDONTITLE,'[COLOR %s][B]Downloading GuiFix:[/B][/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR2, COLOR1, name),'', 'Please Wait')
-            lib=os.path.join(PACKAGES, '%s_guisettings.zip' % zipname)
-            try: os.remove(lib)
-            except: pass
-            downloader.download(buildzip, lib, DP)
+            if not check.check_url(buildzip):
+                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                                   '[COLOR {0}]GuiFix: Invalid Zip Url![/COLOR]'.format(CONFIG.COLOR2))
+                return
+            if not os.path.exists(CONFIG.PACKAGES):
+                os.makedirs(CONFIG.PACKAGES)
+            gui.DP.create(CONFIG.ADDONTITLE,
+                          '[COLOR {0}][B]Downloading GuiFix:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name),
+                          '', 'Please Wait')
+            lib = os.path.join(CONFIG.PACKAGES, '{0}_guisettings.zip'.format(zipname))
+            try:
+                os.remove(lib)
+            except:
+                pass
+            downloader.download(buildzip, lib, gui.DP)
             xbmc.sleep(500)
-            title = '[COLOR %s][B]Installing:[/B][/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR2, COLOR1, name)
-            DP.update(0, title,'', 'Please Wait')
-            extract.all(lib,USERDATA,DP, title=title)
-            DP.close()
-            wiz.defaultSkin()
-            wiz.lookandFeelData('save')
-            if KODIV >= 17:
-                installed = grabAddons(lib)
-                wiz.addonDatabase(installed, 1, True)
-            if INSTALLMETHOD == 1: todo = 1
-            elif INSTALLMETHOD == 2: todo = 0
-            else: todo = DIALOG.yesno(ADDONTITLE, "[COLOR %s]The Gui fix has been installed.  Would you like to Reload the profile or Force Close Kodi?[/COLOR]" % COLOR2, yeslabel="[B][COLOR red]Reload Profile[/COLOR][/B]", nolabel="[B][COLOR springgreen]Force Close[/COLOR][/B]")
-            if todo == 1: wiz.reloadFix()
-            else: DIALOG.ok(ADDONTITLE, "[COLOR %s]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]" % COLOR2); wiz.killxbmc('true')
+            title = '[COLOR {0}][B]Installing:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name)
+            gui.DP.update(0, title, '', 'Please Wait')
+            extract.all(lib, CONFIG.USERDATA, gui.DP, title=title)
+            gui.DP.close()
+            skin.skin_to_default()
+            skin.look_and_feel_data('save')
+            installed = db.grab_addons(lib)
+            db.addon_database(installed, 1, True)
+
+            if CONFIG.INSTALLMETHOD == 1:
+                todo = 1
+            elif CONFIG.INSTALLMETHOD == 2:
+                todo = 0
+            else:
+                todo = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                                        "[COLOR {0}]The Gui fix has been installed. Would you like to Reload the profile or Force Close Kodi?[/COLOR]".format(CONFIG.COLOR2),
+                                        yeslabel="[B][COLOR red]Reload Profile[/COLOR][/B]",
+                                        nolabel="[B][COLOR springgreen]Force Close[/COLOR][/B]")
+            if todo == 1:
+                tools.reload_fix()
+            else:
+                gui.DIALOG.ok(CONFIG.ADDONTITLE,
+                              "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(CONFIG.COLOR2))
+                tools.kill_kodi('true')
         else:
-            wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), '[COLOR %s]GuiFix: Cancelled![/COLOR]' % COLOR2)
+            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                               '[COLOR {0}]GuiFix: Cancelled![/COLOR]'.format(CONFIG.COLOR2))
     elif type == 'fresh':
-        freshStart(name)
+        install.fresh_start(name)
     elif type == 'normal':
         if url == 'normal':
-            if KEEPTRAKT == 'true':
+            if CONFIG.KEEPTRAKT == 'true':
+                from resources.libs import traktit
                 traktit.autoUpdate('all')
-                wiz.setS('traktlastsave', str(THREEDAYS))
-            if KEEPREAL == 'true':
+                CONFIG.set_setting('traktlastsave', tools.get_date(days=3))
+            if CONFIG.KEEPDEBRID == 'true':
+                from resources.libs import debridit
                 debridit.autoUpdate('all')
-                wiz.setS('debridlastsave', str(THREEDAYS))
-            if KEEPLOGIN == 'true':
+                CONFIG.set_setting('debridlastsave', tools.get_date(days=3))
+            if CONFIG.KEEPLOGIN == 'true':
+                from resources.libs import loginit
                 loginit.autoUpdate('all')
-                wiz.setS('loginlastsave', str(THREEDAYS))
-        temp_kodiv = int(KODIV); buildv = int(float(wiz.checkBuild(name, 'kodi')))
+                CONFIG.set_setting('loginlastsave', tools.get_date(days=3))
+        temp_kodiv = int(CONFIG.KODIV)
+        buildv = int(float(check.check_build(name, 'kodi')))
         if not temp_kodiv == buildv:
-            if temp_kodiv == 16 and buildv <= 15: warning = False
-            else: warning = True
-        else: warning = False
-        if warning == True:
-            yes_pressed = DIALOG.yesno("%s - [COLOR red]WARNING!![/COLOR]" % ADDONTITLE, '[COLOR %s]There is a chance that the skin will not appear correctly' % COLOR2, 'When installing a %s build on a Kodi %s install' % (wiz.checkBuild(name, 'kodi'), KODIV), 'Would you still like to install: [COLOR %s]%s v%s[/COLOR]?[/COLOR]' % (COLOR1, name, wiz.checkBuild(name,'version')), nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',yeslabel='[B][COLOR springgreen]Yes, Install[/COLOR][/B]')
+            warning = True
         else:
-            if not over == False: yes_pressed = 1
-            else: yes_pressed = DIALOG.yesno(ADDONTITLE, '[COLOR %s]Would you like to Download and Install:' % COLOR2, '[COLOR %s]%s v%s[/COLOR]?[/COLOR]' % (COLOR1, name, wiz.checkBuild(name,'version')), nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',yeslabel='[B][COLOR springgreen]Yes, Install[/COLOR][/B]')
+            warning = False
+        if warning:
+            yes_pressed = gui.DIALOG.yesno("{0} - [COLOR red]WARNING!![/COLOR]".format(CONFIG.ADDONTITLE),
+                                           '[COLOR {0}]There is a chance that the skin will not appear correctly'.format(CONFIG.COLOR2),
+                                           'When installing a {0} build on a Kodi {1} install'.format(check.check_build(name, 'kodi'), CONFIG.KODIV),
+                                           'Would you still like to install: [COLOR {0}]{1} v{2}[/COLOR]?[/COLOR]'.format(CONFIG.COLOR1, name, check.check_build(name, 'version')),
+                                           nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
+                                           yeslabel='[B][COLOR springgreen]Yes, Install[/COLOR][/B]')
+        else:
+            if over:
+                yes_pressed = 1
+            else:
+                yes_pressed = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                                               '[COLOR {0}]Would you like to Download and Install:'.format(CONFIG.COLOR2),
+                                               '[COLOR {0}]{1} v{2}[/COLOR]?[/COLOR]'.format(CONFIG.COLOR1, name, check.check_build(name, 'version')),
+                                               nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
+                                               yeslabel='[B][COLOR springgreen]Yes, Install[/COLOR][/B]')
         if yes_pressed:
-            wiz.clearS('build')
-            buildzip = wiz.checkBuild(name, 'url')
+            CONFIG.clear_setting('build')
+            buildzip = check.check_build(name, 'url')
             zipname = name.replace('\\', '').replace('/', '').replace(':', '').replace('*', '').replace('?', '').replace('"', '').replace('<', '').replace('>', '').replace('|', '')
-            if not wiz.workingURL(buildzip) == True: wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), '[COLOR %s]Build Install: Invalid Zip Url![/COLOR]' % COLOR2); return
-            if not os.path.exists(PACKAGES): os.makedirs(PACKAGES)
-            DP.create(ADDONTITLE,'[COLOR %s][B]Downloading:[/B][/COLOR] [COLOR %s]%s v%s[/COLOR]' % (COLOR2, COLOR1, name, wiz.checkBuild(name,'version')),'', 'Please Wait')
-            lib=os.path.join(PACKAGES, '%s.zip' % zipname)
-            try: os.remove(lib)
-            except: pass
-            downloader.download(buildzip, lib, DP)
+            if not check.check_url(buildzip):
+                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                                   '[COLOR {0}]Build Install: Invalid Zip Url![/COLOR]'.format(CONFIG.COLOR2))
+                return
+            if not os.path.exists(CONFIG.PACKAGES):
+                os.makedirs(CONFIG.PACKAGES)
+            gui.DP.create(CONFIG.ADDONTITLE,
+                          '[COLOR {0}][B]Downloading:[/B][/COLOR] [COLOR {1}]{2} v{3}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name, check.check_build(name, 'version')),
+                          '', 'Please Wait')
+            lib = os.path.join(CONFIG.PACKAGES, '{0}.zip'format(zipname))
+            try:
+                os.remove(lib)
+            except:
+                pass
+            downloader.download(buildzip, lib, gui.DP)
             xbmc.sleep(500)
-            title = '[COLOR %s][B]Installing:[/B][/COLOR] [COLOR %s]%s v%s[/COLOR]' % (COLOR2, COLOR1, name, wiz.checkBuild(name,'version'))
-            DP.update(0, title,'', 'Please Wait')
-            percent, errors, error = extract.all(lib,HOME,DP, title=title)
+            title = '[COLOR {0}][B]Installing:[/B][/COLOR] [COLOR {1}]{2} v{3}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name, check.check_build(name, 'version'))
+            gui.DP.update(0, title,'', 'Please Wait')
+            percent, errors, error = extract.all(lib, CONFIG.HOME, gui.DP, title=title)
             if int(float(percent)) > 0:
-                wiz.fixmetas()
-                wiz.lookandFeelData('save')
-                wiz.defaultSkin()
-                #wiz.addonUpdates('set')
-                wiz.setS('buildname', name)
-                wiz.setS('buildversion', wiz.checkBuild( name,'version'))
-                wiz.setS('buildtheme', '')
-                wiz.setS('latestversion', wiz.checkBuild( name,'version'))
-                wiz.setS('lastbuildcheck', str(NEXTCHECK))
-                wiz.setS('installed', 'true')
-                wiz.setS('extract', str(percent))
-                wiz.setS('errors', str(errors))
-                wiz.log('INSTALLED %s: [ERRORS:%s]' % (percent, errors))
-                try: os.remove(lib)
-                except: pass
+                db.fix_metas()
+                skin.look_and_feel_data('save')
+                skin.skin_to_default()
+                CONFIG.set_setting('buildname', name)
+                CONFIG.set_setting('buildversion', check.check_build( name,'version'))
+                CONFIG.set_setting('buildtheme', '')
+                CONFIG.set_setting('latestversion', check.check_build( name,'version'))
+                CONFIG.set_setting('lastbuildcheck', str(CONFIG.NEXTCHECK))
+                CONFIG.set_setting('installed', 'true')
+                CONFIG.set_setting('extract', str(percent))
+                CONFIG.set_setting('errors', str(errors))
+                logging.log('INSTALLED {0}: [ERRORS:{1}]'.format(percent, errors))
+                try:
+                    os.remove(lib)
+                except:
+                    pass
                 if int(float(errors)) > 0:
-                    yes=DIALOG.yesno(ADDONTITLE, '[COLOR %s][COLOR %s]%s v%s[/COLOR]' % (COLOR2, COLOR1, name, wiz.checkBuild(name,'version')), 'Completed: [COLOR %s]%s%s[/COLOR] [Errors:[COLOR %s]%s[/COLOR]]' % (COLOR1, percent, '%', COLOR1, errors), 'Would you like to view the errors?[/COLOR]', nolabel='[B][COLOR red]No Thanks[/COLOR][/B]', yeslabel='[B][COLOR springgreen]View Errors[/COLOR][/B]')
+                    yes = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                                           '[COLOR {0}][COLOR {1}]{2} v{3}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name, check.check_build(name, 'version')),
+                                           'Completed: [COLOR {0}]{1}{2}[/COLOR] [Errors:[COLOR {3}]{4}[/COLOR]]'.format(CONFIG.COLOR1, percent, '%', CONFIG.COLOR1, errors),
+                                           'Would you like to view the errors?[/COLOR]',
+                                           nolabel='[B][COLOR red]No Thanks[/COLOR][/B]',
+                                           yeslabel='[B][COLOR springgreen]View Errors[/COLOR][/B]')
                     if yes:
                         if isinstance(errors, unicode):
                             error = error.encode('utf-8')
-                        wiz.TextBox(ADDONTITLE, error)
-                DP.close()
-                themefile = wiz.themeCount(name)
+                        gui.show_text_box(CONFIG.ADDONTITLE, error)
+                gui.DP.close()
+                themefile = check.theme_count(name)
                 if not themefile == False:
-                    buildWizard(name, 'theme')
-                if KODIV >= 17: wiz.addonDatabase(ADDON_ID, 1)
-                if INSTALLMETHOD == 1: todo = 1
-                elif INSTALLMETHOD == 2: todo = 0
-                else: todo = DIALOG.yesno(ADDONTITLE, "[COLOR %s]Would you like to [COLOR %s]Force close[/COLOR] kodi or [COLOR %s]Reload Profile[/COLOR]?[/COLOR]" % (COLOR2, COLOR1, COLOR1), yeslabel="[B][COLOR red]Reload Profile[/COLOR][/B]", nolabel="[B][COLOR springgreen]Force Close[/COLOR][/B]")
-                if todo == 1: wiz.reloadFix()
-                else: wiz.killxbmc(True)
+                    wizard_menu(name, 'theme')
+                db.addon_database(CONFIG.ADDON_ID, 1)
+                if CONFIG.INSTALLMETHOD == 1:
+                    todo = 1
+                elif CONFIG.INSTALLMETHOD == 2:
+                    todo = 0
+                else:
+                    todo = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                                            "[COLOR {0}]Would you like to [COLOR {1}]Force close[/COLOR] Kodi or [COLOR {2}]Reload Profile[/COLOR]?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1),
+                                            yeslabel="[B][COLOR red]Reload Profile[/COLOR][/B]",
+                                            nolabel="[B][COLOR springgreen]Force Close[/COLOR][/B]")
+                if todo == 1:
+                    tools.reload_fix()
+                else:
+                    tools.kill_kodi(True)
             else:
                 if isinstance(errors, unicode):
                     error = error.encode('utf-8')
-                wiz.TextBox("%s: Error Installing Build" % ADDONTITLE, error)
+                gui.show_text_box("{0}: Error Installing Build".format(CONFIG.ADDONTITLE), error)
         else:
-            wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), '[COLOR %s]Build Install: Cancelled![/COLOR]' % COLOR2)
+            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                               '[COLOR {0}]Build Install: Cancelled![/COLOR]'.format(CONFIG.COLOR2))
     elif type == 'theme':
-        if theme == None:
-            themefile = wiz.checkBuild(name, 'theme')
+        if not theme:
+            themefile = check.check_build(name, 'theme')
             themelist = []
-            if not themefile == 'http://' and wiz.workingURL(themefile) == True:
-                themelist = wiz.themeCount(name, False)
+            if not themefile == 'http://' and check.check_url(themefile):
+                themelist = check.theme_count(name, False)
                 if len(themelist) > 0:
-                    if DIALOG.yesno(ADDONTITLE, "[COLOR %s]The Build [COLOR %s]%s[/COLOR] comes with [COLOR %s]%s[/COLOR] different themes" % (COLOR2, COLOR1, name, COLOR1, len(themelist)), "Would you like to install one now?[/COLOR]", yeslabel="[B][COLOR springgreen]Install Theme[/COLOR][/B]", nolabel="[B][COLOR red]Cancel Themes[/COLOR][/B]"):
-                        wiz.log("Theme List: %s " % str(themelist))
-                        ret = DIALOG.select(ADDONTITLE, themelist)
-                        wiz.log("Theme install selected: %s" % ret)
-                        if not ret == -1: theme = themelist[ret]; installtheme = True
-                        else: wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), '[COLOR %s]Theme Install: Cancelled![/COLOR]' % COLOR2); return
-                    else: wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), '[COLOR %s]Theme Install: Cancelled![/COLOR]' % COLOR2); return
-            else: wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), '[COLOR %s]Theme Install: None Found![/COLOR]' % COLOR2)
-        else: installtheme = DIALOG.yesno(ADDONTITLE, '[COLOR %s]Would you like to install the theme:' % COLOR2, '[COLOR %s]%s[/COLOR]' % (COLOR1, theme), 'for [COLOR %s]%s v%s[/COLOR]?[/COLOR]' % (COLOR1, name, wiz.checkBuild(name,'version')), yeslabel="[B][COLOR springgreen]Install Theme[/COLOR][/B]", nolabel="[B][COLOR red]Cancel Themes[/COLOR][/B]")
+                    if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                                        "[COLOR {0}]The Build [COLOR {1}]{2}[/COLOR] comes with [COLOR {3}]{4}[/COLOR] different themes".format(CONFIG.COLOR2, CONFIG.COLOR1, name, CONFIG.COLOR1, len(themelist)),
+                                        "Would you like to install one now?[/COLOR]",
+                                        yeslabel="[B][COLOR springgreen]Install Theme[/COLOR][/B]",
+                                        nolabel="[B][COLOR red]Cancel Themes[/COLOR][/B]"):
+                        logging.log("Theme List: {0}".format(str(themelist)))
+                        ret = gui.DIALOG.select(CONFIG.ADDONTITLE, themelist)
+                        logging.log("Theme install selected: {0}".format(ret))
+                        if not ret == -1:
+                            theme = themelist[ret]
+                            installtheme = True
+                        else:
+                            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                                               '[COLOR {0}]Theme Install: Cancelled![/COLOR]'.format(CONFIG.COLOR2))
+                            return
+                    else:
+                        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                                           '[COLOR {0}]Theme Install: Cancelled![/COLOR]'.format(CONFIG.COLOR2))
+                        return
+            else:
+                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                                   '[COLOR {0}]Theme Install: None Found![/COLOR]'.format(CONFIG.COLOR2))
+        else:
+            installtheme = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                                            '[COLOR {0}]Would you like to install the theme:'.format(CONFIG.COLOR2),
+                                            '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, theme),
+                                            'for [COLOR {0}]{1} v{2}[/COLOR]?[/COLOR]'.format(CONFIG.COLOR1, name, check.check_build(name, 'version')),
+                                            yeslabel="[B][COLOR springgreen]Install Theme[/COLOR][/B]",
+                                            nolabel="[B][COLOR red]Cancel Themes[/COLOR][/B]")
         if installtheme:
-            themezip = wiz.checkTheme(name, theme, 'url')
+            themezip = check.check_theme(name, theme, 'url')
             zipname = name.replace('\\', '').replace('/', '').replace(':', '').replace('*', '').replace('?', '').replace('"', '').replace('<', '').replace('>', '').replace('|', '')
-            if not wiz.workingURL(themezip) == True: wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), '[COLOR %s]Theme Install: Invalid Zip Url![/COLOR]' % COLOR2); return False
-            if not os.path.exists(PACKAGES): os.makedirs(PACKAGES)
-            DP.create(ADDONTITLE,'[COLOR %s][B]Downloading:[/B][/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR2, COLOR1, theme),'', 'Please Wait')
-            lib=os.path.join(PACKAGES, '%s.zip' % zipname)
-            try: os.remove(lib)
-            except: pass
-            downloader.download(themezip, lib, DP)
+            if not check.check_url(themezip):
+                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                                   '[COLOR {0}]Theme Install: Invalid Zip Url![/COLOR]'.format(CONFIG.COLOR2))
+                return False
+            if not os.path.exists(CONFIG.PACKAGES):
+                os.makedirs(CONFIG.PACKAGES)
+            gui.DP.create(CONFIG.ADDONTITLE,
+                          '[COLOR {0}][B]Downloading:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, theme),
+                          '', 'Please Wait')
+            lib = os.path.join(CONFIG.PACKAGES, '{0}.zip'.format(zipname))
+            try:
+                os.remove(lib)
+            except:
+                pass
+            downloader.download(themezip, lib, gui.DP)
             xbmc.sleep(500)
-            DP.update(0,"", "Installing %s " % name)
+            gui.DP.update(0,"", "Installing {0}".format(name))
             test = False
             if url not in ["fresh", "normal"]:
-                test = testTheme(lib) if not wiz.currSkin() in ['skin.confluence', 'skin.estuary'] else False
-                test2 = testGui(lib) if not wiz.currSkin() in ['skin.confluence', 'skin.estuary'] else False
-                if test == True:
-                    wiz.lookandFeelData('save')
-                    swap = wiz.skinToDefault('Theme Install')
-                    if swap == False: return False
+                test = test.test_theme(lib) if not CONFIG.SKIN in ['skin.confluence', 'skin.estuary'] else False
+                test2 = test.test_gui(lib) if not CONFIG.SKIN in ['skin.confluence', 'skin.estuary'] else False
+                if test:
+                    skin.look_and_feel_data('save')
+                    swap = skin.skin_to_default('Theme Install')
+                    if not swap:
+                        return False
                     xbmc.sleep(500)
-            title = '[COLOR %s][B]Installing Theme:[/B][/COLOR] [COLOR %s]%s[/COLOR]' % (COLOR2, COLOR1, theme)
-            DP.update(0, title,'', 'Please Wait')
-            percent, errors, error = extract.all(lib,HOME,DP, title=title)
-            wiz.setS('buildtheme', theme)
-            wiz.log('INSTALLED %s: [ERRORS:%s]' % (percent, errors))
-            DP.close()
+            title = '[COLOR {0}][B]Installing Theme:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, theme)
+            gui.DP.update(0, title,'', 'Please Wait')
+            percent, errors, error = extract.all(lib, CONFIG.HOME, gui.DP, title=title)
+            CONFIG.set_setting('buildtheme', theme)
+            logging.log('INSTALLED {0}: [ERRORS:{1}]'.format(percent, errors))
+            gui.DP.close()
             if url not in ["fresh", "normal"]:
-                wiz.forceUpdate()
-                if KODIV >= 17:
-                    installed = grabAddons(lib)
-                    wiz.addonDatabase(installed, 1, True)
-                if test2 == True:
-                    wiz.lookandFeelData('save')
-                    wiz.defaultSkin()
-                    gotoskin = wiz.getS('defaultskin')
-                    wiz.swapSkins(gotoskin, "Theme Installer")
-                    wiz.lookandFeelData('restore')
-                elif test == True:
-                    wiz.lookandFeelData('save')
-                    wiz.defaultSkin()
-                    gotoskin = wiz.getS('defaultskin')
-                    wiz.swapSkins(gotoskin, "Theme Installer")
-                    wiz.lookandFeelData('restore')
+                update.force_update()
+                installed = db.grab_addons(lib)
+                db.addon_database(installed, 1, True)
+                if test2:
+                    skin.look_and_feel_data('save')
+                    skin.skin_to_default()
+                    gotoskin = CONFIG.get_setting('defaultskin')
+                    skin.switch_to_skin(gotoskin, "Theme Installer")
+                    skin.look_and_feel_data('restore')
+                elif test:
+                    skin.look_and_feel_data('save')
+                    skin.skin_to_default()
+                    gotoskin = CONFIG.get_setting('defaultskin')
+                    skin.switch_to_skin(gotoskin, "Theme Installer")
+                    skin.look_and_feel_data('restore')
                 else:
-                    wiz.ebi("ReloadSkin()")
+                    xbmc.executebuiltin("ReloadSkin()")
                     xbmc.sleep(1000)
-                    wiz.ebi("Container.Refresh")
+                    xbmc.executebuiltin("Container.Refresh")
         else:
-            wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), '[COLOR %s]Theme Install: Cancelled![/COLOR]' % COLOR2)
+            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                               '[COLOR {0}]Theme Install: Cancelled![/COLOR]'.format(CONFIG.COLOR2))
 
 ###########################
 #      Misc Functions     #
@@ -1361,52 +1447,6 @@ def create_save_data_menu(add='', name=''):
     menu_items.append(CONFIG.THEME2.format('{0} Settings'.format(CONFIG.ADDONTITLE)), 'RunPlugin(plugin://{0}/?mode=settings)'.format(CONFIG.ADDON_ID))
 
     return menu_items
-
-# MIGRATION: move to check?
-def buildInfo(name):
-    if wiz.workingURL(BUILDFILE) == True:
-        if wiz.checkBuild(name, 'url'):
-            name, version, url, minor, gui, kodi, theme, icon, fanart, preview, adult, info, description = wiz.checkBuild(name, 'all')
-            adult = 'Yes' if adult.lower() == 'yes' else 'No'
-            extend = False
-            if not info == "http://":
-                try:
-                    tname, extracted, zipsize, skin, created, programs, video, music, picture, repos, scripts = wiz.checkInfo(info)
-                    extend = True
-                except:
-                    extend = False
-            if extend == True:
-                msg  = "[COLOR %s]Build Name:[/COLOR] [COLOR %s]%s[/COLOR][CR][CR]" % (COLOR2, COLOR1, name)
-                msg += "[COLOR %s]Build Version:[/COLOR] v[COLOR %s]%s[/COLOR][CR][CR]" % (COLOR2, COLOR1, version)
-                msg += "[COLOR %s]Latest Update:[/COLOR] [COLOR %s]%s[/COLOR][CR][CR]" % (COLOR2, COLOR1, created)
-                if not theme == "http://":
-                    themecount = wiz.themeCount(name, False)
-                    msg += "[COLOR %s]Build Theme(s):[/COLOR] [COLOR %s]%s[/COLOR][CR][CR]" % (COLOR2, COLOR1, ', '.join(themecount))
-                msg += "[COLOR %s]Kodi Version:[/COLOR] [COLOR %s]%s[/COLOR][CR][CR]" % (COLOR2, COLOR1, kodi)
-                msg += "[COLOR %s]Extracted Size:[/COLOR] [COLOR %s]%s[/COLOR][CR][CR]" % (COLOR2, COLOR1, wiz.convertSize(int(float(extracted))))
-                msg += "[COLOR %s]Zip Size:[/COLOR] [COLOR %s]%s[/COLOR][CR][CR]" % (COLOR2, COLOR1, wiz.convertSize(int(float(zipsize))))
-                msg += "[COLOR %s]Skin Name:[/COLOR] [COLOR %s]%s[/COLOR][CR][CR]" % (COLOR2, COLOR1, skin)
-                msg += "[COLOR %s]Adult Content:[/COLOR] [COLOR %s]%s[/COLOR][CR][CR]" % (COLOR2, COLOR1, adult)
-                msg += "[COLOR %s]Description:[/COLOR] [COLOR %s]%s[/COLOR][CR][CR]" % (COLOR2, COLOR1, description)
-                msg += "[COLOR %s]Programs:[/COLOR] [COLOR %s]%s[/COLOR][CR][CR]" % (COLOR2, COLOR1, programs)
-                msg += "[COLOR %s]Video:[/COLOR] [COLOR %s]%s[/COLOR][CR][CR]" % (COLOR2, COLOR1, video)
-                msg += "[COLOR %s]Music:[/COLOR] [COLOR %s]%s[/COLOR][CR][CR]" % (COLOR2, COLOR1, music)
-                msg += "[COLOR %s]Pictures:[/COLOR] [COLOR %s]%s[/COLOR][CR][CR]" % (COLOR2, COLOR1, picture)
-                msg += "[COLOR %s]Repositories:[/COLOR] [COLOR %s]%s[/COLOR][CR][CR]" % (COLOR2, COLOR1, repos)
-                msg += "[COLOR %s]Scripts:[/COLOR] [COLOR %s]%s[/COLOR]" % (COLOR2, COLOR1, scripts)
-            else:
-                msg  = "[COLOR %s]Build Name:[/COLOR] [COLOR %s]%s[/COLOR][CR]" % (COLOR2, COLOR1, name)
-                msg += "[COLOR %s]Build Version:[/COLOR] [COLOR %s]%s[/COLOR][CR]" % (COLOR2, COLOR1, version)
-                if not theme == "http://":
-                    themecount = wiz.themeCount(name, False)
-                    msg += "[COLOR %s]Build Theme(s):[/COLOR] [COLOR %s]%s[/COLOR][CR]" % (COLOR2, COLOR1, ', '.join(themecount))
-                msg += "[COLOR %s]Kodi Version:[/COLOR] [COLOR %s]%s[/COLOR][CR]" % (COLOR2, COLOR1, kodi)
-                msg += "[COLOR %s]Adult Content:[/COLOR] [COLOR %s]%s[/COLOR][CR]" % (COLOR2, COLOR1, adult)
-                msg += "[COLOR %s]Description:[/COLOR] [COLOR %s]%s[/COLOR][CR]" % (COLOR2, COLOR1, description)
-
-            wiz.TextBox(ADDONTITLE, msg)
-        else: wiz.log("Invalid Build Name!")
-    else: wiz.log("Build text file not working: %s" % WORKINGURL)
 
 ###########################
 #  Making the Directory   #
