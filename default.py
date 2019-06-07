@@ -16,197 +16,450 @@
 #  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.       #
 #  http://www.gnu.org/copyleft/gpl.html                                        #
 ################################################################################
-
+import xbmc
 import xbmcplugin
 
 import sys
-import urllib
 
-try:
-    from sqlite3 import dbapi2 as database
-except ImportError:
-    from pysqlite2 import dbapi2 as database
+try:  # Python 3
+    from urllib.parse import unquote_plus
+except ImportError:  # Python 2
+    from urllib import unquote_plus
 
-from resources.libs import notify
-from resources.libs import debridit
-from resources.libs import traktit
-from resources.libs import loginit
-from resources.libs import skin
+from resources.libs.config import CONFIG
 from resources.libs import logging
 
 
 def get_params():
-    param=[]
-    paramstring=sys.argv[2]
-    if len(paramstring)>=2:
-        params=sys.argv[2]
-        cleanedparams=params.replace('?','')
-        if (params[len(params)-1]=='/'):
-            params=params[0:len(params)-2]
-        pairsofparams=cleanedparams.split('&')
-        param={}
+    param = []
+    paramstring = sys.argv[2]
+    if len(paramstring) >= 2:
+        params = sys.argv[2]
+        cleanedparams = params.replace('?', '')
+        if params[len(params)-1] == '/':
+            params = params[0:len(params)-2]
+        pairsofparams = cleanedparams.split('&')
+        param = {}
         for i in range(len(pairsofparams)):
-            splitparams={}
-            splitparams=pairsofparams[i].split('=')
-            if (len(splitparams))==2:
-                param[splitparams[0]]=splitparams[1]
+            splitparams = {}
+            splitparams = pairsofparams[i].split('=')
+            if len(splitparams) == 2:
+                param[splitparams[0]] = splitparams[1]
 
         return param
 
 
-######################################################################################################################
-######################################################################################################################
-params=get_params()
-url=None
-name=None
-mode=None
+params = get_params()
+url = None
+name = None
+mode = None
 
-try:     mode=urllib.unquote_plus(params["mode"])
-except:  pass
-try:     name=urllib.unquote_plus(params["name"])
-except:  pass
-try:     url=urllib.unquote_plus(params["url"])
-except:  pass
+try:
+    mode = unquote_plus(params["mode"])
+except:
+    pass
+try:
+    name = unquote_plus(params["name"])
+except:
+    pass
+try:
+    url = unquote_plus(params["url"])
+except:
+    pass
 
-wiz.log('[ Version : \'%s\' ] [ Mode : \'%s\' ] [ Name : \'%s\' ] [ Url : \'%s\' ]' % (VERSION, mode if not mode == '' else None, name, url))
+logging.log('[ Version : \'{0}\' ] [ Mode : \'{1}\' ] [ Name : \'{2}\' ] [ Url : \'{3}\' ]'.format(CONFIG.VERSION, mode if not mode == '' else None, name, url))
 
-if   mode==None             : index()
+if not mode:
+    from resources.libs import menu
+    menu.index()
 
-elif mode=='wizardupdate'   : wiz.wizardUpdate()
-elif mode=='builds'         : buildMenu()
-elif mode=='viewbuild'      : viewBuild(name)
-elif mode=='buildinfo'      : buildInfo(name)
-elif mode=='buildpreview'   : buildVideo(name)
-elif mode=='install'        : buildWizard(name, url)
-elif mode=='theme'          : buildWizard(name, mode, url)
-elif mode=='viewthirdparty' : viewThirdList(name)
-elif mode=='installthird'   : thirdPartyInstall(name, url)
-elif mode=='editthird'      : editThirdParty(name); wiz.refresh()
+elif mode == 'wizardupdate':
+    from resources.libs import update
+    update.wizard_update()
+elif mode == 'builds':
+    from resources.libs import menu
+    menu.build_menu()
+elif mode == 'viewbuild':
+    from resources.libs import menu
+    menu.view_build(name)
+elif mode == 'buildinfo':
+    from resources.libs import check
+    check.build_info(name)
+elif mode == 'buildpreview':
+    from resources.libs import yt
+    yt.build_video(name)
+elif mode == 'install':
+    from resources.libs import menu
+    menu.wizard_menu(name, url)
+elif mode == 'theme':
+    from resources.libs import menu
+    menu.wizard_menu(name, mode, url)
 
-elif mode=='maint'          : maintMenu(name)
-elif mode=='kodi17fix'      : wiz.kodi17Fix()
-elif mode=='unknownsources' : skin.swap_us()
-elif mode=='advancedsetting': advancedWindow(name)
-elif mode=='autoadvanced'   : showAutoAdvanced(); wiz.refresh()
-elif mode=='removeadvanced' : removeAdvanced(); wiz.refresh()
-elif mode=='asciicheck'     : wiz.asciiCheck()
-elif mode=='extractazip'    : wiz.extractAZip()
-elif mode=='backupbuild'    : wiz.backUpOptions('build')
-elif mode=='backupgui'      : wiz.backUpOptions('guifix')
-elif mode=='backuptheme'    : wiz.backUpOptions('theme')
-elif mode=='backupaddonpack': wiz.backUpOptions('addon pack')
-elif mode=='backupaddon'    : wiz.backUpOptions('addondata')
-elif mode=='oldThumbs'      : wiz.oldThumbs()
-elif mode=='clearbackup'    : wiz.cleanupBackup()
-elif mode=='convertpath'    : wiz.convertSpecial(HOME)
-elif mode=='currentsettings': viewAdvanced()
-elif mode=='fullclean'      : totalClean(); wiz.refresh()
-elif mode=='clearcache'     : clearCache(); wiz.refresh()
-elif mode=='clearfunctioncache'     : clearFunctionCache(); wiz.refresh()
-elif mode=='clearpackages'  : wiz.clearPackages(); wiz.refresh()
-elif mode=='clearcrash'     : wiz.clearCrash(); wiz.refresh()
-elif mode=='clearthumb'     : clearThumb(); wiz.refresh()
-elif mode=='cleararchive'   : clearArchive(); wiz.refresh()
-elif mode=='checksources'   : wiz.checkSources(); wiz.refresh()
-elif mode=='checkrepos'     : wiz.checkRepos(); wiz.refresh()
-elif mode=='freshstart'     : freshStart()
-elif mode=='forceupdate'    : wiz.forceUpdate()
-elif mode=='forceprofile'   : wiz.reloadProfile(wiz.getInfo('System.ProfileName'))
-elif mode=='forceclose'     : wiz.killxbmc()
-elif mode=='forceskin'      : wiz.ebi("ReloadSkin()"); wiz.refresh()
-elif mode=='hidepassword'   : wiz.hidePassword()
-elif mode=='unhidepassword' : wiz.unhidePassword()
-elif mode=='enableaddons'   : enableAddons()
-elif mode=='toggleaddon'    : wiz.toggleAddon(name, url); wiz.refresh()
-elif mode=='toggleupdates'  : wiz.toggle_addon_updates()
-elif mode=='togglecache'    : toggleCache(name); wiz.refresh()
-elif mode=='toggleadult'    : wiz.toggleAdult(); wiz.refresh()
-elif mode=='changefeq'      : changeFeq(); wiz.refresh()
-elif mode=='uploadlog'      : logging.upload_log()
-elif mode=='viewlog'        : LogViewer()
-elif mode=='viewwizlog'     : LogViewer(WIZLOG)
-elif mode=='viewerrorlog'   : errorChecking()
-elif mode=='viewerrorlast'  : errorChecking(last=True)
-elif mode=='clearwizlog'    : f = open(WIZLOG, 'w'); f.close(); wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Wizard Log Cleared![/COLOR]" % COLOR2)
-elif mode=='purgedb'        : purgeDb()
-elif mode=='fixaddonupdate' : fixUpdate()
-elif mode=='removeaddons'   : removeAddonMenu()
-elif mode=='removeaddon'    : removeAddon(name)
-elif mode=='removeaddondata': removeAddonDataMenu()
-elif mode=='removedata'     : removeAddonData(name)
-elif mode=='resetaddon'     : total = wiz.cleanHouse(ADDONDATA, ignore=True); wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Addon_Data reset[/COLOR]" % COLOR2)
-elif mode=='systeminfo'     : systemInfo()
-elif mode=='restorezip'     : restoreit('build')
-elif mode=='restoregui'     : restoreit('gui')
-elif mode=='restoreaddon'   : restoreit('addondata')
-elif mode=='restoreextzip'  : restoreextit('build')
-elif mode=='restoreextgui'  : restoreextit('gui')
-elif mode=='restoreextaddon': restoreextit('addondata')
-elif mode=='writeadvanced'  : writeAdvanced(name, url)
-elif mode=='speedtest'      : net_tools()
-elif mode=='runspeedtest'   : runSpeedTest(); wiz.refresh()
-elif mode=='clearspeedtest' : clearSpeedTest(); wiz.refresh()
-elif mode=='viewspeedtest'  : viewSpeedTest(name); wiz.refresh()
-elif mode=="viewIP"         : viewIP();
+elif mode == 'maint':
+    from resources.libs import menu
+    menu.maint_menu(name)
+elif mode == 'kodi17fix':
+    from resources.libs import db
+    db.kodi_17_fix()
+elif mode == 'unknownsources':
+    from resources.libs import skin
+    skin.swap_us()
+elif mode == 'advancedsetting':
+    from resources.libs import menu
+    menu.advanced_window(name)
+elif mode == 'autoadvanced':
+    from resources.libs import advanced
+    advanced.autoConfig()
+    xbmc.executebuiltin('Container.Refresh()')
+elif mode == 'removeadvanced':
+    from resources.libs import advanced
+    advanced.remove_advanced()
+    xbmc.executebuiltin('Container.Refresh()')
+elif mode == 'asciicheck':
+     from resources.libs import tools
+     tools.ascii_check()
+elif mode == 'backupbuild':
+    from resources.libs import backup
+    backup.backup('build')
+elif mode == 'backupgui':
+    from resources.libs import backup
+    backup.backup('guifix')
+elif mode == 'backuptheme':
+    from resources.libs import backup
+    backup.backup('theme')
+elif mode == 'backupaddonpack':
+    from resources.libs import backup
+    backup.backup('addon pack')
+elif mode == 'backupaddon':
+    from resources.libs import backup
+    backup.backup('addon_data')
+elif mode == 'oldThumbs':
+    from resources.libs import clear
+    clear.old_thumbs()
+elif mode == 'clearbackup':
+    from resources.libs import backup
+    backup.cleanup_backup()
+elif mode == 'convertpath':
+    from resources.libs import tools
+    tools.convert_special(CONFIG.HOME)
+elif mode == 'currentsettings':
+    from resources.libs import advanced
+    advanced.view_advanced()
+elif mode == 'fullclean':
+    from resources.libs import clear
+    clear.total_clean()
+    xbmc.executebuiltin('Container.Refresh()')
+elif mode == 'clearcache':
+    from resources.libs import clear
+    clear.clear_cache()
+    xbmc.executebuiltin('Container.Refresh()')
+elif mode == 'clearfunctioncache':
+    from resources.libs import clear
+    clear.clear_function_cache()
+    xbmc.executebuiltin('Container.Refresh()')
+elif mode == 'clearpackages':
+    from resources.libs import clear
+    clear.clear_packages()
+    xbmc.executebuiltin('Container.Refresh()')
+elif mode == 'clearcrash':
+    from resources.libs import clear
+    clear.clear_crash()
+    xbmc.executebuiltin('Container.Refresh()')
+elif mode == 'clearthumb':
+    from resources.libs import clear
+    clear.clear_thumbs()
+    xbmc.executebuiltin('Container.Refresh()')
+elif mode == 'cleararchive':
+    from resources.libs import clear
+    clear.clear_archive()
+    xbmc.executebuiltin('Container.Refresh()')
+elif mode == 'checksources':
+    from resources.libs import check
+    check.check_sources()
+    xbmc.executebuiltin('Container.Refresh()')
+elif mode == 'checkrepos':
+    from resources.libs import check
+    check.check_repos()
+    xbmc.executebuiltin('Container.Refresh()')
+elif mode == 'freshstart':
+    from resources.libs import install
+    install.fresh_start()
+elif mode == 'forceupdate':
+    from resources.libs import update
+    update.force_update()
+elif mode == 'forceprofile':
+    from resources.libs import tools
+    tools.reload_profile(tools.get_info_label('System.ProfileName'))
+elif mode == 'forceclose':
+    from resources.libs import tools
+    tools.kill_kodi()
+elif mode == 'forceskin':
+    xbmc.executebuiltin("ReloadSkin()")
+    xbmc.executebuiltin('Container.Refresh()')
+elif mode == 'hidepassword':
+    from resources.libs import db
+    db.hidePassword()
+elif mode == 'unhidepassword':
+    from resources.libs import db
+    db.unhidePassword()
+elif mode == 'enableaddons':
+    from resources.libs import menu
+    menu.enable_addons()
+elif mode == 'toggleaddon':
+    from resources.libs import db
+    db.toggle_addon(name, url)
+    xbmc.executebuiltin('Container.Refresh()')
+elif mode == 'togglecache':
+    from resources.libs import clear
+    clear.toggle_cache(name)
+    xbmc.executebuiltin('Container.Refresh()')
+elif mode == 'toggleadult':
+    from resources.libs import db
+    db.toggle_adult()
+    xbmc.executebuiltin('Container.Refresh()')
+elif mode == 'changefeq':
+    from resources.libs import menu
+    menu.change_freq()
+    xbmc.executebuiltin('Container.Refresh()')
+elif mode == 'uploadlog':
+    logging.upload_log()
+elif mode == 'viewlog':
+    from resources.libs import gui
+    gui.show_log_viewer()
+elif mode == 'viewwizlog':
+    from resources.libs import gui
+    gui.show_log_viewer(CONFIG.WIZLOG)
+elif mode == 'viewerrorlog':
+    logging.error_checking()
+elif mode == 'viewerrorlast':
+    logging.error_checking(last=True)
+elif mode == 'clearwizlog':
+    from resources.libs import tools
+    tools.remove_file(CONFIG.WIZLOG)
+    logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                       "[COLOR {0}]Wizard Log Cleared![/COLOR]".format(CONFIG.COLOR2))
+elif mode == 'purgedb':
+    from resources.libs import db
+    db.purge_db()
+elif mode == 'fixaddonupdate':
+    from resources.libs import db
+    db.fix_update()
+elif mode == 'removeaddons':
+    from resources.libs import clear
+    clear.remove_addon_menu()
+elif mode == 'removeaddon':
+    from resources.libs import clear
+    clear.remove_addon(name)
+elif mode == 'removeaddondata':
+    from resources.libs import clear
+    clear.remove_addon_data_menu()
+elif mode == 'removedata':
+    from resources.libs import clear
+    clear.remove_addon_data(name)
+elif mode == 'resetaddon':
+    from resources.libs import tools
+    total = tools.clean_house(CONFIG.ADDON_DATA, ignore=True)
+    logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                       "[COLOR {0}]Addon_Data reset[/COLOR]".format(CONFIG.COLOR2))
+elif mode == 'systeminfo':
+    from resources.libs import menu
+    menu.system_info()
+elif mode == 'restorezip':
+    from resources.libs import backup
+    backup.restore_it('build')
+elif mode == 'restoregui':
+    from resources.libs import backup
+    backup.restore_it('gui')
+elif mode == 'restoreaddon':
+    from resources.libs import backup
+    backup.restore_it('addondata')
+elif mode == 'restoreextzip':
+    from resources.libs import backup
+    backup.restore_it_external('build')
+elif mode == 'restoreextgui':
+    from resources.libs import backup
+    backup.restore_it_external('gui')
+elif mode == 'restoreextaddon':
+    from resources.libs import backup
+    backup.restore_it_external('addondata')
+elif mode == 'writeadvanced':
+    from resources.libs import advanced
+    advanced.write_advanced(name, url)
+elif mode == 'speedtest':
+    from resources.libs import menu
+    menu.net_tools()
+elif mode == 'runspeedtest':
+    from resources.libs import menu
+    menu.run_speed_test()
+    xbmc.executebuiltin('Container.Refresh()')
+elif mode == 'clearspeedtest':
+    from resources.libs import menu
+    menu.clear_speed_test()
+    xbmc.executebuiltin('Container.Refresh()')
+elif mode == 'viewspeedtest':
+    from resources.libs import menu
+    menu.view_speed_test(name)
+    xbmc.executebuiltin('Container.Refresh()')
+elif mode == 'viewIP':
+    from resources.libs import menu
+    menu.view_ip()
 
-elif mode=='speedtestM'     : speedTest()
+elif mode == 'speedtestM':
+    from resources.libs import menu
+    menu.speed_test()
 
-elif mode=='apk'            : apkMenu(name, url)
-elif mode=='apkscrape'      : apkScraper(name)
-elif mode=='apkinstall'     : apkInstaller(name, url)
-elif mode=='rominstall'     : romInstaller(name, url)
+elif mode == 'apk':
+    from resources.libs import menu
+    menu.apk_menu(name, url)
+elif mode == 'apkscrape':
+    from resources.libs import menu
+    menu.apk_scraper(name)
+elif mode == 'apkinstall':
+    from resources.libs import install
+    install.install_apk(name, url)
 
-elif mode=='youtube'        : youtubeMenu(name, url)
-elif mode=='viewVideo'      : playVideo(url)
+elif mode == 'youtube':
+    from resources.libs import menu
+    menu.youtube_menu(name, url)
+elif mode == 'viewVideo':
+    from resources.libs import yt
+    yt.play_video(url)
 
-elif mode=='addons'         : addonMenu(name, url)
-elif mode=='addonpack'      : packInstaller(name, url)
-elif mode=='skinpack'       : skinInstaller(name, url)
-elif mode=='addoninstall'   : addonInstaller(name, url)
+elif mode == 'addons':
+    from resources.libs import menu
+    menu.addon_menu(name, url)
+elif mode == 'addonpack':
+    from resources.libs import install
+    install.install_addon_pack(name, url)
+elif mode == 'skinpack':
+    from resources.libs import install
+    install.install_skin(name, url)
+elif mode == 'addoninstall':
+    from resources.libs import install
+    install.install_addon(name, url)
 
-elif mode=='savedata'       : saveMenu()
-elif mode=='togglesetting'  : wiz.setS(name, 'false' if wiz.getS(name) == 'true' else 'true'); wiz.refresh()
-elif mode=='managedata'     : manageSaveData(name)
-elif mode=='whitelist'      : wiz.whiteList(name)
+elif mode == 'savedata':
+    from resources.libs import menu
+    menu.save_menu()
+elif mode == 'togglesetting':
+    CONFIG.set_setting(name, 'false' if CONFIG.get_setting(name) == 'true' else 'true')
+    xbmc.executebuiltin('Container.Refresh()')
+elif mode == 'whitelist':
+    from resources.libs import whitelist
+    whitelist.whitelist(name)
 
-elif mode=='trakt'          : traktMenu()
-elif mode=='savetrakt'      : traktit.traktIt('update',      name)
-elif mode=='restoretrakt'   : traktit.traktIt('restore',     name)
-elif mode=='addontrakt'     : traktit.traktIt('clearaddon',  name)
-elif mode=='cleartrakt'     : traktit.clearSaved(name)
-elif mode=='authtrakt'      : traktit.activateTrakt(name); wiz.refresh()
-elif mode=='updatetrakt'    : traktit.autoUpdate('all')
-elif mode=='importtrakt'    : traktit.importlist(name); wiz.refresh()
+elif mode == 'trakt':
+    from resources.libs import menu
+    menu.trakt_menu()
+elif mode == 'savetrakt':
+    from resources.libs import traktit
+    traktit.traktIt('update', name)
+elif mode == 'restoretrakt':
+    from resources.libs import traktit
+    traktit.traktIt('restore', name)
+elif mode == 'addontrakt':
+    from resources.libs import traktit
+    traktit.traktIt('clearaddon', name)
+elif mode == 'cleartrakt':
+    from resources.libs import traktit
+    traktit.clearSaved(name)
+elif mode == 'authtrakt':
+    from resources.libs import traktit
+    traktit.activateTrakt(name)
+    xbmc.executebuiltin('Container.Refresh()')
+elif mode == 'updatetrakt':
+    from resources.libs import traktit
+    traktit.autoUpdate('all')
+elif mode == 'importtrakt':
+    from resources.libs import traktit
+    traktit.importlist(name)
+    xbmc.executebuiltin('Container.Refresh()')
 
-elif mode=='realdebrid'     : realMenu()
-elif mode=='savedebrid'     : debridit.debridIt('update',      name)
-elif mode=='restoredebrid'  : debridit.debridIt('restore',     name)
-elif mode=='addondebrid'    : debridit.debridIt('clearaddon',  name)
-elif mode=='cleardebrid'    : debridit.clearSaved(name)
-elif mode=='authdebrid'     : debridit.activateDebrid(name); wiz.refresh()
-elif mode=='updatedebrid'   : debridit.autoUpdate('all')
-elif mode=='importdebrid'   : debridit.importlist(name); wiz.refresh()
+elif mode == 'realdebrid':
+    from resources.libs import menu
+    menu.debrid_menu()
+elif mode == 'savedebrid':
+    from resources.libs import debridit
+    debridit.debridIt('update', name)
+elif mode == 'restoredebrid':
+    from resources.libs import debridit
+    debridit.debridIt('restore', name)
+elif mode == 'addondebrid':
+    from resources.libs import debridit
+    debridit.debridIt('clearaddon', name)
+elif mode == 'cleardebrid':
+    from resources.libs import debridit
+    debridit.clearSaved(name)
+elif mode == 'authdebrid':
+    from resources.libs import debridit
+    debridit.activateDebrid(name)
+    xbmc.executebuiltin('Container.Refresh()')
+elif mode == 'updatedebrid':
+    from resources.libs import debridit
+    debridit.autoUpdate('all')
+elif mode == 'importdebrid':
+    from resources.libs import debridit
+    debridit.importlist(name)
+    xbmc.executebuiltin('Container.Refresh()')
 
-elif mode=='login'          : loginMenu()
-elif mode=='savelogin'      : loginit.loginIt('update',      name)
-elif mode=='restorelogin'   : loginit.loginIt('restore',     name)
-elif mode=='addonlogin'     : loginit.loginIt('clearaddon',  name)
-elif mode=='clearlogin'     : loginit.clearSaved(name)
-elif mode=='authlogin'      : loginit.activateLogin(name); wiz.refresh()
-elif mode=='updatelogin'    : loginit.autoUpdate('all')
-elif mode=='importlogin'    : loginit.importlist(name); wiz.refresh()
+elif mode == 'login':
+    from resources.libs import menu
+    menu.login_menu()
+elif mode == 'savelogin':
+    from resources.libs import loginit
+    loginit.loginIt('update', name)
+elif mode == 'restorelogin':
+    from resources.libs import loginit
+    loginit.loginIt('restore', name)
+elif mode == 'addonlogin':
+    from resources.libs import loginit
+    loginit.loginIt('clearaddon', name)
+elif mode == 'clearlogin':
+    from resources.libs import loginit
+    loginit.clearSaved(name)
+elif mode == 'authlogin':
+    from resources.libs import loginit
+    loginit.activateLogin(name)
+    xbmc.executebuiltin('Container.Refresh()')
+elif mode == 'updatelogin':
+    from resources.libs import loginit
+    loginit.autoUpdate('all')
+elif mode == 'importlogin':
+    from resources.libs import loginit
+    loginit.importlist(name)
+    xbmc.executebuiltin('Container.Refresh()')
 
-elif mode=='contact'        : notify.contact(CONTACT)
-elif mode=='settings'       : wiz.openS(name); wiz.refresh()
-elif mode=='forcetext'      : wiz.forceText()
-elif mode=='opensettings'   : id = eval(url.upper()+'ID')[name]['plugin']; addonid = wiz.addonId(id); addonid.openSettings(); wiz.refresh()
+elif mode == 'contact':
+    from resources.libs import gui
+    gui.show_contact(CONFIG.CONTACT)
+elif mode == 'settings':
+    CONFIG.open_settings(name)
+    xbmc.executebuiltin('Container.Refresh()')
+elif mode == 'forcetext':
+    from resources.libs import clear
+    clear.force_text()
+elif mode == 'opensettings':
+    id = eval(url.upper()+'ID')[name]['plugin']
+    CONFIG.open_settings(id)
+    xbmc.executebuiltin('Container.Refresh()')
 
-elif mode=='developer'      : developer()
-elif mode=='converttext'    : wiz.convertText()
-elif mode=='createqr'       : wiz.createQR()
-elif mode=='testnotify'     : testnotify()
-elif mode=='testupdate'     : testupdate()
-elif mode=='testfirst'      : testfirst()
-elif mode=='testfirstrun'   : testfirstRun()
+elif mode == 'developer':
+    from resources.libs import menu
+    menu.developer()
+elif mode == 'createqr':
+    from resources.libs import qr
+    qr.create_code()
+elif mode == 'testnotify':
+    from resources.libs import test
+    test.test_notify()
+elif mode == 'testupdate':
+    from resources.libs import test
+    test.test_update()
+elif mode == 'testfirst':
+    from resources.libs import test
+    test.test_save_data_settings()
+elif mode == 'testfirstrun':
+    from resources.libs import test
+    test.test_first_run()
 
 xbmcplugin.endOfDirectory(int(sys.argv[1]))
