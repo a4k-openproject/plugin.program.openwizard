@@ -1,4 +1,5 @@
 import xbmc
+import xbmcaddon
 
 import glob
 import os
@@ -679,3 +680,61 @@ def remove_addon_data(addon):
             else:
                 logging.log('Add-on data for {0} was not removed'.format(addon))
     xbmc.executebuiltin('Container.Refresh()')
+
+
+def remove_addon_menu():
+    from resources.libs import gui
+    from resources.libs import logging
+    from resources.libs import tools
+    from resources.libs import update
+
+    fold = glob.glob(os.path.join(CONFIG.ADDONS, '*/'))
+    addonnames = []
+    addonids = []
+    for folder in sorted(fold, key=lambda x: x):
+        foldername = os.path.split(folder[:-1])[1]
+        if foldername in CONFIG.EXCLUDES:
+            continue
+        elif foldername in CONFIG.DEFAULTPLUGINS:
+            continue
+        elif foldername == 'packages':
+            continue
+        xml = os.path.join(folder, 'addon.xml')
+        if os.path.exists(xml):
+            match = tools.parse_dom(tools.read_from_file(xml), 'addon', ret='id')
+
+            addid = foldername if len(match) == 0 else match[0]
+            try:
+                add = xbmcaddon.Addon(id=addid)
+                addonnames.append(add.getAddonInfo('name'))
+                addonids.append(addid)
+            except:
+                pass
+    if len(addonnames) == 0:
+        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                           "[COLOR {0}]No Addons To Remove[/COLOR]".format(CONFIG.COLOR2))
+        return
+    selected = gui.DIALOG.multiselect("{0}: Select the addons you wish to remove.".format(CONFIG.ADDONTITLE), addonnames)
+    if not selected:
+        return
+    if len(selected) > 0:
+        update.addon_updates('set')
+        for addon in selected:
+            remove_addon(addonids[addon], addonnames[addon], True)
+
+        xbmc.sleep(500)
+
+        if CONFIG.INSTALLMETHOD == 1:
+            todo = 1
+        elif CONFIG.INSTALLMETHOD == 2:
+            todo = 0
+        else:
+            todo = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                                    "[COLOR {0}]Would you like to [COLOR {1}]Force close[/COLOR] Kodi or [COLOR {2}]Reload Profile[/COLOR]?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1),
+                                    yeslabel="[B][COLOR springgreen]Reload Profile[/COLOR][/B]",
+                                    nolabel="[B][COLOR red]Force Close[/COLOR][/B]")
+        if todo == 1:
+            tools.reload_fix('remove addon')
+        else:
+            update.addon_updates('reset')
+            tools.kill_kodi(True)
