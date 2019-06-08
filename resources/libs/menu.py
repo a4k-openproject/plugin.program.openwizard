@@ -917,9 +917,9 @@ def debrid_menu():
 def login_menu():
     from resources.libs import loginit
 
-    keep_login = '[COLOR springgreen]ON[/COLOR]' if CONFIG.EEPLOGIN == 'true' else '[COLOR red]OFF[/COLOR]'
+    keep_login = '[COLOR springgreen]ON[/COLOR]' if CONFIG.KEEPLOGIN == 'true' else '[COLOR red]OFF[/COLOR]'
     last = str(CONFIG.LOGINSAVE) if not CONFIG.LOGINSAVE == '' else 'Login data hasn\'t been saved yet.'
-    add_file('[I]Several of these addons are PAID services.[/I]', '', icon=CONFIG.CONFIG.ICONLOGIN, themeit=CONFIG.THEME3)
+    add_file('[I]Several of these addons are PAID services.[/I]', '', icon=CONFIG.ICONLOGIN, themeit=CONFIG.THEME3)
     add_file('Save API Keys: {0}'.format(keep_login), 'togglesetting', 'keeplogin', icon=CONFIG.ICONLOGIN, themeit=CONFIG.THEME3)
     if CONFIG.KEEPLOGIN == 'true':
         add_file('Last Save: {0}'.format(str(last)), '', icon=CONFIG.ICONLOGIN, themeit=CONFIG.THEME3)

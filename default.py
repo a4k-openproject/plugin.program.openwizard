@@ -94,7 +94,6 @@ elif mode == 'install':
 elif mode == 'theme':
     from resources.libs import menu
     menu.wizard_menu(name, mode, url)
-
 elif mode == 'maint':
     from resources.libs import menu
     menu.maint_menu(name)
@@ -198,10 +197,10 @@ elif mode == 'forceskin':
     xbmc.executebuiltin('Container.Refresh()')
 elif mode == 'hidepassword':
     from resources.libs import db
-    db.hidePassword()
+    db.hide_password()
 elif mode == 'unhidepassword':
     from resources.libs import db
-    db.unhidePassword()
+    db.unhide_password()
 elif mode == 'enableaddons':
     from resources.libs import menu
     menu.enable_addons()
@@ -213,10 +212,10 @@ elif mode == 'togglecache':
     from resources.libs import clear
     clear.toggle_cache(name)
     xbmc.executebuiltin('Container.Refresh()')
-elif mode == 'toggleadult':
-    from resources.libs import db
-    db.toggle_adult()
-    xbmc.executebuiltin('Container.Refresh()')
+# elif mode == 'toggleadult':
+#     from resources.libs import db
+#     db.toggle_adult()
+#     xbmc.executebuiltin('Container.Refresh()')
 elif mode == 'changefeq':
     from resources.libs import menu
     menu.change_freq()
