@@ -37,14 +37,14 @@ def main_menu():
         wizfile = clear.text_cache(CONFIG.BUILDFILE)
         if wizfile:
             ver = check.check_wizard('version')
-            if ver > CONFIG.VERSION:
-                add_file('{0} [v{1}] [COLOR red][B][UPDATE v{2}][/B][/COLOR]'.format(CONFIG.ADDONTITLE, CONFIG.VERSION, ver), 'wizardupdate', themeit=CONFIG.THEME2)
+            if ver > CONFIG.ADDON_VERSION:
+                add_file('{0} [v{1}] [COLOR red][B][UPDATE v{2}][/B][/COLOR]'.format(CONFIG.ADDONTITLE, CONFIG.ADDON_VERSION, ver), 'wizardupdate', themeit=CONFIG.THEME2)
             else:
-                add_file('{0} [v{1}]'.format(CONFIG.ADDONTITLE, CONFIG.VERSION), '', themeit=CONFIG.THEME2)
+                add_file('{0} [v{1}]'.format(CONFIG.ADDONTITLE, CONFIG.ADDON_VERSION), '', themeit=CONFIG.THEME2)
         else:
-            add_file('{0} [v{1}]'.format(CONFIG.ADDONTITLE, CONFIG.VERSION), '', themeit=CONFIG.THEME2)
+            add_file('{0} [v{1}]'.format(CONFIG.ADDONTITLE, CONFIG.ADDON_VERSION), '', themeit=CONFIG.THEME2)
     else:
-        add_file('{0} [v{1}]'.format(CONFIG.ADDONTITLE, CONFIG.VERSION), '', themeit=CONFIG.THEME2)
+        add_file('{0} [v{1}]'.format(CONFIG.ADDONTITLE, CONFIG.ADDON_VERSION), '', themeit=CONFIG.THEME2)
     if len(CONFIG.BUILDNAME) > 0:
         version = check.check_build(CONFIG.BUILDNAME, 'version')
         build = '{0} (v{1})'.format(CONFIG.BUILDNAME, CONFIG.BUILDVERSION)
@@ -77,7 +77,7 @@ def main_menu():
     add_file('Settings', 'settings', icon=CONFIG.ICONSETTINGS, themeit=CONFIG.THEME1)
     add_file('Force Update Text Files', 'forcetext', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
     if CONFIG.DEVELOPER == 'true':
-        add_dir('Developer Menu', 'developer', icon=CONFIG.ICON, themeit=CONFIG.THEME1)
+        add_dir('Developer Menu', 'developer', icon=CONFIG.ADDON_ICON, themeit=CONFIG.THEME1)
     set_view()
 
 
@@ -456,7 +456,7 @@ def maint_menu(view=None):
     on = '[B][COLOR springgreen]ON[/COLOR][/B]'
     off = '[B][COLOR red]OFF[/COLOR][/B]'
 
-    autoclean = 'true' if CONFIG.AUTOCLEANU == 'true' else 'false'
+    autoclean = 'true' if CONFIG.AUTOCLEANUP == 'true' else 'false'
     cache = 'true' if CONFIG.AUTOCACHE == 'true' else 'false'
     packages = 'true' if CONFIG.AUTOPACKAGES == 'true' else 'false'
     thumbs = 'true' if CONFIG.AUTOTHUMBS == 'true' else 'false'
@@ -487,7 +487,7 @@ def maint_menu(view=None):
         includeseren = 'true' if CONFIG.INCLUDESEREN == 'true' else 'false'
 
     sizepack = tools.get_size(CONFIG.PACKAGES)
-    sizethumb = tools.get_size(CONFIG.THUMBS)
+    sizethumb = tools.get_size(CONFIG.THUMBNAILS)
     archive = tools.get_size(CONFIG.ARCHIVE_CACHE)
     sizecache = (clear.get_cache_size())-archive
     totalsize = sizepack+sizethumb+sizecache
@@ -511,7 +511,7 @@ def maint_menu(view=None):
         add_file('Remove Addons', 'removeaddons', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         add_dir('Remove Addon Data', 'removeaddondata', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         add_dir('Enable/Disable Addons', 'enableaddons', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('Enable/Disable Adult Addons', 'toggleadult', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        # add_file('Enable/Disable Adult Addons', 'toggleadult', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         add_file('Force Update Addons', 'forceupdate', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         # addFile('Hide Passwords On Keyboard Entry',   'hidepassword',   icon=ICONMAINT, themeit=THEME3)
         # addFile('Unhide Passwords On Keyboard Entry', 'unhidepassword', icon=ICONMAINT, themeit=THEME3)
@@ -562,14 +562,14 @@ def maint_menu(view=None):
         add_dir('System Information', 'systeminfo', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
     add_file('Show All Maintenance: {0}'.format(maint.replace('true', on).replace('false', off)), 'togglesetting', 'showmaint', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
     add_dir('[I]<< Return to Main Menu[/I]', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
-    add_file('Auto Clean', '', fanart=CONFIG.FANART, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
+    add_file('Auto Clean', '', fanart=CONFIG.ADDON_FANART, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
     add_file('Auto Clean Up On Startup: {0}'.format(autoclean.replace('true', on).replace('false', off)), 'togglesetting', 'autoclean', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
     if autoclean == 'true':
         add_file('--- Auto Clean Frequency: [B][COLOR springgreen]{0}[/COLOR][/B]'.format(CONFIG.CLEANFREQ[CONFIG.AUTOFREQ]), 'changefeq', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         add_file('--- Clear Cache on Startup: {0}'.format(cache.replace('true', on).replace('false', off)), 'togglesetting', 'clearcache', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         add_file('--- Clear Packages on Startup: {0}'.format(packages.replace('true', on).replace('false', off)), 'togglesetting', 'clearpackages', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         add_file('--- Clear Old Thumbs on Startup: {0}'.format(thumbs.replace('true', on).replace('false', off)), 'togglesetting', 'clearthumbs', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-    add_file('Clear Video Cache', '', fanart=CONFIG.FANART, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
+    add_file('Clear Video Cache', '', fanart=CONFIG.ADDON_FANART, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
     add_file('Include Video Cache in Clear Cache: {0}'.format(includevid.replace('true', on).replace('false', off)), 'togglecache', 'includevideo', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
     if includevid == 'true':
         add_file('--- Include All Video Addons: {0}'.format(includeall.replace('true', on).replace('false', off)), 'togglecache', 'includeall', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
@@ -833,7 +833,7 @@ def trakt_menu():
             user = CONFIG.get_setting(saved)
             auser = traktit.traktUser(trakt)
             icon = traktit.TRAKTID[trakt]['icon'] if os.path.exists(path) else CONFIG.ICONTRAKT
-            fanart = traktit.TRAKTID[trakt]['fanart'] if os.path.exists(path) else CONFIG.FANART
+            fanart = traktit.TRAKTID[trakt]['fanart'] if os.path.exists(path) else CONFIG.ADDON_FANART
             menu = create_addon_data_menu('Trakt', trakt)
             menu2 = create_save_data_menu('Trakt', trakt)
             menu.append((CONFIG.THEME2.format('{0} Settings'.format(name)), 'RunPlugin(plugin://{0}/?mode=opensettings&name={1}&url=trakt)'.format(CONFIG.ADDON_ID, trakt)))
@@ -884,7 +884,7 @@ def debrid_menu():
             user = CONFIG.get_setting(saved)
             auser = debridit.debridUser(debrid)
             icon = debridit.DEBRIDID[debrid]['icon'] if os.path.exists(path) else CONFIG.ICONDEBRID
-            fanart = debridit.DEBRIDID[debrid]['fanart'] if os.path.exists(path) else CONFIG.FANART
+            fanart = debridit.DEBRIDID[debrid]['fanart'] if os.path.exists(path) else CONFIG.ADDON_FANART
             menu = create_addon_data_menu('Debrid', debrid)
             menu2 = create_save_data_menu('Debrid', debrid)
             menu.append((CONFIG.THEME2.format('{0} Settings'.format(name)), 'RunPlugin(plugin://{0}/?mode=opensettings&name={1}&url=debrid)'.format(CONFIG.ADDON_ID, debrid)))
@@ -934,7 +934,7 @@ def login_menu():
             user = CONFIG.get_setting(saved)
             auser = loginit.loginUser(login)
             icon = loginit.LOGINID[login]['icon'] if os.path.exists(path) else CONFIG.ICONLOGIN
-            fanart = loginit.LOGINID[login]['fanart'] if os.path.exists(path) else CONFIG.FANART
+            fanart = loginit.LOGINID[login]['fanart'] if os.path.exists(path) else CONFIG.ADDON_FANART
             menu = create_addon_data_menu('Login', login)
             menu2 = create_save_data_menu('Login', login)
             menu.append((CONFIG.THEME2.format('{0} Settings'.format(name)), 'RunPlugin(plugin://{0}/?mode=opensettings&name={1}&url=login)'.format(CONFIG.ADDON_ID, login)))
@@ -996,8 +996,8 @@ def enable_addons():
                 state = "[COLOR red][Disabled][/COLOR]"
                 goto = "true"
                 pass
-            icon = os.path.join(folder, 'icon.png') if os.path.exists(os.path.join(folder, 'icon.png')) else CONFIG.ICON
-            fanart = os.path.join(folder, 'fanart.jpg') if os.path.exists(os.path.join(folder, 'fanart.jpg')) else CONFIG.FANART
+            icon = os.path.join(folder, 'icon.png') if os.path.exists(os.path.join(folder, 'icon.png')) else CONFIG.ADDON_ICON
+            fanart = os.path.join(folder, 'fanart.jpg') if os.path.exists(os.path.join(folder, 'fanart.jpg')) else CONFIG.ADDON_FANART
             add_file("{0} {1}".format(state, name), 'toggleaddon', fold, goto, icon=icon, fanart=fanart)
     if x == 0:
         add_file("No Addons Found to Enable or Disable.", '', icon=CONFIG.ICONMAINT)
@@ -1235,7 +1235,7 @@ def wizard_menu(name, type, theme=None, over=False):
             gui.DP.create(CONFIG.ADDONTITLE,
                           '[COLOR {0}][B]Downloading:[/B][/COLOR] [COLOR {1}]{2} v{3}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name, check.check_build(name, 'version')),
                           '', 'Please Wait')
-            lib = os.path.join(CONFIG.PACKAGES, '{0}.zip'format(zipname))
+            lib = os.path.join(CONFIG.PACKAGES, '{0}.zip'.format(zipname))
             try:
                 os.remove(lib)
             except:
@@ -1453,7 +1453,7 @@ def create_save_data_menu(add='', name=''):
 ###########################
 
 
-def add_separator(middle='', fanart=CONFIG.FANART, icon=CONFIG.ICON, themeit=CONFIG.THEME3):
+def add_separator(middle='', fanart=CONFIG.ADDON_FANART, icon=CONFIG.ADDON_ICON, themeit=CONFIG.THEME3):
     if CONFIG.HIDESPACERS == 'No':
         char = CONFIG.SPACER
         ret = char * 40
@@ -1465,11 +1465,11 @@ def add_separator(middle='', fanart=CONFIG.FANART, icon=CONFIG.ICON, themeit=CON
             add_file(ret[:40], middle, fanart=fanart, icon=icon, themeit=themeit)
 
 
-def add_file(display, mode=None, name=None, url=None, menu=None, description=CONFIG.ADDONTITLE, overwrite=True, fanart=CONFIG.FANART, icon=CONFIG.ICON, themeit=None, isFolder=False):
+def add_file(display, mode=None, name=None, url=None, menu=None, description=CONFIG.ADDONTITLE, overwrite=True, fanart=CONFIG.ADDON_FANART, icon=CONFIG.ADDON_ICON, themeit=None, isFolder=False):
     add_menu_item(display, mode, name, url, menu, description, overwrite, fanart, icon, themeit, isFolder)
 
 
-def add_dir(display, mode=None, name=None, url=None, menu=None, description=CONFIG.ADDONTITLE, overwrite=True, fanart=CONFIG.FANART, icon=CONFIG.ICON, themeit=None, isFolder=True):
+def add_dir(display, mode=None, name=None, url=None, menu=None, description=CONFIG.ADDONTITLE, overwrite=True, fanart=CONFIG.ADDON_FANART, icon=CONFIG.ADDON_ICON, themeit=None, isFolder=True):
     add_menu_item(display, mode, name, url, menu, description, overwrite, fanart, icon, themeit, isFolder)
 
 

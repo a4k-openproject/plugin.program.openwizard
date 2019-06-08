@@ -67,11 +67,11 @@ try:
 except:
     pass
 
-logging.log('[ Version : \'{0}\' ] [ Mode : \'{1}\' ] [ Name : \'{2}\' ] [ Url : \'{3}\' ]'.format(CONFIG.VERSION, mode if not mode == '' else None, name, url))
+logging.log('[ Version : \'{0}\' ] [ Mode : \'{1}\' ] [ Name : \'{2}\' ] [ Url : \'{3}\' ]'.format(CONFIG.ADDON_VERSION, mode if not mode == '' else None, name, url))
 
 if not mode:
     from resources.libs import menu
-    menu.index()
+    menu.main_menu()
 
 elif mode == 'wizardupdate':
     from resources.libs import update
@@ -251,8 +251,8 @@ elif mode == 'removeaddon':
     from resources.libs import clear
     clear.remove_addon(name)
 elif mode == 'removeaddondata':
-    from resources.libs import clear
-    clear.remove_addon_data_menu()
+    from resources.libs import menu
+    menu.remove_addon_data_menu()
 elif mode == 'removedata':
     from resources.libs import clear
     clear.remove_addon_data(name)

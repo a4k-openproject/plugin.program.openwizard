@@ -218,41 +218,41 @@ def toggle_dependency(name, dp=None):
 
 
 # NOT CURRENTLY IN USE, BROKEN DUE TO DEAD NaN LINK
-def toggle_adult():
-    from resources.libs import gui
-    from resources.libs import tools
-
-    do = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
-                          "[COLOR {0}]Would you like to [COLOR {1}]Enable[/COLOR] or [COLOR {2}]Disable[/COLOR] all Adult add-ons?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1),
-                          yeslabel="[B][COLOR springgreen]Enable[/COLOR][/B]",
-                          nolabel="[B][COLOR red]Disable[/COLOR][/B]")
-    state = 'true' if do == 1 else 'false'
-    goto = 'Enabling' if do == 1 else 'Disabling'
-    link = tools.open_url('http://noobsandnerds.com/TI/AddonPortal/adult.php').replace('\n', '').replace('\r', '').replace('\t', '')
-    list = re.compile('i="(.+?)"').findall(link)
-    found = []
-    for item in list:
-        fold = os.path.join(CONFIG.ADDONS, item)
-        if os.path.exists(fold):
-            found.append(item)
-            toggle_addon(item, state, True)
-            logging.log("[Toggle Adult] {0} {1}".format(goto, item), level=xbmc.LOGNOTICE)
-    if len(found) > 0:
-        if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
-                            "[COLOR {0}]Would you like to view a list of the add-ons that where {1}?[/COLOR]".format(CONFIG.COLOR2, goto.replace('ing', 'ed')),
-                            yeslabel="[B][COLOR springgreen]View List[/COLOR][/B]",
-                            nolabel="[B][COLOR red]Cancel[/COLOR][/B]"):
-            editlist = '[CR]'.join(found)
-            gui.show_text_box(CONFIG.ADDONTITLE,
-                              "[COLOR {0}]Here are a list of the add-ons that where {1} for Adult Content:[/COLOR][CR][CR][COLOR {2}]{3}[/COLOR]".format(CONFIG.COLOR1, goto.replace('ing', 'ed'), CONFIG.COLOR2, editlist))
-        else:
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
-                               "[COLOR {0}[COLOR {1}]{2}[/COLOR] Adult Addons {3}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, count, goto.replace('ing', 'ed')))
-        from resources.libs import update
-        update.force_update(True)
-    else:
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
-                           "[COLOR {0}]No Adult Addons Found[/COLOR]".format(CONFIG.COLOR2))
+# def toggle_adult():
+#     from resources.libs import gui
+#     from resources.libs import tools
+#
+#     do = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+#                           "[COLOR {0}]Would you like to [COLOR {1}]Enable[/COLOR] or [COLOR {2}]Disable[/COLOR] all Adult add-ons?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1),
+#                           yeslabel="[B][COLOR springgreen]Enable[/COLOR][/B]",
+#                           nolabel="[B][COLOR red]Disable[/COLOR][/B]")
+#     state = 'true' if do == 1 else 'false'
+#     goto = 'Enabling' if do == 1 else 'Disabling'
+#     link = tools.open_url('http://noobsandnerds.com/TI/AddonPortal/adult.php').replace('\n', '').replace('\r', '').replace('\t', '')
+#     list = re.compile('i="(.+?)"').findall(link)
+#     found = []
+#     for item in list:
+#         fold = os.path.join(CONFIG.ADDONS, item)
+#         if os.path.exists(fold):
+#             found.append(item)
+#             toggle_addon(item, state, True)
+#             logging.log("[Toggle Adult] {0} {1}".format(goto, item), level=xbmc.LOGNOTICE)
+#     if len(found) > 0:
+#         if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+#                             "[COLOR {0}]Would you like to view a list of the add-ons that where {1}?[/COLOR]".format(CONFIG.COLOR2, goto.replace('ing', 'ed')),
+#                             yeslabel="[B][COLOR springgreen]View List[/COLOR][/B]",
+#                             nolabel="[B][COLOR red]Cancel[/COLOR][/B]"):
+#             editlist = '[CR]'.join(found)
+#             gui.show_text_box(CONFIG.ADDONTITLE,
+#                               "[COLOR {0}]Here are a list of the add-ons that where {1} for Adult Content:[/COLOR][CR][CR][COLOR {2}]{3}[/COLOR]".format(CONFIG.COLOR1, goto.replace('ing', 'ed'), CONFIG.COLOR2, editlist))
+#         else:
+#             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+#                                "[COLOR {0}[COLOR {1}]{2}[/COLOR] Adult Addons {3}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, count, goto.replace('ing', 'ed')))
+#         from resources.libs import update
+#         update.force_update(True)
+#     else:
+#         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+#                            "[COLOR {0}]No Adult Addons Found[/COLOR]".format(CONFIG.COLOR2))
 
 
 def create_temp(plugin):
