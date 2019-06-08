@@ -65,16 +65,16 @@ SPACER = '='
 # THEME's so it grabs the text from the menu item
 COLOR1 = 'dodgerblue'
 COLOR2 = 'white'
-# Primary menu items   / %s is the menu item and is required
-THEME1 = '[COLOR '+COLOR1+'][B][I]([COLOR '+COLOR2+']Aftermath[/COLOR])[/I][/B][/COLOR] [COLOR '+COLOR2+']%s[/COLOR]'
-# Build Names          / %s is the menu item and is required
-THEME2 = '[COLOR '+COLOR2+']%s[/COLOR]'
-# Alternate items      / %s is the menu item and is required
-THEME3 = '[COLOR '+COLOR1+']%s[/COLOR]'
-# Current Build Header / %s is the menu item and is required
-THEME4 = '[COLOR '+COLOR1+']Current Build:[/COLOR] [COLOR '+COLOR2+']%s[/COLOR]'
-# Current Theme Header / %s is the menu item and is required
-THEME5 = '[COLOR '+COLOR1+']Current Theme:[/COLOR] [COLOR '+COLOR2+']%s[/COLOR]'
+# Primary menu items   / {0} is the menu item and is required
+THEME1 = '[COLOR '+COLOR1+'][B][I]([COLOR '+COLOR2+']Aftermath[/COLOR])[/I][/B][/COLOR] [COLOR '+COLOR2+']{0}[/COLOR]'
+# Build Names          / {0} is the menu item and is required
+THEME2 = '[COLOR '+COLOR2+']{0}[/COLOR]'
+# Alternate items      / {0} is the menu item and is required
+THEME3 = '[COLOR '+COLOR1+']{0}[/COLOR]'
+# Current Build Header / {0} is the menu item and is required
+THEME4 = '[COLOR '+COLOR1+']Current Build:[/COLOR] [COLOR '+COLOR2+']{0}[/COLOR]'
+# Current Theme Header / {0} is the menu item and is required
+THEME5 = '[COLOR '+COLOR1+']Current Theme:[/COLOR] [COLOR '+COLOR2+']{0}[/COLOR]'
 
 # Message for Contact Page
 # Enable 'Contact' menu item 'Yes' hide or 'No' dont hide

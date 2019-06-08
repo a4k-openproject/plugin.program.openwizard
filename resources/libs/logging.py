@@ -23,10 +23,10 @@ REPLACES = (('//.+?:.+?@', '//USER:PASSWORD@'), ('<user>.+?</user>', '<user>USER
 def log(msg, level=xbmc.LOGDEBUG):
     from resources.libs import tools
 
-    if not os.path.exists(CONFIG.ADDON_DATA):
-        os.makedirs(CONFIG.ADDON_DATA)
+    if not os.path.exists(CONFIG.PLUGIN_DATA):
+        os.makedirs(CONFIG.PLUGIN_DATA)
     if not os.path.exists(CONFIG.WIZLOG):
-        f = open(CONFIG.WIZLOG, 'w')
+        f = open(CONFIG.WIZLOG, 'w+')
         f.close()
     if CONFIG.WIZDEBUGGING == 'false':
         return False

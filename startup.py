@@ -20,21 +20,20 @@
 import xbmc
 import xbmcvfs
 
-import os
-import sys
 import glob
+import os
 import re
+import sys
 
-from datetime import datetime
 from datetime import timedelta
 
 try:  # Python 3
     from urllib.parse import quote_plus
-except ImportError:  # Python 3
+except ImportError:  # Python 2
     from urllib import quote_plus
 
 from resources.libs.config import CONFIG
-from resources.libs import cache
+from resources.libs import clear
 from resources.libs import check
 from resources.libs import db
 from resources.libs import gui
@@ -51,7 +50,7 @@ FAILED = False
 
 
 def check_update():
-    bf = cache.text_cache(CONFIG.BUILDFILE)
+    bf = clear.text_cache(CONFIG.BUILDFILE)
     if not bf:
         return
     link = bf.replace('\n', '').replace('\r', '').replace('\t', '')
@@ -216,7 +215,7 @@ except:
     pass
 
 logging.log("Flushing Aged Cached Text Files")
-cache.flush_old_cache()
+clear.flush_old_cache()
 
 logging.log("[Auto Install Repo] Started", level=xbmc.LOGNOTICE)
 if CONFIG.AUTOINSTALL == 'Yes' and not os.path.exists(os.path.join(CONFIG.ADDONS, CONFIG.REPOID)):
@@ -461,17 +460,17 @@ if CONFIG.AUTOCLEANUP == 'true':
     if service:
         if CONFIG.AUTOCACHE == 'true':
             logging.log('[Auto Clean Up] Cache: On', level=xbmc.LOGNOTICE)
-            cache.clear_cache(True)
+            clear.clear_cache(True)
         else:
             logging.log('[Auto Clean Up] Cache: Off', level=xbmc.LOGNOTICE)
         if CONFIG.AUTOTHUMBS == 'true':
             logging.log('[Auto Clean Up] Old Thumbs: On', level=xbmc.LOGNOTICE)
-            cache.old_thumbs()
+            clear.old_thumbs()
         else:
             logging.log('[Auto Clean Up] Old Thumbs: Off', level=xbmc.LOGNOTICE)
         if CONFIG.AUTOPACKAGES == 'true':
             logging.log('[Auto Clean Up] Packages: On', level=xbmc.LOGNOTICE)
-            cache.clear_packages_startup()
+            clear.clear_packages_startup()
         else:
             logging.log('[Auto Clean Up] Packages: Off', level=xbmc.LOGNOTICE)
 else:

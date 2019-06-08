@@ -98,7 +98,7 @@ def show_text_box(title, msg):
             if action == ACTION_PREVIOUS_MENU or action == ACTION_NAV_BACK:
                 self.close()
 
-    tb = TextBox("Textbox.xml", CONFIG.PATH, 'DefaultSkin', title=title, msg=msg)
+    tb = TextBox("Textbox.xml", CONFIG.ADDON_PATH, 'DefaultSkin', title=title, msg=msg)
     tb.doModal()
     del tb
 
@@ -131,7 +131,7 @@ def show_contact(msg=""):
             if action == ACTION_PREVIOUS_MENU or action == ACTION_NAV_BACK:
                 self.close()
 
-    cw = ContactWindow("Contact.xml", CONFIG.PATH, 'DefaultSkin', title=CONFIG.ADDONTITLE, fanart=CONFIG.CONTACTFANART,
+    cw = ContactWindow("Contact.xml", CONFIG.ADDON_PATH, 'DefaultSkin', title=CONFIG.ADDONTITLE, fanart=CONFIG.CONTACTFANART,
                   image=CONFIG.CONTACTICON, msg=msg)
     cw.doModal()
     del cw
