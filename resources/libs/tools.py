@@ -484,8 +484,8 @@ def ascii_check(use=None, over=False):
                            "[COLOR {0}]ASCII Check: Cancelled[/COLOR]".format(CONFIG.COLOR2))
         return
 
-    files_found = os.path.join(CONFIG.ADDONDATA, 'asciifiles.txt')
-    files_fails = os.path.join(CONFIG.ADDONDATA, 'asciifails.txt')
+    files_found = os.path.join(CONFIG.ADDON_DATA, 'asciifiles.txt')
+    files_fails = os.path.join(CONFIG.ADDON_DATA, 'asciifails.txt')
     afiles = open(files_found, mode='w+')
     afails = open(files_fails, mode='w+')
     f1 = 0

@@ -626,15 +626,15 @@ def speed_test():
     import datetime
 
     add_file('Run Speed Test', 'runspeedtest', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-    if os.path.exists(CONFIG.SPEEDTESTFOLD):
-        speedimg = glob.glob(os.path.join(CONFIG.SPEEDTESTFOLD, '*.png'))
+    if os.path.exists(CONFIG.SPEEDTEST):
+        speedimg = glob.glob(os.path.join(CONFIG.SPEEDTEST, '*.png'))
         speedimg.sort(key=lambda f: os.path.getmtime(f), reverse=True)
         if len(speedimg) > 0:
             add_file('Clear Results', 'clearspeedtest', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
             add_separator('Previous Runs', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
             for item in speedimg:
                 created = datetime.fromtimestamp(os.path.getmtime(item)).strftime('%m/%d/%Y %H:%M:%S')
-                img = item.replace(os.path.join(CONFIG.SPEEDTESTFOLD, ''), '')
+                img = item.replace(os.path.join(CONFIG.SPEEDTEST, ''), '')
                 add_file('[B]{0}[/B]: [I]Ran {1}[/I]'.format(img, created), 'viewspeedtest', img, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
 
 
