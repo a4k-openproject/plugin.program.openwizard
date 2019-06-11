@@ -406,12 +406,12 @@ def convert_special(url, over=False):
 
 
 def redo_thumbs():
-    if not os.path.exists(CONFIG.THUMBS):
-        os.makedirs(CONFIG.THUMBS)
+    if not os.path.exists(CONFIG.THUMBNAILS):
+        os.makedirs(CONFIG.THUMBNAILS)
     thumbfolders = '0123456789abcdef'
-    videos = os.path.join(CONFIG.THUMBS, 'Video', 'Bookmarks')
+    videos = os.path.join(CONFIG.THUMBNAILS, 'Video', 'Bookmarks')
     for item in thumbfolders:
-        foldname = os.path.join(CONFIG.THUMBS, item)
+        foldname = os.path.join(CONFIG.THUMBNAILS, item)
         if not os.path.exists(foldname):
             os.makedirs(foldname)
     if not os.path.exists(videos):
