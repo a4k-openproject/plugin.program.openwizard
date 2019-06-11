@@ -106,10 +106,10 @@ def show_text_box(title, msg):
 def show_contact(msg=""):
     class ContactWindow(xbmcgui.WindowXMLDialog):
         def __init__(self, *args, **kwargs):
-            self.title = CONFIG.THEME3 % kwargs["title"]
+            self.title = CONFIG.THEME3.format(kwargs["title"])
             self.image = kwargs["image"]
             self.fanart = kwargs["fanart"]
-            self.msg = CONFIG.THEME2 % kwargs["msg"]
+            self.msg = CONFIG.THEME2.format(kwargs["msg"])
 
         def onInit(self):
             self.fanartimage = 101

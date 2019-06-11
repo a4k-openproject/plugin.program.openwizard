@@ -4,13 +4,13 @@ from resources.libs.config import CONFIG
 
 
 def generate_code(url, filename):
-    import pyqrcode
+    import segno
 
     if not os.path.exists(CONFIG.QRCODES):
         os.makedirs(CONFIG.QRCODES)
     imagefile = os.path.join(CONFIG.QRCODES, '{0}.png'.format(filename))
-    qrIMG = pyqrcode.create(url)
-    qrIMG.png(imagefile, scale=10)
+    generated_qr = segno.make(url)
+    generated_qr.save(imagefile, scale=10)
     return imagefile
 
 

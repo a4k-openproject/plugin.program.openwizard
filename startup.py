@@ -166,27 +166,26 @@ while xbmc.Player().isPlayingVideo():
     xbmc.sleep(1000)
 
 
-if CONFIG.KODIV >= 17:
-    NOW = tools.get_date(now=True)
-    temp = CONFIG.get_setting('kodi17iscrap')
-    if not temp == '':
-        if temp > str(NOW - timedelta(minutes=2)):
-            logging.log("Killing Start Up Script")
-            sys.exit()
-    logging.log("{0}".format(NOW))
-    CONFIG.set_setting('kodi17iscrap', str(NOW))
-    xbmc.sleep(1000)
-    if not CONFIG.get_setting('kodi17iscrap') == str(NOW):
+NOW = tools.get_date(now=True)
+temp = CONFIG.get_setting('kodi17iscrap')
+if not temp == '':
+    if temp > str(NOW - timedelta(minutes=2)):
         logging.log("Killing Start Up Script")
         sys.exit()
-    else:
-        logging.log("Continuing Start Up Script")
+logging.log("{0}".format(NOW))
+CONFIG.set_setting('kodi17iscrap', str(NOW))
+xbmc.sleep(1000)
+if not CONFIG.get_setting('kodi17iscrap') == str(NOW):
+    logging.log("Killing Start Up Script")
+    sys.exit()
+else:
+    logging.log("Continuing Start Up Script")
 
 logging.log("[Path Check] Started", level=xbmc.LOGNOTICE)
 path = os.path.split(CONFIG.ADDON_PATH)
 if not CONFIG.ADDON_ID == path[1]:
     gui.DIALOG.ok(CONFIG.ADDONTITLE,
-                  '[COLOR {0}]Please make sure that the plugin folder is the same as the ADDON_ID.[/COLOR]'.format(CONFIG.COLOR2),
+                  '[COLOR {0}]Please make sure that the plugin folder is the same as the addon id.[/COLOR]'.format(CONFIG.COLOR2),
                   '[COLOR {0}]Plugin ID:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.ADDON_ID),
                   '[COLOR {0}]Plugin Folder:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, path))
     logging.log("[Path Check] ADDON_ID and plugin folder doesnt match. {0} / {1} ".format(CONFIG.ADDON_ID, path))
@@ -197,14 +196,13 @@ if CONFIG.KODIADDONS in CONFIG.ADDON_PATH:
     logging.log("Copying path to addons dir", level=xbmc.LOGNOTICE)
     if not os.path.exists(CONFIG.ADDONS):
         os.makedirs(CONFIG.ADDONS)
-    newpath = CONFIG.PLUGIN
-    if os.path.exists(newpath):
+    if os.path.exists(CONFIG.PLUGIN):
         logging.log("Folder already exists, cleaning House", level=xbmc.LOGNOTICE)
-        tools.clean_house(newpath)
-        tools.remove_folder(newpath)
+        tools.clean_house(CONFIG.PLUGIN)
+        tools.remove_folder(CONFIG.PLUGIN)
     try:
-        tools.copytree(CONFIG.ADDON_PATH, newpath)
-    except Exception:
+        tools.copytree(CONFIG.ADDON_PATH, CONFIG.PLUGIN)
+    except:
         pass
     update.force_update(silent=True)
 
@@ -334,7 +332,7 @@ if CONFIG.INSTALLED == 'true':
         defaults = CONFIG.get_setting('defaultskin')
         if not defaults == '':
             if os.path.exists(os.path.join(CONFIG.ADDONS, defaults)):
-                if skin.swap_to_skin(defaults):
+                if skin.skin_to_default(defaults):
                     skin.look_and_feel_data('restore')
         if not CONFIG.SKIN == defaults and not CONFIG.BUILDNAME == "":
             gui_xml = check.check_build(CONFIG.BUILDNAME, 'gui')
@@ -371,15 +369,15 @@ if CONFIG.INSTALLED == 'true':
 
     if CONFIG.KEEPTRAKT == 'true':
         from resources.libs import traktit
-        traktit.traktIt('restore', 'all')
+        traktit.trakt_it('restore', 'all')
         logging.log('[Installed Check] Restoring Trakt Data', level=xbmc.LOGNOTICE)
     if CONFIG.KEEPREAL == 'true':
         from resources.libs import debridit
-        debridit.debridIt('restore', 'all')
+        debridit.debrid_it('restore', 'all')
         logging.log('[Installed Check] Restoring Real Debrid Data', level=xbmc.LOGNOTICE)
     if CONFIG.KEEPLOGIN == 'true':
         from resources.libs import loginit
-        loginit.loginIt('restore', 'all')
+        loginit.login_it('restore', 'all')
         logging.log('[Installed Check] Restoring Login Data', level=xbmc.LOGNOTICE)
     CONFIG.clear_setting('install')
 else:
@@ -413,7 +411,7 @@ if CONFIG.KEEPTRAKT == 'true':
     if CONFIG.TRAKTSAVE <= str(tools.get_date()):
         from resources.libs import traktit
         logging.log("[Trakt Data] Saving all Data", level=xbmc.LOGNOTICE)
-        traktit.autoUpdate('all')
+        traktit.auto_update('all')
         CONFIG.set_setting('traktlastsave', str(tools.get_date(days=3)))
     else:
         logging.log("[Trakt Data] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.TRAKTSAVE, str(tools.get_date())), level=xbmc.LOGNOTICE)
@@ -421,14 +419,14 @@ else:
     logging.log("[Trakt Data] Not Enabled", level=xbmc.LOGNOTICE)
 
 logging.log("[Debrid Data] Started", level=xbmc.LOGNOTICE)
-if CONFIG.KEEPREAL == 'true':
-    if CONFIG.REALSAVE <= str(tools.get_date()):
+if CONFIG.KEEPDEBRID == 'true':
+    if CONFIG.DEBRIDSAVE <= str(tools.get_date()):
         from resources.libs import debridit
         logging.log("[Debrid Data] Saving all Data", level=xbmc.LOGNOTICE)
-        debridit.autoUpdate('all')
+        debridit.auto_update('all')
         CONFIG.set_setting('debridlastsave', str(tools.get_date(days=3)))
     else:
-        logging.log("[Debrid Data] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.REALSAVE, str(tools.get_date())), level=xbmc.LOGNOTICE)
+        logging.log("[Debrid Data] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.DEBRIDSAVE, str(tools.get_date())), level=xbmc.LOGNOTICE)
 else:
     logging.log("[Debrid Data] Not Enabled", level=xbmc.LOGNOTICE)
 
@@ -437,7 +435,7 @@ if CONFIG.KEEPLOGIN == 'true':
     if CONFIG.LOGINSAVE <= str(tools.get_date()):
         from resources.libs import loginit
         logging.log("[Login Info] Saving all Data", level=xbmc.LOGNOTICE)
-        loginit.autoUpdate('all')
+        loginit.auto_update('all')
         CONFIG.set_setting('loginlastsave', str(tools.get_date(days=3)))
     else:
         logging.log("[Login Info] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.LOGINSAVE, str(tools.get_date())), level=xbmc.LOGNOTICE)

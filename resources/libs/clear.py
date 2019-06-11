@@ -451,7 +451,7 @@ def old_thumbs():
     size = 0
     if os.path.exists(dbfile):
         try:
-            textdb = database.connect(dbfile)
+            textdb = database.connect(dbfile, isolation_level=None)
             textexe = textdb.cursor()
         except Exception as e:
             logging.log("DB Connection Error: {0}".format(str(e)), level=xbmc.LOGERROR)
@@ -476,7 +476,7 @@ def old_thumbs():
     textdb.commit()
     textexe.close()
     for image in images:
-        path = os.path.join(CONFIG.THUMBNAILSS, image)
+        path = os.path.join(CONFIG.THUMBNAILS, image)
         try:
             imagesize = os.path.getsize(path)
             os.remove(path)
