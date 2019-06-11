@@ -290,9 +290,9 @@ def show_build_prompt():
     class BuildPrompt(xbmcgui.WindowXMLDialog):
 
         def __init__(self, *args, **kwargs):
-            self.title = CONFIG.THEME3 % CONFIG.ADDONTITLE
+            self.title = CONFIG.THEME3.format(CONFIG.ADDONTITLE)
             self.msg = "Currently no build installed from {0}.\n\nSelect 'Build Menu' to install a Community Build from us or 'Ignore' to never see this message again.\n\nThank you for choosing {1}.".format(CONFIG.ADDONTITLE, CONFIG.ADDONTITLE)
-            self.msg = CONFIG.THEME2 % self.msg
+            self.msg = CONFIG.THEME2.format(self.msg)
 
         def onInit(self):
             self.image = 101
@@ -345,7 +345,7 @@ def show_update_window(name='Testing Window', current='1.0', new='1.1', icon=CON
     class UpdateWindow(xbmcgui.WindowXMLDialog):
 
         def __init__(self, *args, **kwargs):
-            self.name = CONFIG.THEME3 % kwargs['name']
+            self.name = CONFIG.THEME3.format(kwargs['name'])
             self.current = kwargs['current']
             self.new = kwargs['new']
             self.icon = kwargs['icon']
@@ -365,7 +365,7 @@ def show_update_window(name='Testing Window', current='1.0', new='1.1', icon=CON
 
         def show_dialog(self):
             self.getControl(self.header).setLabel(self.name)
-            self.getControl(self.textbox).setText(CONFIG.THEME2 % self.msgupdate if current < new else self.msgcurrent)
+            self.getControl(self.textbox).setText(CONFIG.THEME2.format(self.msgupdate if current < new else self.msgcurrent))
             self.getControl(self.imagefanart).setImage(self.fanart)
             self.getControl(self.imagefanart).setColorDiffuse('2FFFFFFF')
             self.getControl(self.imageicon).setImage(self.icon)
@@ -431,7 +431,7 @@ def show_notification(msg='', test=False):
 
         def __init__(self, *args, **kwargs):
             self.test = kwargs['test']
-            self.message = CONFIG.THEME2 % kwargs['msg']
+            self.message = CONFIG.THEME2.format(kwargs['msg'])
 
         def onInit(self):
             self.image = 101
@@ -450,7 +450,7 @@ def show_notification(msg='', test=False):
             self.getControl(self.textbox).setText(self.message)
             self.setFocusId(self.remindme)
             if CONFIG.HEADERTYPE == 'Text':
-                self.getControl(self.titlebox).setLabel(CONFIG.THEME3 % CONFIG.HEADERMESSAGE)
+                self.getControl(self.titlebox).setLabel(CONFIG.THEME3.format(CONFIG.HEADERMESSAGE))
             else:
                 self.getControl(self.titleimage).setImage(CONFIG.HEADERIMAGE)
 
