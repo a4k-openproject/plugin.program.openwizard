@@ -163,11 +163,11 @@ def convert_size(num, suffix='B'):
     return "%.02f %s%s" % (num, 'G', suffix)
 
 
-def get_keyboard( default="", heading="", hidden=False ):
-    keyboard = xbmc.Keyboard( default, heading, hidden )
+def get_keyboard(default="", heading="", hidden=False):
+    keyboard = xbmc.Keyboard(default, heading, hidden)
     keyboard.doModal()
     if keyboard.isConfirmed():
-        return unicode(keyboard.getText(), "utf-8")
+        return keyboard.getText()
     return default
 
 
@@ -186,11 +186,9 @@ def percentage(part, whole):
 def parse_dom(html, name=u"", attrs={}, ret=False):
     if isinstance(html, str):
         try:
-            html = [html.decode("utf-8")]
+            html = html.decode("utf-8")
         except:
-            html = [html]
-    elif isinstance(html, unicode):
-        html = [html]
+            html = html
     elif not isinstance(html, list):
         return u""
 

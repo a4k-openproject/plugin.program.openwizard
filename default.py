@@ -352,26 +352,26 @@ elif mode == 'trakt':
     menu.trakt_menu()
 elif mode == 'savetrakt':
     from resources.libs import traktit
-    traktit.traktIt('update', name)
+    traktit.trakt_it('update', name)
 elif mode == 'restoretrakt':
     from resources.libs import traktit
-    traktit.traktIt('restore', name)
+    traktit.trakt_it('restore', name)
 elif mode == 'addontrakt':
     from resources.libs import traktit
-    traktit.traktIt('clearaddon', name)
+    traktit.trakt_it('clearaddon', name)
 elif mode == 'cleartrakt':
     from resources.libs import traktit
-    traktit.clearSaved(name)
+    traktit.clear_saved(name)
 elif mode == 'authtrakt':
     from resources.libs import traktit
-    traktit.activateTrakt(name)
+    traktit.activate_trakt(name)
     xbmc.executebuiltin('Container.Refresh()')
 elif mode == 'updatetrakt':
     from resources.libs import traktit
-    traktit.autoUpdate('all')
+    traktit.auto_update('all')
 elif mode == 'importtrakt':
     from resources.libs import traktit
-    traktit.importlist(name)
+    traktit.import_list(name)
     xbmc.executebuiltin('Container.Refresh()')
 
 elif mode == 'realdebrid':
@@ -379,26 +379,26 @@ elif mode == 'realdebrid':
     menu.debrid_menu()
 elif mode == 'savedebrid':
     from resources.libs import debridit
-    debridit.debridIt('update', name)
+    debridit.debrid_it('update', name)
 elif mode == 'restoredebrid':
     from resources.libs import debridit
-    debridit.debridIt('restore', name)
+    debridit.debrid_it('restore', name)
 elif mode == 'addondebrid':
     from resources.libs import debridit
-    debridit.debridIt('clearaddon', name)
+    debridit.debrid_it('clearaddon', name)
 elif mode == 'cleardebrid':
     from resources.libs import debridit
-    debridit.clearSaved(name)
+    debridit.clear_saved(name)
 elif mode == 'authdebrid':
     from resources.libs import debridit
-    debridit.activateDebrid(name)
+    debridit.activate_debrid(name)
     xbmc.executebuiltin('Container.Refresh()')
 elif mode == 'updatedebrid':
     from resources.libs import debridit
-    debridit.autoUpdate('all')
+    debridit.auto_update('all')
 elif mode == 'importdebrid':
     from resources.libs import debridit
-    debridit.importlist(name)
+    debridit.import_list(name)
     xbmc.executebuiltin('Container.Refresh()')
 
 elif mode == 'login':
@@ -406,26 +406,26 @@ elif mode == 'login':
     menu.login_menu()
 elif mode == 'savelogin':
     from resources.libs import loginit
-    loginit.loginIt('update', name)
+    loginit.login_it('update', name)
 elif mode == 'restorelogin':
     from resources.libs import loginit
-    loginit.loginIt('restore', name)
+    loginit.login_it('restore', name)
 elif mode == 'addonlogin':
     from resources.libs import loginit
-    loginit.loginIt('clearaddon', name)
+    loginit.login_it('clearaddon', name)
 elif mode == 'clearlogin':
     from resources.libs import loginit
-    loginit.clearSaved(name)
+    loginit.clear_saved(name)
 elif mode == 'authlogin':
     from resources.libs import loginit
-    loginit.activateLogin(name)
+    loginit.activate_login(name)
     xbmc.executebuiltin('Container.Refresh()')
 elif mode == 'updatelogin':
     from resources.libs import loginit
-    loginit.autoUpdate('all')
+    loginit.auto_update('all')
 elif mode == 'importlogin':
     from resources.libs import loginit
-    loginit.importlist(name)
+    loginit.import_list(name)
     xbmc.executebuiltin('Container.Refresh()')
 
 elif mode == 'contact':

@@ -20,7 +20,7 @@ def wizard_update(startup=None):
     from resources.libs import check
     from resources.libs import logging
 
-    if check.check_url(CONFIG.WIZARDFILE):
+    if check.check_url(CONFIG.BUILDFILE):
         try:
             wid, ver, zip = check.check_wizard('all')
         except:
@@ -70,7 +70,7 @@ def wizard_update(startup=None):
                                    "[COLOR {0}]No New Version of Wizard[/COLOR]".format(CONFIG.COLOR2))
             logging.log("[Auto Update Wizard] No New Version v{0}".format(ver), level=xbmc.LOGNOTICE)
     else:
-        logging.log("[Auto Update Wizard] Url for wizard file not valid: {0}".format(CONFIG.WIZARDFILE), level=xbmc.LOGNOTICE)
+        logging.log("[Auto Update Wizard] Url for wizard file not valid: {0}".format(CONFIG.BUILDFILE), level=xbmc.LOGNOTICE)
 
 
 def addon_updates(do=None):

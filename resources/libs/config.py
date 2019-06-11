@@ -129,6 +129,7 @@ class Config:
 
         # Constructed paths
         self.ADDONS = os.path.join(self.HOME, 'addons')
+        self.KODIADDONS = os.path.join(self.XBMC, 'addons')
         self.PLUGIN = os.path.join(self.ADDONS, self.ADDON_ID)
         self.PACKAGES = os.path.join(self.ADDONS, 'packages')
         self.ADDON_DATA = os.path.join(self.USERDATA, 'addon_data')

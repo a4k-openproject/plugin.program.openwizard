@@ -78,6 +78,7 @@ def main_menu():
     add_file('Force Update Text Files', 'forcetext', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
     if CONFIG.DEVELOPER == 'true':
         add_dir('Developer Menu', 'developer', icon=CONFIG.ADDON_ICON, themeit=CONFIG.THEME1)
+
     set_view()
 
 
@@ -831,7 +832,7 @@ def trakt_menu():
             saved = traktit.TRAKTID[trakt]['saved']
             file = traktit.TRAKTID[trakt]['file']
             user = CONFIG.get_setting(saved)
-            auser = traktit.traktUser(trakt)
+            auser = traktit.trakt_user(trakt)
             icon = traktit.TRAKTID[trakt]['icon'] if os.path.exists(path) else CONFIG.ICONTRAKT
             fanart = traktit.TRAKTID[trakt]['fanart'] if os.path.exists(path) else CONFIG.ADDON_FANART
             menu = create_addon_data_menu('Trakt', trakt)
@@ -882,7 +883,7 @@ def debrid_menu():
             saved = debridit.DEBRIDID[debrid]['saved']
             file = debridit.DEBRIDID[debrid]['file']
             user = CONFIG.get_setting(saved)
-            auser = debridit.debridUser(debrid)
+            auser = debridit.debrid_user(debrid)
             icon = debridit.DEBRIDID[debrid]['icon'] if os.path.exists(path) else CONFIG.ICONDEBRID
             fanart = debridit.DEBRIDID[debrid]['fanart'] if os.path.exists(path) else CONFIG.ADDON_FANART
             menu = create_addon_data_menu('Debrid', debrid)
@@ -932,7 +933,7 @@ def login_menu():
             saved = loginit.LOGINID[login]['saved']
             file = loginit.LOGINID[login]['file']
             user = CONFIG.get_setting(saved)
-            auser = loginit.loginUser(login)
+            auser = loginit.login_user(login)
             icon = loginit.LOGINID[login]['icon'] if os.path.exists(path) else CONFIG.ICONLOGIN
             fanart = loginit.LOGINID[login]['fanart'] if os.path.exists(path) else CONFIG.ADDON_FANART
             menu = create_addon_data_menu('Login', login)
@@ -1091,7 +1092,8 @@ def developer():
     add_file('Test Update', 'testupdate', themeit=CONFIG.THEME1)
     add_file('Test First Run', 'testfirst', themeit=CONFIG.THEME1)
     add_file('Test First Run Settings', 'testfirstrun', themeit=CONFIG.THEME1)
-    set_view('files', 'viewType')
+
+    set_view()
 
 ###########################
 #      Build Install      #
@@ -1403,12 +1405,13 @@ def create_install_menu(name):
     menu_items = []
 
     name2 = quote_plus(name)
-    menu_items.append(CONFIG.THEME2.format(name), 'RunAddon({0}, ?mode=viewbuild&name={1})'.format(CONFIG.ADDON_ID, name2))
-    menu_items.append(CONFIG.THEME3.format('Fresh Install'), 'RunPlugin(plugin://{0}/?mode=install&name={1}&url=fresh)'.format(CONFIG.ADDON_ID, name2))
-    menu_items.append(CONFIG.THEME3.format('Normal Install'), 'RunPlugin(plugin://{0}/?mode=install&name={1}&url=normal)'.format(CONFIG.ADDON_ID, name2))
-    menu_items.append(CONFIG.THEME3.format('Apply guiFix'), 'RunPlugin(plugin://{0}/?mode=install&name={1}&url=gui)'.format(CONFIG.ADDON_ID, name2))
-    menu_items.append(CONFIG.THEME3.format('Build Information'), 'RunPlugin(plugin://{0}/?mode=buildinfo&name={1})'.format(CONFIG.ADDON_ID, name2))
-    menu_items.append(CONFIG.THEME2.format('{0} Settings'.format(CONFIG.ADDONTITLE)), 'RunPlugin(plugin://{0}/?mode=settings)'.format(CONFIG.ADDON_ID))
+    menu_items.append((CONFIG.THEME2.format(name), 'RunAddon({0}, ?mode=viewbuild&name={1})'.format(CONFIG.ADDON_ID, name2)))
+    menu_items.append((CONFIG.THEME3.format('Fresh Install'), 'RunPlugin(plugin://{0}/?mode=install&name={1}&url=fresh)'.format(CONFIG.ADDON_ID, name2)))
+    menu_items.append((CONFIG.THEME3.format('Normal Install'), 'RunPlugin(plugin://{0}/?mode=install&name={1}&url=normal)'.format(CONFIG.ADDON_ID, name2)))
+    menu_items.append((CONFIG.THEME3.format('Apply guiFix'), 'RunPlugin(plugin://{0}/?mode=install&name={1}&url=gui)'.format(CONFIG.ADDON_ID, name2)))
+    menu_items.append((CONFIG.THEME3.format('Build Information'), 'RunPlugin(plugin://{0}/?mode=buildinfo&name={1})'.format(CONFIG.ADDON_ID, name2)))
+
+    menu_items.append((CONFIG.THEME2.format('{0} Settings'.format(CONFIG.ADDONTITLE)), 'RunPlugin(plugin://{0}/?mode=settings)'.format(CONFIG.ADDON_ID)))
 
     return menu_items
 
@@ -1420,12 +1423,12 @@ def create_addon_data_menu(add='', name=''):
     add3 = add.replace('Debrid', 'Real Debrid')
     name2 = quote_plus(name.lower().replace(' ', ''))
     name = name.replace('url', 'URL Resolver')
-    menu_items.append(CONFIG.THEME2.format(name.title()), ' ')
-    menu_items.append(CONFIG.THEME3.format('Save {0} Data'.format(add3)), 'RunPlugin(plugin://{0}/?mode=save{1}&name={2})'.format(CONFIG.ADDON_ID, add2, name2))
-    menu_items.append(CONFIG.THEME3.format('Restore {0} Data'.format(add3)), 'RunPlugin(plugin://{0}/?mode=restore{1}&name={2})'.format(CONFIG.ADDON_ID, add2, name2))
-    menu_items.append(CONFIG.THEME3.format('Clear {0} Data'.format(add3)), 'RunPlugin(plugin://{0}/?mode=clear{1}&name={2})'.format(CONFIG.ADDON_ID, add2, name2))
+    menu_items.append((CONFIG.THEME2.format(name.title()), ' '))
+    menu_items.append((CONFIG.THEME3.format('Save {0} Data'.format(add3)), 'RunPlugin(plugin://{0}/?mode=save{1}&name={2})'.format(CONFIG.ADDON_ID, add2, name2)))
+    menu_items.append((CONFIG.THEME3.format('Restore {0} Data'.format(add3)), 'RunPlugin(plugin://{0}/?mode=restore{1}&name={2})'.format(CONFIG.ADDON_ID, add2, name2)))
+    menu_items.append((CONFIG.THEME3.format('Clear {0} Data'.format(add3)), 'RunPlugin(plugin://{0}/?mode=clear{1}&name={2})'.format(CONFIG.ADDON_ID, add2, name2)))
 
-    menu_items.append(CONFIG.THEME2.format('{0} Settings'.format(CONFIG.ADDONTITLE)), 'RunPlugin(plugin://{0}/?mode=settings)'.format(CONFIG.ADDON_ID))
+    menu_items.append((CONFIG.THEME2.format('{0} Settings'.format(CONFIG.ADDONTITLE)), 'RunPlugin(plugin://{0}/?mode=settings)'.format(CONFIG.ADDON_ID)))
 
     return menu_items
 
@@ -1437,14 +1440,14 @@ def create_save_data_menu(add='', name=''):
     add3 = add.replace('Debrid', 'Real Debrid')
     name2 = quote_plus(name.lower().replace(' ', ''))
     name = name.replace('url', 'URL Resolver')
-    menu_items.append(CONFIG.THEME2.format(name.title()), ' ')
-    menu_items.append(CONFIG.THEME3.format('Register {0}'.format(add3)), 'RunPlugin(plugin://{0}/?mode=auth{1}&name={2})'.format(CONFIG.ADDON_ID, add2, name2))
-    menu_items.append(CONFIG.THEME3.format('Save {0} Data'.format(add3)), 'RunPlugin(plugin://{0}/?mode=save{1}&name={2})'.format(CONFIG.ADDON_ID, add2, name2))
-    menu_items.append(CONFIG.THEME3.format('Restore {0} Data'.format(add3)), 'RunPlugin(plugin://{0}/?mode=restore{1}&name={2})'.format(CONFIG.ADDON_ID, add2, name2))
-    menu_items.append(CONFIG.THEME3.format('Import {0} Data'.format(add3)), 'RunPlugin(plugin://{0}/?mode=import{1}&name={2})'.format(CONFIG.ADDON_ID, add2, name2))
-    menu_items.append(CONFIG.THEME3.format('Clear Addon {0} Data'.format(add3)), 'RunPlugin(plugin://{0}/?mode=addon{1}&name={2})'.format(CONFIG.ADDON_ID, add2, name2))
+    menu_items.append((CONFIG.THEME2.format(name.title()), ' '))
+    menu_items.append((CONFIG.THEME3.format('Register {0}'.format(add3)), 'RunPlugin(plugin://{0}/?mode=auth{1}&name={2})'.format(CONFIG.ADDON_ID, add2, name2)))
+    menu_items.append((CONFIG.THEME3.format('Save {0} Data'.format(add3)), 'RunPlugin(plugin://{0}/?mode=save{1}&name={2})'.format(CONFIG.ADDON_ID, add2, name2)))
+    menu_items.append((CONFIG.THEME3.format('Restore {0} Data'.format(add3)), 'RunPlugin(plugin://{0}/?mode=restore{1}&name={2})'.format(CONFIG.ADDON_ID, add2, name2)))
+    menu_items.append((CONFIG.THEME3.format('Import {0} Data'.format(add3)), 'RunPlugin(plugin://{0}/?mode=import{1}&name={2})'.format(CONFIG.ADDON_ID, add2, name2)))
+    menu_items.append((CONFIG.THEME3.format('Clear Addon {0} Data'.format(add3)), 'RunPlugin(plugin://{0}/?mode=addon{1}&name={2})'.format(CONFIG.ADDON_ID, add2, name2)))
 
-    menu_items.append(CONFIG.THEME2.format('{0} Settings'.format(CONFIG.ADDONTITLE)), 'RunPlugin(plugin://{0}/?mode=settings)'.format(CONFIG.ADDON_ID))
+    menu_items.append((CONFIG.THEME2.format('{0} Settings'.format(CONFIG.ADDONTITLE)), 'RunPlugin(plugin://{0}/?mode=settings)'.format(CONFIG.ADDON_ID)))
 
     return menu_items
 

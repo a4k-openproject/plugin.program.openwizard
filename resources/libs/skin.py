@@ -96,7 +96,7 @@ def switch_to_skin(goto, title="Error"):
 
 def skin_to_default(title):
     if CONFIG.SKIN not in ['skin.confluence', 'skin.estuary']:
-        skin = 'skin.confluence' if CONFIG.KODIV < 17 else 'skin.estuary'
+        skin = 'skin.estuary'
     return switch_to_skin(skin, title)
 
 
