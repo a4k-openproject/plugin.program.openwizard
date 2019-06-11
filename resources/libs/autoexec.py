@@ -27,7 +27,7 @@ import xbmcaddon
 
 import os
 import glob
-import thread
+import threading
 
 try:
     from sqlite3 import dbapi2 as database
@@ -88,7 +88,7 @@ def main():
             response = xbmc.executeJSONRPC(query)
             logging.log("Unknown Sources Get Settings: {0}".format(str(response)), level=xbmc.LOGDEBUG)
             if 'false' in response:
-                thread.start_new_thread(self.dialog_watch, ())
+                threading.Thread(traget=self.dialog_watch).start()
                 xbmc.sleep(200)
                 query = '{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{"setting":%s,"value":%s}, "id":1}' % (new, value)
                 response = xbmc.executeJSONRPC(query)
