@@ -187,7 +187,7 @@ def toggle_addon(id, value, over=None):
                 xbmc.sleep(500)
         except:
             pass
-    query = '{"jsonrpc":"2.0", "method":"Addons.SetAddonEnabled","params":{"addonid":"{0}","enabled":{1}}, "id":1}'.format(addonid, value)
+    query = '{{"jsonrpc":"2.0", "method":"Addons.SetAddonEnabled","params":{{"addonid":"{0}","enabled":{1}}}, "id":1}}'.format(addonid, value)
     response = xbmc.executeJSONRPC(query)
     if 'error' in response and over is None:
         from resources.libs import gui
