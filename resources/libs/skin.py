@@ -36,7 +36,7 @@ from resources.libs.config import CONFIG
 def get_old(old):
     try:
         old = '"{0}"'.format(old)
-        query = '{"jsonrpc":"2.0","method":"Settings.GetSettingValue","params":{"setting":{0}}, "id":1}'.format(old)
+        query = '{{"jsonrpc":"2.0","method":"Settings.GetSettingValue","params":{{"setting":{0}}}, "id":1}}'.format(old)
         response = xbmc.executeJSONRPC(query)
         response = simplejson.loads(response)
         if response. has_key('result'):
@@ -51,7 +51,7 @@ def set_new(new, value):
     try:
         new = '"{0}"'.format(new)
         value = '"{0}"'.format(value)
-        query = '{"jsonrpc":"2.0","method":"Settings.SetSettingValue","params":{"setting":{0},"value":{1}}, "id":1}'.format(new, value)
+        query = '{{"jsonrpc":"2.0","method":"Settings.SetSettingValue","params":{{"setting":{0},"value":{1}}}, "id":1}}'.format(new, value)
         response = xbmc.executeJSONRPC(query)
     except:
         pass
@@ -108,7 +108,7 @@ def look_and_feel_data(do='save'):
             'lookandfeel.stereostrength']
     if do == 'save':
         for item in scan:
-            query = '{"jsonrpc":"2.0", "method":"Settings.GetSettingValue","params":{"setting":"{0}"}, "id":1}'.format(item)
+            query = '{{"jsonrpc":"2.0", "method":"Settings.GetSettingValue","params":{{"setting":"{0}"}}, "id":1}}'.format(item)
             response = xbmc.executeJSONRPC(query)
             if 'error' not in response:
                 match = re.compile('{"value":(.+?)}').findall(str(response))
@@ -117,7 +117,7 @@ def look_and_feel_data(do='save'):
     else:
         for item in scan:
             value = CONFIG.get_setting(item.replace('lookandfeel', 'default'))
-            query = '{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{"setting":"{0}","value":{1}}, "id":1}'.format(item, value)
+            query = '{{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{{"setting":"{0}","value":{1}}}, "id":1}}'.format(item, value)
             response = xbmc.executeJSONRPC(query)
             logging.log("{0} restored to {1}".format(item, value), level=xbmc.LOGNOTICE)
 
@@ -127,13 +127,13 @@ def swap_us():
 
     new = '"addons.unknownsources"'
     value = 'true'
-    query = '{"jsonrpc":"2.0", "method":"Settings.GetSettingValue","params":{"setting":{0}}, "id":1}'.format(new)
+    query = '{{"jsonrpc":"2.0", "method":"Settings.GetSettingValue","params":{{"setting":{0}}}, "id":1}}'.format(new)
     response = xbmc.executeJSONRPC(query)
     logging.log("Unknown Sources Get Settings: {0}".format(str(response)))
     if 'false' in response:
         threading.Thread(target=dialog_watch).start()
         xbmc.sleep(200)
-        query = '{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{"setting":{0},"value":{1}}, "id":1}'.format(new, value)
+        query = '{{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{{"setting":{0},"value":{1}}}, "id":1}}'.format(new, value)
         response = xbmc.executeJSONRPC(query)
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            '[COLOR {0}]Unknown Sources:[/COLOR] [COLOR {1}]Enabled[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2))

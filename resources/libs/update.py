@@ -76,7 +76,7 @@ def wizard_update(startup=None):
 def addon_updates(do=None):
     setting = '"general.addonupdates"'
     if do == 'set':
-        query = '{"jsonrpc":"2.0", "method":"Settings.GetSettingValue","params":{"setting":{0}}, "id":1}'.format(setting)
+        query = '{{"jsonrpc":"2.0", "method":"Settings.GetSettingValue","params":{{"setting":{0}}}, "id":1}}'.format(setting)
         response = xbmc.executeJSONRPC(query)
         match = re.compile('{"value":(.+?)}').findall(response)
         if len(match) > 0:
@@ -84,7 +84,7 @@ def addon_updates(do=None):
         else:
             default = 0
         CONFIG.set_setting('default.addonupdate', str(default))
-        query = '{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{"setting":{0},"value":{1}}, "id":1}'.format(setting, '2')
+        query = '{{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{{"setting":{0},"value":{1}}}, "id":1}}'.format(setting, '2')
         response = xbmc.executeJSONRPC(query)
     elif do == 'reset':
         try:
@@ -93,5 +93,5 @@ def addon_updates(do=None):
             value = 0
         if value not in [0, 1, 2]:
             value = 0
-        query = '{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{"setting":{0},"value":{1}}, "id":1}'.format(setting, value)
+        query = '{{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{{"setting":{0},"value":{1}}}, "id":1}}'.format(setting, value)
         response = xbmc.executeJSONRPC(query)
