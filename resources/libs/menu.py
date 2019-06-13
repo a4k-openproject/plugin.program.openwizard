@@ -74,7 +74,7 @@ def main_menu():
     if errors > 0:
         add_file('View Last Error In Log', 'viewerrorlast', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
     add_separator()
-    add_file('Settings', 'settings', icon=CONFIG.ICONSETTINGS, themeit=CONFIG.THEME1)
+    add_file('Settings', 'settings', CONFIG.ADDON_ID, icon=CONFIG.ICONSETTINGS, themeit=CONFIG.THEME1)
     add_file('Force Update Text Files', 'forcetext', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
     if CONFIG.DEVELOPER == 'true':
         add_dir('Developer Menu', 'developer', icon=CONFIG.ADDON_ICON, themeit=CONFIG.THEME1)
