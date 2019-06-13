@@ -610,7 +610,7 @@ def remove_addon(addon, name, over=False):
             shutil.rmtree(folder)
         except Exception as e:
             logging.log("Error removing {0}: {1}".format(addon, str(e)), level=xbmc.LOGNOTICE)
-        remove_addon_data(addon, name, over)
+        remove_addon_data(addon)
     if not over:
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            "[COLOR {0}]{1} Removed[/COLOR]".format(CONFIG.COLOR2, name))
@@ -720,7 +720,7 @@ def remove_addon_menu():
     if len(selected) > 0:
         update.addon_updates('set')
         for addon in selected:
-            remove_addon(addonids[addon], addonnames[addon], True)
+            remove_addon(addon=addonids[addon], name=addonnames[addon], over=True)
 
         xbmc.sleep(500)
 

@@ -32,8 +32,6 @@ try:  # Python 3
 except ImportError:  # Python 2
     from urllib import quote_plus
 
-from datetime import datetime
-
 from resources.libs.config import CONFIG
 from resources.libs import db
 from resources.libs import downloader
@@ -804,7 +802,7 @@ def addon_data(name=""):
                   "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, zipname))
 
 
-def backup(type):
+def backup(type, name=''):
     try:
         if not os.path.exists(CONFIG.BACKUPLOCATION):
             xbmcvfs.mkdirs(CONFIG.BACKUPLOCATION)
@@ -816,15 +814,15 @@ def backup(type):
                       "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, str(e)))
         return
     if type == "addon_pack":
-        addon_pack()
+        addon_pack(name)
     elif type == "build":
-        build()
+        build(name)
     elif type == "guifix":
-        guifix()
+        guifix(name)
     elif type == "theme":
-        theme()
+        theme(name)
     elif type == "addon_data":
-        addon_data()
+        addon_data(name)
 
 
 def restore_local(type):
@@ -875,7 +873,7 @@ def restore_local(type):
     CONFIG.clear_setting('build')
     gui.DP.close()
     from resources.libs import skin
-    skin.skin_to_default()
+    skin.skin_to_default('restore_local')
     skin.look_and_feel_data('save')
     if not file.find('packages') == -1:
         try:
@@ -998,12 +996,14 @@ def restore_it(type):
         x = install.fresh_start('restore')
         if not x:
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
-                               "[COLOR {0}]Local Restore Cancelled[/COLOR]".format(CONFIG.COLOR2)
+                               "[COLOR {0}]Local Restore Cancelled[/COLOR]".format(CONFIG.COLOR2))
             return
-    if CONFIG.SKIN not in ['skin.confluence', 'skin.estuary']:
+
+    if CONFIG.SKIN not in ['skin.estuary']:
         from resources.libs import skin
 
         skin.skin_to_default('Restore Backup')
+
     restore_local(type)
 
 
@@ -1012,8 +1012,10 @@ def restore_it_external(type):
         from resources.libs import install
 
         x = install.fresh_start('restore')
+
         if not x:
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
-                               "[COLOR {0}]External Restore Cancelled[/COLOR]".format(CONFIG.COLOR2)
+                               "[COLOR {0}]External Restore Cancelled[/COLOR]".format(CONFIG.COLOR2))
             return
+
     restore_external(type)
