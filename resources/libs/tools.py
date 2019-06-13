@@ -144,8 +144,8 @@ def file_count(home, excludes=True):
     item = []
     for base, dirs, files in os.walk(home):
         if excludes:
-            dirs[:] = [d for d in dirs if d not in CONFIG.BAD_DIRS]
-            files[:] = [f for f in files if f not in CONFIG.BAD_FILES]
+            dirs[:] = [d for d in dirs if d not in CONFIG.EXCLUDE_DIRS]
+            files[:] = [f for f in files if f not in CONFIG.EXCLUDE_FILES]
         for file in files:
             item.append(file)
     return len(item)

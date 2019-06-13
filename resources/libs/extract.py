@@ -124,7 +124,7 @@ def all_with_progress(_in, _out, dp, ignore, title):
             skip = True
         elif file[-1] in CONFIG.LOGFILES:
             skip = True
-        elif file[-1] in CONFIG.BAD_FILES:
+        elif file[-1] in CONFIG.EXCLUDE_FILES:
             skip = True
         elif file[-1].endswith('.csv'):
             skip = True

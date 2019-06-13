@@ -534,7 +534,7 @@ def maint_menu(view=None):
     add_dir('[B]Back up/Restore[/B]', 'maint', 'backup', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
     if view == "backup" or CONFIG.SHOWMAINT == 'true':
         add_file('Clean Up Back Up Folder', 'clearbackup', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('Back Up Location: [COLOR {0]]{1}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.MYBUILDS), 'settings', 'Maintenance', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('Back Up Location: [COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.MYBUILDS), 'settings', 'Maintenance', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         add_file('[Back Up]: Build', 'backupbuild', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         add_file('[Back Up]: GuiFix', 'backupgui', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         add_file('[Back Up]: Theme', 'backuptheme', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)

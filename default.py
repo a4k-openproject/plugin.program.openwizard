@@ -271,7 +271,7 @@ elif mode == 'restoregui':
     backup.restore_it('gui')
 elif mode == 'restoreaddon':
     from resources.libs import backup
-    backup.restore_it('addondata')
+    backup.restore_it('addon_data')
 elif mode == 'restoreextzip':
     from resources.libs import backup
     backup.restore_it_external('build')
@@ -280,7 +280,7 @@ elif mode == 'restoreextgui':
     backup.restore_it_external('gui')
 elif mode == 'restoreextaddon':
     from resources.libs import backup
-    backup.restore_it_external('addondata')
+    backup.restore_it_external('addon_data')
 elif mode == 'writeadvanced':
     from resources.libs import advanced
     advanced.write_advanced(name, url)

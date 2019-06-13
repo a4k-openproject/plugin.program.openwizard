@@ -371,7 +371,7 @@ if CONFIG.INSTALLED == 'true':
         from resources.libs import traktit
         traktit.trakt_it('restore', 'all')
         logging.log('[Installed Check] Restoring Trakt Data', level=xbmc.LOGNOTICE)
-    if CONFIG.KEEPREAL == 'true':
+    if CONFIG.KEEPDEBRID == 'true':
         from resources.libs import debridit
         debridit.debrid_it('restore', 'all')
         logging.log('[Installed Check] Restoring Real Debrid Data', level=xbmc.LOGNOTICE)
