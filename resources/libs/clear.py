@@ -274,169 +274,162 @@ def clear_function_cache():
 
 
 def clear_cache(over=None):
-    from resources.libs import gui
+    PROFILEADDONDATA = os.path.join(CONFIG.PROFILE, 'addon_data')
+    dbfiles = [
+        ## TODO: Double check these
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'cache.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'cache.meta.5.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'cache.providers.13.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.gaia', 'cache.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.gaia', 'meta.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'meta.5.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.providers.13.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'cache.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'meta.5.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'cache.providers.13.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.venom', 'cache.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'cache.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'meta.5.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'cache.providers.13.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.scrubsv2', 'cache.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.scrubsv2', 'meta.5.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.scrubsv2', 'cache.providers.13.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.seren', 'cache.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.seren', 'torrentScrape.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'script.module.simplecache', 'simplecache.db'))]
 
-    if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
-                        '[COLOR {0}]Would you like to clear cache?[/COLOR]'.format(CONFIG.COLOR2),
-                        nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
-                        yeslabel='[B][COLOR springgreen]Clear Cache[/COLOR][/B]'):
+    cachelist = [
+        (PROFILEADDONDATA),
+        (CONFIG.ADDON_DATA),
+        (os.path.join(CONFIG.HOME, 'cache')),
+        (os.path.join(CONFIG.HOME, 'temp')),
+        (os.path.join('/private/var/mobile/Library/Caches/AppleTV/Video/', 'Other')),
+        (os.path.join('/private/var/mobile/Library/Caches/AppleTV/Video/', 'LocalAndRental')),
+        (os.path.join(CONFIG.ADDON_DATA, 'script.module.simple.downloader')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.itv', 'Images')),
+        (os.path.join(PROFILEADDONDATA, 'script.module.simple.downloader')),
+        (os.path.join(PROFILEADDONDATA, 'plugin.video.itv', 'Images')),
+        (os.path.join(CONFIG.ADDON_DATA, 'script.extendedinfo', 'images')),
+        (os.path.join(CONFIG.ADDON_DATA, 'script.extendedinfo', 'TheMovieDB')),
+        (os.path.join(CONFIG.ADDON_DATA, 'script.extendedinfo', 'YouTube')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.program.autocompletion', 'Google')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.program.autocompletion', 'Bing')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.openmeta', '.storage'))]
 
-        PROFILEADDONDATA = os.path.join(CONFIG.PROFILE, 'addon_data')
-        dbfiles = [
-            ## TODO: Double check these
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'cache.db')),
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'cache.meta.5.db')),
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'cache.providers.13.db')),
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.gaia', 'cache.db')),
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.gaia', 'meta.db')),
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.db')),
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'meta.5.db')),
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.providers.13.db')),
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'cache.db')),
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'meta.5.db')),
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'cache.providers.13.db')),
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.venom', 'cache.db')),
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'cache.db')),
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'meta.5.db')),
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'cache.providers.13.db')),
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.scrubsv2', 'cache.db')),
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.scrubsv2', 'meta.5.db')),
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.scrubsv2', 'cache.providers.13.db')),
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.seren', 'cache.db')),
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.seren', 'torrentScrape.db')),
-            (os.path.join(CONFIG.ADDON_DATA, 'script.module.simplecache', 'simplecache.db'))]
-
-        cachelist = [
-            (PROFILEADDONDATA),
-            (CONFIG.ADDON_DATA),
-            (os.path.join(CONFIG.HOME, 'cache')),
-            (os.path.join(CONFIG.HOME, 'temp')),
-            (os.path.join('/private/var/mobile/Library/Caches/AppleTV/Video/', 'Other')),
-            (os.path.join('/private/var/mobile/Library/Caches/AppleTV/Video/', 'LocalAndRental')),
-            (os.path.join(CONFIG.ADDON_DATA, 'script.module.simple.downloader')),
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.itv', 'Images')),
-            (os.path.join(PROFILEADDONDATA, 'script.module.simple.downloader')),
-            (os.path.join(PROFILEADDONDATA, 'plugin.video.itv', 'Images')),
-            (os.path.join(CONFIG.ADDON_DATA, 'script.extendedinfo', 'images')),
-            (os.path.join(CONFIG.ADDON_DATA, 'script.extendedinfo', 'TheMovieDB')),
-            (os.path.join(CONFIG.ADDON_DATA, 'script.extendedinfo', 'YouTube')),
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.program.autocompletion', 'Google')),
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.program.autocompletion', 'Bing')),
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.openmeta', '.storage'))]
-
-        delfiles = 0
-        excludes = ['meta_cache', 'archive_cache']
-        for item in cachelist:
-            if not os.path.exists(item):
-                continue
-            if item not in [CONFIG.ADDON_DATA, PROFILEADDONDATA]:
-                for root, dirs, files in os.walk(item):
-                    dirs[:] = [d for d in dirs if d not in excludes]
-                    file_count = 0
-                    file_count += len(files)
-                    if file_count > 0:
-                        for f in files:
-                            if f not in CONFIG.LOGFILES:
-                                try:
-                                    os.unlink(os.path.join(root, f))
-                                    logging.log("[Wiped] {0}".format(os.path.join(root, f)), level=xbmc.LOGNOTICE)
-                                    delfiles += 1
-                                except:
-                                    pass
-                            else:
-                                logging.log('Ignore Log File: {0}'.format(f), level=xbmc.LOGNOTICE)
-                        for d in dirs:
+    delfiles = 0
+    excludes = ['meta_cache', 'archive_cache']
+    for item in cachelist:
+        if not os.path.exists(item):
+            continue
+        if item not in [CONFIG.ADDON_DATA, PROFILEADDONDATA]:
+            for root, dirs, files in os.walk(item):
+                dirs[:] = [d for d in dirs if d not in excludes]
+                file_count = 0
+                file_count += len(files)
+                if file_count > 0:
+                    for f in files:
+                        if f not in CONFIG.LOGFILES:
                             try:
-                                shutil.rmtree(os.path.join(root, d))
+                                os.unlink(os.path.join(root, f))
+                                logging.log("[Wiped] {0}".format(os.path.join(root, f)), level=xbmc.LOGNOTICE)
                                 delfiles += 1
-                                logging.log("[Success] cleared {0} files from {1}".format(str(file_count), os.path.join(item, d)),
-                                            level=xbmc.LOGNOTICE)
                             except:
-                                logging.log("[Failed] to wipe cache in: {0}".format(os.path.join(item, d)),
-                                            level=xbmc.LOGNOTICE)
-            else:
-                for root, dirs, files in os.walk(item):
-                    dirs[:] = [d for d in dirs if d not in excludes]
+                                pass
+                        else:
+                            logging.log('Ignore Log File: {0}'.format(f), level=xbmc.LOGNOTICE)
                     for d in dirs:
-                        if not str(d.lower()).find('cache') == -1:
-                            try:
-                                shutil.rmtree(os.path.join(root, d))
-                                delfiles += 1
-                                logging.log("[Success] wiped {0} ".format(os.path.join(root, d)), level=xbmc.LOGNOTICE)
-                            except:
-                                logging.log("[Failed] to wipe cache in: {0}".format(os.path.join(item, d)), level=xbmc.LOGNOTICE)
-
-        if CONFIG.INCLUDEVIDEO == 'true' and over is None:
-            files = []
-            if CONFIG.INCLUDEALL == 'true':
-                files = dbfiles
-            else:
-                ## TODO: Double check these
-                if CONFIG.INCLUDEPLACENTA == 'true':
-                    files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'cache.db'))
-                    files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'meta.5.db'))
-                    files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'providers.13.db'))
-                if CONFIG.INCLUDEEXODUSREDUX == 'true':
-                    files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.db'))
-                    files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'meta.5.db'))
-                    files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'providers.13.db'))
-                if CONFIG.INCLUDEYODA == 'true':
-                    files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'cache.db'))
-                    files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'meta.5.db'))
-                    files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'providers.13.db'))
-                if CONFIG.INCLUDEVENOM == 'true':
-                    files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.venom', 'cache.db'))
-                if CONFIG.INCLUDESCRUBS == 'true':
-                    files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.scrubsv2', 'cache.db'))
-                    files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.scrubsv2', 'meta.5.db'))
-                    files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.scrubsv2', 'providers.13.db'))
-                if CONFIG.INCLUDEOVEREASY == 'true':
-                    files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'cache.db'))
-                    files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'meta.5.db'))
-                    files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'providers.13.db'))
-                if CONFIG.INCLUDEGAIA == 'true':
-                    files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.gaia', 'cache.db'))
-                    files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.gaia', 'meta.db'))
-                if CONFIG.INCLUDESEREN == 'true':
-                    files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.seren', 'cache.db'))
-                    files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.seren', 'torrentScrape.db'))
-            if len(files) > 0:
-                for item in files:
-                    if os.path.exists(item):
-                        delfiles += 1
                         try:
-                            textdb = database.connect(item)
-                            textexe = textdb.cursor()
+                            shutil.rmtree(os.path.join(root, d))
+                            delfiles += 1
+                            logging.log("[Success] cleared {0} files from {1}".format(str(file_count), os.path.join(item, d)),
+                                        level=xbmc.LOGNOTICE)
+                        except:
+                            logging.log("[Failed] to wipe cache in: {0}".format(os.path.join(item, d)),
+                                        level=xbmc.LOGNOTICE)
+        else:
+            for root, dirs, files in os.walk(item):
+                dirs[:] = [d for d in dirs if d not in excludes]
+                for d in dirs:
+                    if not str(d.lower()).find('cache') == -1:
+                        try:
+                            shutil.rmtree(os.path.join(root, d))
+                            delfiles += 1
+                            logging.log("[Success] wiped {0} ".format(os.path.join(root, d)), level=xbmc.LOGNOTICE)
+                        except:
+                            logging.log("[Failed] to wipe cache in: {0}".format(os.path.join(item, d)), level=xbmc.LOGNOTICE)
+
+    if CONFIG.INCLUDEVIDEO == 'true' and over is None:
+        files = []
+        if CONFIG.INCLUDEALL == 'true':
+            files = dbfiles
+        else:
+            ## TODO: Double check these
+            if CONFIG.INCLUDEPLACENTA == 'true':
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'cache.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'meta.5.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'providers.13.db'))
+            if CONFIG.INCLUDEEXODUSREDUX == 'true':
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'meta.5.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'providers.13.db'))
+            if CONFIG.INCLUDEYODA == 'true':
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'cache.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'meta.5.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'providers.13.db'))
+            if CONFIG.INCLUDEVENOM == 'true':
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.venom', 'cache.db'))
+            if CONFIG.INCLUDESCRUBS == 'true':
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.scrubsv2', 'cache.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.scrubsv2', 'meta.5.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.scrubsv2', 'providers.13.db'))
+            if CONFIG.INCLUDEOVEREASY == 'true':
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'cache.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'meta.5.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'providers.13.db'))
+            if CONFIG.INCLUDEGAIA == 'true':
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.gaia', 'cache.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.gaia', 'meta.db'))
+            if CONFIG.INCLUDESEREN == 'true':
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.seren', 'cache.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.seren', 'torrentScrape.db'))
+        if len(files) > 0:
+            for item in files:
+                if os.path.exists(item):
+                    delfiles += 1
+                    try:
+                        textdb = database.connect(item)
+                        textexe = textdb.cursor()
+                    except Exception as e:
+                        logging.log("DB Connection error: {0}".format(str(e)), level=xbmc.LOGERROR)
+                        continue
+                    if 'Database' in item:
+                        try:
+                            textexe.execute("DELETE FROM url_cache")
+                            textexe.execute("VACUUM")
+                            textdb.commit()
+                            textexe.close()
+                            logging.log("[Success] wiped {0}".format(item), level=xbmc.LOGNOTICE)
                         except Exception as e:
-                            logging.log("DB Connection error: {0}".format(str(e)), level=xbmc.LOGERROR)
-                            continue
-                        if 'Database' in item:
+                            logging.log("[Failed] wiped {0}: {1}".format(item, str(e)), level=xbmc.LOGNOTICE)
+                    else:
+                        textexe.execute("SELECT name FROM sqlite_master WHERE type = 'table'")
+                        for table in textexe.fetchall():
                             try:
-                                textexe.execute("DELETE FROM url_cache")
+                                textexe.execute("DELETE FROM {0}".format(table[0]))
                                 textexe.execute("VACUUM")
                                 textdb.commit()
-                                textexe.close()
-                                logging.log("[Success] wiped {0}".format(item), level=xbmc.LOGNOTICE)
+                                logging.log("[Success] wiped {0} in {1}".format(table[0], item), level=xbmc.LOGNOTICE)
                             except Exception as e:
-                                logging.log("[Failed] wiped {0}: {1}".format(item, str(e)), level=xbmc.LOGNOTICE)
-                        else:
-                            textexe.execute("SELECT name FROM sqlite_master WHERE type = 'table'")
-                            for table in textexe.fetchall():
                                 try:
-                                    textexe.execute("DELETE FROM {0}".format(table[0]))
-                                    textexe.execute("VACUUM")
-                                    textdb.commit()
-                                    logging.log("[Success] wiped {0} in {1}".format(table[0], item), level=xbmc.LOGNOTICE)
-                                except Exception as e:
-                                    try:
-                                        logging.log("[Failed] wiped {0} in {1}: {2}".format(table[0], item, str(e)), level=xbmc.LOGNOTICE)
-                                    except:
-                                        pass
-                            textexe.close()
-            else:
-                logging.log("Clear Cache: Clear Video Cache Not Enabled", level=xbmc.LOGNOTICE)
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
-                           '[COLOR {0}]Clear Cache: Removed {1} Files[/COLOR]'.format(CONFIG.COLOR2, delfiles))
+                                    logging.log("[Failed] wiped {0} in {1}: {2}".format(table[0], item, str(e)), level=xbmc.LOGNOTICE)
+                                except:
+                                    pass
+                        textexe.close()
+        else:
+            logging.log("Clear Cache: Clear Video Cache Not Enabled", level=xbmc.LOGNOTICE)
+    logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                       '[COLOR {0}]Clear Cache: Removed {1} Files[/COLOR]'.format(CONFIG.COLOR2, delfiles))
 
 
 def old_thumbs():
