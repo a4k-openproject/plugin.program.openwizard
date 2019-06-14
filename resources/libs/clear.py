@@ -694,12 +694,12 @@ def remove_addon_menu():
             continue
         xml = os.path.join(folder, 'addon.xml')
         if os.path.exists(xml):
-            match = tools.parse_dom(tools.read_from_file(xml), 'addon', ret='id')
+            a = tools.read_from_file(xml).replace('\n', '').replace('\r', '').replace('\t', '')
+            id_match = tools.parse_dom(a, 'addon', ret='id')
 
-            addid = foldername if len(match) == 0 else match[0]
+            addid = foldername if len(id_match) == 0 else id_match[0]
             try:
-                add = xbmcaddon.Addon(id=addid)
-                addonnames.append(add.getAddonInfo('name'))
+                addonnames.append(tools.get_addon_info(addid, 'name'))
                 addonids.append(addid)
             except:
                 pass

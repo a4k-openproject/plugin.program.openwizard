@@ -970,27 +970,28 @@ def enable_addons():
 
     add_file("[I][B][COLOR red]!!Notice: Disabling Some Addons Can Cause Issues!![/COLOR][/B][/I]", '', icon=CONFIG.ICONMAINT)
     fold = glob.glob(os.path.join(CONFIG.ADDONS, '*/'))
-    x = 0
-    for folder in sorted(fold, key = lambda x: x):
+    addonnames = []
+    addonids = []
+    for folder in sorted(fold, key=lambda x: x):
         foldername = os.path.split(folder[:-1])[1]
         if foldername in CONFIG.EXCLUDES:
             continue
-        if foldername in CONFIG.DEFAULTPLUGINS:
+        elif foldername in CONFIG.DEFAULTPLUGINS:
             continue
-        addonxml = os.path.join(folder, 'addon.xml')
-        if os.path.exists(addonxml):
-            x += 1
-            fold = folder.replace(CONFIG.ADDONS, '')[1:-1]
-            a = tools.read_from_file(addonxml).replace('\n', '').replace('\r', '').replace('\t', '')
-            match = tools.parse_dom(a, 'addon', ret='id')
-            match2 = tools.parse_dom(a, 'addon', ret='name')
+        elif foldername == 'packages':
+            continue
+        xml = os.path.join(folder, 'addon.xml')
+        if os.path.exists(xml):
+            a = tools.read_from_file(xml).replace('\n', '').replace('\r', '').replace('\t', '')
+            id_match = tools.parse_dom(a, 'addon', ret='id')
+            name_match = tools.parse_dom(a, 'addon', ret='name')
+
+            addid = foldername if len(id_match) == 0 else id_match[0]
+            name = foldername if len(name_match) == 0 else name_match[0]
             try:
-                pluginid = match[0]
-                name = match2[0]
-            except:
-                continue
-            try:
-                add = xbmcaddon.Addon(id=pluginid)
+                addonnames.append(tools.get_addon_info(addid, 'name'))
+                addonids.append(addid)
+
                 state = "[COLOR springgreen][Enabled][/COLOR]"
                 goto = "false"
             except:
@@ -999,8 +1000,8 @@ def enable_addons():
                 pass
             icon = os.path.join(folder, 'icon.png') if os.path.exists(os.path.join(folder, 'icon.png')) else CONFIG.ADDON_ICON
             fanart = os.path.join(folder, 'fanart.jpg') if os.path.exists(os.path.join(folder, 'fanart.jpg')) else CONFIG.ADDON_FANART
-            add_file("{0} {1}".format(state, name), 'toggleaddon', fold, goto, icon=icon, fanart=fanart)
-    if x == 0:
+            add_file("{0} {1}".format(state, name), 'toggleaddon', addid, goto, icon=icon, fanart=fanart)
+    if len(addonnames) == 0:
         add_file("No Addons Found to Enable or Disable.", '', icon=CONFIG.ICONMAINT)
 
     set_view()
