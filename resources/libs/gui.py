@@ -508,7 +508,7 @@ def show_log_viewer(default=None):
             self.logmsg = tools.read_from_file(self.default)
 
             self.titlemsg = "{0}: {1}".format(CONFIG.ADDONTITLE,
-                                              self.default.replace(CONFIG.LOG, '').replace(CONFIG.ADDON_DATA, ''))
+                                              self.default.replace(CONFIG.LOGPATH, '').replace(CONFIG.ADDON_DATA, ''))
             self.show_dialog()
 
         def show_dialog(self):
