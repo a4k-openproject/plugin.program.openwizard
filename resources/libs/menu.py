@@ -466,7 +466,7 @@ def maint_menu(view=None):
     includeall = 'true' if CONFIG.INCLUDEALL == 'true' else 'false'
     errors = int(logging.error_checking(count=True))
     errorsfound = str(errors) + ' Error(s) Found' if errors > 0 else 'None Found'
-    wizlogsize = ': [COLOR red]Not Found[/COLOR]' if not os.path.exists(CONFIG.WIZLOG) else ": [COLOR springgreen]%s[/COLOR]".format(tools.convert_size(os.path.getsize(CONFIG.WIZLOG)))
+    wizlogsize = ': [COLOR red]Not Found[/COLOR]' if not os.path.exists(CONFIG.WIZLOG) else ": [COLOR springgreen]{0}[/COLOR]".format(tools.convert_size(os.path.getsize(CONFIG.WIZLOG)))
 
     if includeall == 'true':
         includeplacenta = 'true'
