@@ -623,7 +623,7 @@ def view_ip():
 
 
 def speed_test():
-    import datetime
+    from datetime import date
 
     add_file('Run Speed Test', 'runspeedtest', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
     if os.path.exists(CONFIG.SPEEDTEST):
@@ -633,7 +633,7 @@ def speed_test():
             add_file('Clear Results', 'clearspeedtest', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
             add_separator('Previous Runs', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
             for item in speedimg:
-                created = datetime.fromtimestamp(os.path.getmtime(item)).strftime('%m/%d/%Y %H:%M:%S')
+                created = date.fromtimestamp(os.path.getmtime(item)).strftime('%m/%d/%Y %H:%M:%S')
                 img = item.replace(os.path.join(CONFIG.SPEEDTEST, ''), '')
                 add_file('[B]{0}[/B]: [I]Ran {1}[/I]'.format(img, created), 'viewspeedtest', img, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
 
@@ -641,7 +641,7 @@ def speed_test():
 def clear_speed_test():
     from resources.libs import tools
 
-    speedimg = glob.glob(os.path.join(CONFIG.SPEEDTESTFOLD, '*.png'))
+    speedimg = glob.glob(os.path.join(CONFIG.SPEEDTEST, '*.png'))
     for file in speedimg:
         tools.remove_file(file)
 
@@ -649,7 +649,7 @@ def clear_speed_test():
 def view_speed_test(img=None):
     from resources.libs import gui
 
-    img = os.path.join(CONFIG.SPEEDTESTFOLD, img)
+    img = os.path.join(CONFIG.SPEEDTEST, img)
     gui.show_speed_test(img)
 
 
@@ -659,14 +659,14 @@ def run_speed_test():
 
     try:
         found = speedtest.speedtest()
-        if not os.path.exists(CONFIG.SPEEDTESTFOLD):
-            os.makedirs(CONFIG.SPEEDTESTFOLD)
+        if not os.path.exists(CONFIG.SPEEDTEST):
+            os.makedirs(CONFIG.SPEEDTEST)
         urlsplits = found[0].split('/')
-        dest = os.path.join(CONFIG.SPEEDTESTFOLD, urlsplits[-1])
+        dest = os.path.join(CONFIG.SPEEDTEST, urlsplits[-1])
         urlretrieve(found[0], dest)
         view_speed_test(urlsplits[-1])
-    except:
-        logging.log("[Speed Test] Error Running Speed Test")
+    except Exception as e:
+        logging.log("[Speed Test] Error Running Speed Test: {0}".format(e), level=xbmc.LOGDEBUG)
         pass
 
 
