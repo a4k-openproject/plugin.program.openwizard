@@ -28,14 +28,14 @@ from resources.libs.config import CONFIG
 
 
 def read_from_file(file, mode='r'):
-    f = open(file, mode)
+    f = open(file, mode, encoding='utf-8')
     a = f.read()
     f.close()
     return a
 
 
 def write_to_file(file, content, mode='w'):
-    f = open(file, mode)
+    f = open(file, mode, encoding='utf-8')
     f.write(content)
     f.close()
 
