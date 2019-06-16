@@ -227,7 +227,7 @@ class Config:
         self.THIRD3URL = self.get_setting('wizard3url')
 
         # Backup variables
-        self.BACKUPLOCATION = self.get_setting('path') if not self.get_setting('path') == '' else self.HOME
+        self.BACKUPLOCATION = xbmc.translatePath(self.get_setting('path') if not self.get_setting('path') == '' else self.HOME)
         self.MYBUILDS = os.path.join(self.BACKUPLOCATION, 'My_Builds')
         self.INSTALLMETHOD = self.get_setting('installmethod')
         self.INSTALLMETHOD = int(float(self.INSTALLMETHOD)) if self.INSTALLMETHOD.isdigit() else 2
