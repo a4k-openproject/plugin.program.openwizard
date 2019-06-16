@@ -3,6 +3,7 @@ import xbmcvfs
 
 import os
 import shutil
+import zipfile
 
 from resources.libs.config import CONFIG
 from resources.libs import logging
@@ -162,11 +163,6 @@ def export_save_data():
     from resources.libs import gui
     from resources.libs import loginit
     from resources.libs import traktit
-
-    if CONFIG.KODIV > 17:
-        from resources.libs import zfile as zipfile
-    else:
-        import zipfile
 
     dir = [CONFIG.TRAKTFOLD, CONFIG.DEBRIDFOLD, CONFIG.LOGINFOLD]
     keepx = [CONFIG.KEEPADVANCED, CONFIG.KEEPSOURCES, CONFIG.KEEPFAVS, CONFIG.KEEPPROFILES, CONFIG.KEEPPLAYERCORE]

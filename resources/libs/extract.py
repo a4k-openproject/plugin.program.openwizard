@@ -20,14 +20,10 @@
 import xbmc
 
 import sys
+import zipfile
 
 from resources.libs.config import CONFIG
 from resources.libs import logging
-
-if CONFIG.KODIV > 17:
-    from resources.libs import zfile as zipfile
-else:
-    import zipfile
 
 
 def all(_in, _out, dp=None, ignore=None, title=None):

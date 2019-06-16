@@ -4,6 +4,7 @@ import xbmcvfs
 import glob
 import os
 import re
+import zipfile
 
 try:
     from sqlite3 import dbapi2 as database
@@ -367,11 +368,6 @@ def fix_update():
 
 
 def grab_addons(path):
-    if CONFIG.KODIV > 17:
-        from resources.libs import zfile as zipfile
-    else:
-        import zipfile
-
     zfile = zipfile.ZipFile(path)
     addonlist = []
     for item in zfile.infolist():
