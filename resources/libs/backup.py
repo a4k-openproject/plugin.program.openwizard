@@ -223,16 +223,18 @@ def build(name=""):
         zipname = os.path.join(CONFIG.MYBUILDS, '{0}.zip'.format(name))
         for_progress = 0
         ITEM = []
-        exclude_data = False
+        exclude_dirs = CONFIG.EXCLUDE_DIRS
+
         if not gui.DIALOG.yesno(CONFIG.ADDONTITLE,
                                 "[COLOR {0}]Do you want to include your addon_data folder?".format(CONFIG.COLOR2),
                                 "This contains [COLOR {0}]ALL[/COLOR] add-on settings including passwords but may also contain important information such as skin shortcuts. We recommend [COLOR {0}]MANUALLY[/COLOR] removing the addon_data folders that aren\'t required.".format(CONFIG.COLOR1, CONFIG.COLOR1),
                                 "[COLOR {0}]{1}[/COLOR] addon_data is ignored[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDON_ID),
                             yeslabel='[B][COLOR springgreen]Include data[/COLOR][/B]',
                             nolabel='[B][COLOR red]Don\'t Include[/COLOR][/B]'):
-            exclude_data = True
+            exclude_dirs.append('addon_data')
+
         tools.convert_special(CONFIG.HOME, True)
-        tools.ascii_check(CONFIG.HOME, True)
+        # tools.ascii_check(CONFIG.HOME, True)
         extractsize = 0
         try:
             zipf = zipfile.ZipFile(xbmc.translatePath(zipname), mode='w')
@@ -254,10 +256,11 @@ def build(name=""):
                   "[COLOR {0}]Creating backup zip".format(CONFIG.COLOR2), "", "Please Wait...[/COLOR]")
 
         for base, dirs, files in os.walk(CONFIG.HOME):
-            dirs[:] = [d for d in dirs if d not in CONFIG.EXCLUDE_DIRS]
+            dirs[:] = [d for d in dirs if d not in exclude_dirs]
             files[:] = [f for f in files if f not in CONFIG.EXCLUDE_FILES]
             for file in files:
                 ITEM.append(file)
+
         N_ITEM = len(ITEM)
         picture = []
         music = []
@@ -309,7 +312,7 @@ def build(name=""):
         db.fix_metas()
 
         for base, dirs, files in os.walk(CONFIG.HOME):
-            dirs[:] = [d for d in dirs if d not in CONFIG.EXCLUDE_DIRS]
+            dirs[:] = [d for d in dirs if d not in exclude_dirs]
             files[:] = [f for f in files if f not in CONFIG.EXCLUDE_FILES]
             for file in files:
                 try:
@@ -358,7 +361,7 @@ def build(name=""):
                 except Exception as e:
                     logging.log("[Back Up] Type = build: Unable to backup {0}".format(file), level=xbmc.LOGNOTICE)
                     logging.log("Build Backup Error: {0}".format(str(e)), level=xbmc.LOGNOTICE)
-        if exclude_data:
+        if 'addon_data' in exclude_dirs:
             match = glob.glob(os.path.join(CONFIG.ADDON_DATA, 'skin.*', ''))
             for fold in match:
                 fd = os.path.split(fold[:-1])[1]
