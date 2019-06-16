@@ -502,10 +502,8 @@ def ascii_check(use=None, over=False):
         for file in files:
             prog.append(file)
             prog2 = int(len(prog) / float(items) * 100)
-            gui.DP.update(prog2,
-                          "[COLOR {0}]Checking for non ASCII files".format(CONFIG.COLOR2),
-                          '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, d),
-                          'Please Wait[/COLOR]')
+            gui.DP.update(prog2, "[COLOR {0}]Checking for non ASCII files".format(CONFIG.COLOR2),
+                          '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, file), 'Please Wait[/COLOR]')
             try:
                 file.encode('ascii')
             except UnicodeEncodeError:

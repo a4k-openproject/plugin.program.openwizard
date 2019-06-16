@@ -252,6 +252,7 @@ def build(name=""):
                     return
         gui.DP.create("[COLOR {0}]{1}[/COLOR][COLOR {2}]: Creating Zip[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
                   "[COLOR {0}]Creating backup zip".format(CONFIG.COLOR2), "", "Please Wait...[/COLOR]")
+
         for base, dirs, files in os.walk(CONFIG.HOME):
             dirs[:] = [d for d in dirs if d not in CONFIG.EXCLUDE_DIRS]
             files[:] = [f for f in files if f not in CONFIG.EXCLUDE_FILES]
@@ -267,6 +268,7 @@ def build(name=""):
         skins = []
         fold = glob.glob(os.path.join(CONFIG.ADDONS, '*/'))
         idlist = []
+
         for folder in sorted(fold, key=lambda x: x):
             foldername = os.path.split(folder[:-1])[1]
             if foldername == 'packages':
@@ -328,7 +330,7 @@ def build(name=""):
                         logging.log("[Back Up] Type = build: Ignore {0} - Packages Folder".format(file), level=xbmc.LOGNOTICE)
                         continue
                     elif os.path.join(CONFIG.ADDONS, 'inputstream.adaptive') in fn:
-                        logging.log("[Back Up] Type = build: Ignore {0} - Binary Add-on".format(file), levvel=xbmc.LOGNOTICE)
+                        logging.log("[Back Up] Type = build: Ignore {0} - Binary Add-on".format(file), level=xbmc.LOGNOTICE)
                         continue
                     elif file.endswith('.csv'):
                         logging.log("[Back Up] Type = build: Ignore {0} - CSV File".format(file), level=xbmc.LOGNOTICE)
@@ -360,7 +362,7 @@ def build(name=""):
             match = glob.glob(os.path.join(CONFIG.ADDON_DATA, 'skin.*', ''))
             for fold in match:
                 fd = os.path.split(fold[:-1])[1]
-                if not fd in ['skin.confluence', 'skin.re-touch', 'skin.estuary', 'skin.estouchy']:
+                if fd not in ['skin.estuary', 'skin.estouchy']:
                     for base, dirs, files in os.walk(os.path.join(CONFIG.ADDON_DATA, fold)):
                         files[:] = [f for f in files if f not in CONFIG.EXCLUDE_FILES]
                         for file in files:
