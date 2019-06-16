@@ -1,9 +1,6 @@
-from resources.libs.config import CONFIG
+import zipfile
 
-if CONFIG.KODIV > 17:
-    from resources.libs import zfile as zipfile
-else:
-    import zipfile
+from resources.libs.config import CONFIG
 
 
 def str_test(teststr):

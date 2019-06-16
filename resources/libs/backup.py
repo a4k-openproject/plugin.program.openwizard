@@ -26,6 +26,7 @@ import glob
 import shutil
 import re
 import os
+import zipfile
 
 try:  # Python 3
     from urllib.parse import quote_plus
@@ -39,11 +40,6 @@ from resources.libs import extract
 from resources.libs import gui
 from resources.libs import logging
 from resources.libs import tools
-
-if CONFIG.KODIV > 17:
-    from resources.libs import zfile as zipfile
-else:
-    import zipfile
 
 
 def cleanup_backup():
