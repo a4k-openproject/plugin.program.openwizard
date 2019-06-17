@@ -8,6 +8,23 @@ import shutil
 import string
 import sys
 
+if sys.version_info[0] > 2:
+    # Python 3
+    pass
+else:
+    # Python 2
+    import codecs
+    import warnings
+
+    def open(file, mode='r', buffering=-1, encoding=None, errors=None, newline=None, closefd=True, opener=None):
+        if newline is not None:
+            warnings.warn('newline is not supported in py2')
+        if not closefd:
+            warnings.warn('closefd is not supported in py2')
+        if opener is not None:
+            warnings.warn('opener is not supported in py2')
+        return codecs.open(filename=file, mode=mode, encoding=encoding, errors=errors, buffering=buffering)
+
 try:  # Python 3
     from urllib.request import urlopen
     from urllib.request import Request
@@ -387,11 +404,11 @@ def convert_special(url, over=False):
                               "[COLOR {0}]Scanning: [COLOR {1}]{2}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, root.replace(CONFIG.HOME, '')),
                               "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, file),
                               "Please Wait[/COLOR]")
-                a = open(os.path.join(root, file)).read()
+                a = read_from_file(os.path.join(root, file))
                 encodedpath = quote(CONFIG.HOME)
                 encodedpath2 = quote(CONFIG.HOME).replace('%3A', '%3a').replace('%5C', '%5c')
                 b = a.replace(CONFIG.HOME, 'special://home/').replace(encodedpath, 'special://home/').replace(encodedpath2, 'special://home/')
-                write_to_file(os.path.join(root, file), str(b))
+                write_to_file(os.path.join(root, file), b)
 
                 if gui.DP.iscanceled():
                     gui.DP.close()
