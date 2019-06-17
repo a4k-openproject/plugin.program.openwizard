@@ -310,7 +310,7 @@ logging.log("[Installed Check] Started", level=xbmc.LOGNOTICE)
 if CONFIG.INSTALLED == 'true':
     if CONFIG.KODIV >= 17:
         db.kodi_17_fix()
-        if CONFIG.SKIN in ['skin.confluence', 'skin.estuary']:
+        if CONFIG.SKIN in ['skin.confluence', 'skin.estuary', 'skin.estouchy']:
             checkSkin()
         FAILED = True
     elif not CONFIG.EXTRACT == '100' and not CONFIG.BUILDNAME == "":
@@ -327,7 +327,7 @@ if CONFIG.INSTALLED == 'true':
             logging.log("[Installed Check] Fresh Install Re-activated", level=xbmc.LOGNOTICE)
         else:
             logging.log("[Installed Check] Reinstall Ignored")
-    elif CONFIG.SKIN in ['skin.confluence', 'skin.estuary']:
+    elif CONFIG.SKIN in ['skin.confluence', 'skin.estuary', 'skin.estouchy']:
         logging.log("[Installed Check] Incorrect skin: {0}".format(CONFIG.SKIN), level=xbmc.LOGNOTICE)
         defaults = CONFIG.get_setting('defaultskin')
         if not defaults == '':
@@ -394,7 +394,7 @@ if not FAILED:
         CONFIG.set_setting('lastbuildcheck', str(tools.get_date(days=CONFIG.UPDATECHECK)))
     elif not CONFIG.BUILDNAME == '':
         logging.log("[Build Check] Build Installed", level=xbmc.LOGNOTICE)
-        if CONFIG.SKIN in ['skin.confluence', 'skin.estuary'] and not CONFIG.DEFAULTIGNORE == 'true':
+        if CONFIG.SKIN in ['skin.confluence', 'skin.estuary', 'skin.estouchy'] and not CONFIG.DEFAULTIGNORE == 'true':
             checkSkin()
             logging.log("[Build Check] Build Installed: Checking Updates", level=xbmc.LOGNOTICE)
             CONFIG.set_setting('lastbuildcheck', str(tools.get_date(days=CONFIG.UPDATECHECK)))

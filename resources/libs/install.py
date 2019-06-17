@@ -57,7 +57,7 @@ def fresh_start(install=None, over=False):
                                        nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
                                        yeslabel='[B][COLOR springgreen]Continue[/COLOR][/B]')
     if yes_pressed:
-        if CONFIG.SKIN not in ['skin.confluence', 'skin.estuary']:
+        if CONFIG.SKIN not in ['skin.confluence', 'skin.estuary', 'skin.estouchy']:
             from resources.libs import skin
 
             swap = skin.skin_to_default('Fresh Install')
