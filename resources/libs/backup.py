@@ -43,7 +43,7 @@ from resources.libs import tools
 
 
 def cleanup_backup():
-    folder = glob.glob(os.path.join(CONFIG.MYBUILDS, "*"))
+    folder = glob.glob(os.path.join(CONFIG.MYBUILDS, "*/"))
     list = []
     filelist = []
 
@@ -55,7 +55,7 @@ def cleanup_backup():
         filelist.append(item)
         base = item.replace(CONFIG.MYBUILDS, '')
         if os.path.isdir(item):
-            list.append('/%s/' % base)
+            list.append('/{0}/'.format(base))
         elif os.path.isfile(item):
             list.append(base)
     list = ['--- Remove All Items ---'] + list
@@ -509,7 +509,7 @@ def theme(name=""):
     tempzipname = ''
     zipname = os.path.join(CONFIG.MYBUILDS, '{0}.zip'.format(themename))
     try:
-        zipf = zipfile.ZipFile(xbmc.translatePath(zipname), mode='w')
+        zipf = zipfile.ZipFile(zipname, mode='w')
     except:
         try:
             tempzipname = os.path.join(CONFIG.PACKAGES, '{0}.zip'.format(themename))
@@ -566,7 +566,8 @@ def theme(name=""):
                                 CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1), "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.SKIN),
                                 yeslabel="[B][COLOR springgreen]Add Settings[/COLOR][/B]",
                                 nolabel="[B][COLOR red]Skip Settings[/COLOR][/B]"):
-                    zipf.write(ad_skin, ad_skin.replace(CONFIG.HOME, ""), zipfile.ZIP_DEFLATED)
+                    ad_skin2 = ad_skin.replace(CONFIG.HOME, "")
+                    zipf.write(ad_skin, ad_skin2, zipfile.ZIP_DEFLATED)
             match = tools.parse_dom(tools.read_from_file(os.path.join(CONFIG.SKIN, 'addon.xml')), 'import', ret='addon')
             if 'script.skinshortcuts' in match:
                 if gui.DIALOG.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
@@ -670,12 +671,12 @@ def theme(name=""):
                   "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, str(e)))
         if not tempzipname == '':
             try:
-                os.remove(xbmc.translatePath(tempzipname))
+                os.remove(tempzipname)
             except Exception as e:
                 logging.log(str(e))
         else:
             try:
-                os.remove(xbmc.translatePath(zipname))
+                os.remove(zipname)
             except Exception as e:
                 logging.log(str(e))
         return
