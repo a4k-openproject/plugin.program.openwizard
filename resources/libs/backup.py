@@ -365,7 +365,7 @@ def build(name=""):
             match = glob.glob(os.path.join(CONFIG.ADDON_DATA, 'skin.*', ''))
             for fold in match:
                 fd = os.path.split(fold[:-1])[1]
-                if fd not in ['skin.estuary', 'skin.estouchy']:
+                if fd not in ['skin.confluence', 'skin.estuary', 'skin.estouchy']:
                     for base, dirs, files in os.walk(os.path.join(CONFIG.ADDON_DATA, fold)):
                         files[:] = [f for f in files if f not in CONFIG.EXCLUDE_FILES]
                         for file in files:
@@ -454,7 +454,7 @@ def guifix(name=""):
             match = glob.glob(os.path.join(CONFIG.ADDON_DATA, 'skin.*', ''))
             for fold in match:
                 fd = os.path.split(fold[:-1])[1]
-                if fd not in ['skin.confluence', 'skin.re-touch', 'skin.estuary', 'skin.estouchy']:
+                if fd not in ['skin.confluence', 'skin.estuary', 'skin.estouchy']:
                     if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
                                     "[COLOR {0}]Would you like to add the following skin folder to the GUI Fix Zip File?[/COLOR]".format(CONFIG.COLOR2),
                                     "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, fd),
@@ -527,8 +527,8 @@ def theme(name=""):
     tools.convert_special(CONFIG.USERDATA, True)
     tools.ascii_check(CONFIG.USERDATA, True)
     try:
-        if not CONFIG.SKIN == 'skin.confluence':
-            skinfold = os.path.join(CONFIG.ADDONS, CONFIG.SKIN, 'media')
+        if not CONFIG.SKIN not in ['skin.confluence', 'skin.estuary', 'skin.estouchy']:
+            skinfold = os.path.join(CONFIG.SKIN, 'media')
             match2 = glob.glob(os.path.join(skinfold, '*.xbt'))
             if len(match2) > 1:
                 if gui.DIALOG.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
@@ -1001,7 +1001,7 @@ def restore_it(type):
                                "[COLOR {0}]Local Restore Cancelled[/COLOR]".format(CONFIG.COLOR2))
             return
 
-    if CONFIG.SKIN not in ['skin.estuary']:
+    if CONFIG.SKIN not in ['skin.confluence', 'skin.estuary', 'skin.estouchy']:
         from resources.libs import skin
 
         skin.skin_to_default('Restore Backup')

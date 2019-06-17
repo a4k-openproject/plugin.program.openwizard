@@ -1359,8 +1359,8 @@ def wizard_menu(name, type, theme=None, over=False):
             gui.DP.update(0,"", "Installing {0}".format(name))
             test = False
             if url not in ["fresh", "normal"]:
-                test = test.test_theme(lib) if not CONFIG.SKIN in ['skin.confluence', 'skin.estuary'] else False
-                test2 = test.test_gui(lib) if not CONFIG.SKIN in ['skin.confluence', 'skin.estuary'] else False
+                test = test.test_theme(lib) if not CONFIG.SKIN in ['skin.confluence', 'skin.estuary', 'skin.estouchy'] else False
+                test2 = test.test_gui(lib) if not CONFIG.SKIN in ['skin.confluence', 'skin.estuary', 'skin.estouchy'] else False
                 if test:
                     skin.look_and_feel_data('save')
                     swap = skin.skin_to_default('Theme Install')
