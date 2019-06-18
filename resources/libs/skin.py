@@ -19,9 +19,7 @@
 
 
 import xbmc
-import xbmcaddon
 
-import os
 import re
 import threading
 
@@ -33,23 +31,23 @@ except ImportError:
 from resources.libs.config import CONFIG
 
 
-def get_old(old):
+def __get_old(old_key):
     try:
-        old = '"{0}"'.format(old)
+        old = '"{0}"'.format(old_key)
         query = '{{"jsonrpc":"2.0","method":"Settings.GetSettingValue","params":{{"setting":{0}}}, "id":1}}'.format(old)
         response = xbmc.executeJSONRPC(query)
         response = simplejson.loads(response)
-        if response. has_key('result'):
-            if response['result']. has_key('value'):
+        if response.has_key('result'):
+            if response['result'].has_key('value'):
                 return response['result']['value']
     except:
         pass
     return None
 
 
-def set_new(new, value):
+def __set_new(new_key, value):
     try:
-        new = '"{0}"'.format(new)
+        new = '"{0}"'.format(new_key)
         value = '"{0}"'.format(value)
         query = '{{"jsonrpc":"2.0","method":"Settings.SetSettingValue","params":{{"setting":{0},"value":{1}}}, "id":1}}'.format(new, value)
         response = xbmc.executeJSONRPC(query)
@@ -58,35 +56,18 @@ def set_new(new, value):
     return None
 
 
-def swap_skins(skin):
-    if skin == 'skin.confluence':
-        skinfold = os.path.join(CONFIG.HOME, 'userdata', 'addon_data', 'skin.confluence')
-        settings = os.path.join(skinfold, 'settings.xml')
-        if not os.path.exists(settings):
-            string = '<settings>\n    <setting id="FirstTimeRun" type="bool">true</setting>\n</settings>'
-            os.makedirs(skinfold)
-            from resources.libs import tools
-            tools.write_to_file(settings, string)
-        else:
-            xbmcaddon.Addon(id='skin.confluence').setSetting('FirstTimeRun', 'true')
-    old = 'lookandfeel.skin'
+def __swap_skins(skin):
+    old_key = 'lookandfeel.skin'
     value = skin
-    current = get_old(old)
-    new = old
-    set_new(new, value)
+    current_skin = __get_old(old_key)
+    new_key = old_key
+    __set_new(new_key, value)
 
 
 def switch_to_skin(goto, title="Error"):
-    swap_skins(goto)
-    x = 0
-    xbmc.sleep(1000)
-    while not xbmc.getCondVisibility("Window.isVisible(yesnodialog)") and x < 150:
-        x += 1
-        xbmc.sleep(100)
+    __swap_skins(goto)
 
-    if xbmc.getCondVisibility("Window.isVisible(yesnodialog)"):
-        xbmc.executebuiltin('SendClick(11)')
-    else:
+    if not __dialog_watch():
         from resources.libs import logging
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            '[COLOR {0}]{1}: Skin Swap Timed Out![/COLOR]'.format(CONFIG.COLOR2, title))
@@ -97,7 +78,7 @@ def switch_to_skin(goto, title="Error"):
 def skin_to_default(title):
     if CONFIG.SKIN not in ['skin.confluence', 'skin.estuary', 'skin.estouchy']:
         skin = 'skin.estuary'
-    return switch_to_skin(skin, title)
+        return switch_to_skin(skin, title)
 
 
 def look_and_feel_data(do='save'):
@@ -131,7 +112,7 @@ def swap_us():
     response = xbmc.executeJSONRPC(query)
     logging.log("Unknown Sources Get Settings: {0}".format(str(response)))
     if 'false' in response:
-        threading.Thread(target=dialog_watch).start()
+        threading.Thread(target=__dialog_watch).start()
         xbmc.sleep(200)
         query = '{{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{{"setting":{0},"value":{1}}}, "id":1}}'.format(new, value)
         response = xbmc.executeJSONRPC(query)
@@ -140,11 +121,14 @@ def swap_us():
         logging.log("Unknown Sources Set Settings: {0}".format(str(response)))
 
 
-def dialog_watch():
+def __dialog_watch():
     x = 0
-    while not xbmc.getCondVisibility("Window.isVisible(yesnodialog)") and x < 100:
+    while not xbmc.getCondVisibility("Window.isVisible(yesnodialog)") and x < 10:
         x += 1
         xbmc.sleep(100)
 
     if xbmc.getCondVisibility("Window.isVisible(yesnodialog)"):
-        xbmc.executebuiltin('SendClick(11)')
+        xbmc.executebuiltin('SendClick(yesnodialog, 11)')
+        return True
+    else:
+        return False

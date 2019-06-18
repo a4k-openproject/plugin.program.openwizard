@@ -110,7 +110,7 @@ def cleanup_backup():
                                "[COLOR {0}]Clean Up Cancelled![/COLOR]".format(CONFIG.COLOR2))
 
 
-def addon_pack(name=""):
+def __backup_addon_pack(name=""):
     if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
                         "[COLOR {0}]Are you sure you wish to create an Addon Pack?[/COLOR]".format(CONFIG.COLOR2),
                         nolabel="[B][COLOR red]Cancel Backup[/COLOR][/B]",
@@ -208,7 +208,7 @@ def addon_pack(name=""):
                       "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, zipname))
 
 
-def build(name=""):
+def __backup_build(name=""):
     if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
                         "[COLOR {0}]Are you sure you wish to backup the current build?[/COLOR]".format(CONFIG.COLOR2),
                     nolabel="[B][COLOR red]Cancel Backup[/COLOR][/B]",
@@ -402,7 +402,7 @@ def build(name=""):
                       "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, zipname))
 
 
-def info(name, extractsize, programs, video, music, picture, repos, scripts):
+def __backup_info(name, extractsize, programs, video, music, picture, repos, scripts):
     info = name.replace('.zip', '.txt')
     f = open(info, 'w')
     f.close()
@@ -420,7 +420,7 @@ def info(name, extractsize, programs, video, music, picture, repos, scripts):
         f.write('scripts="{0}"\n'.format(', '.join(scripts)) if len(scripts) > 0 else 'scripts="none"\n')
 
 
-def guifix(name=""):
+def __backup_guifix(name=""):
     if name == "":
         guiname = tools.get_keyboard("", "Please enter a name for the GUI Fix zip")
         if not guiname:
@@ -493,7 +493,7 @@ def guifix(name=""):
                   "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, guizipname))
 
 
-def theme(name=""):
+def __backup_theme(name=""):
     if not gui.DIALOG.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
                         "[COLOR {0}]Would you like to create a theme backup?[/COLOR]".format(CONFIG.COLOR2),
                         yeslabel="[B][COLOR springgreen]Continue[/COLOR][/B]",
@@ -691,7 +691,7 @@ def theme(name=""):
               "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, zipname))
 
 
-def addon_data(name=""):
+def __backup_addon_data(name=""):
     if gui.DIALOG.yesno(CONFIG.ADDONTITLE, "[COLOR {0}]Are you sure you wish to backup the current addon_data?[/COLOR]".format(CONFIG.COLOR2),
                     nolabel="[B][COLOR red]Cancel Backup[/COLOR][/B]",
                     yeslabel="[B][COLOR springgreen]Backup Addon_Data[/COLOR][/B]"):
@@ -817,15 +817,15 @@ def backup(type, name=''):
                       "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, str(e)))
         return
     if type == "addon_pack":
-        addon_pack(name)
+        __backup_addon_pack(name)
     elif type == "build":
-        build(name)
+        __backup_build(name)
     elif type == "guifix":
-        guifix(name)
+        __backup_guifix(name)
     elif type == "theme":
-        theme(name)
+        __backup_theme(name)
     elif type == "addon_data":
-        addon_data(name)
+        __backup_addon_data(name)
 
 
 def restore_local(type):
@@ -993,6 +993,8 @@ def restore_external(type):
 
 
 def restore_it(type):
+    # from resources.libs import skin
+
     if type == 'build':
         from resources.libs import install
 
@@ -1002,10 +1004,7 @@ def restore_it(type):
                                "[COLOR {0}]Local Restore Cancelled[/COLOR]".format(CONFIG.COLOR2))
             return
 
-    if CONFIG.SKIN not in ['skin.confluence', 'skin.estuary', 'skin.estouchy']:
-        from resources.libs import skin
-
-        skin.skin_to_default('Restore Backup')
+    # skin.skin_to_default('Restore Backup')
 
     restore_local(type)
 

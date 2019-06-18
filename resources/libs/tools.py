@@ -457,7 +457,7 @@ def reload_fix(default=None):
     if default is None:
         logging.log("Switching to: {0}".format(CONFIG.get_setting('defaultskin')))
         gotoskin = CONFIG.get_setting('defaultskin')
-        skin.swap_skins(gotoskin)
+        skin.switch_to_skin(gotoskin)
         skin.look_and_feel_data('restore')
     update.addon_updates('reset')
     update.force_update()
