@@ -162,7 +162,7 @@ def __backup_addon_pack(name=""):
                     addonfolds.append(foldername)
 
         selected = gui.DIALOG.multiselect(
-            "{0}: Select the add-ons you wish to add to the zip.".format(CONFIG.ADDONTITLE, addonnames))
+            "{0}: Select the add-ons you wish to add to the zip.".format(CONFIG.ADDONTITLE), addonnames)
         if selected is None:
             selected = []
 

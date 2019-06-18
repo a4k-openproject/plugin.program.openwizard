@@ -128,7 +128,7 @@ elif mode == 'backuptheme':
     backup.backup('theme')
 elif mode == 'backupaddonpack':
     from resources.libs import backup
-    backup.backup('addon pack')
+    backup.backup('addon_pack')
 elif mode == 'backupaddon':
     from resources.libs import backup
     backup.backup('addon_data')
