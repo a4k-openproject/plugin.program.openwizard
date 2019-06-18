@@ -216,15 +216,6 @@ class Config:
         self.KEEPTRAKT = self.get_setting('keeptrakt')
         self.KEEPDEBRID = self.get_setting('keepdebrid')
         self.KEEPLOGIN = self.get_setting('keeplogin')
-        
-        # Third Party Wizard variables
-        self.THIRDPARTY = self.get_setting('enable3rd')
-        self.THIRD1NAME = self.get_setting('wizard1name')
-        self.THIRD1URL = self.get_setting('wizard1url')
-        self.THIRD2NAME = self.get_setting('wizard2name')
-        self.THIRD2URL = self.get_setting('wizard2url')
-        self.THIRD3NAME = self.get_setting('wizard3name')
-        self.THIRD3URL = self.get_setting('wizard3url')
 
         # Backup variables
         self.BACKUPLOCATION = xbmc.translatePath(self.get_setting('path') if not self.get_setting('path') == '' else self.HOME)
