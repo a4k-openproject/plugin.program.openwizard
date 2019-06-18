@@ -43,7 +43,8 @@ from resources.libs import tools
 
 
 def cleanup_backup():
-    folder = glob.glob(os.path.join(CONFIG.MYBUILDS, "*/"))
+    folder = glob.glob(os.path.join(CONFIG.MYBUILDS, "*"))
+    logging.log(folder, level=xbmc.LOGNOTICE)
     list = []
     filelist = []
 
