@@ -166,14 +166,6 @@
 		<setting id="keeprepos" type="bool" label="Keep Installed Repositories" default="false"/>
 		<setting id="keepsuper" type="bool" label="Keep Super Favourites" default="false"/>
 		<setting id="keepwhitelist" type="bool" label="Keep My Whitelist Addons" default="false"/>
-		<setting type="lsep" label="Third Party Wizard Support:"/>
-		<setting id="enable3rd" type="bool" label="Enable 3rd Party Wizards" default="false"/>
-		<setting id="wizard1name" type="text" label="Wizard 1 Name: " enable="true" visible="!eq(-1,false)" default=""/>
-		<setting id="wizard1url" type="text" label="Wizard 1 URL: " enable="true" visible="!eq(-2,false)" default=""/>
-		<setting id="wizard2name" type="text" label="Wizard 2 Name: " enable="true" visible="!eq(-3,false)" default=""/>
-		<setting id="wizard2url" type="text" label="Wizard 2 URL: " enable="true" visible="!eq(-4,false)" default=""/>
-		<setting id="wizard3name" type="text" label="Wizard 3 Name: " enable="true" visible="!eq(-5,false)" default=""/>
-		<setting id="wizard3url" type="text" label="Wizard 3 URL: " enable="true" visible="!eq(-6,false)" default=""/>
 	</category>
 
 	<category label="View Settings">
