@@ -395,7 +395,7 @@ def __backup_build(name=""):
                 xbmcvfs.copy(tempzipname, zipname)
                 xbmcvfs.delete(tempzipname)
 
-        info(name, extractsize, programs, video, music, picture, repos, scripts)
+        __backup_info(name, extractsize, programs, video, music, picture, repos, scripts)
 
         gui.DIALOG.ok(CONFIG.ADDONTITLE,
                       "[COLOR {0}]{1}[/COLOR] [COLOR {2}]Backup successful:[/COLOR]".format(CONFIG.COLOR1, name, CONFIG.COLOR2),
