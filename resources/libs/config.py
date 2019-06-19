@@ -155,6 +155,7 @@ class Config:
     def init_settings(self):
         # Build variables
         self.BUILDNAME = self.get_setting('buildname')
+        self.BUILDCHECK = self.get_setting('lastbuildcheck')
         self.DEFAULTSKIN = self.get_setting('defaultskin')
         self.DEFAULTNAME = self.get_setting('defaultskinname')
         self.DEFAULTIGNORE = self.get_setting('defaultskinignore')

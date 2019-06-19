@@ -167,9 +167,9 @@ def check_theme(name, theme, ret):
 def check_wizard(ret):
     from resources.libs import tools
 
-    if not check_url(CONFIG.WIZARDFILE):
+    if not check_url(CONFIG.BUILDFILE):
         return False
-    link = tools.open_url(CONFIG.WIZARDFILE).replace('\n', '').replace('\r', '').replace('\t', '')
+    link = tools.open_url(CONFIG.BUILDFILE).replace('\n', '').replace('\r', '').replace('\t', '')
     match = re.compile('id="{0}".+?ersion="(.+?)".+?ip="(.+?)"'.format(CONFIG.ADDON_ID)).findall(link)
     if len(match) > 0:
         for version, zip in match:
