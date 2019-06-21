@@ -306,6 +306,7 @@ def check_repos():
 
 
 def build_count():
+    from resources.libs import test
     from resources.libs import tools
 
     link = tools.open_url(CONFIG.BUILDFILE).replace('\n', '').replace('\r', '').replace('\t', '')
@@ -321,7 +322,7 @@ def build_count():
                 hidden += 1
                 adultcount += 1
                 continue
-            if not CONFIG.DEVELOPER == 'true' and tools.str_test(name):
+            if not CONFIG.DEVELOPER == 'true' and test.str_test(name):
                 hidden += 1
                 continue
             kodi = int(float(kodi))
