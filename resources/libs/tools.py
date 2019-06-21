@@ -608,9 +608,6 @@ def get_info_label(label):
 
 
 def open_url(url):
-    req = Request(url)
-    req.add_header('User-Agent', CONFIG.USER_AGENT)
-    response = urlopen(req)
-    link = response.read()
-    response.close()
-    return link
+    import requests
+
+    return requests.get(url, headers={'user-agent': CONFIG.USER_AGENT}).text
