@@ -170,9 +170,10 @@ class Config:
         # View variables
         self.SHOW17 = self.get_setting('show17')
         self.SHOW18 = self.get_setting('show18')
+        self.SHOW19 = self.get_setting('show19')
         self.SHOWADULT = self.get_setting('adult')
         self.SHOWMAINT = self.get_setting('showmaint')
-        self.SEPERATE = self.get_setting('seperate')
+        self.SEPARATE = self.get_setting('separate')
         self.DEVELOPER = self.get_setting('developer')
         
         # Auto-Clean variables

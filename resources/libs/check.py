@@ -122,7 +122,7 @@ def build_info(name):
                 msg += "[COLOR {0}]Music:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, music)
                 msg += "[COLOR {0}]Pictures:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, picture)
                 msg += "[COLOR {0}]Repositories:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, repos)
-                msg += "[COLOR {0}]Scripts:[/COLOR] [COLOR {1}]{}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, scripts)
+                msg += "[COLOR {0}]Scripts:[/COLOR] [COLOR {1}]{2}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, scripts)
             else:
                 msg  = "[COLOR {0}]Build Name:[/COLOR] [COLOR {1}]{2}[/COLOR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, name)
                 msg += "[COLOR {0}]Build Version:[/COLOR] [COLOR {1}]{2}[/COLOR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, version)
@@ -314,8 +314,10 @@ def build_count():
     total = 0
     count17 = 0
     count18 = 0
+    count19 = 0
     hidden = 0
     adultcount = 0
+
     if len(match) > 0:
         for name, kodi, adult in match:
             if not CONFIG.SHOWADULT == 'true' and adult.lower() == 'yes':
@@ -327,11 +329,13 @@ def build_count():
                 continue
             kodi = int(float(kodi))
             total += 1
-            if kodi == 18:
+            if kodi == 19:
+                count19 += 1
+            elif kodi == 18:
                 count18 += 1
             elif kodi == 17:
                 count17 += 1
-    return total, count17, count18, adultcount, hidden
+    return total, count17, count18, count19, adultcount, hidden
 
 
 def theme_count(name, count=True):

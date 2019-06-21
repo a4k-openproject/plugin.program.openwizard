@@ -10,9 +10,10 @@
 		<setting id="disableupdate" type="bool" label="Disable Update Notification" default="false"/>
 		<setting id="installmethod" type="enum" label="Which method would you like to use after Install?" values="Always Ask|Reload Profile|Force Close" default="0"/>
 		<setting type="lsep" label="Show Builds:"/>
-		<setting id="show17" type="bool" label="Show Krypton(v17.0) Builds" default="true"/>
-		<setting id="show18" type="bool" label="Show Leia(v18.0) Builds" default="true"/>
-		<setting id="seperate" type="bool" label="Do not seperate based off version" default="false"/>
+		<setting id="show17" type="bool" label="Show Krypton (v17.0) Builds" default="true"/>
+		<setting id="show18" type="bool" label="Show Leia (v18.0) Builds" default="true"/>
+		<setting id="show19" type="bool" label="Show Matrix (v19.0) Builds" default="true"/>
+		<setting id="separate" type="bool" label="Do not separate based off version" default="false"/>
         
         <!-- Hidden Settings -->
 		<setting id="installed" type="bool" label="Build Installed" visible="false" default="false" />
