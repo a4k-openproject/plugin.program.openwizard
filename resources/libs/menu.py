@@ -96,9 +96,10 @@ def build_menu():
         add_file('{0}'.format(CONFIG.BUILDFILE), '', icon=CONFIG.ICONBUILDS, themeit=CONFIG.THEME3)
         return
 
-    total, count17, count18, adultcount, hidden = check.build_count()
+    total, count17, count18, count19, adultcount, hidden = check.build_count()
     link = bf.replace('\n', '').replace('\r', '').replace('\t', '').replace('gui=""', 'gui="http://"').replace('theme=""', 'theme="http://"').replace('adult=""', 'adult="no"')
     match = re.compile('name="(.+?)".+?ersion="(.+?)".+?rl="(.+?)".+?ui="(.+?)".+?odi="(.+?)".+?heme="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"').findall(link)
+
     if total == 1:
         for name, version, url, gui, kodi, theme, icon, fanart, adult, description in match:
             if not CONFIG.SHOWADULT == 'true' and adult.lower() == 'yes':
@@ -111,7 +112,7 @@ def build_menu():
     add_dir('Save Data Menu', 'savedata', icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME3)
     add_separator()
     if len(match) >= 1:
-        if CONFIG.SEPERATE == 'true':
+        if CONFIG.SEPARATE == 'true':
             for name, version, url, gui, kodi, theme, icon, fanart, adult, description in match:
                 if not CONFIG.SHOWADULT == 'true' and adult.lower() == 'yes':
                     continue
@@ -120,6 +121,18 @@ def build_menu():
                 menu = create_install_menu(name)
                 add_dir('[{0}] {1} (v{2})'.format(float(kodi), name, version), 'viewbuild', name, description=description, fanart=fanart, icon=icon, menu=menu, themeit=CONFIG.THEME2)
         else:
+            if count19 > 0:
+                state = '+' if CONFIG.SHOW19 == 'false' else '-'
+                add_file('[B]{0} Matrix Builds ({1})[/B]'.format(state, count19), 'togglesetting',  'show19', themeit=CONFIG.THEME3)
+                if CONFIG.SHOW19 == 'true':
+                    for name, version, url, gui, kodi, theme, icon, fanart, adult, description in match:
+                        if not CONFIG.SHOWADULT == 'true' and adult.lower() == 'yes':
+                            continue
+                        if not CONFIG.DEVELOPER == 'true' and test.str_test(name):
+                            continue
+                        if int(float(kodi)) == 19:
+                            menu = create_install_menu(name)
+                            add_dir('[{0}] {1} (v{2})'.format(float(kodi), name, version), 'viewbuild', name, description=description, fanart=fanart, icon=icon, menu=menu, themeit=CONFIG.THEME2)
             if count18 > 0:
                 state = '+' if CONFIG.SHOW18 == 'false' else '-'
                 add_file('[B]{0} Leia Builds ({1})[/B]'.format(state, count18), 'togglesetting',  'show18', themeit=CONFIG.THEME3)
@@ -129,7 +142,7 @@ def build_menu():
                             continue
                         if not CONFIG.DEVELOPER == 'true' and test.str_test(name):
                             continue
-                        if CONFIG.KODIV >= 18:
+                        if int(float(kodi)) == 18:
                             menu = create_install_menu(name)
                             add_dir('[{0}] {1} (v{2})'.format(float(kodi), name, version), 'viewbuild', name, description=description, fanart=fanart, icon=icon, menu=menu, themeit=CONFIG.THEME2)
             if count17 > 0:
@@ -141,7 +154,7 @@ def build_menu():
                             continue
                         if not CONFIG.DEVELOPER == 'true' and test.str_test(name):
                             continue
-                        if CONFIG.KODIV >= 17:
+                        if int(float(kodi)) == 17:
                             menu = create_install_menu(name)
                             add_dir('[{0}] {1} (v{2})'.format(float(kodi), name, version), 'viewbuild', name, description=description, fanart=fanart, icon=icon, menu=menu, themeit=CONFIG.THEME2)
     elif hidden > 0:
