@@ -380,7 +380,6 @@ def show_update_window(name='Testing Window', current='1.0', new='1.1', icon=CON
             xbmc.executebuiltin('RunPlugin({0})'.format(url))
             self.close()
 
-
         def do_normal_install(self):
             from resources.libs import logging
             logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}] [User Selected: Normal Install build]".format(CONFIG.BUILDVERSION, CONFIG.LATESTVERSION), level=xbmc.LOGNOTICE)
@@ -407,7 +406,7 @@ def show_update_window(name='Testing Window', current='1.0', new='1.1', icon=CON
                 self.do_fresh_install()
             elif controlid == self.normal:
                 self.do_normal_install()
-            else:
+            elif controlid == self.ignore:
                 self.do_ignore()
 
     update = UpdateWindow("BuildUpdate.xml", CONFIG.ADDON_PATH, 'DefaultSkin', name=name, current=current, new=new, icon=icon, fanart=fanart)

@@ -25,7 +25,7 @@ def wizard_update(startup=None):
             wid, ver, zip = check.check_wizard('all')
         except:
             return
-        if ver > CONFIG.VERSION:
+        if ver > CONFIG.ADDON_VERSION:
             from resources.libs import gui
 
             yes = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
