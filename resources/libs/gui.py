@@ -29,6 +29,8 @@ ACTION_BACKSPACE = 110  # ?
 ACTION_MOUSE_LEFT_CLICK = 100
 ACTION_MOUSE_LONG_CLICK = 108
 
+BACK_ACTIONS = [ACTION_PREVIOUS_MENU, ACTION_NAV_BACK, ACTION_BACKSPACE]
+
 
 def highlight_text(msg):
     msg = msg.replace('\n', '[NL]')
@@ -95,7 +97,7 @@ def show_text_box(title, msg):
                 self.close()
 
         def onAction(self, action):
-            if action == ACTION_PREVIOUS_MENU or action == ACTION_NAV_BACK:
+            if action.getId() in BACK_ACTIONS:
                 self.close()
 
     tb = TextBox("Textbox.xml", CONFIG.ADDON_PATH, 'DefaultSkin', title=title, msg=msg)
@@ -128,7 +130,7 @@ def show_contact(msg=""):
             self.setFocusId(self.scrollcontrol)
 
         def onAction(self, action):
-            if action == ACTION_PREVIOUS_MENU or action == ACTION_NAV_BACK:
+            if action.getId() in BACK_ACTIONS:
                 self.close()
 
     cw = ContactWindow("Contact.xml", CONFIG.ADDON_PATH, 'DefaultSkin', title=CONFIG.ADDONTITLE, fanart=CONFIG.CONTACTFANART,
@@ -160,6 +162,10 @@ def show_qr_code(layout, imagefile, message):
             if controlid == self.okbutton:
                 self.close()
 
+        def onAction(self, action):
+            if action.getId() in BACK_ACTIONS:
+                self.close()
+
     qr = QRCode(layout, CONFIG.ADDON_PATH, 'DefaultSkin', image=imagefile, text=message)
     qr.doModal()
     del qr
@@ -177,8 +183,7 @@ def show_apk_warning(apk):
             self.close_window()
 
         def onAction(self, action):
-            if action in [ACTION_PREVIOUS_MENU, ACTION_BACKSPACE, ACTION_NAV_BACK, ACTION_SELECT_ITEM,
-                          ACTION_MOUSE_LEFT_CLICK, ACTION_MOUSE_LONG_CLICK]:
+            if action.getId() in BACK_ACTIONS:
                 self.close_window()
 
         def close_window(self):
@@ -211,12 +216,8 @@ def show_speed_test(img):
             self.close_window()
 
         def onAction(self, action):
-            if action in [ACTION_PREVIOUS_MENU, ACTION_BACKSPACE, ACTION_NAV_BACK, ACTION_SELECT_ITEM,
-                          ACTION_MOUSE_LEFT_CLICK, ACTION_MOUSE_LONG_CLICK]:
-                self.close_window()
-
-        def close_window(self):
-            self.close()
+            if action.getId() in BACK_ACTIONS:
+                self.close()
 
     popup = SpeedTest('SpeedTest.xml', CONFIG.ADDON_PATH, 'DefaultSkin', img=img)
     popup.doModal()
@@ -281,6 +282,10 @@ def show_save_data_settings():
 
                 self.close()
 
+        def onAction(self, action):
+            if action.getId() in BACK_ACTIONS:
+                self.close()
+
     fr = FirstRun("FirstRunSaveData.xml", CONFIG.ADDON_PATH, 'DefaultSkin', current=CONFIG.KEEPWHITELIST)
     fr.doModal()
     del fr
@@ -302,7 +307,6 @@ def show_build_prompt():
             self.ignore = 202
             self.show_dialog()
 
-
         def show_dialog(self):
             self.getControl(self.image).setImage(CONFIG.ADDON_FANART)
             self.getControl(self.image).setColorDiffuse('9FFFFFFF')
@@ -312,28 +316,28 @@ def show_build_prompt():
 
         def do_build_menu(self):
             from resources.libs import logging
-            logging.log("[Check Updates] [User Selected: Open Build Menu] [Next Check: {0}]".format(str(CONFIG.NEXTCHECK)),
+            logging.log("[Check Updates] [User Selected: Open Build Menu] [Next Check: {0}]".format(str(CONFIG.BUILDCHECK)),
                         level=xbmc.LOGNOTICE)
-            CONFIG.set_setting('lastbuildcheck', str(CONFIG.NEXTCHECK))
+            CONFIG.set_setting('lastbuildcheck', str(CONFIG.BUILDCHECK))
             url = 'plugin://{0}/?mode=builds'.format(CONFIG.ADDON_ID)
             xbmc.executebuiltin('ActivateWindow(10025, "{0}", return)'.format(url))
             self.close()
 
         def do_ignore(self):
             from resources.libs import logging
-            logging.log("[First Run] [User Selected: Ignore Build Menu] [Next Check: {0}]".format(str(CONFIG.NEXTCHECK)),
+            logging.log("[First Run] [User Selected: Ignore Build Menu] [Next Check: {0}]".format(str(CONFIG.BUILDCHECK)),
                         level=xbmc.LOGNOTICE)
-            CONFIG.set_setting('lastbuildcheck', str(CONFIG.NEXTCHECK))
+            CONFIG.set_setting('lastbuildcheck', str(CONFIG.BUILDCHECK))
             self.close()
 
         def onAction(self, action):
-            if action == ACTION_PREVIOUS_MENU or action == ACTION_NAV_BACK:
+            if action.getId() in BACK_ACTIONS:
                 self.do_ignore()
 
         def onClick(self, controlid):
             if controlid == self.buildmenu:
                 self.do_build_menu()
-            else:
+            elif controlid == self.ignore:
                 self.do_ignore()
 
     fr = BuildPrompt("FirstRunBuild.xml", CONFIG.ADDON_PATH, 'DefaultSkin')
@@ -374,8 +378,8 @@ def show_update_window(name='Testing Window', current='1.0', new='1.1', icon=CON
         def do_fresh_install(self):
             from resources.libs import logging
             logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}] [User Selected: Fresh Install build]".format(CONFIG.BUILDVERSION, CONFIG.LATESTVERSION), level=xbmc.LOGNOTICE)
-            logging.log("[Check Updates] [Next Check: {0}]".format(str(CONFIG.NEXTCHECK)), level=xbmc.LOGNOTICE)
-            CONFIG.set_setting('lastbuildcheck', str(CONFIG.NEXTCHECK))
+            logging.log("[Check Updates] [Next Check: {0}]".format(str(CONFIG.BUILDCHECK)), level=xbmc.LOGNOTICE)
+            CONFIG.set_setting('lastbuildcheck', str(CONFIG.BUILDCHECK))
             url = 'plugin://{0}/?mode=install&name={1}&url=fresh'.format(CONFIG.ADDON_ID, quote_plus(CONFIG.BUILDNAME))
             xbmc.executebuiltin('RunPlugin({0})'.format(url))
             self.close()
@@ -383,8 +387,8 @@ def show_update_window(name='Testing Window', current='1.0', new='1.1', icon=CON
         def do_normal_install(self):
             from resources.libs import logging
             logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}] [User Selected: Normal Install build]".format(CONFIG.BUILDVERSION, CONFIG.LATESTVERSION), level=xbmc.LOGNOTICE)
-            logging.log("[Check Updates] [Next Check: {0}]".format(str(CONFIG.NEXTCHECK)), level=xbmc.LOGNOTICE)
-            CONFIG.set_setting('lastbuildcheck', str(CONFIG.NEXTCHECK))
+            logging.log("[Check Updates] [Next Check: {0}]".format(str(CONFIG.BUILDCHECK)), level=xbmc.LOGNOTICE)
+            CONFIG.set_setting('lastbuildcheck', str(CONFIG.BUILDCHECK))
             url = 'plugin://{0}/?mode=install&name={1}&url=normal'.format(CONFIG.ADDON_ID, quote_plus(CONFIG.BUILDNAME))
             xbmc.executebuiltin('RunPlugin({0})'.format(url))
             self.close()
@@ -398,7 +402,7 @@ def show_update_window(name='Testing Window', current='1.0', new='1.1', icon=CON
             self.close()
 
         def onAction(self, action):
-            if action == ACTION_PREVIOUS_MENU or action == ACTION_NAV_BACK:
+            if action.getId() in BACK_ACTIONS:
                 self.do_ignore()
 
         def onClick(self, controlid):
@@ -470,13 +474,13 @@ def show_notification(msg='', test=False):
             self.close()
 
         def onAction(self, action):
-            if action == ACTION_PREVIOUS_MENU or action == ACTION_NAV_BACK:
+            if action.getId() in BACK_ACTIONS:
                 self.do_remind()
 
         def onClick(self, controlid):
             if controlid == self.dismiss:
                 self.do_dismiss()
-            else:
+            elif controlid == self.remindme:
                 self.do_remind()
 
     xbmc.executebuiltin('Skin.SetString(headertexttype, {0})'.format('true' if CONFIG.HEADERTYPE == 'Text' else 'false'))
@@ -556,11 +560,12 @@ def show_log_viewer(default=None):
                     self.setFocusId(self.scrollbar)
 
         def onAction(self, action):
-            if action == ACTION_PREVIOUS_MENU or action == ACTION_NAV_BACK:
+            if action.getId() in BACK_ACTIONS:
                 self.close()
 
-    if default is None:
+    if not default:
         default = logging.grab_log(True)
+        
     lv = LogViewer("LogViewer.xml", CONFIG.ADDON_PATH, 'DefaultSkin', default=default)
     lv.doModal()
     del lv
