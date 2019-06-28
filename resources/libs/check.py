@@ -90,12 +90,13 @@ def check_info(name):
 
 
 def build_info(name):
+    from resources.libs import gui
     from resources.libs import logging
     from resources.libs import tools
 
     if check_url(CONFIG.BUILDFILE):
         if check_build(name, 'url'):
-            name, version, url, minor, gui, kodi, theme, icon, fanart, preview, adult, info, description = check_build(name, 'all')
+            name, version, url, minor, gui_ignore, kodi, theme, icon, fanart, preview, adult, info, description = check_build(name, 'all')
             adult = 'Yes' if adult.lower() == 'yes' else 'No'
             extend = False
             if not info == "http://":
