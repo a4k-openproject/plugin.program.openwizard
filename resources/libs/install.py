@@ -17,7 +17,9 @@ def fresh_start(install=None, over=False):
     from resources.libs import gui
     from resources.libs import logging
     from resources.libs import tools
-
+    
+    exclude_dirs = CONFIG.EXCLUDES
+    
     if CONFIG.KEEPTRAKT == 'true':
         from resources.libs import traktit
 
@@ -45,7 +47,7 @@ def fresh_start(install=None, over=False):
                                        nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
                                        yeslabel='[B][COLOR springgreen]Continue[/COLOR][/B]')
     elif install:
-        yes_pressed = gui.DIALOG.yesno(CONFIG.ADDONTITLE, "[COLOR %s]Do you wish to restore your".format(CONFIG.COLOR2),
+        yes_pressed = gui.DIALOG.yesno(CONFIG.ADDONTITLE, "[COLOR {0}]Do you wish to restore your".format(CONFIG.COLOR2),
                                        "Kodi configuration to default settings",
                                        "Before installing [COLOR {0}]{1}[/COLOR]?".format(CONFIG.COLOR1, install),
                                        nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
@@ -57,17 +59,9 @@ def fresh_start(install=None, over=False):
                                        nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
                                        yeslabel='[B][COLOR springgreen]Continue[/COLOR][/B]')
     if yes_pressed:
-        if CONFIG.SKIN not in ['skin.confluence', 'skin.estuary', 'skin.estouchy']:
-            from resources.libs import skin
-
-            swap = skin.skin_to_default('Fresh Install')
-            if not swap:
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
-                                   '[COLOR {0}]Fresh Install: Skin Swap Failed![/COLOR]'.format(CONFIG.COLOR2))
-                return False
-            xbmc.sleep(1000)
-
+        from resources.libs import skin
         from resources.libs import update
+        
         update.addon_updates('set')
         xbmcPath = os.path.abspath(CONFIG.HOME)
         gui.DP.create(CONFIG.ADDONTITLE,
@@ -79,10 +73,10 @@ def fresh_start(install=None, over=False):
             repos = glob.glob(os.path.join(CONFIG.ADDONS, 'repo*/'))
             for item in repos:
                 repofolder = os.path.split(item[:-1])[1]
-                if not repofolder == CONFIG.EXCLUDES:
-                    CONFIG.EXCLUDES.append(repofolder)
+                if not repofolder == exclude_dirs:
+                    exclude_dirs.append(repofolder)
         if CONFIG.KEEPSUPER == 'true':
-            CONFIG.EXCLUDES.append('plugin.program.super.favourites')
+            exclude_dirs.append('plugin.program.super.favourites')
         if CONFIG.KEEPWHITELIST == 'true':
             pvr = ''
 
@@ -99,24 +93,24 @@ def fresh_start(install=None, over=False):
 
                     depends = db.depends_list(fold)
                     for plug in depends:
-                        if not plug in CONFIG.EXCLUDES:
-                            CONFIG.EXCLUDES.append(plug)
+                        if not plug in exclude_dirs:
+                            exclude_dirs.append(plug)
                         depends2 = db.depends_list(plug)
                         for plug2 in depends2:
-                            if not plug2 in CONFIG.EXCLUDES:
-                                CONFIG.EXCLUDES.append(plug2)
-                    if not fold in CONFIG.EXCLUDES:
-                        CONFIG.EXCLUDES.append(fold)
+                            if not plug2 in exclude_dirs:
+                                exclude_dirs.append(plug2)
+                    if not fold in exclude_dirs:
+                        exclude_dirs.append(fold)
                 if not pvr == '':
                     CONFIG.set_setting('pvrclient', fold)
         if CONFIG.get_setting('pvrclient') == '':
-            for item in CONFIG.EXCLUDES:
+            for item in exclude_dirs:
                 if item.startswith('pvr'):
                     CONFIG.set_setting('pvrclient', item)
         gui.DP.update(0, "[COLOR {0}]Clearing out files and folders:".format(CONFIG.COLOR2))
         latestAddonDB = db.latest_db('Addons')
         for root, dirs, files in os.walk(xbmcPath, topdown=True):
-            dirs[:] = [d for d in dirs if d not in CONFIG.EXCLUDES]
+            dirs[:] = [d for d in dirs if d not in exclude_dirs]
             for name in files:
                 del_file += 1
                 fold = root.replace('/', '\\').split('\\')
@@ -158,7 +152,7 @@ def fresh_start(install=None, over=False):
                                    "[COLOR {0}]Fresh Start Cancelled[/COLOR]".format(CONFIG.COLOR2))
                 return False
         for root, dirs, files in os.walk(xbmcPath, topdown=True):
-            dirs[:] = [d for d in dirs if d not in CONFIG.EXCLUDES]
+            dirs[:] = [d for d in dirs if d not in exclude_dirs]
             for name in dirs:
                 gui.DP.update(100, '',
                               'Cleaning Up Empty Folder: [COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, name), '')
@@ -178,7 +172,7 @@ def fresh_start(install=None, over=False):
         elif install:
             from resources.libs import menu
 
-            menu.build_wizard(install, 'normal', over=True)
+            menu.wizard_menu(install, 'normal', over=True)
         else:
             if CONFIG.INSTALLMETHOD == 1:
                 todo = 1

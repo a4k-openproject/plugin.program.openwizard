@@ -76,9 +76,11 @@ def switch_to_skin(goto, title="Error"):
 
 
 def skin_to_default(title):
-    if CONFIG.SKIN not in ['skin.confluence', 'skin.estuary', 'skin.estouchy']:
-        skin = 'skin.estuary'
-        return switch_to_skin(skin, title)
+    for id in ['skin.confluence', 'skin.estuary', 'skin.estouchy']:
+        if id not in CONFIG.SKIN:
+            skin = 'skin.estuary'
+            return switch_to_skin(skin, title)
+    return True
 
 
 def look_and_feel_data(do='save'):

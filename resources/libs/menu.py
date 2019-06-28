@@ -37,10 +37,11 @@ def main_menu():
         wizfile = clear.text_cache(CONFIG.BUILDFILE)
         if wizfile:
             ver = check.check_wizard('version')
-            if ver > CONFIG.ADDON_VERSION:
-                add_file('{0} [v{1}] [COLOR red][B][UPDATE v{2}][/B][/COLOR]'.format(CONFIG.ADDONTITLE, CONFIG.ADDON_VERSION, ver), 'wizardupdate', themeit=CONFIG.THEME2)
-            else:
-                add_file('{0} [v{1}]'.format(CONFIG.ADDONTITLE, CONFIG.ADDON_VERSION), '', themeit=CONFIG.THEME2)
+            if ver:
+                if ver > CONFIG.ADDON_VERSION:
+                    add_file('{0} [v{1}] [COLOR red][B][UPDATE v{2}][/B][/COLOR]'.format(CONFIG.ADDONTITLE, CONFIG.ADDON_VERSION, ver), 'wizardupdate', themeit=CONFIG.THEME2)
+                else:
+                    add_file('{0} [v{1}]'.format(CONFIG.ADDONTITLE, CONFIG.ADDON_VERSION), '', themeit=CONFIG.THEME2)
         else:
             add_file('{0} [v{1}]'.format(CONFIG.ADDONTITLE, CONFIG.ADDON_VERSION), '', themeit=CONFIG.THEME2)
     else:
@@ -1177,7 +1178,7 @@ def wizard_menu(name, type, theme=None, over=False):
             gui.DP.update(0, title, '', 'Please Wait')
             extract.all(lib, CONFIG.USERDATA, gui.DP, title=title)
             gui.DP.close()
-            skin.skin_to_default()
+            skin.skin_to_default('Build Install')
             skin.look_and_feel_data('save')
             installed = db.grab_addons(lib)
             db.addon_database(installed, 1, True)
@@ -1203,18 +1204,18 @@ def wizard_menu(name, type, theme=None, over=False):
     elif type == 'fresh':
         install.fresh_start(name)
     elif type == 'normal':
-        if url == 'normal':
+        if name == 'normal':
             if CONFIG.KEEPTRAKT == 'true':
                 from resources.libs import traktit
-                traktit.autoUpdate('all')
+                traktit.auto_update('all')
                 CONFIG.set_setting('traktlastsave', tools.get_date(days=3))
             if CONFIG.KEEPDEBRID == 'true':
                 from resources.libs import debridit
-                debridit.autoUpdate('all')
+                debridit.auto_update('all')
                 CONFIG.set_setting('debridlastsave', tools.get_date(days=3))
             if CONFIG.KEEPLOGIN == 'true':
                 from resources.libs import loginit
-                loginit.autoUpdate('all')
+                loginit.auto_update('all')
                 CONFIG.set_setting('loginlastsave', tools.get_date(days=3))
         temp_kodiv = int(CONFIG.KODIV)
         buildv = int(float(check.check_build(name, 'kodi')))
@@ -1259,17 +1260,17 @@ def wizard_menu(name, type, theme=None, over=False):
             downloader.download(buildzip, lib, gui.DP)
             xbmc.sleep(500)
             title = '[COLOR {0}][B]Installing:[/B][/COLOR] [COLOR {1}]{2} v{3}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name, check.check_build(name, 'version'))
-            gui.DP.update(0, title,'', 'Please Wait')
+            gui.DP.update(0, title, '', 'Please Wait')
             percent, errors, error = extract.all(lib, CONFIG.HOME, gui.DP, title=title)
             if int(float(percent)) > 0:
                 db.fix_metas()
                 skin.look_and_feel_data('save')
-                skin.skin_to_default()
+                skin.skin_to_default('Build Install')
                 CONFIG.set_setting('buildname', name)
-                CONFIG.set_setting('buildversion', check.check_build( name,'version'))
+                CONFIG.set_setting('buildversion', check.check_build(name, 'version'))
                 CONFIG.set_setting('buildtheme', '')
-                CONFIG.set_setting('latestversion', check.check_build( name,'version'))
-                CONFIG.set_setting('lastbuildcheck', str(CONFIG.NEXTCHECK))
+                CONFIG.set_setting('latestversion', check.check_build(name, 'version'))
+                CONFIG.set_setting('lastbuildcheck', str(CONFIG.BUILDCHECK))
                 CONFIG.set_setting('installed', 'true')
                 CONFIG.set_setting('extract', str(percent))
                 CONFIG.set_setting('errors', str(errors))
