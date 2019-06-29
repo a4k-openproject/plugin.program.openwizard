@@ -1139,6 +1139,7 @@ def wizard_menu(name, type, theme=None, over=False):
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                "[COLOR {0}]Build Zip Error: {1}[/COLOR]".format(CONFIG.COLOR2, testbuild))
             return
+            
     if type == 'gui':
         if name == CONFIG.BUILDNAME:
             if over:

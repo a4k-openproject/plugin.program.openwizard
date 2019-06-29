@@ -59,7 +59,6 @@ def fresh_start(install=None, over=False):
                                        nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
                                        yeslabel='[B][COLOR springgreen]Continue[/COLOR][/B]')
     if yes_pressed:
-        from resources.libs import skin
         from resources.libs import update
         
         update.addon_updates('set')
@@ -93,13 +92,13 @@ def fresh_start(install=None, over=False):
 
                     depends = db.depends_list(fold)
                     for plug in depends:
-                        if not plug in exclude_dirs:
+                        if plug not in exclude_dirs:
                             exclude_dirs.append(plug)
                         depends2 = db.depends_list(plug)
                         for plug2 in depends2:
-                            if not plug2 in exclude_dirs:
+                            if plug2 not in exclude_dirs:
                                 exclude_dirs.append(plug2)
-                    if not fold in exclude_dirs:
+                    if fold not in exclude_dirs:
                         exclude_dirs.append(fold)
                 if not pvr == '':
                     CONFIG.set_setting('pvrclient', fold)
@@ -142,7 +141,7 @@ def fresh_start(install=None, over=False):
                     gui.DP.update(int(tools.percentage(del_file, total_files)), '',
                                   '[COLOR {0}]File: [/COLOR][COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name), '')
                     try:
-                        os.remove(os.path.join(root,name))
+                        os.remove(os.path.join(root, name))
                     except Exception as e:
                         logging.log("Error removing {0}".format(os.path.join(root, name)), level=xbmc.LOGNOTICE)
                         logging.log("-> / {0}".format(str(e)), level=xbmc.LOGNOTICE)
@@ -186,7 +185,7 @@ def fresh_start(install=None, over=False):
             if todo == 1:
                 tools.reload_fix('fresh')
             else:
-                update.addon_updates('reset');
+                update.addon_updates('reset')
                 tools.kill_kodi(True)
     else:
         if not install == 'restore':
