@@ -584,10 +584,10 @@ def play_video(url):
 
 
 def build_video(name):
-    from resources.libs import check
     from resources.libs import logging
+    from resources.libs import tools
 
-    if check.check_url(CONFIG.BUILDFILE):
+    if tools.check_url(CONFIG.BUILDFILE):
         videofile = check.check_build(name, 'preview')
         if videofile and not videofile == 'http://':
             play_video(videofile)

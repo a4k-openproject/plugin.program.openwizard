@@ -17,10 +17,10 @@ def force_update(silent=False):
 
 
 def wizard_update(startup=None):
-    from resources.libs import check
     from resources.libs import logging
+    from resources.libs import tools
 
-    if check.check_url(CONFIG.BUILDFILE):
+    if tools.check_url(CONFIG.BUILDFILE):
         try:
             wid, ver, zip = check.check_wizard('all')
         except:

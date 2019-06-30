@@ -552,11 +552,10 @@ def net_info():
 
 
 def get_ip():
-    from resources.libs import check
     from resources.libs import tools
 
     site = 'http://whatismyipaddress.com/'
-    if not check.check_url(site):
+    if not tools.check_url(site):
         return 'Unknown', 'Unknown', 'Unknown'
     page = tools.open_url(site).replace('\n', '').replace('\r', '')
     if 'Access Denied' not in page:

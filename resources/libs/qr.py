@@ -15,7 +15,6 @@ def generate_code(url, filename):
 
 
 def create_code():
-    from resources.libs import check
     from resources.libs import gui
     from resources.libs import logging
     from resources.libs import tools
@@ -33,7 +32,7 @@ def create_code():
         logging.log_notify("[COLOR {0}]Create QR Code[/COLOR]".format(CONFIG.COLOR1),
                            '[COLOR {0}]Not a Valid URL![/COLOR]'.format(CONFIG.COLOR2))
         return
-    working = check.check_url(url)
+    working = tools.check_url(url)
     if not working:
         if not gui.DIALOG.yesno(CONFIG.ADDONTITLE,
                                 "[COLOR {0}]It seems the URL you entered isn\'t working, Would you like to create it anyways?[/COLOR]".format(CONFIG.COLOR2),

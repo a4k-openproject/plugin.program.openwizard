@@ -484,7 +484,7 @@ def write_advanced(name, url):
     from resources.libs import tools
     from resources.libs import logging
 
-    if check.check_url(url):
+    if tools.check_url(url):
         if os.path.exists(CONFIG.ADVANCED):
             choice = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
                                       "[COLOR {0}]Would you like to overwrite your current Advanced Settings with [COLOR {1}]{}[/COLOR]?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, name),

@@ -15,30 +15,10 @@ except ImportError:
 from resources.libs.config import CONFIG
 
 
-def check_url(url):
-    from resources.libs import tools
-
-    if url in ['http://', 'https://', '']:
-        return False
-    check = 0
-    status = ''
-    while check < 3:
-        check += 1
-        try:
-            status = tools.open_url(url)
-            break
-        except Exception as e:
-            status = str(e)
-            from resources.libs import logging
-            logging.log("Working Url Error: %s [%s]" % (e, url))
-            xbmc.sleep(500)
-    return status
-
-
 def check_build(name, ret):
     from resources.libs import tools
 
-    if not check_url(CONFIG.BUILDFILE):
+    if not tools.check_url(CONFIG.BUILDFILE):
         return False
     link = tools.open_url(CONFIG.BUILDFILE).replace('\n', '').replace('\r', '').replace('\t', '')\
         .replace('gui=""', 'gui="http://"').replace('theme=""', 'theme="http://"')
@@ -78,7 +58,7 @@ def check_build(name, ret):
 def check_info(name):
     from resources.libs import tools
 
-    if not check_url(name):
+    if not tools.check_url(name):
         return False
     link = tools.open_url(name).replace('\n', '').replace('\r', '').replace('\t', '')
     match = re.compile('.+?ame="(.+?)".+?xtracted="(.+?)".+?ipsize="(.+?)".+?kin="(.+?)".+?reated="(.+?)".+?rograms="(.+?)".+?ideo="(.+?)".+?usic="(.+?)".+?icture="(.+?)".+?epos="(.+?)".+?cripts="(.+?)"').findall(link)
@@ -94,7 +74,7 @@ def build_info(name):
     from resources.libs import logging
     from resources.libs import tools
 
-    if check_url(CONFIG.BUILDFILE):
+    if tools.check_url(CONFIG.BUILDFILE):
         if check_build(name, 'url'):
             name, version, url, minor, gui_ignore, kodi, theme, icon, fanart, preview, adult, info, description = check_build(name, 'all')
             adult = 'Yes' if adult.lower() == 'yes' else 'No'
@@ -145,7 +125,7 @@ def check_theme(name, theme, ret):
     from resources.libs import tools
 
     themeurl = check_build(name, 'theme')
-    if not check_url(themeurl):
+    if not tools.check_url(themeurl):
         return False
     link = tools.open_url(themeurl).replace('\n', '').replace('\r', '').replace('\t', '')
     match = re.compile('name="{0}".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult=(.+?).+?escription="(.+?)"'.format(theme)).findall(link)
@@ -168,7 +148,7 @@ def check_theme(name, theme, ret):
 def check_wizard(ret):
     from resources.libs import tools
 
-    if not check_url(CONFIG.BUILDFILE):
+    if not tools.check_url(CONFIG.BUILDFILE):
         return False
     link = tools.open_url(CONFIG.BUILDFILE).replace('\n', '').replace('\r', '').replace('\t', '')
     match = re.compile('id="{0}".+?ersion="(.+?)".+?ip="(.+?)"'.format(CONFIG.ADDON_ID)).findall(link)
@@ -211,7 +191,7 @@ def check_sources():
                           "[COLOR {0}]Checking [COLOR {1}]{2}[/COLOR]:[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, name),
                           "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, path))
             if 'http' in path:
-                working = check_url(path)
+                working = tools.check_url(path)
                 if not working:
                     bad.append([name, path, sharing, working])
 
