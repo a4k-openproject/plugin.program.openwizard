@@ -201,8 +201,9 @@ def install_addon_pack(name, url):
     from resources.libs import extract
     from resources.libs import gui
     from resources.libs import logging
+    from resources.libs import tools
 
-    if not check.check_url(url):
+    if not tools.check_url(url):
         logging.log_notify("[COLOR {0}]Addon Installer[/COLOR]".format(CONFIG.COLOR1),
                            '[COLOR {0}]{1}:[/COLOR] [COLOR {2}]Invalid Zip Url![/COLOR]'.format(CONFIG.COLOR1, name, CONFIG.COLOR2))
         return
@@ -232,15 +233,15 @@ def install_addon_pack(name, url):
 
 
 def install_skin(name, url):
-    from resources.libs import check
     from resources.libs import downloader
     from resources.libs import db
     from resources.libs import extract
     from resources.libs import gui
     from resources.libs import logging
     from resources.libs import skin
+    from resources.libs import tools
 
-    if not check.check_url(url):
+    if not tools.check_url(url):
         logging.log_notify("[COLOR {0}]Addon Installer[/COLOR]".format(CONFIG.COLOR1),
                            '[COLOR {0}]{1}:[/COLOR] [COLOR {2}]Invalid Zip Url![/COLOR]'.format(CONFIG.COLOR1, name, CONFIG.COLOR2))
         return
@@ -275,15 +276,15 @@ def install_skin(name, url):
 
 
 def install_addon_from_url(name, url):
-    from resources.libs import check
     from resources.libs import downloader
     from resources.libs import db
     from resources.libs import extract
     from resources.libs import gui
     from resources.libs import logging
     from resources.libs import skin
+    from resources.libs import tools
 
-    if not check.check_url(url):
+    if not tools.check_url(url):
         logging.log_notify("[COLOR {0}]Addon Installer[/COLOR]".format(CONFIG.COLOR1),
                            '[COLOR {0}]{1}:[/COLOR] [COLOR {2}]Invalid Zip Url![/COLOR]'.format(CONFIG.COLOR1, name, CONFIG.COLOR2))
         return
@@ -325,7 +326,6 @@ def install_addon(plugin, url):
     from resources.libs import logging
 
     if not CONFIG.ADDONFILE == 'http://':
-        from resources.libs import check
         from resources.libs import clear
         from resources.libs import downloader
         from resources.libs import db
@@ -336,7 +336,7 @@ def install_addon(plugin, url):
 
         if url is None:
             url = CONFIG.ADDONFILE
-        if check.check_url(url):
+        if tools.check_url(url):
             link = clear.text_cache(url).replace('\n', '').replace('\r', '').replace('\t', '').replace('repository=""', 'repository="none"').replace('repositoryurl=""', 'repositoryurl="http://"').replace('repositoryxml=""', 'repositoryxml="http://"')
             match = re.compile('name="(.+?)".+?lugin="%s".+?rl="(.+?)".+?epository="(.+?)".+?epositoryxml="(.+?)".+?epositoryurl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"' % plugin).findall(link)
             if len(match) > 0:
@@ -476,7 +476,6 @@ def installed(addon):
 
 
 def install_apk(apk, url):
-    from resources.libs import check
     from resources.libs import downloader
     from resources.libs import gui
     from resources.libs import logging
@@ -497,7 +496,7 @@ def install_apk(apk, url):
         display = apk
         if not os.path.exists(CONFIG.PACKAGES):
             os.makedirs(CONFIG.PACKAGES)
-        if not check.check_url(url):
+        if not tools.check_url(url):
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                '[COLOR {0}]APK Installer: Invalid Apk Url![/COLOR]'.format(CONFIG.COLOR2))
             return

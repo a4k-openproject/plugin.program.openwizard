@@ -31,7 +31,7 @@ def flush_old_cache():
 
 
 def text_cache(url):
-    from resources.libs import check
+    from resources.libs import tools
 
     try:
         age = int(float(CONFIG.CACHEAGE))
@@ -45,11 +45,11 @@ def text_cache(url):
         if os.path.exists(file):
             file_modified = datetime.fromtimestamp(os.path.getmtime(file))
             if datetime.now() - file_modified > timedelta(minutes=age):
-                if check.check_url(url):
+                if tools.check_url(url):
                     os.remove(file)
 
         if not os.path.exists(file):
-            if not check.check_url(url):
+            if not tools.check_url(url):
                 return False
             textfile = tools.open_url(url)
             content = tools.basecode(textfile, True)

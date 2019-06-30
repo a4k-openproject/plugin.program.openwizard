@@ -324,9 +324,9 @@ def apk_scraper():
 
 
 def apk_menu(url=None):
-    from resources.libs import clear
-    from resources.libs import check
+    from resources.libs import clear    
     from resources.libs import logging
+    from resources.libs import tools
 
     if not url:
         add_dir('Official Kodi Apk\'s', 'apkscrape', 'kodi', icon=CONFIG.ICONAPK, themeit=CONFIG.THEME1)
@@ -335,11 +335,11 @@ def apk_menu(url=None):
         if not url:
             TEMPAPKFILE = clear.text_cache(CONFIG.APKFILE)
             if not TEMPAPKFILE:
-                APKWORKING = check.check_url(CONFIG.APKFILE)
+                APKWORKING = tools.check_url(CONFIG.APKFILE)
         else:
             TEMPAPKFILE = clear.text_cache(url)
             if not TEMPAPKFILE:
-                APKWORKING = check.check_url(url)
+                APKWORKING = tools.check_url(url)
         if TEMPAPKFILE:
             link = TEMPAPKFILE.replace('\n', '').replace('\r', '').replace('\t', '')
             match = re.compile('name="(.+?)".+?ection="(.+?)".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"').findall(link)
@@ -371,18 +371,18 @@ def apk_menu(url=None):
 
 def addon_menu(url=None):
     from resources.libs import clear
-    from resources.libs import check
     from resources.libs import logging
+    from resources.libs import tools
 
     if not CONFIG.ADDONFILE == 'http://':
         if not url:
             TEMPADDONFILE = clear.text_cache(CONFIG.ADDONFILE)
             if not TEMPADDONFILE:
-                ADDONWORKING = check.check_url(CONFIG.ADDONFILE)
+                ADDONWORKING = tools.check_url(CONFIG.ADDONFILE)
         else:
             TEMPADDONFILE = clear.text_cache(url)
             if not TEMPADDONFILE:
-                ADDONWORKING = check.check_url(url)
+                ADDONWORKING = tools.check_url(url)
         if TEMPADDONFILE:
             link = TEMPADDONFILE.replace('\n', '').replace('\r', '').replace('\t', '').replace('repository=""', 'repository="none"').replace('repositoryurl=""', 'repositoryurl="http://"').replace('repositoryxml=""', 'repositoryxml="http://"')
             match = re.compile('name="(.+?)".+?lugin="(.+?)".+?rl="(.+?)".+?epository="(.+?)".+?epositoryxml="(.+?)".+?epositoryurl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"').findall(link)
@@ -430,18 +430,18 @@ def addon_menu(url=None):
 
 def youtube_menu(url=None):
     from resources.libs import clear
-    from resources.libs import check
     from resources.libs import logging
+    from resources.libs import tools
 
     if not CONFIG.YOUTUBEFILE == 'http://':
         if not url:
             TEMPYOUTUBEFILE = clear.text_cache(CONFIG.YOUTUBEFILE)
             if not TEMPYOUTUBEFILE:
-                YOUTUBEWORKING = check.check_url(CONFIG.YOUTUBEFILE)
+                YOUTUBEWORKING = tools.check_url(CONFIG.YOUTUBEFILE)
         else:
             TEMPYOUTUBEFILE = clear.text_cache(url)
             if not TEMPYOUTUBEFILE:
-                YOUTUBEWORKING = check.check_url(url)
+                YOUTUBEWORKING = tools.check_url(url)
         if TEMPYOUTUBEFILE:
             link = TEMPYOUTUBEFILE.replace('\n', '').replace('\r', '').replace('\t', '')
             match = re.compile('name="(.+?)".+?ection="(.+?)".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?escription="(.+?)"').findall(link)
@@ -1026,16 +1026,16 @@ def advanced_window(url=None):
 
     if not CONFIG.ADVANCEDFILE == 'http://':
         from resources.libs import clear
-        from resources.libs import check
+        from resources.libs import tools
 
         if url is None:
             TEMPADVANCEDFILE = clear.text_cache(CONFIG.ADVANCEDFILE)
             if not TEMPADVANCEDFILE:
-                ADVANCEDWORKING = check.check_url(CONFIG.ADVANCEDFILE)
+                ADVANCEDWORKING = tools.check_url(CONFIG.ADVANCEDFILE)
         else:
             TEMPADVANCEDFILE = clear.text_cache(url)
             if not TEMPADVANCEDFILE:
-                ADVANCEDWORKING = check.check_url(url)
+                ADVANCEDWORKING = tools.check_url(url)
         add_file('Quick Configure advancedsettings.xml', 'autoadvanced', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         if os.path.exists(CONFIG.ADVANCED):
             add_file('View Current advancedsettings.xml', 'currentsettings', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
@@ -1134,7 +1134,7 @@ def wizard_menu(name, type, theme=None, over=False):
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                "[COLOR {0}]Unable to find build[/COLOR]".format(CONFIG.COLOR2))
             return
-        testworking = check.check_url(testbuild)
+        testworking = tools.check_url(testbuild)
         if not testworking:
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                "[COLOR {0}]Build Zip Error: {1}[/COLOR]".format(CONFIG.COLOR2, testbuild))
@@ -1159,7 +1159,7 @@ def wizard_menu(name, type, theme=None, over=False):
         if yes:
             buildzip = check.check_build(name, 'gui')
             zipname = name.replace('\\', '').replace('/', '').replace(':', '').replace('*', '').replace('?', '').replace('"', '').replace('<', '').replace('>', '').replace('|', '')
-            if not check.check_url(buildzip):
+            if not tools.check_url(buildzip):
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                    '[COLOR {0}]GuiFix: Invalid Zip Url![/COLOR]'.format(CONFIG.COLOR2))
                 return
@@ -1244,7 +1244,7 @@ def wizard_menu(name, type, theme=None, over=False):
             CONFIG.clear_setting('build')
             buildzip = check.check_build(name, 'url')
             zipname = name.replace('\\', '').replace('/', '').replace(':', '').replace('*', '').replace('?', '').replace('"', '').replace('<', '').replace('>', '').replace('|', '')
-            if not check.check_url(buildzip):
+            if not tools.check_url(buildzip):
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                    '[COLOR {0}]Build Install: Invalid Zip Url![/COLOR]'.format(CONFIG.COLOR2))
                 return
@@ -1320,7 +1320,7 @@ def wizard_menu(name, type, theme=None, over=False):
         if not theme:
             themefile = check.check_build(name, 'theme')
             themelist = []
-            if not themefile == 'http://' and check.check_url(themefile):
+            if not themefile == 'http://' and tools.check_url(themefile):
                 themelist = check.theme_count(name, False)
                 if len(themelist) > 0:
                     if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
@@ -1355,7 +1355,7 @@ def wizard_menu(name, type, theme=None, over=False):
         if installtheme:
             themezip = check.check_theme(name, theme, 'url')
             zipname = name.replace('\\', '').replace('/', '').replace(':', '').replace('*', '').replace('?', '').replace('"', '').replace('<', '').replace('>', '').replace('|', '')
-            if not check.check_url(themezip):
+            if not tools.check_url(themezip):
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                    '[COLOR {0}]Theme Install: Invalid Zip Url![/COLOR]'.format(CONFIG.COLOR2))
                 return False

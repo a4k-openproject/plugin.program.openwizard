@@ -29,11 +29,13 @@ try:  # Python 3
     from urllib.request import urlopen
     from urllib.request import Request
     from urllib.parse import quote
+    from urllib.parse import urlparse
     from html.parser import HTMLParser
 except ImportError:  # Python 2
     from urllib2 import urlopen
     from urllib2 import Request
     from urllib import quote
+    from urlparse import urlparse
     import HTMLParser
 
 from resources.libs.config import CONFIG
@@ -607,7 +609,40 @@ def get_info_label(label):
 #########################
 
 
-def open_url(url):
+def check_url(url):
     import requests
+    from resources.libs import logging
+    
+    if __is_url(url):
+        try:
+            response = requests.head(url, headers={'user-agent': CONFIG.USER_AGENT})
+            
+            if response.status_code < 300:
+                return True
+            else:
+                logging.log("URL responded with error code: {0} [{1}]".format(response.status_code, url))
+                return False
+        except Exception as e:
+            logging.log("URL Error: {0} [{1}]".format(e, url))
+            return False
+    else:
+        logging.log("Not a valid URL: [{0}]".format(url))
+        return False
+            
 
-    return requests.get(url, headers={'user-agent': CONFIG.USER_AGENT}).text
+def __is_url(url):
+    try:
+        result = urlparse(url)
+        return all([result.scheme, result.netloc])
+    except ValueError:
+        return False
+        
+
+def open_url(url):
+    import logging
+    import requests
+    
+    try:
+        return requests.get(url, headers={'user-agent': CONFIG.USER_AGENT}, timeout=1.000).content
+    except:
+        logging.log('URL invalid or timed out.', level=xbmc.LOGERROR)

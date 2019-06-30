@@ -31,11 +31,11 @@ def test_gui(path):
 
 
 def test_notify():
-    from resources.libs import check
     from resources.libs import gui
     from resources.libs import logging
+    from resources.libs import tools
 
-    if check.check_url(CONFIG.NOTIFICATION):
+    if tools.check_url(CONFIG.NOTIFICATION):
         try:
             id, msg = gui.split_notify(CONFIG.NOTIFICATION)
             if not id:

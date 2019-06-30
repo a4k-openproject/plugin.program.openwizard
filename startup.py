@@ -278,7 +278,7 @@ else:
 logging.log("[Notifications] Started", level=xbmc.LOGNOTICE)
 if CONFIG.ENABLE == 'Yes':
     if not CONFIG.NOTIFY == 'true':
-        url = check.check_url(CONFIG.NOTIFICATION)
+        url = tools.check_url(CONFIG.NOTIFICATION)
         if url:
             id, msg = gui.split_notify(CONFIG.NOTIFICATION)
             if id:

@@ -914,6 +914,8 @@ def restore_local(type):
 
 
 def restore_external(type):
+    from resources.libs import tools
+    
     source = gui.DIALOG.browse(1,
                                '[COLOR {0}]Select the backup file you want to restore[/COLOR]'.format(CONFIG.COLOR2),
                                'files', '.zip', False, False)
@@ -926,8 +928,7 @@ def restore_external(type):
                            "[COLOR {0}]External Restore: Invalid URL[/COLOR]".format(CONFIG.COLOR2))
         return
     try:
-        from resources.libs import check
-        work = check.check_url(source)
+        work = tools.check_url(source)
     except:
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            "[COLOR {0}]External Restore: Error Valid URL[/COLOR]".format(CONFIG.COLOR2))
