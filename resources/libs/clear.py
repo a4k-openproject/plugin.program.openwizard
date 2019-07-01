@@ -14,21 +14,6 @@ from resources.libs import logging
 from resources.libs import tools
 
 
-def flush_old_cache():
-    if not os.path.exists(CONFIG.TEXTCACHE):
-        os.makedirs(CONFIG.TEXTCACHE)
-    try:
-        age = int(float(CONFIG.CACHEAGE))
-    except:
-        age = 30
-    match = glob.glob(os.path.join(CONFIG.TEXTCACHE, '*.txt'))
-    for file in match:
-        file_modified = datetime.fromtimestamp(os.path.getmtime(file))
-        if datetime.now() - file_modified > timedelta(minutes=age):
-            logging.log("Found: {0}".format(file))
-            os.remove(file)
-
-
 def get_cache_size():
     from resources.libs import tools
 
