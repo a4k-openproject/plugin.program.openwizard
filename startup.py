@@ -343,7 +343,7 @@ if CONFIG.INSTALLED == 'true':
                               "[COLOR {0}]It looks like the skin settings was not applied to the build.".format(CONFIG.COLOR2),
                               "Sadly no gui fix was attatched to the build",
                               "You will need to reinstall the build and make sure to do a force close[/COLOR]")
-            elif check.check_url(gui):
+            elif tools.check_url(gui):
                 yes = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
                                        '{0} was not installed correctly!'.format(CONFIG.BUILDNAME),
                                        'It looks like the skin settings was not applied to the build.',
@@ -385,7 +385,7 @@ else:
 
 if not FAILED:
     logging.log("[Build Check] Started", level=xbmc.LOGNOTICE)
-    if not check.check_url(CONFIG.BUILDFILE):
+    if not tools.check_url(CONFIG.BUILDFILE):
         logging.log("[Build Check] Not a valid URL for Build File: {0}".format(CONFIG.BUILDFILE), level=xbmc.LOGNOTICE)
     elif CONFIG.BUILDCHECK == '' and CONFIG.BUILDNAME == '':
         logging.log("[Build Check] First Run", level=xbmc.LOGNOTICE)
