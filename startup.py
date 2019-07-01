@@ -212,9 +212,6 @@ try:
 except:
     pass
 
-logging.log("Flushing Aged Cached Text Files")
-clear.flush_old_cache()
-
 logging.log("[Auto Install Repo] Started", level=xbmc.LOGNOTICE)
 if CONFIG.AUTOINSTALL == 'Yes' and not os.path.exists(os.path.join(CONFIG.ADDONS, CONFIG.REPOID)):
     workingxml = tools.check_url(CONFIG.REPOADDONXML)
