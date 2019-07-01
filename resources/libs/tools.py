@@ -638,11 +638,14 @@ def __is_url(url):
         return False
         
 
-def open_url(url):
+def open_url(url, binary=False):
     import logging
     import requests
     
     try:
-        return requests.get(url, headers={'user-agent': CONFIG.USER_AGENT}, timeout=1.000).content
+        if binary:
+            return requests.get(url, headers={'user-agent': CONFIG.USER_AGENT}, timeout=1.000).content
+        else:
+            return requests.get(url, headers={'user-agent': CONFIG.USER_AGENT}, timeout=1.000).text
     except:
-        logging.log('URL invalid or timed out.', level=xbmc.LOGERROR)
+        logging.log(msg='URL invalid or timed out.', level=xbmc.LOGERROR)
