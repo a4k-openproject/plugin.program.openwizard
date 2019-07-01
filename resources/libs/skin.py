@@ -37,8 +37,8 @@ def __get_old(old_key):
         query = '{{"jsonrpc":"2.0","method":"Settings.GetSettingValue","params":{{"setting":{0}}}, "id":1}}'.format(old)
         response = xbmc.executeJSONRPC(query)
         response = simplejson.loads(response)
-        if response.has_key('result'):
-            if response['result'].has_key('value'):
+        if 'result' in response:
+            if 'value' in response['result']:
                 return response['result']['value']
     except:
         pass

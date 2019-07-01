@@ -1,5 +1,4 @@
 import xbmc
-import xbmcaddon
 
 import glob
 import os
@@ -30,38 +29,6 @@ def flush_old_cache():
             os.remove(file)
 
 
-def text_cache(url):
-    from resources.libs import tools
-
-    try:
-        age = int(float(CONFIG.CACHEAGE))
-    except:
-        age = 30
-    if CONFIG.CACHETEXT.lower() == 'yes':
-        spliturl = url.split('/')
-        if not os.path.exists(CONFIG.TEXTCACHE):
-            os.makedirs(CONFIG.TEXTCACHE)
-        file = xbmc.makeLegalFilename(os.path.join(CONFIG.TEXTCACHE, spliturl[-1]+'_'+spliturl[-2]+'.txt'))
-        if os.path.exists(file):
-            file_modified = datetime.fromtimestamp(os.path.getmtime(file))
-            if datetime.now() - file_modified > timedelta(minutes=age):
-                if tools.check_url(url):
-                    os.remove(file)
-
-        if not os.path.exists(file):
-            if not tools.check_url(url):
-                return False
-            textfile = tools.open_url(url)
-            content = tools.basecode(textfile, True)
-            tools.write_to_file(file, content)
-
-        a = tools.basecode(tools.read_from_file(file), False)
-        return a
-    else:
-        textfile = tools.open_url(url)
-        return textfile
-
-
 def get_cache_size():
     from resources.libs import tools
 
@@ -86,7 +53,7 @@ def get_cache_size():
         (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.seren', 'torrentScrape.db')),
         (os.path.join(CONFIG.ADDON_DATA, 'script.module.simplecache', 'simplecache.db'))]
     cachelist = [
-        (CONFIG.ADDON_DATA),
+        CONFIG.ADDON_DATA,
         (os.path.join(CONFIG.HOME, 'cache')),
         (os.path.join(CONFIG.HOME, 'temp')),
         (os.path.join('/private/var/mobile/Library/Caches/AppleTV/Video/', 'Other')),
@@ -113,7 +80,8 @@ def get_cache_size():
     totalsize = 0
 
     for item in cachelist:
-        if not os.path.exists(item): continue
+        if not os.path.exists(item):
+            continue
         if item not in [CONFIG.ADDON_DATA, PROFILEADDONDATA]:
             totalsize = tools.get_size(item, totalsize)
         else:
@@ -159,7 +127,8 @@ def get_cache_size():
                 files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'providers.13.db'))
         if len(files) > 0:
             for item in files:
-                if not os.path.exists(item): continue
+                if not os.path.exists(item):
+                    continue
                 totalsize += os.path.getsize(item)
         else:
             logging.log("Clear Cache: Clear Video Cache Not Enabled", level=xbmc.LOGNOTICE)
@@ -300,8 +269,8 @@ def clear_cache(over=None):
         (os.path.join(CONFIG.ADDON_DATA, 'script.module.simplecache', 'simplecache.db'))]
 
     cachelist = [
-        (PROFILEADDONDATA),
-        (CONFIG.ADDON_DATA),
+        PROFILEADDONDATA,
+        CONFIG.ADDON_DATA,
         (os.path.join(CONFIG.HOME, 'cache')),
         (os.path.join(CONFIG.HOME, 'temp')),
         (os.path.join('/private/var/mobile/Library/Caches/AppleTV/Video/', 'Other')),

@@ -16,9 +16,6 @@ ART = os.path.join(PATH, 'resources', 'art')
 ADDONTITLE = '[B][COLOR dodgerblue]Aftermath[/COLOR][/B] Wizard'
 BUILDERNAME = 'Aftermath'
 EXCLUDES = [ADDON_ID, 'repository.aftermath']
-# Enable/Disable the text file caching with 'Yes' or 'No' and age being how often it rechecks in minutes
-CACHETEXT = 'Yes'
-CACHEAGE = 30
 # Text File with build info in it.
 BUILDFILE = 'http://'
 # How often you would like it to check for build updates in days

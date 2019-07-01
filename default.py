@@ -434,9 +434,6 @@ elif mode == 'contact':
 elif mode == 'settings':
     CONFIG.open_settings(name)
     xbmc.executebuiltin('Container.Refresh()')
-elif mode == 'forcetext':
-    from resources.libs import clear
-    clear.force_text()
 elif mode == 'opensettings':
     id = eval(url.upper()+'ID')[name]['plugin']
     CONFIG.open_settings(id)

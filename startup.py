@@ -50,7 +50,7 @@ FAILED = False
 
 
 def check_update():
-    bf = clear.text_cache(CONFIG.BUILDFILE)
+    bf = tools.open_url(CONFIG.BUILDFILE)
     if not bf:
         return
     link = bf.replace('\n', '').replace('\r', '').replace('\t', '')
