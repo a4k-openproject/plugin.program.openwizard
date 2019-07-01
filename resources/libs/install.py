@@ -106,6 +106,10 @@ def fresh_start(install=None, over=False):
             for item in exclude_dirs:
                 if item.startswith('pvr'):
                     CONFIG.set_setting('pvrclient', item)
+
+        for item in CONFIG.DEPENDENCIES:
+            exclude_dirs.append(item)
+
         gui.DP.update(0, "[COLOR {0}]Clearing out files and folders:".format(CONFIG.COLOR2))
         latestAddonDB = db.latest_db('Addons')
         for root, dirs, files in os.walk(xbmcPath, topdown=True):
@@ -195,7 +199,6 @@ def fresh_start(install=None, over=False):
 
 
 def install_addon_pack(name, url):
-    from resources.libs import check
     from resources.libs import downloader
     from resources.libs import db
     from resources.libs import extract
@@ -271,7 +274,7 @@ def install_skin(name, url):
         if item.startswith('skin.') and not item == 'skin.shortcuts':
             if not CONFIG.BUILDNAME == '' and CONFIG.DEFAULTIGNORE == 'true':
                 CONFIG.set_setting('defaultskinignore', 'true')
-            skin.swap_skins(item, 'Skin Installer')
+            skin.switch_to_skin(item, 'Skin Installer')
     xbmc.executebuiltin('Container.Refresh()')
 
 
@@ -319,7 +322,7 @@ def install_addon_from_url(name, url):
         if item.startswith('skin.') and not item == 'skin.shortcuts':
             if not CONFIG.BUILDNAME == '' and CONFIG.DEFAULTIGNORE == 'true':
                 CONFIG.set_setting('defaultskinignore', 'true')
-            skin.swap_skins(item, 'Skin Installer')
+            skin.switch_to_skin(item, 'Skin Installer')
 
 
 def install_addon(plugin, url):

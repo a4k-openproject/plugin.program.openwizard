@@ -108,6 +108,7 @@ class Config:
         self.XMLS = ['advancedsettings.xml', 'sources.xml', 'favourites.xml', 'profiles.xml', 'playercorefactory.xml']
         self.MODURL = 'http://tribeca.tvaddons.ag/tools/maintenance/modules/'
         self.MODURL2 = 'http://mirrors.kodi.tv/addons/jarvis/'
+        self.DEPENDENCIES = ['script.module.bottle', 'script.module.certifi', 'script.module.chardet', 'script.module.idna', 'script.module.requests', 'script.module.six', 'script.module.urllib3', 'script.module.web-pdb']
 
         # Default special paths
         self.XBMC = xbmc.translatePath('special://xbmc/')

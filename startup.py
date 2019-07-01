@@ -217,12 +217,12 @@ clear.flush_old_cache()
 
 logging.log("[Auto Install Repo] Started", level=xbmc.LOGNOTICE)
 if CONFIG.AUTOINSTALL == 'Yes' and not os.path.exists(os.path.join(CONFIG.ADDONS, CONFIG.REPOID)):
-    workingxml = check.check_url(CONFIG.REPOADDONXML)
+    workingxml = tools.check_url(CONFIG.REPOADDONXML)
     if workingxml:
         ver = tools.parse_dom(tools.open_url(CONFIG.REPOADDONXML), 'addon', ret='version', attrs={'id': CONFIG.REPOID})
         if len(ver) > 0:
             installzip = '{0}-{1}.zip'.format(CONFIG.REPOID, ver[0])
-            workingrepo = check.check_url(CONFIG.REPOZIPURL+installzip)
+            workingrepo = tools.check_url(CONFIG.REPOZIPURL+installzip)
             if workingrepo:
                 gui.DP.create(CONFIG.ADDONTITLE, 'Downloading Repo...', '', 'Please Wait')
                 if not os.path.exists(CONFIG.PACKAGES):
