@@ -60,10 +60,11 @@ def _pbhook(numblocks, blocksize, filesize, dp, start_time):
         total = float(filesize) / (1024 * 1024)
         mbs = '[COLOR %s][B]Size:[/B] [COLOR %s]%.02f[/COLOR] MB of [COLOR %s]%.02f[/COLOR] MB[/COLOR]' % (CONFIG.COLOR2, CONFIG.COLOR1, currently_downloaded, CONFIG.COLOR1, total)
         e = '[COLOR %s][B]Speed:[/B] [COLOR %s]%.02f [/COLOR]%s/s ' % (CONFIG.COLOR2, CONFIG.COLOR1, kbps_speed, type_speed)
-        e += '[B]ETA:[/B] [COLOR %s]%02d:%02d[/COLOR][/COLOR]' % (CONFIG.COLOR1, divmod(eta, 60))
+        div = divmod(eta, 60)
+        e += '[B]ETA:[/B] [COLOR %s]%02d:%02d[/COLOR][/COLOR]' % (CONFIG.COLOR1, div[0], div[1])
         dp.update(percent, '', mbs, e)
     except Exception as e:
-        logging.log("ERROR Downloading: %s".format(str(e)), level=xbmc.LOGERROR)
+        logging.log("ERROR Downloading: {0}".format(str(e)), level=xbmc.LOGERROR)
         return str(e)
     if dp.iscanceled():
         dp.close()
