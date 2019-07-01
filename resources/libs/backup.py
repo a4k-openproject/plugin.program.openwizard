@@ -403,21 +403,24 @@ def __backup_build(name=""):
 
 
 def __backup_info(name, extractsize, programs, video, music, picture, repos, scripts):
-    info = name.replace('.zip', '.txt')
-    f = open(info, 'w')
-    f.close()
-    with open(info, 'a') as f:
-        f.write('name="{0}"\n'.format(name))
-        f.write('extracted="{0}"\n'.format(extractsize))
-        f.write('zipsize="{0}"\n'.format(os.path.getsize(xbmc.translatePath(name))))
-        f.write('skin="{0}"\n'.format(CONFIG.SKIN))
-        f.write('created="{0}"\n'.format(tools.get_date(now=True)))
-        f.write('programs="{0}"\n'.format(', '.join(programs)) if len(programs) > 0 else 'programs="none"\n')
-        f.write('video="{0}"\n'.format(', '.join(video)) if len(video) > 0 else 'video="none"\n')
-        f.write('music="{0}"\n'.format(', '.join(music)) if len(music) > 0 else 'music="none"\n')
-        f.write('picture="{0}"\n'.format(', '.join(picture)) if len(picture) > 0 else 'picture="none"\n')
-        f.write('repos="{0}"\n'.format(', '.join(repos)) if len(repos) > 0 else 'repos="none"\n')
-        f.write('scripts="{0}"\n'.format(', '.join(scripts)) if len(scripts) > 0 else 'scripts="none"\n')
+    from resources.libs import tools
+    
+    info = name + '.txt'
+    zipname = name + '.zip'
+    
+    content = 'name="{0}"\n'.format(name)
+    content += 'extracted="{0}"\n'.format(extractsize)
+    content += 'zipsize="{0}"\n'.format(os.path.getsize(os.path.join(CONFIG.MYBUILDS, zipname))
+    content += 'skin="{0}"\n'.format(CONFIG.SKIN)
+    content += 'created="{0}"\n'.format(tools.get_date(now=True))
+    content += 'programs="{0}"\n'.format(', '.join(programs)) if len(programs) > 0 else 'programs="none"\n'
+    content += 'video="{0}"\n'.format(', '.join(video)) if len(video) > 0 else 'video="none"\n'
+    content += 'music="{0}"\n'.format(', '.join(music)) if len(music) > 0 else 'music="none"\n'
+    content += 'picture="{0}"\n'.format(', '.join(picture)) if len(picture) > 0 else 'picture="none"\n'
+    content += 'repos="{0}"\n'.format(', '.join(repos)) if len(repos) > 0 else 'repos="none"\n'
+    content += 'scripts="{0}"\n'.format(', '.join(scripts)) if len(scripts) > 0 else 'scripts="none"\n'
+    
+    tools.write_to_file(os.path.join(CONFIG.MYBUILDS, info), content)
 
 
 def __backup_guifix(name=""):
