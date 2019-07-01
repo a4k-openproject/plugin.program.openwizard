@@ -26,7 +26,6 @@ from resources.libs.config import CONFIG
 
 def main_menu():
     from resources.libs import check
-    from resources.libs import clear
     from resources.libs import logging
     from resources.libs import tools
 
@@ -34,7 +33,7 @@ def main_menu():
     errorsfound = str(errors) + ' Error(s) Found' if errors > 0 else 'None Found'
 
     if CONFIG.AUTOUPDATE == 'Yes':
-        wizfile = clear.text_cache(CONFIG.BUILDFILE)
+        wizfile = tools.open_url(CONFIG.BUILDFILE)
         if wizfile:
             ver = check.check_wizard('version')
             if ver:
@@ -76,7 +75,6 @@ def main_menu():
         add_file('View Last Error In Log', 'viewerrorlast', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
     add_separator()
     add_file('Settings', 'settings', CONFIG.ADDON_ID, icon=CONFIG.ICONSETTINGS, themeit=CONFIG.THEME1)
-    add_file('Force Update Text Files', 'forcetext', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
     if CONFIG.DEVELOPER == 'true':
         add_dir('Developer Menu', 'developer', icon=CONFIG.ADDON_ICON, themeit=CONFIG.THEME1)
 
@@ -87,8 +85,9 @@ def build_menu():
     from resources.libs import check
     from resources.libs import clear
     from resources.libs import test
+    from resources.libs import tools
 
-    bf = clear.text_cache(CONFIG.BUILDFILE)
+    bf = tools.open_url(CONFIG.BUILDFILE)
     if not bf:
         add_file('Kodi Version: {0}'.format(CONFIG.KODIV), '', icon=CONFIG.ICONBUILDS, themeit=CONFIG.THEME3)
         add_dir('Save Data Menu', 'savedata', icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME3)
@@ -173,8 +172,9 @@ def build_menu():
 def view_build(name):
     from resources.libs import check
     from resources.libs import clear
+    from resources.libs import tools
 
-    bf = clear.text_cache(CONFIG.BUILDFILE)
+    bf = tools.open_url(CONFIG.BUILDFILE)
     if not bf:
         add_file('URL for txt file not valid', '', themeit=CONFIG.THEME3)
         add_file('{0}'.format(CONFIG.BUILDFILE), '', themeit=CONFIG.THEME3)
@@ -211,7 +211,7 @@ def view_build(name):
         if not gui == 'http://':
             add_file('Apply guiFix', 'install', name, 'gui', description=description, fanart=fanart, icon=icon, themeit=CONFIG.THEME1)
         if not themefile == 'http://':
-            themecheck = clear.text_cache(themefile)
+            themecheck = tools.open_url(themefile)
             if themecheck:
                 add_separator('THEMES', fanart=fanart, icon=icon)
                 link = themecheck.replace('\n', '').replace('\r', '').replace('\t', '')
@@ -324,7 +324,6 @@ def apk_scraper():
 
 
 def apk_menu(url=None):
-    from resources.libs import clear    
     from resources.libs import logging
     from resources.libs import tools
 
@@ -333,11 +332,11 @@ def apk_menu(url=None):
         add_separator()
     if not CONFIG.APKFILE == 'http://':
         if not url:
-            TEMPAPKFILE = clear.text_cache(CONFIG.APKFILE)
+            TEMPAPKFILE = tools.open_url(CONFIG.APKFILE)
             if not TEMPAPKFILE:
                 APKWORKING = tools.check_url(CONFIG.APKFILE)
         else:
-            TEMPAPKFILE = clear.text_cache(url)
+            TEMPAPKFILE = tools.open_url(url)
             if not TEMPAPKFILE:
                 APKWORKING = tools.check_url(url)
         if TEMPAPKFILE:
@@ -370,17 +369,16 @@ def apk_menu(url=None):
 
 
 def addon_menu(url=None):
-    from resources.libs import clear
     from resources.libs import logging
     from resources.libs import tools
 
     if not CONFIG.ADDONFILE == 'http://':
         if not url:
-            TEMPADDONFILE = clear.text_cache(CONFIG.ADDONFILE)
+            TEMPADDONFILE = tools.open_url(CONFIG.ADDONFILE)
             if not TEMPADDONFILE:
                 ADDONWORKING = tools.check_url(CONFIG.ADDONFILE)
         else:
-            TEMPADDONFILE = clear.text_cache(url)
+            TEMPADDONFILE = tools.open_url(url)
             if not TEMPADDONFILE:
                 ADDONWORKING = tools.check_url(url)
         if TEMPADDONFILE:
@@ -429,17 +427,16 @@ def addon_menu(url=None):
 
 
 def youtube_menu(url=None):
-    from resources.libs import clear
     from resources.libs import logging
     from resources.libs import tools
 
     if not CONFIG.YOUTUBEFILE == 'http://':
         if not url:
-            TEMPYOUTUBEFILE = clear.text_cache(CONFIG.YOUTUBEFILE)
+            TEMPYOUTUBEFILE = tools.open_url(CONFIG.YOUTUBEFILE)
             if not TEMPYOUTUBEFILE:
                 YOUTUBEWORKING = tools.check_url(CONFIG.YOUTUBEFILE)
         else:
-            TEMPYOUTUBEFILE = clear.text_cache(url)
+            TEMPYOUTUBEFILE = tools.open_url(url)
             if not TEMPYOUTUBEFILE:
                 YOUTUBEWORKING = tools.check_url(url)
         if TEMPYOUTUBEFILE:
@@ -1023,17 +1020,15 @@ def enable_addons():
 
 def advanced_window(url=None):
     from resources.libs import logging
+    from resources.libs import tools
 
     if not CONFIG.ADVANCEDFILE == 'http://':
-        from resources.libs import clear
-        from resources.libs import tools
-
         if url is None:
-            TEMPADVANCEDFILE = clear.text_cache(CONFIG.ADVANCEDFILE)
+            TEMPADVANCEDFILE = tools.open_url(CONFIG.ADVANCEDFILE)
             if not TEMPADVANCEDFILE:
                 ADVANCEDWORKING = tools.check_url(CONFIG.ADVANCEDFILE)
         else:
-            TEMPADVANCEDFILE = clear.text_cache(url)
+            TEMPADVANCEDFILE = tools.open_url(url)
             if not TEMPADVANCEDFILE:
                 ADVANCEDWORKING = tools.check_url(url)
         add_file('Quick Configure advancedsettings.xml', 'autoadvanced', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)

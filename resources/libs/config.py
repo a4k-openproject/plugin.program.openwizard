@@ -29,8 +29,6 @@ class Config:
         self.ADDONTITLE = uservar.ADDONTITLE
         self.BUILDERNAME = uservar.BUILDERNAME
         self.EXCLUDES = uservar.EXCLUDES
-        self.CACHETEXT = uservar.CACHETEXT
-        self.CACHEAGE = uservar.CACHEAGE if str(uservar.CACHEAGE).isdigit() else 30
         self.BUILDFILE = uservar.BUILDFILE
         self.UPDATECHECK = uservar.UPDATECHECK if str(uservar.UPDATECHECK).isdigit() else 0
         self.APKFILE = uservar.APKFILE
@@ -136,7 +134,6 @@ class Config:
         self.ADDON_DATA = os.path.join(self.USERDATA, 'addon_data')
         self.PLUGIN_DATA = os.path.join(self.ADDON_DATA, self.ADDON_ID)
         self.QRCODES = os.path.join(self.PLUGIN_DATA, 'QRCodes')
-        self.TEXTCACHE = os.path.join(self.PLUGIN_DATA, 'Cache')
         self.SPEEDTEST = os.path.join(self.PLUGIN_DATA, 'SpeedTest')
         self.ARCHIVE_CACHE = os.path.join(self.TEMP, 'archive_cache')
         self.ART = os.path.join(self.PLUGIN, 'resources', 'art')
