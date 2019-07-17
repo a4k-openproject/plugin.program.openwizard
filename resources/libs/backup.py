@@ -110,7 +110,7 @@ def cleanup_backup():
                                "[COLOR {0}]Clean Up Cancelled![/COLOR]".format(CONFIG.COLOR2))
 
 
-def __backup_addon_pack(name=""):
+def _backup_addon_pack(name=""):
     if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
                         "[COLOR {0}]Are you sure you wish to create an Addon Pack?[/COLOR]".format(CONFIG.COLOR2),
                         nolabel="[B][COLOR red]Cancel Backup[/COLOR][/B]",
@@ -208,7 +208,7 @@ def __backup_addon_pack(name=""):
                       "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, zipname))
 
 
-def __backup_build(name=""):
+def _backup_build(name=""):
     if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
                         "[COLOR {0}]Are you sure you wish to backup the current build?[/COLOR]".format(CONFIG.COLOR2),
                     nolabel="[B][COLOR red]Cancel Backup[/COLOR][/B]",
@@ -395,14 +395,14 @@ def __backup_build(name=""):
                 xbmcvfs.copy(tempzipname, zipname)
                 xbmcvfs.delete(tempzipname)
 
-        __backup_info(name, extractsize, programs, video, music, picture, repos, scripts)
+        _backup_info(name, extractsize, programs, video, music, picture, repos, scripts)
 
         gui.DIALOG.ok(CONFIG.ADDONTITLE,
                       "[COLOR {0}]{1}[/COLOR] [COLOR {2}]Backup successful:[/COLOR]".format(CONFIG.COLOR1, name, CONFIG.COLOR2),
                       "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, zipname))
 
 
-def __backup_info(name, extractsize, programs, video, music, picture, repos, scripts):
+def _backup_info(name, extractsize, programs, video, music, picture, repos, scripts):
     backup_path = CONFIG.MY_BUILDS
     zipname = name + '.zip'
     txtname = name + '.txt'
@@ -423,7 +423,7 @@ def __backup_info(name, extractsize, programs, video, music, picture, repos, scr
         f.write('scripts="{0}"\n'.format(', '.join(scripts)) if len(scripts) > 0 else 'scripts="none"\n')
 
 
-def __backup_guifix(name=""):
+def _backup_guifix(name=""):
     if name == "":
         guiname = tools.get_keyboard("", "Please enter a name for the GUI Fix zip")
         if not guiname:
@@ -496,7 +496,7 @@ def __backup_guifix(name=""):
                   "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, guizipname))
 
 
-def __backup_theme(name=""):
+def _backup_theme(name=""):
     if not gui.DIALOG.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
                         "[COLOR {0}]Would you like to create a theme backup?[/COLOR]".format(CONFIG.COLOR2),
                         yeslabel="[B][COLOR springgreen]Continue[/COLOR][/B]",
@@ -694,7 +694,7 @@ def __backup_theme(name=""):
               "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, zipname))
 
 
-def __backup_addon_data(name=""):
+def _backup_addon_data(name=""):
     if gui.DIALOG.yesno(CONFIG.ADDONTITLE, "[COLOR {0}]Are you sure you wish to backup the current addon_data?[/COLOR]".format(CONFIG.COLOR2),
                     nolabel="[B][COLOR red]Cancel Backup[/COLOR][/B]",
                     yeslabel="[B][COLOR springgreen]Backup Addon_Data[/COLOR][/B]"):
@@ -820,15 +820,15 @@ def backup(type, name=''):
                       "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, str(e)))
         return
     if type == "addon_pack":
-        __backup_addon_pack(name)
+        _backup_addon_pack(name)
     elif type == "build":
-        __backup_build(name)
+        _backup_build(name)
     elif type == "guifix":
-        __backup_guifix(name)
+        _backup_guifix(name)
     elif type == "theme":
-        __backup_theme(name)
+        _backup_theme(name)
     elif type == "addon_data":
-        __backup_addon_data(name)
+        _backup_addon_data(name)
 
 
 def restore_local(type):
