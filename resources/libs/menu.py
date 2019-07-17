@@ -1179,21 +1179,8 @@ def wizard_menu(name, type, theme=None, over=False):
             installed = db.grab_addons(lib)
             db.addon_database(installed, 1, True)
 
-            if CONFIG.INSTALLMETHOD == 1:
-                todo = 1
-            elif CONFIG.INSTALLMETHOD == 2:
-                todo = 0
-            else:
-                todo = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
-                                        "[COLOR {0}]The Gui fix has been installed. Would you like to Reload the profile or Force Close Kodi?[/COLOR]".format(CONFIG.COLOR2),
-                                        yeslabel="[B][COLOR red]Reload Profile[/COLOR][/B]",
-                                        nolabel="[B][COLOR springgreen]Force Close[/COLOR][/B]")
-            if todo == 1:
-                tools.reload_fix()
-            else:
-                gui.DIALOG.ok(CONFIG.ADDONTITLE,
-                              "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(CONFIG.COLOR2))
-                tools.kill_kodi('true')
+            gui.DIALOG.ok(CONFIG.ADDONTITLE, "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(CONFIG.COLOR2))
+            tools.kill_kodi('true')
         else:
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                '[COLOR {0}]GuiFix: Cancelled![/COLOR]'.format(CONFIG.COLOR2))
@@ -1291,19 +1278,9 @@ def wizard_menu(name, type, theme=None, over=False):
                 if not themefile == False:
                     wizard_menu(name, 'theme')
                 db.addon_database(CONFIG.ADDON_ID, 1)
-                if CONFIG.INSTALLMETHOD == 1:
-                    todo = 1
-                elif CONFIG.INSTALLMETHOD == 2:
-                    todo = 0
-                else:
-                    todo = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
-                                            "[COLOR {0}]Would you like to [COLOR {1}]Force close[/COLOR] Kodi or [COLOR {2}]Reload Profile[/COLOR]?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1),
-                                            yeslabel="[B][COLOR red]Reload Profile[/COLOR][/B]",
-                                            nolabel="[B][COLOR springgreen]Force Close[/COLOR][/B]")
-                if todo == 1:
-                    tools.reload_fix()
-                else:
-                    tools.kill_kodi(True)
+                
+                gui.DIALOG.ok(CONFIG.ADDONTITLE, "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(CONFIG.COLOR2))
+                tools.kill_kodi(True)
             else:
                 if isinstance(errors, unicode):
                     error = error.encode('utf-8')

@@ -900,20 +900,8 @@ def restore_local(type):
     CONFIG.set_setting('extract', str(percent))
     CONFIG.set_setting('errors', str(errors))
 
-    if CONFIG.INSTALLMETHOD == 1:
-        todo = 1
-    elif CONFIG.INSTALLMETHOD == 2:
-        todo = 0
-    else:
-        todo = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
-                                "[COLOR {0}]Would you like to [COLOR {1}]Force close[/COLOR] kodi or [COLOR {2}]Reload Profile[/COLOR]?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1),
-                                yeslabel="[B][COLOR red]Reload Profile[/COLOR][/B]",
-                                nolabel="[B][COLOR springgreen]Force Close[/COLOR][/B]")
-
-    if todo == 1:
-        tools.reload_fix()
-    else:
-        tools.kill_kodi(True)
+    gui.DIALOG.ok(CONFIG.ADDONTITLE, "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(CONFIG.COLOR2))
+    tools.kill_kodi(True)
 
 
 def restore_external(type):
@@ -980,20 +968,8 @@ def restore_external(type):
     except:
         pass
 
-    if CONFIG.INSTALLMETHOD == 1:
-        todo = 1
-    elif CONFIG.INSTALLMETHOD == 2:
-        todo = 0
-    else:
-        todo = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
-                                "[COLOR {0}]Would you like to [COLOR {1}]Force close[/COLOR] kodi or [COLOR {2}]Reload Profile[/COLOR]?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1),
-                                yeslabel="[B][COLOR red]Reload Profile[/COLOR][/B]",
-                                nolabel="[B][COLOR springgreen]Force Close[/COLOR][/B]")
-
-    if todo == 1:
-        tools.reload_fix()
-    else:
-        tools.kill_kodi(True)
+    gui.DIALOG.ok(CONFIG.ADDONTITLE, "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(CONFIG.COLOR2))
+    tools.kill_kodi(True)
 
 
 def restore_it(type):
