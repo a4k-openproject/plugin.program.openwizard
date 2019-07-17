@@ -671,17 +671,7 @@ def remove_addon_menu():
 
         xbmc.sleep(500)
 
-        todo = CONFIG.INSTALLMETHOD
-
-        if todo == 0:  # always ask
-            todo = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
-                                    "[COLOR {0}]Would you like to [COLOR {1}]Force close[/COLOR] Kodi or [COLOR {2}]Reload Profile[/COLOR]?[/COLOR]".format(
-                                        CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1),
-                                    yeslabel="[B][COLOR springgreen]Reload Profile[/COLOR][/B]",
-                                    nolabel="[B][COLOR red]Force Close[/COLOR][/B]")
-
-        if todo == 0 or todo == 2:  # force close
-            update.addon_updates('reset')
-            tools.kill_kodi(True)
-        elif todo == 1:  # reload profile
-            tools.reload_fix('remove addon')
+        gui.DIALOG.ok(CONFIG.ADDONTITLE, "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(CONFIG.COLOR2))
+        
+        update.addon_updates('reset')
+        tools.kill_kodi(True)

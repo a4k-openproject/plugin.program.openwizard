@@ -86,7 +86,6 @@ class Config:
 
     def init_paths(self):
         # Static variables
-        self.INSTALLMETHODS = ['Always Ask', 'Reload Profile', 'Force Close']
         self.CLEANFREQ = ['Every Startup', 'Every Day', 'Every Three Days', 'Every Weekly']
         self.LOGFILES = ['log', 'xbmc.old.log', 'kodi.log', 'kodi.old.log', 'spmc.log', 'spmc.old.log', 'tvmc.log',
                          'tvmc.old.log', 'dmp']
@@ -220,8 +219,6 @@ class Config:
         # Backup variables
         self.BACKUPLOCATION = xbmc.translatePath(self.get_setting('path') if not self.get_setting('path') == '' else self.HOME)
         self.MYBUILDS = os.path.join(self.BACKUPLOCATION, 'My_Builds')
-        self.INSTALLMETHOD = self.get_setting('installmethod')
-        self.INSTALLMETHOD = int(float(self.INSTALLMETHOD)) if self.INSTALLMETHOD.isdigit() else 2
 
         # Logging variables
         self.WIZDEBUGGING = self.get_setting('addon_debug')
