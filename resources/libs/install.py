@@ -177,20 +177,10 @@ def fresh_start(install=None, over=False):
 
             menu.wizard_menu(install, 'normal', over=True)
         else:
-            if CONFIG.INSTALLMETHOD == 1:
-                todo = 1
-            elif CONFIG.INSTALLMETHOD == 2:
-                todo = 0
-            else:
-                todo = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
-                                        "[COLOR {0}]Would you like to [COLOR {1}]Force close[/COLOR] Kodi or [COLOR {2}]Reload Profile[/COLOR]?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1),
-                                        yeslabel="[B][COLOR red]Reload Profile[/COLOR][/B]",
-                                        nolabel="[B][COLOR springgreen]Force Close[/COLOR][/B]")
-            if todo == 1:
-                tools.reload_fix('fresh')
-            else:
-                update.addon_updates('reset')
-                tools.kill_kodi(True)
+            gui.DIALOG.ok(CONFIG.ADDONTITLE, "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(CONFIG.COLOR2))
+            
+            update.addon_updates('reset')
+            tools.kill_kodi(True)
     else:
         if not install == 'restore':
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
