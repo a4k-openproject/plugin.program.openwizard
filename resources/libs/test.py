@@ -1,4 +1,7 @@
-import zipfile
+try:  # Python 3
+    import zipfile
+except ImportError:  # Python 2
+    from resources.libs import zipfile
 
 from resources.libs.config import CONFIG
 
