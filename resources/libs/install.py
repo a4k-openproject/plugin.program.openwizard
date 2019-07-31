@@ -19,6 +19,7 @@ def fresh_start(install=None, over=False):
     from resources.libs import tools
     
     exclude_dirs = CONFIG.EXCLUDES
+    exclude_dirs.append('My_Builds')
     
     if CONFIG.KEEPTRAKT == 'true':
         from resources.libs import traktit
