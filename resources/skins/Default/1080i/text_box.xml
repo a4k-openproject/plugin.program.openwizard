@@ -46,7 +46,8 @@
                 <control type="button" id="201">
                     <align>center</align>
                     <height>80</height>
-                    <textcolor>$INFO[Window().Property(texture.color2)]</textcolor>
+                    <textcolor>FFFFFFFF</textcolor>
+                    <focusedcolor>$INFO[Window().Property(texture.color2)]</focusedcolor>
                     <texturefocus colordiffuse="$INFO[Window().Property(texture.color1)]">Background/white.png</texturefocus>
                     <texturenofocus colordiffuse="FF282828">Background/white.png</texturenofocus>
                     <label>Close</label>
