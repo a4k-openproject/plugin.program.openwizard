@@ -212,10 +212,6 @@ def autoConfig(msg='', TxtColor='0xFFFFFFFF', Font='font12', BorderWidth=10):
             self.setFocus(self.videoCacheSize)
 
 
-        def doExit(self):
-            self.CloseWindow()
-
-
         def updateCurrent(self, control):
             if control == self.videoCacheSize:
                 self.currentVideo = (self.videomax)*self.videoCacheSize.getPercent()/100
@@ -287,14 +283,14 @@ def autoConfig(msg='', TxtColor='0xFFFFFFFF', Font='font12', BorderWidth=10):
                     f.write('	</network>\n')
                     f.write('</advancedsettings>\n')
                 f.close()
-            self.CloseWindow()
+            self.close()
 
 
         def onControl(self, control):
             if control == self.buttonWrite:
                 self.doWrite()
             elif control == self.buttonCancel:
-                self.doExit()
+                self.close()
 
 
         def onAction(self, action):
@@ -311,13 +307,9 @@ def autoConfig(msg='', TxtColor='0xFFFFFFFF', Font='font12', BorderWidth=10):
             elif F in [self.Button0, self.Button1, self.Button2, self.Button3] and action in [gui.ACTION_MOUSE_LEFT_CLICK, gui.ACTION_SELECT_ITEM]:
                 self.updateCurrent(F)
             elif action == gui.ACTION_PREVIOUS_MENU:
-                self.doExit()
+                self.close()
             elif action == gui.ACTION_NAV_BACK:
-                self.doExit()
-
-
-        def CloseWindow(self):
-            self.close()
+                self.close()
 
     maxW = 1280
     maxH = 720
@@ -380,11 +372,6 @@ def QautoConfig(msg='', TxtColor='0xFFFFFFFF', Font='font10', BorderWidth=10):
             self.buttonCancel.controlLeft(self.buttonWrite)
             self.buttonCancel.controlRight(self.buttonWrite)
 
-
-        def doExit(self):
-            self.CloseWindow()
-
-
         def updateCurrent(self, control):
             if control == self.videoCacheSize:
                 self.currentVideo = (self.videomax)*self.videoCacheSize.getPercent()/100
@@ -443,14 +430,14 @@ def QautoConfig(msg='', TxtColor='0xFFFFFFFF', Font='font10', BorderWidth=10):
                 f.close()
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                    '[COLOR {0}]advancedsettings.xml has been written[/COLOR]'.format(CONFIG.COLOR2))
-            self.CloseWindow()
+            self.close()
 
 
         def onControl(self, control):
             if control == self.buttonWrite:
                 self.doWrite()
             elif control == self.buttonCancel:
-                self.doExit()
+                self.close()
 
 
         def onAction(self, action):
@@ -459,13 +446,9 @@ def QautoConfig(msg='', TxtColor='0xFFFFFFFF', Font='font10', BorderWidth=10):
             except:
                 F = False
             if action == gui.ACTION_PREVIOUS_MENU:
-                self.doExit()
+                self.close()
             elif action == gui.ACTION_NAV_BACK:
-                self.doExit()
-
-
-        def CloseWindow(self):
-            self.close()
+                self.close()
 
     maxW = 1280
     maxH = 720
@@ -479,7 +462,6 @@ def QautoConfig(msg='', TxtColor='0xFFFFFFFF', Font='font10', BorderWidth=10):
 
 
 def write_advanced(name, url):
-    from resources.libs import check
     from resources.libs import gui
     from resources.libs import tools
     from resources.libs import logging
