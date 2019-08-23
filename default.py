@@ -454,6 +454,6 @@ def route(paramstring):
     xbmcplugin.endOfDirectory(_handle)
 
 
-if __name__ == 'main':
+if __name__ == '__main__':
     route(sys.argv[2][1:])
 
