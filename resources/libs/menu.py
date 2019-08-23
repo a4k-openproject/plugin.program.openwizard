@@ -1098,8 +1098,8 @@ def developer():
     add_file('Create QR Code', 'createqr', themeit=CONFIG.THEME1)
     add_file('Test Notifications', 'testnotify', themeit=CONFIG.THEME1)
     add_file('Test Update', 'testupdate', themeit=CONFIG.THEME1)
-    add_file('Test First Run', 'testfirst', themeit=CONFIG.THEME1)
-    add_file('Test First Run Settings', 'testfirstrun', themeit=CONFIG.THEME1)
+    add_file('Test Build Prompt', 'testbuildprompt', themeit=CONFIG.THEME1)
+    add_file('Test Save Data Settings', 'testsavedata', themeit=CONFIG.THEME1)
 
     set_view()
 
