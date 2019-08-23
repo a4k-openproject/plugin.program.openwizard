@@ -743,15 +743,15 @@ def platform():
 
     if xbmc.getCondVisibility('system.platform.android'):
         return 'android'
-	elif xbmc.getCondVisibility('system.platform.linux') or xbmc.getCondVisibility('system.platform.linux.Raspberrypi'):
+    elif xbmc.getCondVisibility('system.platform.linux') or xbmc.getCondVisibility('system.platform.linux.Raspberrypi'):
         return 'linux'
-	elif xbmc.getCondVisibility('system.platform.windows'):
+    elif xbmc.getCondVisibility('system.platform.windows'):
         return 'windows'
-	elif xbmc.getCondVisibility('system.platform.osx'):
+    elif xbmc.getCondVisibility('system.platform.osx'):
         return 'osx'
-	elif xbmc.getCondVisibility('system.platform.atv2'):
+    elif xbmc.getCondVisibility('system.platform.atv2'):
         return 'atv2'
-	elif xbmc.getCondVisibility('system.platform.ios') or xbmc.getCondVisibility('system.platform.darwin'):
+    elif xbmc.getCondVisibility('system.platform.ios') or xbmc.getCondVisibility('system.platform.darwin'):
         return 'ios'
 
 class ZipFile(object):
