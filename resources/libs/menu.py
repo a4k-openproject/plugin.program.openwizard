@@ -530,7 +530,7 @@ def maint_menu(view=None):
     add_dir('[B]Misc Maintenance[/B]', 'maint', 'misc', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
     if view == "misc" or CONFIG.SHOWMAINT == 'true':
         add_file('Kodi 17 Fix', 'kodi17fix', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_dir('Speed Test', 'speedtest', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_dir('Network Tools', 'nettools', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         add_file('Enable Unknown Sources', 'unknownsources', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         add_file('Reload Skin', 'forceskin', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         add_file('Reload Profile', 'forceprofile', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
@@ -609,8 +609,8 @@ def maint_menu(view=None):
 #########################################NET TOOLS#############################################
 
 
-def net_tools(view=None):
-    add_dir('Speed Tester', 'speedtestM', icon=CONFIG.ICONSPEED, themeit=CONFIG.THEME1)
+def net_tools():
+    add_dir('Speed Test', 'speedtest', icon=CONFIG.ICONSPEED, themeit=CONFIG.THEME1)
     if CONFIG.HIDESPACERS == 'No':
         add_separator()
     add_dir('View IP Address & MAC Address', 'viewIP', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
