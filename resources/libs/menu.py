@@ -60,11 +60,11 @@ def main_menu():
     add_dir('Builds', 'builds', icon=CONFIG.ICONBUILDS, themeit=CONFIG.THEME1)
     add_dir('Maintenance', 'maint', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
     if (tools.platform() == 'android' or CONFIG.DEVELOPER == 'true') and CONFIG.KODIV < 18:
-        add_dir('Apk Installer','apk', icon=CONFIG.ICONAPK, themeit=CONFIG.THEME1)
+        add_dir('APK Installer', 'apk', icon=CONFIG.ICONAPK, themeit=CONFIG.THEME1)
     if not CONFIG.ADDONFILE == 'http://':
         add_dir('Addon Installer', 'addons', icon=CONFIG.ICONADDONS, themeit=CONFIG.THEME1)
     if not CONFIG.YOUTUBEFILE == 'http://' and not CONFIG.YOUTUBETITLE == '':
-        add_dir (CONFIG.YOUTUBETITLE, 'youtube', icon=CONFIG.ICONYOUTUBE, themeit=CONFIG.THEME1)
+        add_dir(CONFIG.YOUTUBETITLE, 'youtube', icon=CONFIG.ICONYOUTUBE, themeit=CONFIG.THEME1)
     add_dir('Save Data', 'savedata', icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME1)
     if CONFIG.HIDECONTACT == 'No':
         add_file('Contact', 'contact', icon=CONFIG.ICONCONTACT, themeit=CONFIG.THEME1)
@@ -83,7 +83,6 @@ def main_menu():
 
 def build_menu():
     from resources.libs import check
-    from resources.libs import clear
     from resources.libs import test
     from resources.libs import tools
 
@@ -171,7 +170,6 @@ def build_menu():
 
 def view_build(name):
     from resources.libs import check
-    from resources.libs import clear
     from resources.libs import tools
 
     bf = tools.open_url(CONFIG.BUILDFILE)
@@ -328,7 +326,7 @@ def apk_menu(url=None):
     from resources.libs import tools
 
     if not url:
-        add_dir('Official Kodi Apk\'s', 'apkscrape', 'kodi', icon=CONFIG.ICONAPK, themeit=CONFIG.THEME1)
+        add_dir('Official Kodi APK\'s', 'apkscrape', 'kodi', icon=CONFIG.ICONAPK, themeit=CONFIG.THEME1)
         add_separator()
     if not CONFIG.APKFILE == 'http://':
         if not url:
