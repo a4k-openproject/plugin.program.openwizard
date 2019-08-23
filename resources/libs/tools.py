@@ -47,14 +47,14 @@ from resources.libs.config import CONFIG
 
 
 def read_from_file(file, mode='r'):
-    f = open(file, mode, encoding='utf-8')
+    f = open(file, mode)
     a = f.read()
     f.close()
     return a
 
 
 def write_to_file(file, content, mode='w'):
-    f = open(file, mode, encoding='utf-8')
+    f = open(file, mode)
     f.write(content)
     f.close()
 
@@ -570,10 +570,10 @@ def ascii_check(use=None, over=False):
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                  "[COLOR {0}]ASCII Check: {1} Removed / {2} Failed.[/COLOR]".format(CONFIG.COLOR2, f1, f2))
             else:
-                gui.show_text_box(CONFIG.ADDONTITLE,
+                gui.show_text_box("Viewing Removed ASCII Files",
                                   "[COLOR yellow][B]{0} Files Removed:[/B][/COLOR]\n {1}\n\n[COLOR yellow][B]{2} Files Failed:[B][/COLOR]\n {3}".format(f1, msg, f2, msg2))
         else:
-            gui.show_text_box(CONFIG.ADDONTITLE, "[COLOR yellow][B]{0} Files Found:[/B][/COLOR]\n {1}".format(f1, msg))
+            gui.show_text_box("Viewed Found ASCII Files", "[COLOR yellow][B]{0} Files Found:[/B][/COLOR]\n {1}".format(f1, msg))
     else:
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            "[COLOR {0}]ASCII Check: None Found.[/COLOR]".format(CONFIG.COLOR2))

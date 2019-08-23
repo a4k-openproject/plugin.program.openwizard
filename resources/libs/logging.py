@@ -342,8 +342,8 @@ def show_result(message, url=None):
 def view_log_file():
     from resources.libs import gui
 
-    mainlog = grab_log(True)
-    oldlog = grab_log(True, True)
+    mainlog = grab_log(file=True)
+    oldlog = grab_log(file=True, old=True)
     which = 0
 
     if oldlog and mainlog:
@@ -364,9 +364,9 @@ def view_log_file():
         which = 1
 
     logtype = mainlog if which == 0 else oldlog
-    msg = grab_log(False) if which == 0 else grab_log(False, True)
+    msg = grab_log() if which == 0 else grab_log(old=True)
 
-    gui.show_text_box("{0} - {1}".format(CONFIG.ADDONTITLE, logtype), msg)
+    gui.show_text_box("Viewing Log File: {0}".format(logtype), msg)
 
 
 def error_list(file):
@@ -386,8 +386,8 @@ def error_checking(log=None, count=None, last=None):
     error1 = []
     error2 = []
     if log is None:
-        curr = grab_log(True, False)
-        old = grab_log(True, True)
+        curr = grab_log(file=True)
+        old = grab_log(file=True, old=True)
         if not old  and not curr:
             if count is None:
                 log_notify('[COLOR {0}]View Error Log[/COLOR]'.format(CONFIG.COLOR1),
@@ -414,17 +414,19 @@ def error_checking(log=None, count=None, last=None):
     if count is not None:
         return len(errors)
     elif len(errors) > 0:
+        from resources.libs import gui
+        
         if last is None:
             i = 0
             string = ''
             for item in errors:
                 i += 1
                 string += "[B][COLOR red]ERROR NUMBER {0}:[/B][/COLOR] {1}\n".format(str(i), item.replace(CONFIG.HOME, '/').replace('                                        ', ''))
+            gui.show_text_box("Viewing Errors in Log", string)
         else:
             string = "[B][COLOR red]Last Error in Log:[/B][/COLOR] {0}\n".format(errors[0].replace(CONFIG.HOME, '/').replace('                                        ', ''))
+            gui.show_text_box("Viewing Last Error in Log", string)
 
-        from resources.libs import gui
-        gui.show_text_box("{0}: Errors in Log".format(CONFIG.ADDONTITLE), string)
     else:
         log_notify('[COLOR {0}]View Error Log[/COLOR]'.format(CONFIG.COLOR1),
                    '[COLOR {0}]No Errors Found![/COLOR]'.format(CONFIG.COLOR2))

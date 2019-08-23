@@ -84,23 +84,22 @@ def show_text_box(title, msg):
             self.title = 101
             self.msg = 102
             self.scrollbar = 103
-            self.okbutton = 201
-            self.show_dialog()
-
-        def show_dialog(self):
-            self.getControl(self.title).setLabel(title)
-            self.getControl(self.msg).setText(msg)
-            self.setFocusId(self.scrollbar)
+            self.closebutton = 201
+            
+            self.setProperty('texture.color1', CONFIG.COLOR1)
+            self.setProperty('texture.color2', CONFIG.COLOR2)
+            self.setProperty('message.title', title)
+            self.setProperty('message.msg', msg)
 
         def onClick(self, controlid):
-            if controlid == self.okbutton:
+            if controlid == self.closebutton:
                 self.close()
 
         def onAction(self, action):
             if action.getId() in BACK_ACTIONS:
                 self.close()
 
-    tb = TextBox("Textbox.xml", CONFIG.ADDON_PATH, 'DefaultSkin', title=title, msg=msg)
+    tb = TextBox("text_box.xml", CONFIG.ADDON_PATH, 'Default', title=title, msg=msg)
     tb.doModal()
     del tb
 
@@ -133,7 +132,7 @@ def show_contact(msg=""):
             if action.getId() in BACK_ACTIONS:
                 self.close()
 
-    cw = ContactWindow("Contact.xml", CONFIG.ADDON_PATH, 'DefaultSkin', title=CONFIG.ADDONTITLE, fanart=CONFIG.CONTACTFANART,
+    cw = ContactWindow("Contact.xml", CONFIG.ADDON_PATH, 'Default', title=CONFIG.ADDONTITLE, fanart=CONFIG.CONTACTFANART,
                   image=CONFIG.CONTACTICON, msg=msg)
     cw.doModal()
     del cw
@@ -166,7 +165,7 @@ def show_qr_code(layout, imagefile, message):
             if action.getId() in BACK_ACTIONS:
                 self.close()
 
-    qr = QRCode(layout, CONFIG.ADDON_PATH, 'DefaultSkin', image=imagefile, text=message)
+    qr = QRCode(layout, CONFIG.ADDON_PATH, 'Default', image=imagefile, text=message)
     qr.doModal()
     del qr
 
@@ -192,7 +191,7 @@ def show_apk_warning(apk):
             self.close()
 
     xbmc.executebuiltin('Skin.SetString(apkinstaller, Now that {0} has been downloaded[CR]Click install on the next window!)'.format(apk))
-    popup = APKInstaller('APK.xml', CONFIG.ADDON_PATH, 'DefaultSkin', close_time=34)
+    popup = APKInstaller('APK.xml', CONFIG.ADDON_PATH, 'Default', close_time=34)
     popup.doModal()
     del popup
 
@@ -219,7 +218,7 @@ def show_speed_test(img):
             if action.getId() in BACK_ACTIONS:
                 self.close()
 
-    popup = SpeedTest('SpeedTest.xml', CONFIG.ADDON_PATH, 'DefaultSkin', img=img)
+    popup = SpeedTest('SpeedTest.xml', CONFIG.ADDON_PATH, 'Default', img=img)
     popup.doModal()
     del popup
 
@@ -286,7 +285,7 @@ def show_save_data_settings():
             if action.getId() in BACK_ACTIONS:
                 self.close()
 
-    fr = FirstRun("FirstRunSaveData.xml", CONFIG.ADDON_PATH, 'DefaultSkin', current=CONFIG.KEEPWHITELIST)
+    fr = FirstRun("FirstRunSaveData.xml", CONFIG.ADDON_PATH, 'Default', current=CONFIG.KEEPWHITELIST)
     fr.doModal()
     del fr
 
@@ -340,7 +339,7 @@ def show_build_prompt():
             elif controlid == self.ignore:
                 self.do_ignore()
 
-    fr = BuildPrompt("FirstRunBuild.xml", CONFIG.ADDON_PATH, 'DefaultSkin')
+    fr = BuildPrompt("FirstRunBuild.xml", CONFIG.ADDON_PATH, 'Default')
     fr.doModal()
     del fr
 
@@ -413,7 +412,7 @@ def show_update_window(name='Testing Window', current='1.0', new='1.1', icon=CON
             elif controlid == self.ignore:
                 self.do_ignore()
 
-    update = UpdateWindow("BuildUpdate.xml", CONFIG.ADDON_PATH, 'DefaultSkin', name=name, current=current, new=new, icon=icon, fanart=fanart)
+    update = UpdateWindow("BuildUpdate.xml", CONFIG.ADDON_PATH, 'Default', name=name, current=current, new=new, icon=icon, fanart=fanart)
     update.doModal()
     del update
 
@@ -485,7 +484,7 @@ def show_notification(msg='', test=False):
 
     xbmc.executebuiltin('Skin.SetString(headertexttype, {0})'.format('true' if CONFIG.HEADERTYPE == 'Text' else 'false'))
     xbmc.executebuiltin('Skin.SetString(headerimagetype, {0})'.format('true' if CONFIG.HEADERTYPE == 'Image' else 'false'))
-    notify = Notification("Notifications.xml", CONFIG.ADDON_PATH, 'DefaultSkin', msg=msg, test=test)
+    notify = Notification("Notifications.xml", CONFIG.ADDON_PATH, 'Default', msg=msg, test=test)
     notify.doModal()
     del notify
 
@@ -498,74 +497,60 @@ def show_log_viewer(default=None):
             self.default = kwargs['default']
 
         def onInit(self):
+            from resources.libs import tools
+            
             self.title = 101
             self.msg = 102
             self.scrollbar = 103
             self.upload = 201
-            self.kodi = 202
-            self.kodiold = 203
-            self.wizard = 204
-            self.okbutton = 205
+            self.kodilog = 202
+            self.oldlog = 203
+            self.wizardlog = 204
+            self.closebutton = 205
 
-            from resources.libs import tools
             self.logmsg = tools.read_from_file(self.default)
-
-            self.titlemsg = "{0}: {1}".format(CONFIG.ADDONTITLE,
-                                              self.default.replace(CONFIG.LOGPATH, '').replace(CONFIG.ADDON_DATA, ''))
-            self.show_dialog()
-
-        def show_dialog(self):
-            self.getControl(self.title).setLabel(self.titlemsg)
-            self.getControl(self.msg).setText(highlight_text(self.logmsg))
-            self.setFocusId(self.scrollbar)
+            self.logfile = os.path.basename(self.default)
+            
+            self.setProperty('texture.color1', CONFIG.COLOR1)
+            self.setProperty('texture.color2', CONFIG.COLOR2)
+            self.setProperty('message.title', "Viewing Log File")
+            self.setProperty('message.logmsg', highlight_text(self.logmsg))
+            self.setProperty('message.logfile', self.logfile)
 
         def onClick(self, controlId):
-            if controlId == self.okbutton:
+            if controlId == self.closebutton:
                 self.close()
             elif controlId == self.upload:
                 self.close()
                 logging.upload_log()
-            elif controlId == self.kodi:
-                newmsg = logging.grab_log(False)
-                filename = logging.grab_log(True)
+            elif controlId in [self.kodilog, self.oldlog, self.wizardlog]:
+                if controlId == self.kodilog:
+                    newmsg = logging.grab_log()
+                    filename = logging.grab_log(file=True)
+                elif controlId == self.oldlog:
+                    newmsg = logging.grab_log(old=True)
+                    filename = logging.grab_log(file=True, old=True)
+                elif controlId == self.wizardlog:
+                    newmsg = logging.grab_log(wizard=True)
+                    filename = logging.grab_log(file=True, wizard=True)
+                
                 if not newmsg:
-                    self.titlemsg = "{0}: View Log Error".format(CONFIG.ADDONTITLE)
-                    self.getControl(self.msg).setText("Log File Does Not Exists!")
+                    self.setProperty('message.title', "Error Viewing Log File")
+                    self.setProperty('message.logmsg', "File does not exist or could not be read.")
                 else:
-                    self.titlemsg = "{0}: {1}".format(CONFIG.ADDONTITLE, filename.replace(CONFIG.LOG, ''))
-                    self.getControl(self.title).setLabel(self.titlemsg)
-                    self.getControl(self.msg).setText(highlight_text(newmsg))
-                    self.setFocusId(self.scrollbar)
-            elif controlId == self.kodiold:
-                newmsg = logging.grab_log(False, True)
-                filename = logging.grab_log(True, True)
-                if not newmsg:
-                    self.titlemsg = "{0}: View Log Error".format(CONFIG.ADDONTITLE)
-                    self.getControl(self.msg).setText("Log File Does Not Exists!")
-                else:
-                    self.titlemsg = "{0}: {1}".format(CONFIG.ADDONTITLE, filename.replace(CONFIG.LOG, ''))
-                    self.getControl(self.title).setLabel(self.titlemsg)
-                    self.getControl(self.msg).setText(highlight_text(newmsg))
-                    self.setFocusId(self.scrollbar)
-            elif controlId == self.wizard:
-                newmsg = logging.grab_log(False, False, True)
-                filename = logging.grab_log(True, False, True)
-                if not newmsg:
-                    self.titlemsg = "{0}: View Log Error".format(CONFIG.ADDONTITLE)
-                    self.getControl(self.msg).setText("Log File Does Not Exists!")
-                else:
-                    self.titlemsg = "{0}: {1}".format(CONFIG.ADDONTITLE, filename.replace(CONFIG.ADDON_DATA, ''))
-                    self.getControl(self.title).setLabel(self.titlemsg)
-                    self.getControl(self.msg).setText(highlight_text(newmsg))
-                    self.setFocusId(self.scrollbar)
+                    self.logmsg = newmsg
+                    self.logfile = os.path.basename(filename)
+                
+                    self.setProperty('message.logmsg', highlight_text(self.logmsg))
+                    self.setProperty('message.logfile', self.logfile)
 
         def onAction(self, action):
             if action.getId() in BACK_ACTIONS:
                 self.close()
 
-    if not default:
-        default = logging.grab_log(True)
+    if default is None:
+        default = logging.grab_log(file=True)
         
-    lv = LogViewer("LogViewer.xml", CONFIG.ADDON_PATH, 'DefaultSkin', default=default)
+    lv = LogViewer("log_viewer.xml", CONFIG.ADDON_PATH, 'Default', default=default)
     lv.doModal()
     del lv

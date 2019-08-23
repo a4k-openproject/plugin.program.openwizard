@@ -114,7 +114,7 @@ def build_info(name):
                 msg += "[COLOR {0}]Adult Content:[/COLOR] [COLOR {1}]{2}[/COLOR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, adult)
                 msg += "[COLOR {0}]Description:[/COLOR] [COLOR {1}]{2}[/COLOR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, description)
 
-            gui.show_text_box(CONFIG.ADDONTITLE, msg)
+            gui.show_text_box("Viewing Build Info: {0}".format(name), msg)
         else:
             logging.log("Invalid Build Name!")
     else:
@@ -269,7 +269,7 @@ def check_repos():
                            "[COLOR {0}]Enabling Addons Cancelled[/COLOR]".format(CONFIG.COLOR2))
         sys.exit()
     gui.DP.close()
-    logfile = logging.grab_log(False)
+    logfile = logging.grab_log()
     fails = re.compile('CRepositoryUpdateJob(.+?)failed').findall(logfile)
     for item in fails:
         logging.log("Bad Repository: {0} ".format(item), level=xbmc.LOGNOTICE)
@@ -280,7 +280,7 @@ def check_repos():
         msg = "[COLOR {0}]Below is a list of Repositories that did not resolve.  This does not mean that they are Depreciated, sometimes hosts go down for a short period of time.  Please do serveral scans of your repository list before removing a repository just to make sure it is broken.[/COLOR][CR][CR][COLOR {1}]".format(CONFIG.COLOR2, CONFIG.COLOR1)
         msg += '[CR]'.join(badrepos)
         msg += '[/COLOR]'
-        gui.show_text_box("{0}: Bad Repositories".format(CONFIG.ADDONTITLE), msg)
+        gui.show_text_box("Viewing Broken Repositories", msg)
     else:
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            "[COLOR {0}]All Repositories Working![/COLOR]".format(CONFIG.COLOR2))
