@@ -1270,7 +1270,7 @@ def wizard_menu(name, type, theme=None, over=False):
                     if yes:
                         if isinstance(errors, unicode):
                             error = error.encode('utf-8')
-                        gui.show_text_box(CONFIG.ADDONTITLE, error)
+                        gui.show_text_box("Viewing Build Install Error", error)
                 gui.DP.close()
                 themefile = check.theme_count(name)
                 if not themefile == False:
@@ -1282,7 +1282,7 @@ def wizard_menu(name, type, theme=None, over=False):
             else:
                 if isinstance(errors, unicode):
                     error = error.encode('utf-8')
-                gui.show_text_box("{0}: Error Installing Build".format(CONFIG.ADDONTITLE), error)
+                gui.show_text_box("Viewing Error Installing Build", error)
         else:
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                '[COLOR {0}]Build Install: Cancelled![/COLOR]'.format(CONFIG.COLOR2))

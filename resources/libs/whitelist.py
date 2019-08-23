@@ -128,8 +128,8 @@ def whitelist(do):
                     name, id, fold = item
                 except Exception as e:
                     logging.log(str(e))
-                msg += "[COLOR {0}]{1][/COLOR] [COLOR {2}]\"{3}\"[/COLOR][CR]".format(CONFIG.COLOR1, name, CONFIG.COLOR2, id)
-            gui.show_text_box("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE), msg)
+                msg += "[COLOR {0}]{1}[/COLOR] [COLOR {2}]\"{3}\"[/COLOR][CR]".format(CONFIG.COLOR1, name, CONFIG.COLOR2, id)
+            gui.show_text_box("Viewing Whitelisted Items", msg)
         else:
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                "[COLOR {0}]No items in whitelist[/COLOR]".format(CONFIG.COLOR2))

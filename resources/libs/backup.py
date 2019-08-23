@@ -896,7 +896,7 @@ def restore_local(type):
                             yeslabel='[B][COLOR springgreen]View Errors[/COLOR][/B]'):
             if isinstance(errors, unicode):
                 error = error.encode('utf-8')
-            gui.show_text_box(CONFIG.ADDONTITLE, error.replace('\t',''))
+            gui.show_text_box("Viewing Errors", error.replace('\t',''))
     CONFIG.set_setting('installed', 'true')
     CONFIG.set_setting('extract', str(percent))
     CONFIG.set_setting('errors', str(errors))
@@ -960,7 +960,7 @@ def restore_external(type):
                             'Would you like to view the errors?[/COLOR]',
                             nolabel='[B][COLOR red]No Thanks[/COLOR][/B]',
                             yeslabel='[B][COLOR springgreen]View Errors[/COLOR][/B]'):
-            gui.show_text_box(CONFIG.ADDONTITLE, error.replace('\t',''))
+            gui.show_text_box("Viewing Errors", error.replace('\t',''))
     CONFIG.set_setting('installed', 'true')
     CONFIG.set_setting('extract', str(percent))
     CONFIG.set_setting('errors', str(errors))
