@@ -213,7 +213,7 @@ def show_speed_test(img):
             self.getControl(self.imagespeed).setImage(self.imgfile)
 
         def onClick(self, controlid):
-            self.close_window()
+            self.close()
 
         def onAction(self, action):
             if action.getId() in BACK_ACTIONS:
