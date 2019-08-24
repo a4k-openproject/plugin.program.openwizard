@@ -12,14 +12,131 @@ from resources.libs.config import CONFIG
 ###########################
 
 
+def wipe():
+    from resources.libs import db
+    from resources.libs import gui
+    from resources.libs import logging
+    from resources.libs import tools
+    from resources.libs import update
+
+    exclude_dirs = CONFIG.EXCLUDES
+    exclude_dirs.append('My_Builds')
+        
+    update.addon_updates('set')
+    xbmcPath = os.path.abspath(CONFIG.HOME)
+    gui.DP.create(CONFIG.ADDONTITLE,
+                  "[COLOR {0}]Calculating files and folders".format(CONFIG.COLOR2), '', 'Please Wait![/COLOR]')
+    total_files = sum([len(files) for r, d, files in os.walk(xbmcPath)])
+    del_file = 0
+    gui.DP.update(0, "[COLOR {0}]Gathering Excludes list.[/COLOR]".format(CONFIG.COLOR2))
+    if CONFIG.KEEPREPOS == 'true':
+        repos = glob.glob(os.path.join(CONFIG.ADDONS, 'repo*/'))
+        for item in repos:
+            repofolder = os.path.split(item[:-1])[1]
+            if not repofolder == exclude_dirs:
+                exclude_dirs.append(repofolder)
+    if CONFIG.KEEPSUPER == 'true':
+        exclude_dirs.append('plugin.program.super.favourites')
+    if CONFIG.KEEPWHITELIST == 'true':
+        pvr = ''
+
+        from resources.libs import whitelist
+        whitelist = whitelist.whitelist('read')
+        if len(whitelist) > 0:
+            for item in whitelist:
+                try:
+                    name, id, fold = item
+                except:
+                    pass
+                if fold.startswith('pvr'):
+                    pvr = id
+
+                depends = db.depends_list(fold)
+                for plug in depends:
+                    if plug not in exclude_dirs:
+                        exclude_dirs.append(plug)
+                    depends2 = db.depends_list(plug)
+                    for plug2 in depends2:
+                        if plug2 not in exclude_dirs:
+                            exclude_dirs.append(plug2)
+                if fold not in exclude_dirs:
+                    exclude_dirs.append(fold)
+            if not pvr == '':
+                CONFIG.set_setting('pvrclient', fold)
+    if CONFIG.get_setting('pvrclient') == '':
+        for item in exclude_dirs:
+            if item.startswith('pvr'):
+                CONFIG.set_setting('pvrclient', item)
+
+    for item in CONFIG.DEPENDENCIES:
+        exclude_dirs.append(item)
+
+    gui.DP.update(0, "[COLOR {0}]Clearing out files and folders:".format(CONFIG.COLOR2))
+    latestAddonDB = db.latest_db('Addons')
+    for root, dirs, files in os.walk(xbmcPath, topdown=True):
+        dirs[:] = [d for d in dirs if d not in exclude_dirs]
+        for name in files:
+            del_file += 1
+            fold = root.replace('/', '\\').split('\\')
+            x = len(fold)-1
+            if name == 'sources.xml' and fold[-1] == 'userdata' and CONFIG.KEEPSOURCES == 'true':
+                logging.log("Keep sources.xml: {0}".format(os.path.join(root, name)), level=xbmc.LOGNOTICE)
+            elif name == 'favourites.xml' and fold[-1] == 'userdata' and CONFIG.KEEPFAVS == 'true':
+                logging.log("Keep favourites.xml: {0}".format(os.path.join(root, name)), level=xbmc.LOGNOTICE)
+            elif name == 'profiles.xml' and fold[-1] == 'userdata' and CONFIG.KEEPPROFILES == 'true':
+                logging.log("Keep profiles.xml: {0}".format(os.path.join(root, name)), level=xbmc.LOGNOTICE)
+            elif name == 'playercorefactory.xml' and fold[-1] == 'userdata' and CONFIG.KEEPPLAYERCORE == 'true':
+                logging.log("Keep playercorefactory.xml: {0}".format(os.path.join(root, name)), level=xbmc.LOGNOTICE)
+            elif name == 'advancedsettings.xml' and fold[-1] == 'userdata' and CONFIG.KEEPADVANCED == 'true':
+                logging.log("Keep advancedsettings.xml: {0}".format(os.path.join(root, name)), level=xbmc.LOGNOTICE)
+            elif name in CONFIG.LOGFILES:
+                logging.log("Keep Log File: {0}".format(name), level=xbmc.LOGNOTICE)
+            elif name.endswith('.db'):
+                try:
+                    if name == latestAddonDB:
+                        logging.log("Ignoring {0} on Kodi {1}".format(name, tools.kodi_version()), level=xbmc.LOGNOTICE)
+                    else:
+                        os.remove(os.path.join(root, name))
+                except Exception as e:
+                    if not name.startswith('Textures13'):
+                        logging.log('Failed to delete, Purging DB', level=xbmc.LOGNOTICE)
+                        logging.log("-> {0}".format(str(e)), level=xbmc.LOGNOTICE)
+                        db.purge_db_file(os.path.join(root, name))
+            else:
+                gui.DP.update(int(tools.percentage(del_file, total_files)), '',
+                              '[COLOR {0}]File: [/COLOR][COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name), '')
+                try:
+                    os.remove(os.path.join(root, name))
+                except Exception as e:
+                    logging.log("Error removing {0}".format(os.path.join(root, name)), level=xbmc.LOGNOTICE)
+                    logging.log("-> / {0}".format(str(e)), level=xbmc.LOGNOTICE)
+        if gui.DP.iscanceled():
+            gui.DP.close()
+            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                               "[COLOR {0}]Fresh Start Cancelled[/COLOR]".format(CONFIG.COLOR2))
+            return False
+    for root, dirs, files in os.walk(xbmcPath, topdown=True):
+        dirs[:] = [d for d in dirs if d not in exclude_dirs]
+        for name in dirs:
+            gui.DP.update(100, '',
+                          'Cleaning Up Empty Folder: [COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, name), '')
+            if name not in ["Database", "userdata", "temp", "addons", "addon_data"]:
+                shutil.rmtree(os.path.join(root, name), ignore_errors=True, onerror=None)
+        if gui.DP.iscanceled():
+            gui.DP.close()
+            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                               "[COLOR {0}]Fresh Start Cancelled[/COLOR]".format(CONFIG.COLOR2))
+            return False
+    gui.DP.close()
+    CONFIG.clear_setting('build')
+
 def fresh_start(install=None, over=False):
     from resources.libs import db
     from resources.libs import gui
     from resources.libs import logging
     from resources.libs import tools
     
-    exclude_dirs = CONFIG.EXCLUDES
-    exclude_dirs.append('My_Builds')
+
     
     if CONFIG.KEEPTRAKT == 'true':
         from resources.libs import traktit
@@ -60,115 +177,8 @@ def fresh_start(install=None, over=False):
                                        nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
                                        yeslabel='[B][COLOR springgreen]Continue[/COLOR][/B]')
     if yes_pressed:
-        from resources.libs import update
+        wipe()
         
-        update.addon_updates('set')
-        xbmcPath = os.path.abspath(CONFIG.HOME)
-        gui.DP.create(CONFIG.ADDONTITLE,
-                      "[COLOR {0}]Calculating files and folders".format(CONFIG.COLOR2), '', 'Please Wait![/COLOR]')
-        total_files = sum([len(files) for r, d, files in os.walk(xbmcPath)])
-        del_file = 0
-        gui.DP.update(0, "[COLOR {0}]Gathering Excludes list.[/COLOR]".format(CONFIG.COLOR2))
-        if CONFIG.KEEPREPOS == 'true':
-            repos = glob.glob(os.path.join(CONFIG.ADDONS, 'repo*/'))
-            for item in repos:
-                repofolder = os.path.split(item[:-1])[1]
-                if not repofolder == exclude_dirs:
-                    exclude_dirs.append(repofolder)
-        if CONFIG.KEEPSUPER == 'true':
-            exclude_dirs.append('plugin.program.super.favourites')
-        if CONFIG.KEEPWHITELIST == 'true':
-            pvr = ''
-
-            from resources.libs import whitelist
-            whitelist = whitelist.whitelist('read')
-            if len(whitelist) > 0:
-                for item in whitelist:
-                    try:
-                        name, id, fold = item
-                    except:
-                        pass
-                    if fold.startswith('pvr'):
-                        pvr = id
-
-                    depends = db.depends_list(fold)
-                    for plug in depends:
-                        if plug not in exclude_dirs:
-                            exclude_dirs.append(plug)
-                        depends2 = db.depends_list(plug)
-                        for plug2 in depends2:
-                            if plug2 not in exclude_dirs:
-                                exclude_dirs.append(plug2)
-                    if fold not in exclude_dirs:
-                        exclude_dirs.append(fold)
-                if not pvr == '':
-                    CONFIG.set_setting('pvrclient', fold)
-        if CONFIG.get_setting('pvrclient') == '':
-            for item in exclude_dirs:
-                if item.startswith('pvr'):
-                    CONFIG.set_setting('pvrclient', item)
-
-        for item in CONFIG.DEPENDENCIES:
-            exclude_dirs.append(item)
-
-        gui.DP.update(0, "[COLOR {0}]Clearing out files and folders:".format(CONFIG.COLOR2))
-        latestAddonDB = db.latest_db('Addons')
-        for root, dirs, files in os.walk(xbmcPath, topdown=True):
-            dirs[:] = [d for d in dirs if d not in exclude_dirs]
-            for name in files:
-                del_file += 1
-                fold = root.replace('/', '\\').split('\\')
-                x = len(fold)-1
-                if name == 'sources.xml' and fold[-1] == 'userdata' and CONFIG.KEEPSOURCES == 'true':
-                    logging.log("Keep sources.xml: {0}".format(os.path.join(root, name)), level=xbmc.LOGNOTICE)
-                elif name == 'favourites.xml' and fold[-1] == 'userdata' and CONFIG.KEEPFAVS == 'true':
-                    logging.log("Keep favourites.xml: {0}".format(os.path.join(root, name)), level=xbmc.LOGNOTICE)
-                elif name == 'profiles.xml' and fold[-1] == 'userdata' and CONFIG.KEEPPROFILES == 'true':
-                    logging.log("Keep profiles.xml: {0}".format(os.path.join(root, name)), level=xbmc.LOGNOTICE)
-                elif name == 'playercorefactory.xml' and fold[-1] == 'userdata' and CONFIG.KEEPPLAYERCORE == 'true':
-                    logging.log("Keep playercorefactory.xml: {0}".format(os.path.join(root, name)), level=xbmc.LOGNOTICE)
-                elif name == 'advancedsettings.xml' and fold[-1] == 'userdata' and CONFIG.KEEPADVANCED == 'true':
-                    logging.log("Keep advancedsettings.xml: {0}".format(os.path.join(root, name)), level=xbmc.LOGNOTICE)
-                elif name in CONFIG.LOGFILES:
-                    logging.log("Keep Log File: {0}".format(name), level=xbmc.LOGNOTICE)
-                elif name.endswith('.db'):
-                    try:
-                        if name == latestAddonDB:
-                            logging.log("Ignoring {0} on Kodi {1}".format(name, tools.kodi_version()), level=xbmc.LOGNOTICE)
-                        else:
-                            os.remove(os.path.join(root, name))
-                    except Exception as e:
-                        if not name.startswith('Textures13'):
-                            logging.log('Failed to delete, Purging DB', level=xbmc.LOGNOTICE)
-                            logging.log("-> {0}".format(str(e)), level=xbmc.LOGNOTICE)
-                            db.purge_db_file(os.path.join(root, name))
-                else:
-                    gui.DP.update(int(tools.percentage(del_file, total_files)), '',
-                                  '[COLOR {0}]File: [/COLOR][COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name), '')
-                    try:
-                        os.remove(os.path.join(root, name))
-                    except Exception as e:
-                        logging.log("Error removing {0}".format(os.path.join(root, name)), level=xbmc.LOGNOTICE)
-                        logging.log("-> / {0}".format(str(e)), level=xbmc.LOGNOTICE)
-            if gui.DP.iscanceled():
-                gui.DP.close()
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
-                                   "[COLOR {0}]Fresh Start Cancelled[/COLOR]".format(CONFIG.COLOR2))
-                return False
-        for root, dirs, files in os.walk(xbmcPath, topdown=True):
-            dirs[:] = [d for d in dirs if d not in exclude_dirs]
-            for name in dirs:
-                gui.DP.update(100, '',
-                              'Cleaning Up Empty Folder: [COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, name), '')
-                if name not in ["Database", "userdata", "temp", "addons", "addon_data"]:
-                    shutil.rmtree(os.path.join(root, name), ignore_errors=True, onerror=None)
-            if gui.DP.iscanceled():
-                gui.DP.close()
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
-                                   "[COLOR {0}]Fresh Start Cancelled[/COLOR]".format(CONFIG.COLOR2))
-                return False
-        gui.DP.close()
-        CONFIG.clear_setting('build')
         if over:
             return True
         elif install == 'restore':
@@ -179,7 +189,7 @@ def fresh_start(install=None, over=False):
             menu.wizard_menu(install, 'normal', over=True)
         else:
             gui.DIALOG.ok(CONFIG.ADDONTITLE, "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(CONFIG.COLOR2))
-            
+            from resources.libs import update
             update.addon_updates('reset')
             tools.kill_kodi(True)
     else:

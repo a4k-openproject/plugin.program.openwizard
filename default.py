@@ -309,28 +309,40 @@ def route(paramstring):
         backup.backup('theme')
     elif mode == 'backupaddonpack':  # Backup Addon Pack
         from resources.libs import backup
-        backup.backup('addon_pack')
+        backup.backup('addonpack')
     elif mode == 'backupaddon':  # Backup Addon Data
         from resources.libs import backup
-        backup.backup('addon_data')
-    elif mode == 'restorezip':  # Restore Build
-        from resources.libs import backup
-        backup.restore_it('build')
-    elif mode == 'restoregui':  # Restore Gui
-        from resources.libs import backup
-        backup.restore_it('gui')
-    elif mode == 'restoreaddon':  # Restore Addon Data
-        from resources.libs import backup
-        backup.restore_it('addon_data')
-    elif mode == 'restoreextzip':  # Restore External Build
-        from resources.libs import backup
-        backup.restore_it_external('build')
-    elif mode == 'restoreextgui':  # Restore External guisettings
-        from resources.libs import backup
-        backup.restore_it_external('gui')
-    elif mode == 'restoreextaddon':  # Restore External Addon Data
-        from resources.libs import backup
-        backup.restore_it_external('addon_data')
+        backup.backup('addondata')
+    elif mode == 'restorebuild':  # Restore Local Build
+        from resources.libs import restore
+        restore.Restore().restore('build')
+    elif mode == 'restoregui':  # Restore Local Guifix
+        from resources.libs import restore
+        restore.Restore().restore('guifix')
+    elif mode == 'restoretheme':  # Restore Local Theme
+        from resources.libs import restore
+        restore.Restore().restore('theme')
+    elif mode == 'restoreaddonpack':  # Restore Local Addon Pack
+        from resources.libs import restore
+        restore.Restore().restore('addonpack')
+    elif mode == 'restoreaddondata':  # Restore Local Addon Data
+        from resources.libs import restore
+        restore.Restore().restore('addondata')
+    elif mode == 'restoreextbuild':  # Restore External Build
+        from resources.libs import restore
+        restore.Restore().restore('build', external=True)
+    elif mode == 'restoreextgui':  # Restore External Guifix
+        from resources.libs import restore
+        restore.Restore().restore('guifix', external=True)
+    elif mode == 'restoreexttheme':  # Restore External Theme
+        from resources.libs import restore
+        restore.Restore().restore('theme', external=True)
+    elif mode == 'restoreextaddonpack':  # Restore External Addon Pack
+        from resources.libs import restore
+        restore.Restore().restore('addonpack', external=True)
+    elif mode == 'restoreextaddondata':  # Restore External Addon Data
+        from resources.libs import restore
+        restore.Restore().restore('addondata', external=True)
 
     if mode == 'wizardupdate':  # Wizard Update
         from resources.libs import update
