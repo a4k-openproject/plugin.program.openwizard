@@ -127,11 +127,11 @@ def upload_log():
     for item in files:
         filetype = item[0]
         if filetype == 'log':
-            log = grab_log(file=True).replace(CONFIG.LOGPATH, "")
+            log = os.path.basename(grab_log(file=True))
             name = log if log else "kodi.log"
             error = "Error posting the {0} file".format(name)
         elif filetype == 'oldlog':
-            log = grab_log(file=True, old=True).replace(CONFIG.LOGPATH, "")
+            log = os.path.basename(grab_log(file=True, old=True))
             name = log if log else "kodi.old.log"
             error = "Error posting the {0} file".format(name)
         elif filetype == 'wizlog':
@@ -366,7 +366,7 @@ def view_log_file():
     logtype = mainlog if which == 0 else oldlog
     msg = grab_log() if which == 0 else grab_log(old=True)
 
-    gui.show_text_box("Viewing Log File: {0}".format(logtype), msg)
+    gui.show_log_viewer("Viewing Log File: {0}".format(logtype), msg, ext_buttons=True)
 
 
 def error_list(file):
@@ -422,10 +422,10 @@ def error_checking(log=None, count=None, last=None):
             for item in errors:
                 i += 1
                 string += "[B][COLOR red]ERROR NUMBER {0}:[/B][/COLOR] {1}\n".format(str(i), item.replace(CONFIG.HOME, '/').replace('                                        ', ''))
-            gui.show_text_box("Viewing Errors in Log", string)
+            gui.show_log_viewer("Viewing Errors in Log", string)
         else:
             string = "[B][COLOR red]Last Error in Log:[/B][/COLOR] {0}\n".format(errors[0].replace(CONFIG.HOME, '/').replace('                                        ', ''))
-            gui.show_text_box("Viewing Last Error in Log", string)
+            gui.show_log_viewer("Viewing Last Error in Log", string)
 
     else:
         log_notify('[COLOR {0}]View Error Log[/COLOR]'.format(CONFIG.COLOR1),

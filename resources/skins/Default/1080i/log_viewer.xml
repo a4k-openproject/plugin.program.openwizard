@@ -61,6 +61,7 @@
                     <texturefocus colordiffuse="$INFO[Window().Property(texture.color1)]">Background/white.png</texturefocus>
                     <texturenofocus colordiffuse="FF282828">Background/white.png</texturenofocus>
                     <label>Kodi Log</label>
+                    <visible>String.IsEqual(Window().Property(message.buttons), true)</visible>
                 </control>
                 
                 <control type="button" id="203">
@@ -71,6 +72,7 @@
                     <texturefocus colordiffuse="$INFO[Window().Property(texture.color1)]">Background/white.png</texturefocus>
                     <texturenofocus colordiffuse="FF282828">Background/white.png</texturenofocus>
                     <label>Old Log</label>
+                    <visible>String.IsEqual(Window().Property(message.buttons), true)</visible>
                 </control>
                 
                 <control type="button" id="204">
@@ -81,6 +83,7 @@
                     <texturefocus colordiffuse="$INFO[Window().Property(texture.color1)]">Background/white.png</texturefocus>
                     <texturenofocus colordiffuse="FF282828">Background/white.png</texturenofocus>
                     <label>Wizard Log</label>
+                    <visible>String.IsEqual(Window().Property(message.buttons), true)</visible>
                 </control>
                 
                 <control type="button" id="205">
