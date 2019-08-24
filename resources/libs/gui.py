@@ -489,7 +489,7 @@ def show_notification(msg='', test=False):
     del notify
 
 
-def show_log_viewer(default=None):
+def show_log_viewer(window_title="Viewing Log File", window_msg=None, default=None, ext_buttons=False):
     from resources.libs import logging
 
     class LogViewer(xbmcgui.WindowXMLDialog):
@@ -508,14 +508,20 @@ def show_log_viewer(default=None):
             self.wizardlog = 204
             self.closebutton = 205
 
-            self.logmsg = tools.read_from_file(self.default)
+            if window_msg is None:
+                self.logmsg = tools.read_from_file(self.default)
+            else:
+                self.logmsg = window_msg
             self.logfile = os.path.basename(self.default)
+            
+            self.buttons = 'true' if ext_buttons else 'false'
             
             self.setProperty('texture.color1', CONFIG.COLOR1)
             self.setProperty('texture.color2', CONFIG.COLOR2)
-            self.setProperty('message.title', "Viewing Log File")
+            self.setProperty('message.title', window_title)
             self.setProperty('message.logmsg', highlight_text(self.logmsg))
             self.setProperty('message.logfile', self.logfile)
+            self.setProperty('message.buttons', self.buttons)
 
         def onClick(self, controlId):
             if controlId == self.closebutton:
