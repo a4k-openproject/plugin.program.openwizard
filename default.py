@@ -99,7 +99,19 @@ def route(paramstring):
         yt.build_video(name)
     elif mode == 'maint':  # Maintenance + Maintenance -> any "Tools" section
         from resources.libs import menu
-        menu.maint_menu(name)
+        
+        if name == 'clean':
+            menu.clean_maint_menu()
+        elif name == 'addon':
+            menu.addon_maint_menu()
+        elif name == 'misc':
+            menu.misc_maint_menu()
+        elif name == 'backup':
+            menu.backup_maint_menu()
+        elif name == 'tweaks':
+            menu.tweaks_maint_menu()
+        elif name is None:
+            menu.maint_menu()
     elif mode == 'advancedsetting':  # Maintenance -> System Tweaks/Fixes -> Advanced Settings
         from resources.libs import menu
         menu.advanced_window(name)
