@@ -169,7 +169,6 @@ class Config:
         self.SHOW18 = self.get_setting('show18')
         self.SHOW19 = self.get_setting('show19')
         self.SHOWADULT = self.get_setting('adult')
-        self.SHOWMAINT = self.get_setting('showmaint')
         self.SEPARATE = self.get_setting('separate')
         self.DEVELOPER = self.get_setting('developer')
         

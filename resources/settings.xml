@@ -41,7 +41,6 @@
         <setting id="wizlog" type="bool" label="Include Wizard Logs" default="false"/>
         <setting id="crashlog" type="bool" label="Include Kodi Crash Logs" default="false"/>
         <setting type="lsep" label="Maintenance Menu: "/>
-        <setting id="showmaint" type="bool" label="Show All Maintenance Sections" default="false"/>
         <setting id="path" type="folder" label="Choose Backup Storage Location" default="special://home/"/>
         <!--<setting id="rompath" type="folder" label="Choose Roms Extract Location Location" default=""/>-->
         <setting type="lsep" label="Auto Clean On Startup:"/>

@@ -459,8 +459,29 @@ def youtube_menu(url=None):
 
 
 def maint_menu(view=None):
+    if view == 'clean':
+        clean_maint_menu()
+    elif view == 'addon':
+        addon_maint_menu()
+    elif view == 'misc':
+        misc_maint_menu()
+    elif view == 'backup':
+        backup_maint_menu()
+    elif view == 'tweaks':
+        tweaks_maint_menu()
+        
+    if view is None:
+        add_dir('[B]Cleaning Tools[/B]', 'maint', 'clean', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
+        add_dir('[B]Addon Tools[/B]', 'maint', 'addon',  icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
+        add_dir('[B]Misc Maintenance[/B]', 'maint', 'misc', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
+        add_dir('[B]Back up/Restore[/B]', 'maint', 'backup', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
+        add_dir('[B]System Tweaks/Fixes[/B]', 'maint', 'tweaks', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
+
+    set_view()
+
+    
+def clean_maint_menu():
     from resources.libs import clear
-    from resources.libs import logging
     from resources.libs import tools
 
     on = '[B][COLOR springgreen]ON[/COLOR][/B]'
@@ -470,12 +491,44 @@ def maint_menu(view=None):
     cache = 'true' if CONFIG.AUTOCACHE == 'true' else 'false'
     packages = 'true' if CONFIG.AUTOPACKAGES == 'true' else 'false'
     thumbs = 'true' if CONFIG.AUTOTHUMBS == 'true' else 'false'
-    maint = 'true' if CONFIG.SHOWMAINT == 'true' else 'false'
     includevid = 'true' if CONFIG.INCLUDEVIDEO == 'true' else 'false'
     includeall = 'true' if CONFIG.INCLUDEALL == 'true' else 'false'
-    errors = int(logging.error_checking(count=True))
-    errorsfound = str(errors) + ' Error(s) Found' if errors > 0 else 'None Found'
-    wizlogsize = ': [COLOR red]Not Found[/COLOR]' if not os.path.exists(CONFIG.WIZLOG) else ": [COLOR springgreen]{0}[/COLOR]".format(tools.convert_size(os.path.getsize(CONFIG.WIZLOG)))
+
+    sizepack = tools.get_size(CONFIG.PACKAGES)
+    sizethumb = tools.get_size(CONFIG.THUMBNAILS)
+    archive = tools.get_size(CONFIG.ARCHIVE_CACHE)
+    sizecache = (clear.get_cache_size()) - archive
+    totalsize = sizepack + sizethumb + sizecache
+
+    add_file('Total Clean Up: [COLOR springgreen][B]{0}[/B][/COLOR]'.format(tools.convert_size(totalsize)), 'fullclean', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('Clear Cache: [COLOR springgreen][B]{0}[/B][/COLOR]'.format(tools.convert_size(sizecache)), 'clearcache', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    if xbmc.getCondVisibility('System.HasAddon(script.module.urlresolver)') or xbmc.getCondVisibility('System.HasAddon(script.module.resolveurl)'):
+        add_file('Clear Resolver Function Caches', 'clearfunctioncache', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('Clear Packages: [COLOR springgreen][B]{0}[/B][/COLOR]'.format(tools.convert_size(sizepack)), 'clearpackages', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('Clear Thumbnails: [COLOR springgreen][B]{0}[/B][/COLOR]'.format(tools.convert_size(sizethumb)), 'clearthumb', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    if os.path.exists(CONFIG.ARCHIVE_CACHE):
+        add_file('Clear Archive_Cache: [COLOR springgreen][B]{0}[/B][/COLOR]'.format(tools.convert_size(archive)), 'cleararchive', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('Clear Old Thumbnails', 'oldThumbs', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('Clear Crash Logs', 'clearcrash', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('Purge Databases', 'purgedb', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('Fresh Start', 'freshstart', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+
+    add_file('Auto Clean', '', fanart=CONFIG.ADDON_FANART, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
+    add_file('Auto Clean Up On Startup: {0}'.format(autoclean.replace('true', on).replace('false', off)),
+             'togglesetting', 'autoclean', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    if autoclean == 'true':
+        add_file(
+            '--- Auto Clean Frequency: [B][COLOR springgreen]{0}[/COLOR][/B]'.format(CONFIG.CLEANFREQ[CONFIG.AUTOFREQ]),
+            'changefeq', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('--- Clear Cache on Startup: {0}'.format(cache.replace('true', on).replace('false', off)),
+                 'togglesetting', 'clearcache', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('--- Clear Packages on Startup: {0}'.format(packages.replace('true', on).replace('false', off)),
+                 'togglesetting', 'clearpackages', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('--- Clear Old Thumbs on Startup: {0}'.format(thumbs.replace('true', on).replace('false', off)),
+                 'togglesetting', 'clearthumbs', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('Clear Video Cache', '', fanart=CONFIG.ADDON_FANART, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
+    add_file('Include Video Cache in Clear Cache: {0}'.format(includevid.replace('true', on).replace('false', off)),
+             'togglecache', 'includevideo', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
 
     if includeall == 'true':
         includegaia = 'true'
@@ -494,116 +547,104 @@ def maint_menu(view=None):
         includescrubs = 'true' if CONFIG.INCLUDESCRUBS == 'true' else 'false'
         includeseren = 'true' if CONFIG.INCLUDESEREN == 'true' else 'false'
 
-    sizepack = tools.get_size(CONFIG.PACKAGES)
-    sizethumb = tools.get_size(CONFIG.THUMBNAILS)
-    archive = tools.get_size(CONFIG.ARCHIVE_CACHE)
-    sizecache = (clear.get_cache_size())-archive
-    totalsize = sizepack+sizethumb+sizecache
-
-    add_dir('[B]Cleaning Tools[/B]', 'maint', 'clean', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
-    if view == "clean" or CONFIG.SHOWMAINT == 'true':
-        add_file('Total Clean Up: [COLOR springgreen][B]{0}[/B][/COLOR]'.format(tools.convert_size(totalsize)), 'fullclean', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('Clear Cache: [COLOR springgreen][B]{0}[/B][/COLOR]'.format(tools.convert_size(sizecache)), 'clearcache', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        if (xbmc.getCondVisibility('System.HasAddon(script.module.urlresolver)') or xbmc.getCondVisibility('System.HasAddon(script.module.resolveurl)')):
-            add_file('Clear Resolver Function Caches', 'clearfunctioncache', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('Clear Packages: [COLOR springgreen][B]{0}[/B][/COLOR]'.format(tools.convert_size(sizepack)), 'clearpackages', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('Clear Thumbnails: [COLOR springgreen][B]{0}[/B][/COLOR]'.format(tools.convert_size(sizethumb)), 'clearthumb', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        if os.path.exists(CONFIG.ARCHIVE_CACHE):
-            add_file('Clear Archive_Cache: [COLOR springgreen][B]{0}[/B][/COLOR]'.format(tools.convert_size(archive)), 'cleararchive', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('Clear Old Thumbnails', 'oldThumbs', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('Clear Crash Logs', 'clearcrash', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('Purge Databases', 'purgedb', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('Fresh Start', 'freshstart', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-    add_dir('[B]Addon Tools[/B]', 'maint', 'addon',  icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
-    if view == "addon" or CONFIG.SHOWMAINT == 'true':
-        add_file('Remove Addons', 'removeaddons', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_dir('Remove Addon Data', 'removeaddondata', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_dir('Enable/Disable Addons', 'enableaddons', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        # add_file('Enable/Disable Adult Addons', 'toggleadult', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('Force Update Addons', 'forceupdate', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        # addFile('Hide Passwords On Keyboard Entry',   'hidepassword',   icon=ICONMAINT, themeit=THEME3)
-        # addFile('Unhide Passwords On Keyboard Entry', 'unhidepassword', icon=ICONMAINT, themeit=THEME3)
-    add_dir('[B]Misc Maintenance[/B]', 'maint', 'misc', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
-    if view == "misc" or CONFIG.SHOWMAINT == 'true':
-        add_file('Kodi 17 Fix', 'kodi17fix', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_dir('Network Tools', 'nettools', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('Enable Unknown Sources', 'unknownsources', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('Reload Skin', 'forceskin', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('Reload Profile', 'forceprofile', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('Force Close Kodi', 'forceclose', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('Upload Log File', 'uploadlog', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('View Errors in Log: [COLOR springgreen][B]{0}[/B][/COLOR]'.format(errorsfound), 'viewerrorlog', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        if errors > 0:
-            add_file('View Last Error In Log', 'viewerrorlast', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('View Log File', 'viewlog', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('View Wizard Log File', 'viewwizlog', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('Clear Wizard Log File: [COLOR springgreen][B]{0}[/B][/COLOR]'.format(wizlogsize), 'clearwizlog', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-    add_dir('[B]Back up/Restore[/B]', 'maint', 'backup', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
-    if view == "backup" or CONFIG.SHOWMAINT == 'true':
-        add_file('Clean Up Back Up Folder', 'clearbackup', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('Back Up Location: [COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.MYBUILDS), 'settings', 'Maintenance', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('[Back Up]: Build', 'backupbuild', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('[Back Up]: GuiFix', 'backupgui', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('[Back Up]: Theme', 'backuptheme', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('[Back Up]: Addon Pack', 'backupaddonpack', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('[Back Up]: Addon_data', 'backupaddon', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('[Restore]: Local Build', 'restorebuild', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('[Restore]: Local GuiFix', 'restoregui', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('[Restore]: Local Theme', 'restoretheme', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('[Restore]: Local Addon Pack', 'restoreaddonpack', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('[Restore]: Local Addon_data', 'restoreaddon', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('[Restore]: External Build', 'restoreextbuild', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('[Restore]: External GuiFix', 'restoreextgui', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('[Restore]: External Theme', 'restoreexttheme', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('[Restore]: External Addon Pack', 'restoreextaddonpack', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('[Restore]: External Addon_data', 'restoreextaddondata', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-    add_dir('[B]System Tweaks/Fixes[/B]', 'maint', 'tweaks', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
-    if view == "tweaks" or CONFIG.SHOWMAINT == 'true':
-        if not CONFIG.ADVANCEDFILE == 'http://' and not CONFIG.ADVANCEDFILE == '':
-            add_dir('Advanced Settings', 'advancedsetting', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        else:
-            if os.path.exists(CONFIG.ADVANCED):
-                add_file('View Current AdvancedSettings.xml', 'currentsettings', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-                add_file('Remove Current AdvancedSettings.xml', 'removeadvanced', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-            add_file('Quick Configure AdvancedSettings.xml', 'autoadvanced', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('Scan Sources for broken links', 'checksources', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('Scan For Broken Repositories', 'checkrepos', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('Fix Addons Not Updating', 'fixaddonupdate', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('Remove Non-Ascii filenames', 'asciicheck', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('Convert Paths to special', 'convertpath', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_dir('System Information', 'systeminfo', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-    add_file('Show All Maintenance: {0}'.format(maint.replace('true', on).replace('false', off)), 'togglesetting', 'showmaint', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
-    add_dir('[I]<< Return to Main Menu[/I]', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
-    add_file('Auto Clean', '', fanart=CONFIG.ADDON_FANART, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
-    add_file('Auto Clean Up On Startup: {0}'.format(autoclean.replace('true', on).replace('false', off)), 'togglesetting', 'autoclean', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-    if autoclean == 'true':
-        add_file('--- Auto Clean Frequency: [B][COLOR springgreen]{0}[/COLOR][/B]'.format(CONFIG.CLEANFREQ[CONFIG.AUTOFREQ]), 'changefeq', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('--- Clear Cache on Startup: {0}'.format(cache.replace('true', on).replace('false', off)), 'togglesetting', 'clearcache', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('--- Clear Packages on Startup: {0}'.format(packages.replace('true', on).replace('false', off)), 'togglesetting', 'clearpackages', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        add_file('--- Clear Old Thumbs on Startup: {0}'.format(thumbs.replace('true', on).replace('false', off)), 'togglesetting', 'clearthumbs', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-    add_file('Clear Video Cache', '', fanart=CONFIG.ADDON_FANART, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
-    add_file('Include Video Cache in Clear Cache: {0}'.format(includevid.replace('true', on).replace('false', off)), 'togglecache', 'includevideo', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
     if includevid == 'true':
-        add_file('--- Include All Video Addons: {0}'.format(includeall.replace('true', on).replace('false', off)), 'togglecache', 'includeall', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('--- Include All Video Addons: {0}'.format(includeall.replace('true', on).replace('false', off)),
+                 'togglecache', 'includeall', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         if xbmc.getCondVisibility('System.HasAddon(plugin.video.exodusredux)'):
-            add_file('--- Include Exodus Redux: {0}'.format(includeexodusredux.replace('true', on).replace('false', off)), 'togglecache', 'includeexodusredux', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+            add_file(
+                '--- Include Exodus Redux: {0}'.format(includeexodusredux.replace('true', on).replace('false', off)),
+                'togglecache', 'includeexodusredux', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         if xbmc.getCondVisibility('System.HasAddon(plugin.video.gaia)'):
-            add_file('--- Include Gaia: {0}'.format(includegaia.replace('true', on).replace('false', off)), 'togglecache', 'includegaia', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        if xbmc.getCondVisibility('System.HasAddon(plugin.video.thecrew)'):
-            add_file('--- Include THE CREW: {0}'.format(includethecrew.replace('true', on).replace('false', off)), 'togglecache', 'includethecrew', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+            add_file('--- Include Gaia: {0}'.format(includegaia.replace('true', on).replace('false', off)),
+                     'togglecache', 'includegaia', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         if xbmc.getCondVisibility('System.HasAddon(plugin.video.scrubsv2)'):
-            add_file( '--- Include Scrubs v2: {0}'.format(includescrubs.replace('true', on).replace('false', off)), 'togglecache', 'includescrubs', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+            add_file('--- Include Scrubs v2: {0}'.format(includescrubs.replace('true', on).replace('false', off)),
+                     'togglecache', 'includescrubs', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         if xbmc.getCondVisibility('System.HasAddon(plugin.video.seren)'):
-            add_file('--- Include Seren: {0}'.format(includeseren.replace('true', on).replace('false', off)), 'togglecache', 'includeseren', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+            add_file('--- Include Seren: {0}'.format(includeseren.replace('true', on).replace('false', off)),
+                     'togglecache', 'includeseren', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        if xbmc.getCondVisibility('System.HasAddon(plugin.video.thecrew)'):
+            add_file('--- Include THE CREW: {0}'.format(includethecrew.replace('true', on).replace('false', off)),
+                     'togglecache', 'includethecrew', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         if xbmc.getCondVisibility('System.HasAddon(plugin.video.venom)'):
-            add_file('--- Include Venom: {0}'.format(includevenom.replace('true', on).replace('false', off)), 'togglecache', 'includevenom', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+            add_file('--- Include Venom: {0}'.format(includevenom.replace('true', on).replace('false', off)),
+                     'togglecache', 'includevenom', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         if xbmc.getCondVisibility('System.HasAddon(plugin.video.yoda)'):
-            add_file('--- Include Yoda: {0}'.format(includeyoda.replace('true', on).replace('false', off)), 'togglecache', 'includeyoda', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+            add_file('--- Include Yoda: {0}'.format(includeyoda.replace('true', on).replace('false', off)),
+                     'togglecache', 'includeyoda', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         add_file('--- Enable All Video Addons', 'togglecache', 'true', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         add_file('--- Disable All Video Addons', 'togglecache', 'false', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    
 
-    set_view()
+def addon_maint_menu():
+    add_file('Remove Addons', 'removeaddons', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_dir('Remove Addon Data', 'removeaddondata', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_dir('Enable/Disable Addons', 'enableaddons', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    # add_file('Enable/Disable Adult Addons', 'toggleadult', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('Force Update Addons', 'forceupdate', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    # addFile('Hide Passwords On Keyboard Entry',   'hidepassword',   icon=ICONMAINT, themeit=THEME3)
+    # addFile('Unhide Passwords On Keyboard Entry', 'unhidepassword', icon=ICONMAINT, themeit=THEME3)
+    
 
+def misc_maint_menu():
+    from resources.libs import logging
+    from resources.libs import tools
+
+    errors = int(logging.error_checking(count=True))
+    errorsfound = str(errors) + ' Error(s) Found' if errors > 0 else 'None Found'
+    wizlogsize = ': [COLOR red]Not Found[/COLOR]' if not os.path.exists(CONFIG.WIZLOG) else ": [COLOR springgreen]{0}[/COLOR]".format(tools.convert_size(os.path.getsize(CONFIG.WIZLOG)))
+
+    add_file('Kodi 17 Fix', 'kodi17fix', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_dir('Network Tools', 'nettools', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('Enable Unknown Sources', 'unknownsources', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('Reload Skin', 'forceskin', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('Reload Profile', 'forceprofile', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('Force Close Kodi', 'forceclose', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('Upload Log File', 'uploadlog', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('View Errors in Log: [COLOR springgreen][B]{0}[/B][/COLOR]'.format(errorsfound), 'viewerrorlog', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    if errors > 0:
+        add_file('View Last Error In Log', 'viewerrorlast', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('View Log File', 'viewlog', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('View Wizard Log File', 'viewwizlog', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('Clear Wizard Log File: [COLOR springgreen][B]{0}[/B][/COLOR]'.format(wizlogsize), 'clearwizlog', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    
+
+def backup_maint_menu():
+    add_file('Clean Up Back Up Folder', 'clearbackup', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('Back Up Location: [COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.MYBUILDS), 'settings', 'Maintenance', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('[Back Up]: Build', 'backupbuild', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('[Back Up]: GuiFix', 'backupgui', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('[Back Up]: Theme', 'backuptheme', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('[Back Up]: Addon Pack', 'backupaddonpack', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('[Back Up]: Addon_data', 'backupaddon', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('[Restore]: Local Build', 'restorebuild', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('[Restore]: Local GuiFix', 'restoregui', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('[Restore]: Local Theme', 'restoretheme', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('[Restore]: Local Addon Pack', 'restoreaddonpack', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('[Restore]: Local Addon_data', 'restoreaddon', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('[Restore]: External Build', 'restoreextbuild', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('[Restore]: External GuiFix', 'restoreextgui', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('[Restore]: External Theme', 'restoreexttheme', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('[Restore]: External Addon Pack', 'restoreextaddonpack', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('[Restore]: External Addon_data', 'restoreextaddondata', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    
+    
+def tweaks_maint_menu():
+    if not CONFIG.ADVANCEDFILE == 'http://' and not CONFIG.ADVANCEDFILE == '':
+        add_dir('Advanced Settings', 'advancedsetting', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    else:
+        if os.path.exists(CONFIG.ADVANCED):
+            add_file('View Current AdvancedSettings.xml', 'currentsettings', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+            add_file('Remove Current AdvancedSettings.xml', 'removeadvanced', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        add_file('Quick Configure AdvancedSettings.xml', 'autoadvanced', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('Scan Sources for broken links', 'checksources', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('Scan For Broken Repositories', 'checkrepos', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('Fix Addons Not Updating', 'fixaddonupdate', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('Remove Non-Ascii filenames', 'asciicheck', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_file('Convert Paths to special', 'convertpath', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    add_dir('System Information', 'systeminfo', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        
+        
 #########################################NET TOOLS#############################################
 
 
