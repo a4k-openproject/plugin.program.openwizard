@@ -737,15 +737,12 @@ def _backup_addon_data(name=""):
         N_ITEM = len(ITEM)
 
         bad_files = [
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'cache.db')),
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'cache.meta.5.db')),
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'cache.providers.13.db')),
             (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.db')),
             (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.meta.5.db')),
             (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.providers.13.db')),
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'cache.db')),
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'cache.meta.5.db')),
-            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'cache.providers.13.db')),
+            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.thecrew', 'cache.db')),
+            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.thecrew', 'cache.meta.5.db')),
+            (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.thecrew', 'cache.providers.13.db')),
             (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'cache.db')),
             (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'cache.meta.5.db')),
             (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'cache.providers.13.db')),

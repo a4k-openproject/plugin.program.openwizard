@@ -478,10 +478,9 @@ def maint_menu(view=None):
     wizlogsize = ': [COLOR red]Not Found[/COLOR]' if not os.path.exists(CONFIG.WIZLOG) else ": [COLOR springgreen]{0}[/COLOR]".format(tools.convert_size(os.path.getsize(CONFIG.WIZLOG)))
 
     if includeall == 'true':
-        includeplacenta = 'true'
         includegaia = 'true'
         includeexodusredux = 'true'
-        includeovereasy = 'true'
+        includethecrew = 'true'
         includeyoda = 'true'
         includevenom = 'true'
         includescrubs = 'true'
@@ -489,8 +488,7 @@ def maint_menu(view=None):
     else:
         includeexodusredux = 'true' if CONFIG.INCLUDEEXODUSREDUX == 'true' else 'false'
         includegaia = 'true' if CONFIG.INCLUDEGAIA == 'true' else 'false'
-        includeovereasy = 'true' if CONFIG.INCLUDEOVEREASY == 'true' else 'false'
-        includeplacenta = 'true' if CONFIG.INCLUDEPLACENTA == 'true' else 'false'
+        includethecrew = 'true' if CONFIG.INCLUDETHECREW == 'true' else 'false'
         includeyoda = 'true' if CONFIG.INCLUDEYODA == 'true' else 'false'
         includevenom = 'true' if CONFIG.INCLUDEVENOM == 'true' else 'false'
         includescrubs = 'true' if CONFIG.INCLUDESCRUBS == 'true' else 'false'
@@ -591,10 +589,8 @@ def maint_menu(view=None):
             add_file('--- Include Exodus Redux: {0}'.format(includeexodusredux.replace('true', on).replace('false', off)), 'togglecache', 'includeexodusredux', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         if xbmc.getCondVisibility('System.HasAddon(plugin.video.gaia)'):
             add_file('--- Include Gaia: {0}'.format(includegaia.replace('true', on).replace('false', off)), 'togglecache', 'includegaia', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        if xbmc.getCondVisibility('System.HasAddon(plugin.video.overeasy)'):
-            add_file('--- Include Overeasy: {0}'.format(includeovereasy.replace('true', on).replace('false', off)), 'togglecache', 'includeovereasy', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        if xbmc.getCondVisibility('System.HasAddon(plugin.video.placenta)'):
-            add_file('--- Include Placenta: {0}'.format(includeplacenta.replace('true', on).replace('false', off)), 'togglecache', 'includeplacenta', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        if xbmc.getCondVisibility('System.HasAddon(plugin.video.thecrew)'):
+            add_file('--- Include THE CREW: {0}'.format(includethecrew.replace('true', on).replace('false', off)), 'togglecache', 'includethecrew', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         if xbmc.getCondVisibility('System.HasAddon(plugin.video.scrubsv2)'):
             add_file( '--- Include Scrubs v2: {0}'.format(includescrubs.replace('true', on).replace('false', off)), 'togglecache', 'includescrubs', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         if xbmc.getCondVisibility('System.HasAddon(plugin.video.seren)'):

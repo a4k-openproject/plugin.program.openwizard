@@ -20,15 +20,12 @@ def get_cache_size():
     PROFILEADDONDATA = os.path.join(CONFIG.PROFILE, 'addon_data')
 
     dbfiles = [
-        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'cache.db')),
-        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'cache.meta.5.db')),
-        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'cache.providers.13.db')),
         (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.db')),
         (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.meta.5.db')),
         (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.providers.13.db')),
-        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'cache.db')),
-        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'cache.meta.5.db')),
-        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'cache.providers.13.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.thecrew', 'cache.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.thecrew', 'cache.meta.5.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.thecrew', 'cache.providers.13.db')),
         (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'cache.db')),
         (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'cache.meta.5.db')),
         (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'cache.providers.13.db')),
@@ -84,10 +81,6 @@ def get_cache_size():
                 files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.db'))
                 files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'meta.5.db'))
                 files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'providers.13.db'))
-            if CONFIG.INCLUDEPLACENTA == 'true':
-                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'cache.db'))
-                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'meta.5.db'))
-                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'providers.13.db'))
             if CONFIG.INCLUDEYODA == 'true':
                 files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'cache.db'))
                 files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'meta.5.db'))
@@ -106,10 +99,10 @@ def get_cache_size():
             if CONFIG.INCLUDESEREN == 'true':
                 files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.seren', 'cache.db'))
                 files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.seren', 'torrentScrape.db'))
-            if CONFIG.INCLUDEOVEREASY == 'true':
-                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'cache.db'))
-                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'meta.5.db'))
-                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'providers.13.db'))
+            if CONFIG.INCLUDETHECREW == 'true':
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.thecrew', 'cache.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.thecrew', 'meta.5.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.thecrew', 'providers.13.db'))
         if len(files) > 0:
             for item in files:
                 if not os.path.exists(item):
@@ -230,18 +223,14 @@ def clear_function_cache():
 def clear_cache(over=None):
     PROFILEADDONDATA = os.path.join(CONFIG.PROFILE, 'addon_data')
     dbfiles = [
-        ## TODO: Double check these
-        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'cache.db')),
-        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'cache.meta.5.db')),
-        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'cache.providers.13.db')),
         (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.gaia', 'cache.db')),
         (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.gaia', 'meta.db')),
         (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.db')),
         (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'meta.5.db')),
         (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.providers.13.db')),
-        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'cache.db')),
-        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'meta.5.db')),
-        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'cache.providers.13.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.thecrew', 'cache.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.thecrew', 'meta.5.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.thecrew', 'cache.providers.13.db')),
         (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.venom', 'cache.db')),
         (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'cache.db')),
         (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.yoda', 'meta.5.db')),
@@ -318,11 +307,6 @@ def clear_cache(over=None):
         if CONFIG.INCLUDEALL == 'true':
             files = dbfiles
         else:
-            ## TODO: Double check these
-            if CONFIG.INCLUDEPLACENTA == 'true':
-                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'cache.db'))
-                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'meta.5.db'))
-                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'providers.13.db'))
             if CONFIG.INCLUDEEXODUSREDUX == 'true':
                 files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.db'))
                 files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'meta.5.db'))
@@ -337,10 +321,10 @@ def clear_cache(over=None):
                 files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.scrubsv2', 'cache.db'))
                 files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.scrubsv2', 'meta.5.db'))
                 files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.scrubsv2', 'providers.13.db'))
-            if CONFIG.INCLUDEOVEREASY == 'true':
-                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'cache.db'))
-                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'meta.5.db'))
-                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'providers.13.db'))
+            if CONFIG.INCLUDETHECREW == 'true':
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.thecrew', 'cache.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.thecrew', 'meta.5.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.thecrew', 'providers.13.db'))
             if CONFIG.INCLUDEGAIA == 'true':
                 files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.gaia', 'cache.db'))
                 files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.gaia', 'meta.db'))
@@ -470,8 +454,8 @@ def force_text():
 
 
 def toggle_cache(state):
-    cachelist = ['includevideo', 'includeall', 'includeexodusredux', 'includegaia', 'includeovereasy', 'includeplacenta', 'includescrubs', 'includeseren', 'includevenom', 'includeyoda']
-    titlelist = ['Include Video Addons', 'Include All Addons', 'Include Exodus Redux', 'Include Gaia', 'Include Overeasy', 'Include Placenta', 'Include Scrubs v2', 'Include Seren', 'Include Venom', 'Include Yoda']
+    cachelist = ['includevideo', 'includeall', 'includeexodusredux', 'includegaia', 'includescrubs', 'includeseren', 'includethecrew', 'includevenom', 'includeyoda']
+    titlelist = ['Include Video Addons', 'Include All Addons', 'Include Exodus Redux', 'Include Gaia', 'Include Scrubs v2', 'Include Seren', 'Include THE CREW', 'Include Venom', 'Include Yoda']
     if state in ['true', 'false']:
         for item in cachelist:
             CONFIG.set_setting(item, state)
