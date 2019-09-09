@@ -1475,12 +1475,13 @@ def add_separator(middle='', fanart=CONFIG.ADDON_FANART, icon=CONFIG.ADDON_ICON,
     if CONFIG.HIDESPACERS == 'No':
         char = CONFIG.SPACER
         ret = char * 40
+        
         if not middle == '':
             middle = '[ {0} ]'.format(middle)
             fluff = int((40 - len(middle))/2)
             ret = "{0}{1}{2}".format(ret[:fluff], middle, ret[:fluff+2])
-
-            add_file(ret[:40], middle, fanart=fanart, icon=icon, themeit=themeit)
+            
+        add_file(ret[:40], fanart=fanart, icon=icon, themeit=themeit)
 
 
 def add_file(display, mode=None, name=None, url=None, menu=None, description=CONFIG.ADDONTITLE, overwrite=True, fanart=CONFIG.ADDON_FANART, icon=CONFIG.ADDON_ICON, themeit=None, isFolder=False):
