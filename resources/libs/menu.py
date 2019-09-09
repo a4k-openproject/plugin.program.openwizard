@@ -458,24 +458,12 @@ def youtube_menu(url=None):
     set_view()
 
 
-def maint_menu(view=None):
-    if view == 'clean':
-        clean_maint_menu()
-    elif view == 'addon':
-        addon_maint_menu()
-    elif view == 'misc':
-        misc_maint_menu()
-    elif view == 'backup':
-        backup_maint_menu()
-    elif view == 'tweaks':
-        tweaks_maint_menu()
-        
-    if view is None:
-        add_dir('[B]Cleaning Tools[/B]', 'maint', 'clean', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
-        add_dir('[B]Addon Tools[/B]', 'maint', 'addon',  icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
-        add_dir('[B]Misc Maintenance[/B]', 'maint', 'misc', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
-        add_dir('[B]Back up/Restore[/B]', 'maint', 'backup', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
-        add_dir('[B]System Tweaks/Fixes[/B]', 'maint', 'tweaks', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
+def maint_menu():
+    add_dir('[B]Cleaning Tools[/B]', 'maint', 'clean', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
+    add_dir('[B]Addon Tools[/B]', 'maint', 'addon',  icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
+    add_dir('[B]Misc Maintenance[/B]', 'maint', 'misc', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
+    add_dir('[B]Back up/Restore[/B]', 'maint', 'backup', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
+    add_dir('[B]System Tweaks/Fixes[/B]', 'maint', 'tweaks', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
 
     set_view()
 
