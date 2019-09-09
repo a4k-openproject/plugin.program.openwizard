@@ -88,9 +88,9 @@ def main():
             response = xbmc.executeJSONRPC(query)
             logging.log("Unknown Sources Get Settings: {0}".format(str(response)), level=xbmc.LOGDEBUG)
             if 'false' in response:
-                threading.Thread(traget=self.dialog_watch).start()
+                threading.Thread(target=self.dialog_watch).start()
                 xbmc.sleep(200)
-                query = '{{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{{"setting":{0},"value":{1}}, "id":1}}'.format(new, value))
+                query = '{{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{{"setting":{0},"value":{1}}, "id":1}}'.format(new, value)
                 response = xbmc.executeJSONRPC(query)
                 gui.DIALOG.notification("AutoExec.py", "Unknown Sources: Enabled")
                 logging.log("Unknown Sources Set Settings: {0}".format(str(response)), level=xbmc.LOGDEBUG)

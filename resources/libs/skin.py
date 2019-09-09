@@ -30,8 +30,10 @@ except ImportError:
 
 from resources.libs.config import CONFIG
 
+DEFAULT_SKINS = ['skin.confluence', 'skin.estuary', 'skin.estouchy']
 
-def __get_old(old_key):
+
+def _get_old(old_key):
     try:
         old = '"{0}"'.format(old_key)
         query = '{{"jsonrpc":"2.0","method":"Settings.GetSettingValue","params":{{"setting":{0}}}, "id":1}}'.format(old)
@@ -45,7 +47,7 @@ def __get_old(old_key):
     return None
 
 
-def __set_new(new_key, value):
+def _set_new(new_key, value):
     try:
         new = '"{0}"'.format(new_key)
         value = '"{0}"'.format(value)
@@ -56,31 +58,35 @@ def __set_new(new_key, value):
     return None
 
 
-def __swap_skins(skin):
+def _swap_skins(skin):
     old_key = 'lookandfeel.skin'
     value = skin
-    current_skin = __get_old(old_key)
+    current_skin = _get_old(old_key)
     new_key = old_key
-    __set_new(new_key, value)
+    _set_new(new_key, value)
 
 
 def switch_to_skin(goto, title="Error"):
-    __swap_skins(goto)
+    _swap_skins(goto)
 
-    if not __dialog_watch():
+    if not _dialog_watch():
         from resources.libs import logging
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            '[COLOR {0}]{1}: Skin Swap Timed Out![/COLOR]'.format(CONFIG.COLOR2, title))
         return False
+
     return True
 
 
 def skin_to_default(title):
-    for id in ['skin.confluence', 'skin.estuary', 'skin.estouchy']:
-        if id not in CONFIG.SKIN:
-            skin = 'skin.estuary'
-            return switch_to_skin(skin, title)
-    return True
+    if CONFIG.SKIN not in DEFAULT_SKINS:
+        skin = 'skin.estuary'
+        return switch_to_skin(skin, title)
+    else:
+        from resources.libs import logging
+        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                           '[COLOR {0}]{1}: Skipping Skin Swap[/COLOR]'.format(CONFIG.COLOR2, title))
+        return True
 
 
 def look_and_feel_data(do='save'):
@@ -123,14 +129,14 @@ def swap_us():
         logging.log("Unknown Sources Set Settings: {0}".format(str(response)))
 
 
-def __dialog_watch():
+def _dialog_watch():
     x = 0
     while not xbmc.getCondVisibility("Window.isVisible(yesnodialog)") and x < 10:
         x += 1
         xbmc.sleep(100)
 
-    if xbmc.getCondVisibility("Window.isVisible(yesnodialog)"):
-        xbmc.executebuiltin('SendClick(yesnodialog, 11)')
-        return True
-    else:
-        return False
+        if xbmc.getCondVisibility("Window.isVisible(yesnodialog)"):
+            xbmc.executebuiltin('SendClick(yesnodialog, 11)')
+            return True
+
+    return False
