@@ -97,9 +97,7 @@ def _finish(file, loc, zname):
     db.fix_metas()
     CONFIG.clear_setting('build')
     gui.DP.close()
-    from resources.libs import skin
-    skin.skin_to_default("Restore")
-    skin.look_and_feel_data('save')
+
     if int(errors) >= 1:
         if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
                             '[COLOR {0}][COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, zname),
@@ -135,6 +133,9 @@ class Restore:
     def _choose(self, loc):
         from resources.libs import gui
         from resources.libs import logging
+        from resources.libs import skin
+
+        skin.look_and_feel_data()
 
         if not self.external:
             file = gui.DIALOG.browse(1,
@@ -145,6 +146,8 @@ class Restore:
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                    "[COLOR {0}]Local Restore: Cancelled[/COLOR]".format(CONFIG.COLOR2))
                 return
+
+            skin.skin_to_default("Restore")
 
             gui.DP.create(CONFIG.ADDONTITLE, '[COLOR {0}]Installing Local Backup'.format(CONFIG.COLOR2), '',
                           'Please Wait[/COLOR]')
@@ -175,6 +178,8 @@ class Restore:
                 logging.log("External Source: {0}".format(source), level=xbmc.LOGNOTICE)
                 return
 
+            skin.skin_to_default("Restore")
+
             _external(source, loc)
 
     def _build(self):
@@ -185,8 +190,8 @@ class Restore:
                                            "[COLOR {0}]Do you wish to restore your".format(CONFIG.COLOR2),
                                            "Kodi configuration to default settings",
                                            "Before installing the {0} backup?[/COLOR]".format(self.location),
-                                           nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
-                                           yeslabel='[B][COLOR springgreen]Continue[/COLOR][/B]')
+                                           nolabel='[B][COLOR red]No[/COLOR][/B]',
+                                           yeslabel='[B][COLOR springgreen]Yes[/COLOR][/B]')
         if wipe:
             from resources.libs import install
             install.wipe()
