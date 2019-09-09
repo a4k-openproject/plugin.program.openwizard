@@ -27,7 +27,7 @@ from resources.libs.config import CONFIG
 from resources.libs import logging
 from resources.libs import tools
 
-ORDER = ['fanart-exodusredux', 'fanart-gaia', 'fanart-overeasy', 'fanart-metadatautils', 'fanart-placenta', 'fanart-premiumizer', 'fanart-realizer', 'fanart-scrubs', 'fanart-venom', 'fanart-yoda', 'imdb-exodusredux', 'imdb-gaia', 'imdb-overeasy', 'imdb-placenta', 'imdb-premiumizer', 'imdb-realizer', 'imdb-scrubs', 'imdb-venom', 'imdb-yoda', 'kitsu-wonderfulsubs', 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-metadatautils', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-overeasy', 'tmdb-placenta', 'tmdb-premiumizer', 'tmdb-realizer', 'tmdb-scrubs', 'tmdb-seren', 'tmdb-venom', 'tmdb-yoda', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-premiumizer', 'tvdb-realizer', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
+ORDER = ['fanart-exodusredux', 'fanart-gaia', 'fanart-metadatautils', 'fanart-premiumizer', 'fanart-realizer', 'fanart-scrubs', 'fanart-seren', 'fanart-thecrew', 'fanart-venom', 'fanart-yoda', 'imdb-exodusredux', 'imdb-gaia', 'imdb-premiumizer', 'imdb-realizer', 'imdb-scrubs', 'imdb-thecrew', 'imdb-venom', 'imdb-yoda', 'kitsu-wonderfulsubs', 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-metadatautils', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-premiumizer', 'tmdb-realizer', 'tmdb-scrubs', 'tmdb-seren', 'tmdb-thecrew', 'tmdb-venom', 'tmdb-yoda', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-premiumizer', 'tvdb-realizer', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
 
 ORDER          = ['fanart-exodusredux', 'fanart-gaia', 'fanart-numbers', 'fanart-overeasy', 'fanart-metadatautils', 'fanart-placenta', 'fanart-premiumizer', 'fanart-realizer', 'fanart-scrubs', 'fanart-thecrew', 'fanart-venom', 'fanart-yoda', 'imdb-exodusredux', 'imdb-gaia', 'imdb-numbers', 'imdb-overeasy', 'imdb-placenta', 'imdb-premiumizer', 'imdb-realizer', 'imdb-scrubs', 'imdb-thecrew', 'imdb-venom', 'imdb-yoda', 'kitsu-wonderfulsubs', 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-metadatautils', 'tmdb-numbers', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-overeasy', 'tmdb-placenta', 'tmdb-premiumizer', 'tmdb-realizer', 'tmdb-scrubs', 'tmdb-seren', 'tmdb-thecrew', 'tmdb-venom', 'tmdb-yoda', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-premiumizer', 'tvdb-realizer', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
 LOGINID = {
@@ -72,8 +72,8 @@ LOGINID = {
         'plugin'   : 'plugin.video.seren',
         'saved'    : 'tmdb-seren',
         'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.seren'),
-        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.seren', 'temp-icon.png'),
-        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.seren', 'temp-fanart.png'),
+        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.seren', 'ico-fox-gold-final.png'),
+        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.seren', 'fanart-fox-gold-final.png'),
         'file'     : os.path.join(CONFIG.LOGINFOLD, 'seren_tmdb'),
         'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.seren', 'settings.xml'),
         'default'  : 'tmdb.apikey',
@@ -84,8 +84,8 @@ LOGINID = {
         'plugin'   : 'plugin.video.seren',
         'saved'    : 'trakt-seren',
         'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.seren'),
-        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.seren', 'temp-icon.png'),
-        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.seren', 'temp-fanart.png'),
+        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.seren', 'ico-fox-gold-final.png'),
+        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.seren', 'fanart-fox-gold-final.png'),
         'file'     : os.path.join(CONFIG.LOGINFOLD, 'seren_trakt'),
         'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.seren', 'settings.xml'),
         'default'  : 'trakt.clientid',
@@ -96,12 +96,24 @@ LOGINID = {
         'plugin'   : 'plugin.video.seren',
         'saved'    : 'tvdb-seren',
         'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.seren'),
-        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.seren', 'temp-icon.png'),
-        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.seren', 'temp-fanart.png'),
+        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.seren', 'ico-fox-gold-final.png'),
+        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.seren', 'fanart-fox-gold-final.png'),
         'file'     : os.path.join(CONFIG.LOGINFOLD, 'seren_tvdb'),
         'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.seren', 'settings.xml'),
         'default'  : 'tvdb.apikey',
         'data'     : ['tvdb.apikey', 'tvdb.jw', 'tvdb.expiry'],
+        'activate' : ''},
+    'fanart-seren': {
+        'name'     : 'Fanart.tv - Seren',
+        'plugin'   : 'plugin.video.seren',
+        'saved'    : 'fanart-seren',
+        'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.seren'),
+        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.seren', 'ico-fox-gold-final.png'),
+        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.seren', 'fanart-fox-gold-final.png'),
+        'file'     : os.path.join(CONFIG.LOGINFOLD, 'seren_fanart'),
+        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.seren', 'settings.xml'),
+        'default'  : 'fanart.apikey',
+        'data'     : ['fanart.apikey'],
         'activate' : ''},
     'fanart-gaia': {
         'name'     : 'Fanart.tv - Gaia',
@@ -307,6 +319,42 @@ LOGINID = {
         'default'  : 'imdb.user',
         'data'     : ['imdb.user'],
         'activate' : ''},
+    'fanart-thecrew': {
+        'name'     : 'Fanart.tv - THE CREW',
+        'plugin'   : 'plugin.video.thecrew',
+        'saved'    : 'fanart-thecrew',
+        'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.thecrew'),
+        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.thecrew', 'icon.png'),
+        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.thecrew', 'fanart.jpg'),
+        'file'     : os.path.join(CONFIG.LOGINFOLD, 'thecrew_fanart'),
+        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.thecrew', 'settings.xml'),
+        'default'  : 'fanart.tv.user',
+        'data'     : ['fanart.tv.user'],
+        'activate' : ''},
+    'tmdb-thecrew': {
+        'name'     : 'TMDb - THE CREW',
+        'plugin'   : 'plugin.video.thecrew',
+        'saved'    : 'tmdb-thecrew',
+        'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.thecrew'),
+        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.thecrew', 'icon.png'),
+        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.thecrew', 'fanart.jpg'),
+        'file'     : os.path.join(CONFIG.LOGINFOLD, 'thecrew_tmdb'),
+        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.thecrew', 'settings.xml'),
+        'default'  : 'tm.user',
+        'data'     : ['tm.user'],
+        'activate' : ''},
+    'imdb-thecrew': {
+        'name'     : 'IMDb - THE CREW',
+        'plugin'   : 'plugin.video.thecrew',
+        'saved'    : 'imdb-thecrew',
+        'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.thecrew'),
+        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.thecrew', 'icon.png'),
+        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.thecrew', 'fanart.jpg'),
+        'file'     : os.path.join(CONFIG.LOGINFOLD, 'thecrew_imdb'),
+        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.thecrew', 'settings.xml'),
+        'default'  : 'imdb.user',
+        'data'     : ['imdb.user'],
+        'activate' : ''},
     'trakt-openmeta': {
         'name'     : 'Trakt - OpenMeta',
         'plugin'   : 'plugin.video.openmeta',
@@ -415,6 +463,7 @@ LOGINID = {
         'default'  : 'wonderfulsubs.name',
         'data'     : ['wonderfulsubs.name', 'wonderfulsubs.password'],
         'activate' : ''},
+    'fanart-scrubs': {
         'name'     : 'Fanart.tv - Scrubs v2',
         'plugin'   : 'plugin.video.scrubsv2',
         'saved'    : 'fanart-scrubs',

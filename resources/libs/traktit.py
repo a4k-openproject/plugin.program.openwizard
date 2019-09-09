@@ -27,34 +27,10 @@ from resources.libs.config import CONFIG
 from resources.libs import logging
 from resources.libs import tools
 
-ORDER = ['exodusredux', 'gaia', 'openmeta', 'overeasy', 'placenta', 'premiumizer', 'realizer', 'scrubs', 'seren', 'trakt', 'venom', 'yoda']
+ORDER = ['exodusredux', 'gaia', 'openmeta', 'premiumizer', 'realizer', 'scrubs', 'seren', 'thecrew', 'trakt', 'venom', 'yoda']
 
 ORDER          = ['exodusredux', 'gaia', 'numbers', 'openmeta', 'overeasy', 'placenta', 'premiumizer', 'realizer', 'scrubs', 'seren', 'thecrew', 'trakt', 'venom', 'yoda']
 TRAKTID = {
-    'placenta': {
-        'name'     : 'Placenta',
-        'plugin'   : 'plugin.video.placenta',
-        'saved'    : 'placenta',
-        'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.placenta'),
-        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.placenta', 'icon.png'),
-        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.placenta', 'fanart.jpg'),
-        'file'     : os.path.join(CONFIG.TRAKTFOLD, 'placenta_trakt'),
-        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.placenta', 'settings.xml'),
-        'default'  : 'trakt.user',
-        'data'     : ['trakt.user', 'trakt.refresh', 'trakt.token'],
-        'activate' : 'RunPlugin(plugin://plugin.video.placenta/?action=authTrakt)'},
-     'thecrew': {
-        'name'     : 'THE CREW',
-        'plugin'   : 'plugin.video.thecrew',
-        'saved'    : 'thecrew',
-        'path'     : os.path.join(ADDONS, 'plugin.video.thecrew'),
-        'icon'     : os.path.join(ADDONS, 'plugin.video.thecrew', 'icon.png'),
-        'fanart'   : os.path.join(ADDONS, 'plugin.video.thecrew', 'fanart.jpg'),
-        'file'     : os.path.join(TRAKTFOLD, 'thecrew_trakt'),
-        'settings' : os.path.join(ADDOND, 'plugin.video.thecrew', 'settings.xml'),
-        'default'  : 'trakt.user',
-        'data'     : ['trakt.user', 'trakt.refresh', 'trakt.token'],
-        'activate' : 'RunPlugin(plugin://plugin.video.thecrew/?action=authTrakt)'},
     'gaia': {
         'name'     : 'Gaia',
         'plugin'   : 'plugin.video.gaia',
@@ -79,18 +55,6 @@ TRAKTID = {
         'default'  : 'trakt.user',
         'data'     : ['trakt.user', 'trakt.refresh', 'trakt.token'],
         'activate' : 'RunPlugin(plugin://plugin.video.numbersbynumbers/?action=authTrakt)'},
-    'overeasy': {
-        'name'     : 'Overeasy',
-        'plugin'   : 'plugin.video.overeasy',
-        'saved'    : 'overeasy',
-        'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.overeasy'),
-        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.overeasy', 'icon.png'),
-        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.overeasy', 'fanart.jpg'),
-        'file'     : os.path.join(CONFIG.TRAKTFOLD, 'overeasy_trakt'),
-        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.overeasy', 'settings.xml'),
-        'default'  : 'trakt.user',
-        'data'     : ['trakt.refresh', 'trakt.token', 'trakt.user'],
-        'activate' : 'RunPlugin(plugin://plugin.video.overeasy/?action=authTrakt)'},
     'seren': {
         'name'     : 'Seren',
         'plugin'   : 'plugin.video.seren',
@@ -163,6 +127,18 @@ TRAKTID = {
         'default'  : 'trakt.user',
         'data'     : ['trakt.token', 'trakt.refresh', 'trakt.user'],
         'activate' : 'RunPlugin(plugin://plugin.video.venom/?action=authTrakt&opensettings=tru&query=10.2)'},
+    'thecrew': {
+        'name'     : 'THE CREW',
+        'plugin'   : 'plugin.video.thecrew',
+        'saved'    : 'thecrew',
+        'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.thecrew'),
+        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.thecrew', 'icon.png'),
+        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.thecrew', 'fanart.jpg'),
+        'file'     : os.path.join(CONFIG.TRAKTFOLD, 'thecrew_trakt'),
+        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.thecrew', 'settings.xml'),
+        'default'  : 'trakt.user',
+        'data'     : ['trakt.token', 'trakt.refresh', 'trakt.user'],
+        'activate' : 'RunPlugin(plugin://plugin.video.thecrew/?action=authTrakt)'},
     'scrubs': {
         'name'     : 'Scrubs v2',
         'plugin'   : 'plugin.video.scrubsv2',

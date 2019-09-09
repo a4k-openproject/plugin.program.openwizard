@@ -185,11 +185,10 @@ class Config:
         # Video Cache variables
         self.INCLUDEVIDEO = self.get_setting('includevideo')
         self.INCLUDEALL = self.get_setting('includeall')
-        self.INCLUDEPLACENTA = self.get_setting('includeplacenta')
         self.INCLUDEEXODUSREDUX = self.get_setting('includeexodusredux')
         self.INCLUDEGAIA = self.get_setting('includegaia')
         self.INCLUDESEREN = self.get_setting('includeseren')
-        self.INCLUDEOVEREASY = self.get_setting('includeovereasy')
+        self.INCLUDETHECREW = self.get_setting('includethecrew')
         self.INCLUDEYODA = self.get_setting('includeyoda')
         self.INCLUDEVENOM = self.get_setting('includevenom')
         self.INCLUDESCRUBS = self.get_setting('includescrubs')
