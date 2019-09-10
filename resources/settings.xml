@@ -36,13 +36,11 @@
 
     <category label="Maintenance">
         <setting type="lsep" label="Upload Log: "/>
-        <!-- <setting id="email" type="text" label="E-Mail Address" /> -->
         <setting id="oldlog" type="bool" label="Include Kodi.Old.Log" default="false"/>
         <setting id="wizlog" type="bool" label="Include Wizard Logs" default="false"/>
         <setting id="crashlog" type="bool" label="Include Kodi Crash Logs" default="false"/>
         <setting type="lsep" label="Maintenance Menu: "/>
         <setting id="path" type="folder" label="Choose Backup Storage Location" default="special://home/"/>
-        <!--<setting id="rompath" type="folder" label="Choose Roms Extract Location Location" default=""/>-->
         <setting type="lsep" label="Auto Clean On Startup:"/>
         <setting id="autoclean" type="bool" label="Enable Auto Clean" default="false"/>
         <setting id="clearcache" type="bool" label="Clear Cache on Startup" default="true" enable="!eq(-1,false)"/>
@@ -174,6 +172,5 @@
         <setting id="wizlogcleansize" type="enum" subsetting="true" label="Max file size for wizard.log?" enable="!eq(-6,false)" visible="eq(-2,1)+!eq(-3,false)" values="100 KB|200 KB|300 KB|400 KB|500 KB|1 MB" default="1"/>
         <setting id="wizlogcleanlines" type="enum" subsetting="true" label="Keep how many lines of wizard.log?" enable="!eq(-7,false)" visible="eq(-3,2)+!eq(-4,false)" values="100|200|300|400|500" default="2"/>
         <setting id="nextcleandate" type="text" label="Next Time Wizard Log Cleaned:" visible="false" default=""/>
-        <setting id="rompath" type="text" default="" visible="false"/>
     </category>
 </settings>
