@@ -18,14 +18,8 @@
 ################################################################################
 
 import xbmc
-import xbmcvfs
 
-import glob
 import os
-import re
-import sys
-
-from datetime import timedelta
 
 try:  # Python 3
     from urllib.parse import quote_plus
@@ -44,64 +38,20 @@ from resources.libs import update
 
 FAILED = False
 
-########################
-#    Check Updates     #
-########################
-
-
-def writeAdvanced():
-    if CONFIG.RAM > 1536:
-        buffer = '209715200'
-    else:
-        buffer = '104857600'
-    with open(CONFIG.ADVANCED, 'w+') as f:
-        f.write('<advancedsettings>\n')
-        f.write('	<network>\n')
-        f.write('		<buffermode>2</buffermode>\n')
-        f.write('		<cachemembuffersize>%s</cachemembuffersize>\n' % buffer)
-        f.write('		<readbufferfactor>5</readbufferfactor>\n')
-        f.write('		<curlclienttimeout>10</curlclienttimeout>\n')
-        f.write('		<curllowspeedtime>10</curllowspeedtime>\n')
-        f.write('	</network>\n')
-        f.write('</advancedsettings>\n')
-    f.close()
-
-
+# Don't run the script while video is playing :)
 while xbmc.Player().isPlayingVideo():
     xbmc.sleep(1000)
 
-### PATH CHECK
-logging.log("[Path Check] Started", level=xbmc.LOGNOTICE)
-path = os.path.split(CONFIG.ADDON_PATH)
-if not CONFIG.ADDON_ID == path[1]:
-    gui.DIALOG.ok(CONFIG.ADDONTITLE,
-                  '[COLOR {0}]Please make sure that the plugin folder is the same as the addon id.[/COLOR]'.format(CONFIG.COLOR2),
-                  '[COLOR {0}]Plugin ID:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.ADDON_ID),
-                  '[COLOR {0}]Plugin Folder:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, path))
-    logging.log("[Path Check] ADDON_ID and plugin folder doesnt match. {0} / {1} ".format(CONFIG.ADDON_ID, path))
-else:
-    logging.log("[Path Check] Good!", level=xbmc.LOGNOTICE)
+check.check_paths()  # Ensure that the wizard's name matches its folder
+tools.ensure_folders()  # Ensure that any needed folders are created
 
-if CONFIG.KODIADDONS in CONFIG.ADDON_PATH:
-    logging.log("Copying path to addons dir", level=xbmc.LOGNOTICE)
-    if not os.path.exists(CONFIG.ADDONS):
-        os.makedirs(CONFIG.ADDONS)
-    if os.path.exists(CONFIG.PLUGIN):
-        logging.log("Folder already exists, cleaning House", level=xbmc.LOGNOTICE)
-        tools.clean_house(CONFIG.PLUGIN)
-        tools.remove_folder(CONFIG.PLUGIN)
-    try:
-        tools.copytree(CONFIG.ADDON_PATH, CONFIG.PLUGIN)
-    except:
-        pass
-    update.force_update(silent=True)
-
-try:
-    if not os.path.exists(CONFIG.MYBUILDS):
-        xbmcvfs.mkdirs(CONFIG.MYBUILDS)
-except:
-    pass
-
+# AUTO INSTALL REPO
+# AUTO UPDATE WIZARD
+# FIRST RUN SETTINGS
+# SHOW NOTIFICATIONS
+# BUILD UPDATE CHECK
+# SAVE LOGINS
+# AUTO CLEAN
 
 ### AUTO INSTALL REPO
 logging.log("[Auto Install Repo] Started", level=xbmc.LOGNOTICE)
@@ -165,7 +115,7 @@ if CONFIG.AUTOUPDATE == 'Yes':
 else:
     logging.log("[Auto Update Wizard] Not Enabled", level=xbmc.LOGNOTICE)
 
-### NOTIFICATIONS
+### SHOW NOTIFICATIONS
 logging.log("[Notifications] Started", level=xbmc.LOGNOTICE)
 if CONFIG.ENABLE == 'Yes':
     if not CONFIG.NOTIFY == 'true':

@@ -32,27 +32,6 @@ except ImportError:  # Python 2
 from resources.libs.config import CONFIG
 
 
-def _make_backup_locations():
-    try:
-        if not os.path.exists(CONFIG.BACKUPLOCATION):
-            xbmcvfs.mkdirs(CONFIG.BACKUPLOCATION)
-        if not os.path.exists(CONFIG.MYBUILDS):
-            xbmcvfs.mkdirs(CONFIG.MYBUILDS)
-        if not os.path.exists(CONFIG.USERDATA):
-            xbmcvfs.mkdirs(CONFIG.USERDATA)
-        if not os.path.exists(CONFIG.ADDON_DATA):
-            xbmcvfs.mkdirs(CONFIG.ADDON_DATA)
-        if not os.path.exists(CONFIG.PACKAGES):
-            xbmcvfs.mkdirs(CONFIG.PACKAGES)
-    except Exception as e:
-        from resources.libs import gui
-
-        gui.DIALOG.ok(CONFIG.ADDONTITLE,
-                      "[COLOR {0}]Error making Back Up directories:[/COLOR]".format(CONFIG.COLOR2),
-                      "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, str(e)))
-        return
-
-
 def _local(file, loc):
     display = os.path.split(file)
     filename = display[1]
@@ -125,7 +104,8 @@ def _finish(file, loc, zname):
 
 class Restore:
     def __init__(self):
-        _make_backup_locations()
+        from resources.libs import tools
+        tools.ensure_folders()
 
         self.external = False
         self.location = 'Local'

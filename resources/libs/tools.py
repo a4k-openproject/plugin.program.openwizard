@@ -578,6 +578,30 @@ def ascii_check(use=None, over=False):
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            "[COLOR {0}]ASCII Check: None Found.[/COLOR]".format(CONFIG.COLOR2))
 
+
+def ensure_folders():
+    import xbmcvfs
+
+    try:
+        if not os.path.exists(CONFIG.BACKUPLOCATION):
+            xbmcvfs.mkdirs(CONFIG.BACKUPLOCATION)
+        if not os.path.exists(CONFIG.MYBUILDS):
+            xbmcvfs.mkdirs(CONFIG.MYBUILDS)
+        if not os.path.exists(CONFIG.USERDATA):
+            xbmcvfs.mkdirs(CONFIG.USERDATA)
+        if not os.path.exists(CONFIG.ADDON_DATA):
+            xbmcvfs.mkdirs(CONFIG.ADDON_DATA)
+        if not os.path.exists(CONFIG.PACKAGES):
+            xbmcvfs.mkdirs(CONFIG.PACKAGES)
+    except Exception as e:
+        from resources.libs import gui
+
+        gui.DIALOG.ok(CONFIG.ADDONTITLE,
+                      "[COLOR {0}]Error creating add-on directories:[/COLOR]".format(CONFIG.COLOR2),
+                      "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, str(e)))
+        return
+
+
 #########################
 #  Add-on Functions     #
 #########################
