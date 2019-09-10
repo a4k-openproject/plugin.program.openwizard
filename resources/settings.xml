@@ -174,8 +174,6 @@
         <setting id="wizlogcleansize" type="enum" subsetting="true" label="Max file size for wizard.log?" enable="!eq(-6,false)" visible="eq(-2,1)+!eq(-3,false)" values="100 KB|200 KB|300 KB|400 KB|500 KB|1 MB" default="1"/>
         <setting id="wizlogcleanlines" type="enum" subsetting="true" label="Keep how many lines of wizard.log?" enable="!eq(-7,false)" visible="eq(-3,2)+!eq(-4,false)" values="100|200|300|400|500" default="2"/>
         <setting id="nextcleandate" type="text" label="Next Time Wizard Log Cleaned:" visible="false" default=""/>
-
-        <setting id="kodi17iscrap" type="text" default="" visible="false"/>
         <setting id="rompath" type="text" default="" visible="false"/>
     </category>
 </settings>
