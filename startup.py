@@ -49,29 +49,6 @@ FAILED = False
 ########################
 
 
-def check_update():
-    bf = tools.open_url(CONFIG.BUILDFILE)
-    if not bf:
-        return
-    link = bf.replace('\n', '').replace('\r', '').replace('\t', '')
-    match = re.compile('name="%s".+?ersion="(.+?)".+?con="(.+?)".+?anart="(.+?)"' % CONFIG.BUILDNAME).findall(link)
-    if len(match) > 0:
-        version = match[0][0]
-        icon = match[0][1]
-        fanart = match[0][2]
-        CONFIG.set_setting('latestversion', version)
-        if version > CONFIG.BUILDVERSION:
-            if CONFIG.DISABLEUPDATE == 'false':
-                logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}] Opening Update Window".format(CONFIG.BUILDVERSION, version), level=xbmc.LOGNOTICE)
-                gui.show_update_window(CONFIG.BUILDNAME, CONFIG.BUILDVERSION, version, icon, fanart)
-            else:
-                logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}] Update Window Disabled".format(CONFIG.BUILDVERSION, version), level=xbmc.LOGNOTICE)
-        else:
-            logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}]".format(CONFIG.BUILDVERSION, version), level=xbmc.LOGNOTICE)
-    else:
-        logging.log("[Check Updates] ERROR: Unable to find build version in build text file", level=xbmc.LOGERROR)
-
-
 def writeAdvanced():
     if CONFIG.RAM > 1536:
         buffer = '209715200'
@@ -90,82 +67,10 @@ def writeAdvanced():
     f.close()
 
 
-def checkSkin():
-    logging.log("[Build Check] Invalid Skin Check Start")
-    gotoskin = False
-    if not CONFIG.DEFAULTSKIN == '':
-        if os.path.exists(os.path.join(CONFIG.ADDONS, CONFIG.DEFAULTSKIN)):
-            if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
-                                "[COLOR {0}]It seems that the skin has been set back to [COLOR {1}]{2}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.SKIN[5:].title()),
-                                "Would you like to set the skin back to:[/COLOR]",
-                                '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.DEFAULTNAME)):
-                gotoskin = CONFIG.DEFAULTSKIN
-                gotoname = CONFIG.DEFAULTNAME
-            else:
-                logging.log("Skin was not reset", level=xbmc.LOGNOTICE)
-                CONFIG.set_setting('defaultskinignore', 'true')
-                gotoskin = False
-        else:
-            CONFIG.set_setting('defaultskin', '')
-            CONFIG.set_setting('defaultskinname', '')
-            CONFIG.DEFAULTSKIN = ''
-            CONFIG.DEFAULTNAME = ''
-    if CONFIG.DEFAULTSKIN == '':
-        skinname = []
-        skinlist = []
-        for folder in glob.glob(os.path.join(CONFIG.ADDONS, 'skin.*/')):
-            xml = "{0}/addon.xml".format(folder)
-            if os.path.exists(xml):
-                g = tools.read_from_file(xml).replace('\n', '').replace('\r', '').replace('\t', '')
-                match = tools.parse_dom(g, 'addon', ret='id')
-                match2 = tools.parse_dom(g, 'addon', ret='name')
-                logging.log("{0}: {1}".format(folder, str(match[0])), level=xbmc.LOGNOTICE)
-                if len(match) > 0:
-                    skinlist.append(str(match[0]))
-                    skinname.append(str(match2[0]))
-                else:
-                    logging.log("ID not found for {0}".format(folder), level=xbmc.LOGNOTICE)
-            else:
-                logging.log("ID not found for {0}".format(folder), level=xbmc.LOGNOTICE)
-        if len(skinlist) > 0:
-            if len(skinlist) > 1:
-                if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
-                                    "[COLOR {0}]It seems that the skin has been set back to [COLOR {1}]{2}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.SKIN[5:].title()),
-                                    "Would you like to view a list of avaliable skins?[/COLOR]"):
-                    choice = gui.DIALOG.select("Select skin to switch to!", skinname)
-                    if choice == -1:
-                        logging.log("Skin was not reset", level=xbmc.LOGNOTICE)
-                        CONFIG.set_setting('defaultskinignore', 'true')
-                    else:
-                        gotoskin = skinlist[choice]
-                        gotoname = skinname[choice]
-                else:
-                    logging.log("Skin was not reset", level=xbmc.LOGNOTICE)
-                    CONFIG.set_setting('defaultskinignore', 'true')
-            else:
-                if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
-                                    "[COLOR {0}]It seems that the skin has been set back to [COLOR {1}]{2}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.SKIN[5:].title()),
-                                    "Would you like to set the skin back to:[/COLOR]",
-                                    '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, skinname[0])):
-                    gotoskin = skinlist[0]
-                    gotoname = skinname[0]
-                else:
-                    logging.log("Skin was not reset", level=xbmc.LOGNOTICE)
-                    CONFIG.set_setting('defaultskinignore', 'true')
-        else:
-            logging.log("No skins found in addons folder.", level=xbmc.LOGNOTICE)
-            CONFIG.set_setting('defaultskinignore', 'true')
-            gotoskin = False
-    if gotoskin:
-        if skin.switch_to_skin(gotoskin):
-            skin.look_and_feel_data('restore')
-    logging.log("[Build Check] Invalid Skin Check End", level=xbmc.LOGNOTICE)
-
-
 while xbmc.Player().isPlayingVideo():
     xbmc.sleep(1000)
 
-
+### PATH CHECK
 logging.log("[Path Check] Started", level=xbmc.LOGNOTICE)
 path = os.path.split(CONFIG.ADDON_PATH)
 if not CONFIG.ADDON_ID == path[1]:
@@ -197,6 +102,8 @@ try:
 except:
     pass
 
+
+### AUTO INSTALL REPO
 logging.log("[Auto Install Repo] Started", level=xbmc.LOGNOTICE)
 if CONFIG.AUTOINSTALL == 'Yes' and not os.path.exists(os.path.join(CONFIG.ADDONS, CONFIG.REPOID)):
     workingxml = tools.check_url(CONFIG.REPOADDONXML)
@@ -251,12 +158,14 @@ elif not CONFIG.AUTOINSTALL == 'Yes':
 elif os.path.exists(os.path.join(CONFIG.ADDONS, CONFIG.REPOID)):
     logging.log("[Auto Install Repo] Repository already installed")
 
+### AUTO UPDATE WIZARD
 logging.log("[Auto Update Wizard] Started", level=xbmc.LOGNOTICE)
 if CONFIG.AUTOUPDATE == 'Yes':
     update.wizard_update('startup')
 else:
     logging.log("[Auto Update Wizard] Not Enabled", level=xbmc.LOGNOTICE)
 
+### NOTIFICATIONS
 logging.log("[Notifications] Started", level=xbmc.LOGNOTICE)
 if CONFIG.ENABLE == 'Yes':
     if not CONFIG.NOTIFY == 'true':
@@ -288,12 +197,13 @@ if CONFIG.ENABLE == 'Yes':
 else:
     logging.log("[Notifications] Not Enabled", level=xbmc.LOGNOTICE)
 
+### BUILD CHECK
 logging.log("[Installed Check] Started", level=xbmc.LOGNOTICE)
 if CONFIG.INSTALLED == 'true':
     if CONFIG.KODIV >= 17:
         db.kodi_17_fix()
         if CONFIG.SKIN in ['skin.confluence', 'skin.estuary', 'skin.estouchy']:
-            checkSkin()
+            check.check_skin()
         FAILED = True
     elif not CONFIG.EXTRACT == '100' and not CONFIG.BUILDNAME == "":
         logging.log("[Installed Check] Build was extracted {0}/100 with [ERRORS: {1}]".format(CONFIG.EXTRACT, CONFIG.EXTERROR), level=xbmc.LOGNOTICE)
@@ -377,17 +287,18 @@ if not FAILED:
     elif not CONFIG.BUILDNAME == '':
         logging.log("[Build Check] Build Installed", level=xbmc.LOGNOTICE)
         if CONFIG.SKIN in ['skin.confluence', 'skin.estuary', 'skin.estouchy'] and not CONFIG.DEFAULTIGNORE == 'true':
-            checkSkin()
+            check.check_skin()
             logging.log("[Build Check] Build Installed: Checking Updates", level=xbmc.LOGNOTICE)
             CONFIG.set_setting('lastbuildcheck', str(tools.get_date(days=CONFIG.UPDATECHECK)))
-            check_update()
+            check.check_build_update()
         elif CONFIG.BUILDCHECK <= str(tools.get_date()):
             logging.log("[Build Check] Build Installed: Checking Updates", level=xbmc.LOGNOTICE)
             CONFIG.set_setting('lastbuildcheck', str(tools.get_date(days=CONFIG.UPDATECHECK)))
-            check_update()
+            check.check_build_update()
         else:
             logging.log("[Build Check] Build Installed: Next check isn't until: {0} / TODAY is: {1}".format(CONFIG.BUILDCHECK, str(tools.get_date())), level=xbmc.LOGNOTICE)
 
+### SAVE TRAKT
 logging.log("[Trakt Data] Started", level=xbmc.LOGNOTICE)
 if CONFIG.KEEPTRAKT == 'true':
     if CONFIG.TRAKTSAVE <= str(tools.get_date()):
@@ -400,6 +311,7 @@ if CONFIG.KEEPTRAKT == 'true':
 else:
     logging.log("[Trakt Data] Not Enabled", level=xbmc.LOGNOTICE)
 
+### SAVE DEBRID
 logging.log("[Debrid Data] Started", level=xbmc.LOGNOTICE)
 if CONFIG.KEEPDEBRID == 'true':
     if CONFIG.DEBRIDSAVE <= str(tools.get_date()):
@@ -412,6 +324,7 @@ if CONFIG.KEEPDEBRID == 'true':
 else:
     logging.log("[Debrid Data] Not Enabled", level=xbmc.LOGNOTICE)
 
+### SAVE LOGIN
 logging.log("[Login Info] Started", level=xbmc.LOGNOTICE)
 if CONFIG.KEEPLOGIN == 'true':
     if CONFIG.LOGINSAVE <= str(tools.get_date()):
@@ -424,6 +337,7 @@ if CONFIG.KEEPLOGIN == 'true':
 else:
     logging.log("[Login Info] Not Enabled", level=xbmc.LOGNOTICE)
 
+### AUTO CLEAN
 logging.log("[Auto Clean Up] Started", level=xbmc.LOGNOTICE)
 if CONFIG.AUTOCLEANUP == 'true':
     service = False
