@@ -166,21 +166,6 @@ while xbmc.Player().isPlayingVideo():
     xbmc.sleep(1000)
 
 
-NOW = tools.get_date(now=True)
-temp = CONFIG.get_setting('kodi17iscrap')
-if not temp == '':
-    if temp > str(NOW - timedelta(minutes=2)):
-        logging.log("Killing Start Up Script")
-        sys.exit()
-logging.log("{0}".format(NOW))
-CONFIG.set_setting('kodi17iscrap', str(NOW))
-xbmc.sleep(1000)
-if not CONFIG.get_setting('kodi17iscrap') == str(NOW):
-    logging.log("Killing Start Up Script")
-    sys.exit()
-else:
-    logging.log("Continuing Start Up Script")
-
 logging.log("[Path Check] Started", level=xbmc.LOGNOTICE)
 path = os.path.split(CONFIG.ADDON_PATH)
 if not CONFIG.ADDON_ID == path[1]:
