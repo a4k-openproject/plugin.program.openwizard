@@ -33,6 +33,24 @@ from resources.libs import logging
 from resources.libs import tools
 
 
+def writeAdvanced():
+    if CONFIG.RAM > 1536:
+        buffer = '209715200'
+    else:
+        buffer = '104857600'
+    with open(CONFIG.ADVANCED, 'w+') as f:
+        f.write('<advancedsettings>\n')
+        f.write('	<network>\n')
+        f.write('		<buffermode>2</buffermode>\n')
+        f.write('		<cachemembuffersize>%s</cachemembuffersize>\n' % buffer)
+        f.write('		<readbufferfactor>5</readbufferfactor>\n')
+        f.write('		<curlclienttimeout>10</curlclienttimeout>\n')
+        f.write('		<curllowspeedtime>10</curllowspeedtime>\n')
+        f.write('	</network>\n')
+        f.write('</advancedsettings>\n')
+    f.close()
+
+
 def autoConfig(msg='', TxtColor='0xFFFFFFFF', Font='font12', BorderWidth=10):
     class MyWindow(xbmcgui.WindowDialog):
         scr = {}
