@@ -17,6 +17,7 @@ def force_update(silent=False):
 
 
 def wizard_update(startup=None):
+    from resources.libs import check
     from resources.libs import logging
     from resources.libs import tools
 
