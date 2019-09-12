@@ -178,9 +178,7 @@ def installed_build_check():
                 logging.log('[Installed Check] Guifix url not working: {0}'.format(gui), level=xbmc.LOGNOTICE)
     else:
         logging.log('[Installed Check] Install seems to be completed correctly', level=xbmc.LOGNOTICE)
-    if not CONFIG.get_setting('pvrclient') == "":
-        db.toggle_addon(CONFIG.get_setting('pvrclient'), 1)
-        xbmc.executebuiltin('StartPVRManager')
+
     update.addon_updates('reset')
 
     if CONFIG.KEEPTRAKT == 'true':

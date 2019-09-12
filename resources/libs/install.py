@@ -38,9 +38,8 @@ def wipe():
     if CONFIG.KEEPSUPER == 'true':
         exclude_dirs.append('plugin.program.super.favourites')
     if CONFIG.KEEPWHITELIST == 'true':
-        pvr = ''
-
         from resources.libs import whitelist
+        
         whitelist = whitelist.whitelist('read')
         if len(whitelist) > 0:
             for item in whitelist:
@@ -48,8 +47,6 @@ def wipe():
                     name, id, fold = item
                 except:
                     pass
-                if fold.startswith('pvr'):
-                    pvr = id
 
                 depends = db.depends_list(fold)
                 for plug in depends:
@@ -61,12 +58,6 @@ def wipe():
                             exclude_dirs.append(plug2)
                 if fold not in exclude_dirs:
                     exclude_dirs.append(fold)
-            if not pvr == '':
-                CONFIG.set_setting('pvrclient', fold)
-    if CONFIG.get_setting('pvrclient') == '':
-        for item in exclude_dirs:
-            if item.startswith('pvr'):
-                CONFIG.set_setting('pvrclient', item)
 
     for item in CONFIG.DEPENDENCIES:
         exclude_dirs.append(item)
@@ -129,6 +120,7 @@ def wipe():
             return False
     gui.DP.close()
     CONFIG.clear_setting('build')
+
 
 def fresh_start(install=None, over=False):
     from resources.libs import db

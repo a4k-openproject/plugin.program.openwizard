@@ -31,7 +31,6 @@
         <setting id="default.startupwindow" type="text" label="Default lookandfeel.startupwindow:" enable="false" default="" visible="false"/>
         <setting id="default.stereostrength" type="text" label="Default lookandfeel.stereostrength:" enable="false" default="" visible="false"/>
         <setting id="default.addonupdate" type="text" label="Default general.addonupdate:" enable="false" default="" visible="false"/>
-        <setting id="pvrclient" type="text" label="Enabled PVR:" enable="false" default="" visible="false"/>
     </category>
 
     <category label="Maintenance">

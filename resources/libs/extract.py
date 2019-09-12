@@ -72,8 +72,6 @@ def all_with_progress(_in, _out, dp, ignore, title):
         except:
             pass
         excludes.append(fold)
-        if fold.startswith('pvr'):
-            CONFIG.set_setting('pvrclient', id)
 
     nFiles = float(len(zin.namelist()))
     zipsize = tools.convert_size(sum([item.file_size for item in zin.infolist()]))
