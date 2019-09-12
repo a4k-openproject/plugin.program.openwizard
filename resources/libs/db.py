@@ -24,6 +24,7 @@ def addon_database(addon=None, state=1, array=False):
     dbfile = latest_db('Addons')
     dbfile = os.path.join(CONFIG.DATABASE, dbfile)
     installedtime = str(datetime.now())[:-7]
+
     if os.path.exists(dbfile):
         try:
             textdb = database.connect(dbfile)
@@ -33,6 +34,7 @@ def addon_database(addon=None, state=1, array=False):
             return False
     else:
         return False
+
     if state == 2:
         try:
             textexe.execute("DELETE FROM installed WHERE addonID = ?", (addon,))
@@ -41,6 +43,7 @@ def addon_database(addon=None, state=1, array=False):
         except:
             logging.log("Error Removing {0} from DB".format(addon))
         return True
+
     try:
         if not array:
             textexe.execute('INSERT or IGNORE into installed (addonID , enabled, installDate) VALUES (?,?,?)', (addon, state, installedtime,))
@@ -160,7 +163,7 @@ def kodi_17_fix():
                     logging.log("{0} was disabled".format(aid[0]))
                     disabledAddons.append(addonid)
                 except:
-                    logging.log("Unabled to enable: {0}".format(folder), level=xbmc.LOGERROR)
+                    logging.log("Unable to enable: {0}".format(folder), level=xbmc.LOGERROR)
     if len(disabledAddons) > 0:
         addon_database(disabledAddons, 1, True)
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
