@@ -282,6 +282,8 @@ def check_skin():
             CONFIG.set_setting('defaultskinignore', 'true')
             gotoskin = False
     if gotoskin:
+        from resources.libs import skin
+
         if skin.switch_to_skin(gotoskin):
             skin.look_and_feel_data('restore')
     logging.log("[Build Check] Invalid Skin Check End", level=xbmc.LOGNOTICE)
