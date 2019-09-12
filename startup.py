@@ -38,86 +38,65 @@ from resources.libs import update
 
 FAILED = False
 
-# Don't run the script while video is playing :)
-while xbmc.Player().isPlayingVideo():
-    xbmc.sleep(1000)
 
-check.check_paths()  # Ensure that the wizard's name matches its folder
-tools.ensure_folders()  # Ensure that any needed folders are created
+def auto_install_repo():
+    if not os.path.exists(os.path.join(CONFIG.ADDONS, CONFIG.REPOID)):
+        workingxml = tools.check_url(CONFIG.REPOADDONXML)
 
-# AUTO INSTALL REPO
-# AUTO UPDATE WIZARD
-# FIRST RUN SETTINGS
-# SHOW NOTIFICATIONS
-# BUILD UPDATE CHECK
-# SAVE LOGINS
-# AUTO CLEAN
+        if workingxml:
+            ver = tools.parse_dom(tools.open_url(CONFIG.REPOADDONXML), 'addon', ret='version', attrs={'id': CONFIG.REPOID})
+            if len(ver) > 0:
+                installzip = '{0}-{1}.zip'.format(CONFIG.REPOID, ver[0])
+                workingrepo = tools.check_url(CONFIG.REPOZIPURL + installzip)
 
-### AUTO INSTALL REPO
-logging.log("[Auto Install Repo] Started", level=xbmc.LOGNOTICE)
-if CONFIG.AUTOINSTALL == 'Yes' and not os.path.exists(os.path.join(CONFIG.ADDONS, CONFIG.REPOID)):
-    workingxml = tools.check_url(CONFIG.REPOADDONXML)
-    if workingxml:
-        ver = tools.parse_dom(tools.open_url(CONFIG.REPOADDONXML), 'addon', ret='version', attrs={'id': CONFIG.REPOID})
-        if len(ver) > 0:
-            installzip = '{0}-{1}.zip'.format(CONFIG.REPOID, ver[0])
-            workingrepo = tools.check_url(CONFIG.REPOZIPURL+installzip)
-            if workingrepo:
-                gui.DP.create(CONFIG.ADDONTITLE, 'Downloading Repo...', '', 'Please Wait')
-                if not os.path.exists(CONFIG.PACKAGES):
-                    os.makedirs(CONFIG.PACKAGES)
-                lib = os.path.join(CONFIG.PACKAGES, installzip)
-                try:
-                    os.remove(lib)
-                except:
-                    pass
+                if workingrepo:
+                    gui.DP.create(CONFIG.ADDONTITLE, 'Downloading Repo...', '', 'Please Wait')
+                    tools.ensure_folders(CONFIG.PACKAGES)
+                    lib = os.path.join(CONFIG.PACKAGES, installzip)
 
-                from resources.libs import downloader
-                from resources.libs import extract
-                downloader.download(CONFIG.REPOZIPURL+installzip, lib, gui.DP)
-                extract.all(lib, CONFIG.ADDONS, gui.DP)
+                    # Remove the old zip if there is one
+                    tools.remove_file(lib)
 
-                try:
-                    repoxml = os.path.join(CONFIG.ADDONS, CONFIG.REPOID, 'addon.xml')
-                    name = tools.parse_dom(tools.read_from_file(repoxml), 'addon', ret='name', attrs={'id': CONFIG.REPOID})
-                    logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name[0]),
-                                       "[COLOR {0}]Add-on updated[/COLOR]".format(CONFIG.COLOR2),
-                                       icon=os.path.join(CONFIG.ADDONS, CONFIG.REPOID, 'icon.png'))
-                except:
-                    pass
+                    from resources.libs import downloader
+                    from resources.libs import extract
+                    downloader.download(CONFIG.REPOZIPURL + installzip, lib, gui.DP)
+                    extract.all(lib, CONFIG.ADDONS, gui.DP)
 
-                if CONFIG.KODIV >= 17:
+                    try:
+                        repoxml = os.path.join(CONFIG.ADDONS, CONFIG.REPOID, 'addon.xml')
+                        name = tools.parse_dom(tools.read_from_file(repoxml), 'addon', ret='name',
+                                               attrs={'id': CONFIG.REPOID})
+                        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name[0]),
+                                           "[COLOR {0}]Add-on updated[/COLOR]".format(CONFIG.COLOR2),
+                                           icon=os.path.join(CONFIG.ADDONS, CONFIG.REPOID, 'icon.png'))
+                    except:
+                        pass
+
+                    # Add wizard to add-on database
                     db.addon_database(CONFIG.REPOID, 1)
 
-                gui.DP.close()
-                xbmc.sleep(500)
-                update.force_update(silent=True)
-                logging.log("[Auto Install Repo] Successfully Installed", level=xbmc.LOGNOTICE)
+                    gui.DP.close()
+                    xbmc.sleep(500)
+
+                    logging.log("[Auto Install Repo] Successfully Installed", level=xbmc.LOGNOTICE)
+                else:
+                    logging.log_notify("[COLOR {0}]Repo Install Error[/COLOR]".format(CONFIG.COLOR1),
+                                       "[COLOR {0}]Invalid URL for zip![/COLOR]".format(CONFIG.COLOR2))
+                    logging.log("[Auto Install Repo] Was unable to create a working URL for repository. {0}".format(
+                        workingrepo), level=xbmc.LOGERROR)
             else:
-                logging.log_notify("[COLOR {0}]Repo Install Error[/COLOR]".format(CONFIG.COLOR1),
-                                   "[COLOR {0}]Invalid url for zip![/COLOR]".format(CONFIG.COLOR2))
-                logging.log("[Auto Install Repo] Was unable to create a working url for repository. {0}".format(workingrepo), level=xbmc.LOGERROR)
+                logging.log("Invalid URL for Repo zip", level=xbmc.LOGERROR)
         else:
-            logging.log("Invalid URL for Repo Zip", level=xbmc.LOGERROR)
-    else:
-        logging.log_notify("[COLOR {0}]Repo Install Error[/COLOR]".format(CONFIG.COLOR1),
-                           "[COLOR {0}]Invalid addon.xml file![/COLOR]".format(CONFIG.COLOR2))
-        logging.log("[Auto Install Repo] Unable to read the addon.xml file.", level=xbmc.LOGERROR)
-elif not CONFIG.AUTOINSTALL == 'Yes':
-    logging.log("[Auto Install Repo] Not Enabled", level=xbmc.LOGNOTICE)
-elif os.path.exists(os.path.join(CONFIG.ADDONS, CONFIG.REPOID)):
-    logging.log("[Auto Install Repo] Repository already installed")
+            logging.log_notify("[COLOR {0}]Repo Install Error[/COLOR]".format(CONFIG.COLOR1),
+                               "[COLOR {0}]Invalid addon.xml file![/COLOR]".format(CONFIG.COLOR2))
+            logging.log("[Auto Install Repo] Unable to read the addon.xml file.", level=xbmc.LOGERROR)
+    elif not CONFIG.AUTOINSTALL == 'Yes':
+        logging.log("[Auto Install Repo] Not Enabled", level=xbmc.LOGNOTICE)
+    elif os.path.exists(os.path.join(CONFIG.ADDONS, CONFIG.REPOID)):
+        logging.log("[Auto Install Repo] Repository already installed")
 
-### AUTO UPDATE WIZARD
-logging.log("[Auto Update Wizard] Started", level=xbmc.LOGNOTICE)
-if CONFIG.AUTOUPDATE == 'Yes':
-    update.wizard_update('startup')
-else:
-    logging.log("[Auto Update Wizard] Not Enabled", level=xbmc.LOGNOTICE)
 
-### SHOW NOTIFICATIONS
-logging.log("[Notifications] Started", level=xbmc.LOGNOTICE)
-if CONFIG.ENABLE == 'Yes':
+def show_notification():
     if not CONFIG.NOTIFY == 'true':
         url = tools.check_url(CONFIG.NOTIFICATION)
         if url:
@@ -144,18 +123,15 @@ if CONFIG.ENABLE == 'Yes':
             logging.log("[Notifications] URL({0}): {1}".format(CONFIG.NOTIFICATION, url), level=xbmc.LOGNOTICE)
     else:
         logging.log("[Notifications] Turned Off", level=xbmc.LOGNOTICE)
-else:
-    logging.log("[Notifications] Not Enabled", level=xbmc.LOGNOTICE)
 
-### BUILD CHECK
-logging.log("[Installed Check] Started", level=xbmc.LOGNOTICE)
-if CONFIG.INSTALLED == 'true':
-    if CONFIG.KODIV >= 17:
-        db.kodi_17_fix()
-        if CONFIG.SKIN in ['skin.confluence', 'skin.estuary', 'skin.estouchy']:
-            check.check_skin()
-        FAILED = True
-    elif not CONFIG.EXTRACT == '100' and not CONFIG.BUILDNAME == "":
+
+def installed_build_check():
+    ### This may not be necessary anymore
+    # db.kodi_17_fix()
+    # if CONFIG.SKIN in ['skin.confluence', 'skin.estuary', 'skin.estouchy']:
+    #     check.check_skin()
+
+    if not CONFIG.EXTRACT == '100' and not CONFIG.BUILDNAME == "":
         logging.log("[Installed Check] Build was extracted {0}/100 with [ERRORS: {1}]".format(CONFIG.EXTRACT, CONFIG.EXTERROR), level=xbmc.LOGNOTICE)
         yes = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
                                '[COLOR {0}]{1}[/COLOR] [COLOR {2}]was not installed correctly!'.format(CONFIG.COLOR1, CONFIG.COLOR2, CONFIG.BUILDNAME),
@@ -163,7 +139,6 @@ if CONFIG.INSTALLED == 'true':
                                'Would you like to try again?[/COLOR]',
                                nolabel='[B]No Thanks![/B]', yeslabel='[B]Retry Install[/B]')
         CONFIG.clear_setting('build')
-        FAILED = True
         if yes:
             xbmc.executebuiltin("PlayMedia(plugin://{0}/?mode=install&name={1}&url=fresh)".format(CONFIG.ADDON_ID, quote_plus(CONFIG.BUILDNAME)))
             logging.log("[Installed Check] Fresh Install Re-activated", level=xbmc.LOGNOTICE)
@@ -178,12 +153,11 @@ if CONFIG.INSTALLED == 'true':
                     skin.look_and_feel_data('restore')
         if not CONFIG.SKIN == defaults and not CONFIG.BUILDNAME == "":
             gui_xml = check.check_build(CONFIG.BUILDNAME, 'gui')
-            FAILED = True
             if gui_xml == 'http://':
                 logging.log("[Installed Check] Guifix was set to http://", level=xbmc.LOGNOTICE)
                 gui.DIALOG.ok(CONFIG.ADDONTITLE,
                               "[COLOR {0}]It looks like the skin settings was not applied to the build.".format(CONFIG.COLOR2),
-                              "Sadly no gui fix was attatched to the build",
+                              "Sadly no gui fix was attached to the build",
                               "You will need to reinstall the build and make sure to do a force close[/COLOR]")
             elif tools.check_url(gui):
                 yes = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
@@ -221,12 +195,11 @@ if CONFIG.INSTALLED == 'true':
         from resources.libs import loginit
         loginit.login_it('restore', 'all')
         logging.log('[Installed Check] Restoring Login Data', level=xbmc.LOGNOTICE)
-    CONFIG.clear_setting('install')
-else:
-    logging.log("[Installed Check] Not Enabled", level=xbmc.LOGNOTICE)
 
-if not FAILED:
-    logging.log("[Build Check] Started", level=xbmc.LOGNOTICE)
+    CONFIG.clear_setting('install')
+
+
+def build_update_check():
     if not tools.check_url(CONFIG.BUILDFILE):
         logging.log("[Build Check] Not a valid URL for Build File: {0}".format(CONFIG.BUILDFILE), level=xbmc.LOGNOTICE)
     elif CONFIG.BUILDCHECK == '' and CONFIG.BUILDNAME == '':
@@ -248,9 +221,8 @@ if not FAILED:
         else:
             logging.log("[Build Check] Build Installed: Next check isn't until: {0} / TODAY is: {1}".format(CONFIG.BUILDCHECK, str(tools.get_date())), level=xbmc.LOGNOTICE)
 
-### SAVE TRAKT
-logging.log("[Trakt Data] Started", level=xbmc.LOGNOTICE)
-if CONFIG.KEEPTRAKT == 'true':
+
+def save_trakt():
     if CONFIG.TRAKTSAVE <= str(tools.get_date()):
         from resources.libs import traktit
         logging.log("[Trakt Data] Saving all Data", level=xbmc.LOGNOTICE)
@@ -258,12 +230,9 @@ if CONFIG.KEEPTRAKT == 'true':
         CONFIG.set_setting('traktlastsave', str(tools.get_date(days=3)))
     else:
         logging.log("[Trakt Data] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.TRAKTSAVE, str(tools.get_date())), level=xbmc.LOGNOTICE)
-else:
-    logging.log("[Trakt Data] Not Enabled", level=xbmc.LOGNOTICE)
 
-### SAVE DEBRID
-logging.log("[Debrid Data] Started", level=xbmc.LOGNOTICE)
-if CONFIG.KEEPDEBRID == 'true':
+
+def save_debrid():
     if CONFIG.DEBRIDSAVE <= str(tools.get_date()):
         from resources.libs import debridit
         logging.log("[Debrid Data] Saving all Data", level=xbmc.LOGNOTICE)
@@ -271,12 +240,9 @@ if CONFIG.KEEPDEBRID == 'true':
         CONFIG.set_setting('debridlastsave', str(tools.get_date(days=3)))
     else:
         logging.log("[Debrid Data] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.DEBRIDSAVE, str(tools.get_date())), level=xbmc.LOGNOTICE)
-else:
-    logging.log("[Debrid Data] Not Enabled", level=xbmc.LOGNOTICE)
 
-### SAVE LOGIN
-logging.log("[Login Info] Started", level=xbmc.LOGNOTICE)
-if CONFIG.KEEPLOGIN == 'true':
+
+def save_login():
     if CONFIG.LOGINSAVE <= str(tools.get_date()):
         from resources.libs import loginit
         logging.log("[Login Info] Saving all Data", level=xbmc.LOGNOTICE)
@@ -284,12 +250,9 @@ if CONFIG.KEEPLOGIN == 'true':
         CONFIG.set_setting('loginlastsave', str(tools.get_date(days=3)))
     else:
         logging.log("[Login Info] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.LOGINSAVE, str(tools.get_date())), level=xbmc.LOGNOTICE)
-else:
-    logging.log("[Login Info] Not Enabled", level=xbmc.LOGNOTICE)
 
-### AUTO CLEAN
-logging.log("[Auto Clean Up] Started", level=xbmc.LOGNOTICE)
-if CONFIG.AUTOCLEANUP == 'true':
+
+def auto_clean():
     service = False
     days = [tools.get_date(), tools.get_date(days=1), tools.get_date(days=3), tools.get_date(days=7)]
 
@@ -317,6 +280,72 @@ if CONFIG.AUTOCLEANUP == 'true':
             clear.clear_packages_startup()
         else:
             logging.log('[Auto Clean Up] Packages: Off', level=xbmc.LOGNOTICE)
+
+# Don't run the script while video is playing :)
+while xbmc.Player().isPlayingVideo():
+    xbmc.sleep(1000)
+
+check.check_paths()  # Ensure that the wizard's name matches its folder
+tools.ensure_folders()  # Ensure that any needed folders are created
+
+### AUTO INSTALL REPO
+if CONFIG.AUTOINSTALL == 'Yes':
+    logging.log("[Auto Install Repo] Started", level=xbmc.LOGNOTICE)
+    auto_install_repo()
 else:
-    logging.log('[Auto Clean Up] Turned off', level=xbmc.LOGNOTICE)
+    logging.log("[Auto Install Repo] Not Enabled", level=xbmc.LOGNOTICE)
+
+### AUTO UPDATE WIZARD
+logging.log("[Auto Update Wizard] Started", level=xbmc.LOGNOTICE)
+if CONFIG.AUTOUPDATE == 'Yes':
+    update.wizard_update('startup')
+else:
+    logging.log("[Auto Update Wizard] Not Enabled", level=xbmc.LOGNOTICE)
+
+### SHOW NOTIFICATIONS
+if CONFIG.ENABLE_NOTIFICATION == 'Yes':
+    logging.log("[Notifications] Started", level=xbmc.LOGNOTICE)
+    show_notification()
+else:
+    logging.log("[Notifications] Not Enabled", level=xbmc.LOGNOTICE)
+
+### INSTALLED BUILD CHECK
+if CONFIG.INSTALLED == 'true':
+    logging.log("[Installed Check] Started", level=xbmc.LOGNOTICE)
+    installed_build_check()
+else:
+    logging.log("[Installed Check] Not Enabled", level=xbmc.LOGNOTICE)
+
+### BUILD CHECK
+if not FAILED:
+    logging.log("[Build Check] Started", level=xbmc.LOGNOTICE)
+    build_update_check()
+
+### SAVE TRAKT
+if CONFIG.KEEPTRAKT == 'true':
+    logging.log("[Trakt Data] Started", level=xbmc.LOGNOTICE)
+    save_trakt()
+else:
+    logging.log("[Trakt Data] Not Enabled", level=xbmc.LOGNOTICE)
+
+### SAVE DEBRID
+if CONFIG.KEEPDEBRID == 'true':
+    logging.log("[Debrid Data] Started", level=xbmc.LOGNOTICE)
+    save_debrid()
+else:
+    logging.log("[Debrid Data] Not Enabled", level=xbmc.LOGNOTICE)
+
+### SAVE LOGIN
+if CONFIG.KEEPLOGIN == 'true':
+    logging.log("[Login Info] Started", level=xbmc.LOGNOTICE)
+    save_login()
+else:
+    logging.log("[Login Info] Not Enabled", level=xbmc.LOGNOTICE)
+
+### AUTO CLEAN
+if CONFIG.AUTOCLEANUP == 'true':
+    logging.log("[Auto Clean Up] Started", level=xbmc.LOGNOTICE)
+    auto_clean()
+else:
+    logging.log('[Auto Clean Up] Not Enabled', level=xbmc.LOGNOTICE)
 

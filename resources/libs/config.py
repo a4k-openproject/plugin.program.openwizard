@@ -74,7 +74,7 @@ class Config:
         self.REPOZIPURL = uservar.REPOZIPURL
 
         # Notification Window
-        self.ENABLE = uservar.ENABLE
+        self.ENABLE_NOTIFICATION = uservar.ENABLE
         self.NOTIFICATION = uservar.NOTIFICATION
         self.HEADERTYPE = uservar.HEADERTYPE
         self.FONTHEADER = uservar.FONTHEADER
