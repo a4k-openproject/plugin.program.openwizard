@@ -55,7 +55,7 @@
         <setting id="includescrubs" type="bool" label="Include Scrubs v2 Cache DB: " default="true" enable="eq(-3,false)" visible="System.HasAddon(plugin.video.scrubsv2)"/>
         <setting id="includenumbers" type="bool" label="Include NuMb3r5 Cache DB: " default="true" enable="eq(-3,false)" visible="System.HasAddon(plugin.video.numbersbynumbers)"/>
         <setting id="includeseren" type="bool" label="Include Seren Cache DB: " default="true" enable="eq(-4,false)" visible="System.HasAddon(plugin.video.seren)"/>
-        <setting id="includethecrew" type="bool" label="Include THE CREW Cache DB: " default="true" enable="eq(-8,false)" visible="System.HasAddon(plugin.video.thecrew)"/>
+        <setting id="includethecrew" type="bool" label="Include THE CREW Cache DB: " default="true" enable="eq(-5,false)" visible="System.HasAddon(plugin.video.thecrew)"/>
         <setting id="includevenom" type="bool" label="Include Venom Cache DB: " default="true" enable="eq(-6,false)" visible="System.HasAddon(plugin.video.venom)"/>
 
         <!-- Default settings for Save Data entries -->

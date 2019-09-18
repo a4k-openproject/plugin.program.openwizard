@@ -126,7 +126,8 @@ def show_notification():
 
 
 def installed_build_check():
-    ### This may not be necessary anymore
+    # This may not be necessary anymore
+    #
     # db.kodi_17_fix()
     # if CONFIG.SKIN in ['skin.confluence', 'skin.estuary', 'skin.estouchy']:
     #     check.check_skin()
@@ -286,61 +287,60 @@ while xbmc.Player().isPlayingVideo():
 check.check_paths()  # Ensure that the wizard's name matches its folder
 tools.ensure_folders()  # Ensure that any needed folders are created
 
-### AUTO INSTALL REPO
+# AUTO INSTALL REPO
 if CONFIG.AUTOINSTALL == 'Yes':
     logging.log("[Auto Install Repo] Started", level=xbmc.LOGNOTICE)
     auto_install_repo()
 else:
     logging.log("[Auto Install Repo] Not Enabled", level=xbmc.LOGNOTICE)
 
-### AUTO UPDATE WIZARD
+# AUTO UPDATE WIZARD
 logging.log("[Auto Update Wizard] Started", level=xbmc.LOGNOTICE)
 if CONFIG.AUTOUPDATE == 'Yes':
     update.wizard_update('startup')
 else:
     logging.log("[Auto Update Wizard] Not Enabled", level=xbmc.LOGNOTICE)
 
-### SHOW NOTIFICATIONS
+# SHOW NOTIFICATIONS
 if CONFIG.ENABLE_NOTIFICATION == 'Yes':
     logging.log("[Notifications] Started", level=xbmc.LOGNOTICE)
     show_notification()
 else:
     logging.log("[Notifications] Not Enabled", level=xbmc.LOGNOTICE)
 
-### INSTALLED BUILD CHECK
+# INSTALLED BUILD CHECK
 if CONFIG.INSTALLED == 'true':
     logging.log("[Installed Check] Started", level=xbmc.LOGNOTICE)
     installed_build_check()
 else:
     logging.log("[Installed Check] Not Enabled", level=xbmc.LOGNOTICE)
 
-### BUILD CHECK
+# SAVE TRAKT
 if not FAILED:
     logging.log("[Build Check] Started", level=xbmc.LOGNOTICE)
     build_update_check()
 
-### SAVE TRAKT
 if CONFIG.KEEPTRAKT == 'true':
     logging.log("[Trakt Data] Started", level=xbmc.LOGNOTICE)
     save_trakt()
 else:
     logging.log("[Trakt Data] Not Enabled", level=xbmc.LOGNOTICE)
 
-### SAVE DEBRID
+# SAVE DEBRID
 if CONFIG.KEEPDEBRID == 'true':
     logging.log("[Debrid Data] Started", level=xbmc.LOGNOTICE)
     save_debrid()
 else:
     logging.log("[Debrid Data] Not Enabled", level=xbmc.LOGNOTICE)
 
-### SAVE LOGIN
+# SAVE LOGIN
 if CONFIG.KEEPLOGIN == 'true':
     logging.log("[Login Info] Started", level=xbmc.LOGNOTICE)
     save_login()
 else:
     logging.log("[Login Info] Not Enabled", level=xbmc.LOGNOTICE)
 
-### AUTO CLEAN
+# AUTO CLEAN
 if CONFIG.AUTOCLEANUP == 'true':
     logging.log("[Auto Clean Up] Started", level=xbmc.LOGNOTICE)
     auto_clean()

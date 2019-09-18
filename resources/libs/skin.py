@@ -120,7 +120,7 @@ def swap_us():
     response = xbmc.executeJSONRPC(query)
     logging.log("Unknown Sources Get Settings: {0}".format(str(response)))
     if 'false' in response:
-        threading.Thread(target=__dialog_watch).start()
+        threading.Thread(target=_dialog_watch).start()
         xbmc.sleep(200)
         query = '{{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{{"setting":{0},"value":{1}}}, "id":1}}'.format(new, value)
         response = xbmc.executeJSONRPC(query)
