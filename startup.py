@@ -19,7 +19,10 @@
 
 import xbmc
 
+import datetime
+from datetime import timedelta
 import os
+import sys
 
 try:  # Python 3
     from urllib.parse import quote_plus
@@ -35,8 +38,6 @@ from resources.libs import logging
 from resources.libs import skin
 from resources.libs import tools
 from resources.libs import update
-
-FAILED = False
 
 
 def auto_install_repo():
@@ -201,24 +202,14 @@ def installed_build_check():
 def build_update_check():
     if not tools.check_url(CONFIG.BUILDFILE):
         logging.log("[Build Check] Not a valid URL for Build File: {0}".format(CONFIG.BUILDFILE), level=xbmc.LOGNOTICE)
-    elif CONFIG.BUILDCHECK == '' and CONFIG.BUILDNAME == '':
-        logging.log("[Build Check] First Run", level=xbmc.LOGNOTICE)
-        gui.show_save_data_settings()
-        gui.show_build_prompt()
-        CONFIG.set_setting('lastbuildcheck', str(tools.get_date(days=CONFIG.UPDATECHECK)))
     elif not CONFIG.BUILDNAME == '':
-        logging.log("[Build Check] Build Installed", level=xbmc.LOGNOTICE)
         if CONFIG.SKIN in ['skin.confluence', 'skin.estuary', 'skin.estouchy'] and not CONFIG.DEFAULTIGNORE == 'true':
             check.check_skin()
-            logging.log("[Build Check] Build Installed: Checking Updates", level=xbmc.LOGNOTICE)
-            CONFIG.set_setting('lastbuildcheck', str(tools.get_date(days=CONFIG.UPDATECHECK)))
-            check.check_build_update()
-        elif CONFIG.BUILDCHECK <= str(tools.get_date()):
-            logging.log("[Build Check] Build Installed: Checking Updates", level=xbmc.LOGNOTICE)
-            CONFIG.set_setting('lastbuildcheck', str(tools.get_date(days=CONFIG.UPDATECHECK)))
-            check.check_build_update()
-        else:
-            logging.log("[Build Check] Build Installed: Next check isn't until: {0} / TODAY is: {1}".format(CONFIG.BUILDCHECK, str(tools.get_date())), level=xbmc.LOGNOTICE)
+
+        logging.log("[Build Check] Build Installed: Checking Updates", level=xbmc.LOGNOTICE)
+        check.check_build_update()
+
+    CONFIG.set_setting('lastbuildcheck', str(tools.get_date(days=CONFIG.UPDATECHECK)))
 
 
 def save_trakt():
@@ -280,12 +271,61 @@ def auto_clean():
         else:
             logging.log('[Auto Clean Up] Packages: Off', level=xbmc.LOGNOTICE)
 
-# Don't run the script while video is playing :)
-while xbmc.Player().isPlayingVideo():
-    xbmc.sleep(1000)
 
-check.check_paths()  # Ensure that the wizard's name matches its folder
-tools.ensure_folders()  # Ensure that any needed folders are created
+def stop_if_duplicate():
+    NOW = datetime.now()
+    temp = CONFIG.get_setting('time_started')
+    if not temp == '':
+        if temp > str(NOW - timedelta(minutes=2)):
+            logging.log("Killing Start Up Script")
+            sys.exit()
+    logging.log("{0}".format(NOW))
+    CONFIG.set_setting('time_started', str(NOW))
+    xbmc.sleep(1000)
+    if not CONFIG.get_setting('time_started') == str(NOW):
+        logging.log("Killing Start Up Script")
+        sys.exit()
+    else:
+        logging.log("Continuing Start Up Script")
+
+
+def check_for_video():
+    while xbmc.Player().isPlayingVideo():
+        xbmc.sleep(1000)
+
+
+# Don't run the script while video is playing :)
+check_for_video()
+# Stop this script if it's been run more than once
+stop_if_duplicate()
+# Ensure that the wizard's name matches its folder
+check.check_paths()
+# Ensure that any needed folders are created
+tools.ensure_folders()
+
+
+# FIRST RUN SETTINGS
+if CONFIG.FIRSTRUN == 'true':
+    logging.log("[First Run] Showing Save Data Settings", level=xbmc.LOGNOTICE)
+    gui.show_save_data_settings()
+
+    CONFIG.set_setting('first_install', 'false')
+else:
+    logging.log("[First Run] Skipping Save Data Settings", level=xbmc.LOGNOTICE)
+
+# BUILD INSTALL PROMPT
+if CONFIG.BUILDNAME == '':
+    logging.log("[Build Installed Check] Build Not Installed", level=xbmc.LOGNOTICE)
+    gui.show_build_prompt()
+else:
+    logging.log("[Build Installed Check] Build Installed", level=xbmc.LOGNOTICE)
+
+# BUILD UPDATE CHECK
+if CONFIG.BUILDCHECK <= str(tools.get_date()):
+    logging.log("[Build Update Check] Started", level=xbmc.LOGNOTICE)
+    build_update_check()
+else:
+    logging.log("[Build Update Check] Next Check: {0}".format(CONFIG.BUILDCHECK), level=xbmc.LOGNOTICE)
 
 # AUTO INSTALL REPO
 if CONFIG.AUTOINSTALL == 'Yes':
@@ -316,10 +356,6 @@ else:
     logging.log("[Installed Check] Not Enabled", level=xbmc.LOGNOTICE)
 
 # SAVE TRAKT
-if not FAILED:
-    logging.log("[Build Check] Started", level=xbmc.LOGNOTICE)
-    build_update_check()
-
 if CONFIG.KEEPTRAKT == 'true':
     logging.log("[Trakt Data] Started", level=xbmc.LOGNOTICE)
     save_trakt()

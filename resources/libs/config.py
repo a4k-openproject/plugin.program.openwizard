@@ -150,6 +150,8 @@ class Config:
         self.WHITELIST = os.path.join(self.PLUGIN_DATA, 'whitelist.txt')
 
     def init_settings(self):
+        self.FIRSTRUN = self.get_setting('first_install')
+
         # Build variables
         self.BUILDNAME = self.get_setting('buildname')
         self.BUILDCHECK = self.get_setting('lastbuildcheck')
