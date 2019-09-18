@@ -54,7 +54,7 @@
         <setting id="includegaia" type="bool" label="Include Gaia Cache DB: " default="true" enable="eq(-2,false)" visible="System.HasAddon(plugin.video.gaia)"/>
         <setting id="includescrubs" type="bool" label="Include Scrubs v2 Cache DB: " default="true" enable="eq(-3,false)" visible="System.HasAddon(plugin.video.scrubsv2)"/>
         <setting id="includeseren" type="bool" label="Include Seren Cache DB: " default="true" enable="eq(-4,false)" visible="System.HasAddon(plugin.video.seren)"/>
-                <setting id="includethecrew" type="bool" label="Include THE CREW Cache DB: " default="true" enable="eq(-5,false)" visible="System.HasAddon(plugin.video.thecrew)"/>
+        <setting id="includethecrew" type="bool" label="Include THE CREW Cache DB: " default="true" enable="eq(-5,false)" visible="System.HasAddon(plugin.video.thecrew)"/>
         <setting id="includevenom" type="bool" label="Include Venom Cache DB: " default="true" enable="eq(-6,false)" visible="System.HasAddon(plugin.video.venom)"/>
         <setting id="includeyoda" type="bool" label="Include Yoda Cache DB: " default="true" enable="eq(-7,false)" visible="System.HasAddon(plugin.video.yoda)"/>
 
