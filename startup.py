@@ -209,7 +209,7 @@ def build_update_check():
         logging.log("[Build Check] Build Installed: Checking Updates", level=xbmc.LOGNOTICE)
         check.check_build_update()
 
-    CONFIG.set_setting('lastbuildcheck', str(tools.get_date(days=CONFIG.UPDATECHECK)))
+    CONFIG.set_setting('lastbuildcheck', str(tools.get_date(now=True)))
 
 
 def save_trakt():
@@ -297,7 +297,7 @@ def check_for_video():
 # Don't run the script while video is playing :)
 check_for_video()
 # Stop this script if it's been run more than once
-stop_if_duplicate()
+# stop_if_duplicate()
 # Ensure that the wizard's name matches its folder
 check.check_paths()
 # Ensure that any needed folders are created
@@ -318,10 +318,10 @@ if CONFIG.BUILDNAME == '':
     logging.log("[Build Installed Check] Build Not Installed", level=xbmc.LOGNOTICE)
     gui.show_build_prompt()
 else:
-    logging.log("[Build Installed Check] Build Installed", level=xbmc.LOGNOTICE)
+    logging.log("[Build Installed Check] Build Installed: {0}".format(CONFIG.BUILDNAME), level=xbmc.LOGNOTICE)
 
 # BUILD UPDATE CHECK
-if CONFIG.BUILDCHECK <= str(tools.get_date()):
+if CONFIG.BUILDCHECK <= str(tools.get_date(days=CONFIG.UPDATECHECK, now=True)):
     logging.log("[Build Update Check] Started", level=xbmc.LOGNOTICE)
     build_update_check()
 else:
@@ -335,8 +335,8 @@ else:
     logging.log("[Auto Install Repo] Not Enabled", level=xbmc.LOGNOTICE)
 
 # AUTO UPDATE WIZARD
-logging.log("[Auto Update Wizard] Started", level=xbmc.LOGNOTICE)
 if CONFIG.AUTOUPDATE == 'Yes':
+    logging.log("[Auto Update Wizard] Started", level=xbmc.LOGNOTICE)
     update.wizard_update('startup')
 else:
     logging.log("[Auto Update Wizard] Not Enabled", level=xbmc.LOGNOTICE)
