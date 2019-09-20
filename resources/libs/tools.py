@@ -639,24 +639,28 @@ def check_url(url):
     import requests
     from resources.libs import logging
     
-    if __is_url(url):
+    if _is_url(url):
         try:
-            response = requests.head(url, headers={'user-agent': CONFIG.USER_AGENT})
+            response = requests.head(url, headers={'user-agent': CONFIG.USER_AGENT}, allow_redirects=True)
             
             if response.status_code < 300:
+                logging.log("URL check passed for {0}: Status code {1}".format(url, response.status_code), level=xbmc.LOGDEBUG)
                 return True
+            elif response.status_code < 400:
+                logging.log("URL check redirected from {0} to {1}: Status code {2}".format(url, response.headers['Location'], response.status_code), level=xbmc.LOGDEBUG)
+                return check_url(response.headers['Location'])
             else:
-                logging.log("URL responded with error code: {0} [{1}]".format(response.status_code, url))
+                logging.log("URL check failed for {0}: Status code [{1}]".format(url, response.status_code), level=xbmc.LOGERROR)
                 return False
         except Exception as e:
-            logging.log("URL Error: {0} [{1}]".format(e, url))
+            logging.log("URL check error for {0}: [{1}]".format(url, e), level=xbmc.LOGERROR)
             return False
     else:
-        logging.log("Not a valid URL: [{0}]".format(url))
+        logging.log("URL is not of a valid schema: {0}".format(url), level=xbmc.LOGERROR)
         return False
             
 
-def __is_url(url):
+def _is_url(url):
     try:
         result = urlparse(url)
         return all([result.scheme, result.netloc])
@@ -674,4 +678,4 @@ def open_url(url, binary=False):
         else:
             return requests.get(url, headers={'user-agent': CONFIG.USER_AGENT}, timeout=1.000).text
     except:
-        logging.log(msg='URL invalid or timed out.', level=xbmc.LOGERROR)
+        logging.log('URL invalid or timed out for {0}'.format(url), level=xbmc.LOGERROR)
