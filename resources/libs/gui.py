@@ -364,30 +364,29 @@ def show_update_window(name='Testing Window', current='1.0', new='1.1', icon=CON
             self.fresh = 201
             self.normal = 202
             self.ignore = 203
-            self.show_dialog()
 
-        def show_dialog(self):
-            self.getControl(self.header).setLabel(self.name)
-            self.getControl(self.textbox).setText(CONFIG.THEME2.format(self.msgupdate if current < new else self.msgcurrent))
-            self.getControl(self.imagefanart).setImage(self.fanart)
-            self.getControl(self.imagefanart).setColorDiffuse('2FFFFFFF')
-            self.getControl(self.imageicon).setImage(self.icon)
-            self.setFocusId(self.fresh)
+            self.setProperty('dialog.header', self.name)
+            self.setProperty('dialog.textbox', CONFIG.THEME2.format(self.msgupdate if current < new else self.msgcurrent))
+            self.setProperty('dialog.imagefanart', self.fanart)
+            self.setProperty('dialog.imagediffuse', '2FFFFFFF')
+            self.setProperty('dialog.imageicon', self.icon)
 
         def do_fresh_install(self):
             from resources.libs import logging
-            logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}] [User Selected: Fresh Install build]".format(CONFIG.BUILDVERSION, CONFIG.LATESTVERSION), level=xbmc.LOGNOTICE)
-            logging.log("[Check Updates] [Next Check: {0}]".format(str(CONFIG.BUILDCHECK)), level=xbmc.LOGNOTICE)
-            CONFIG.set_setting('lastbuildcheck', str(CONFIG.BUILDCHECK))
+            from resources.libs import tools
+            
+            logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}] [User Selected: Fresh Install build]".format(CONFIG.BUILDVERSION, CONFIG.BUILDLATEST), level=xbmc.LOGNOTICE)
+            logging.log("[Check Updates] [Next Check: {0}]".format(str(tools.get_date(days=CONFIG.UPDATECHECK))), level=xbmc.LOGNOTICE)
             url = 'plugin://{0}/?mode=install&name={1}&url=fresh'.format(CONFIG.ADDON_ID, quote_plus(CONFIG.BUILDNAME))
             xbmc.executebuiltin('RunPlugin({0})'.format(url))
             self.close()
 
         def do_normal_install(self):
             from resources.libs import logging
-            logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}] [User Selected: Normal Install build]".format(CONFIG.BUILDVERSION, CONFIG.LATESTVERSION), level=xbmc.LOGNOTICE)
-            logging.log("[Check Updates] [Next Check: {0}]".format(str(CONFIG.BUILDCHECK)), level=xbmc.LOGNOTICE)
-            CONFIG.set_setting('lastbuildcheck', str(CONFIG.BUILDCHECK))
+            from resources.libs import tools
+            
+            logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}] [User Selected: Normal Install build]".format(CONFIG.BUILDVERSION, CONFIG.BUILDLATEST), level=xbmc.LOGNOTICE)
+            logging.log("[Check Updates] [Next Check: {0}]".format(str(tools.get_date(days=CONFIG.UPDATECHECK))), level=xbmc.LOGNOTICE)
             url = 'plugin://{0}/?mode=install&name={1}&url=normal'.format(CONFIG.ADDON_ID, quote_plus(CONFIG.BUILDNAME))
             xbmc.executebuiltin('RunPlugin({0})'.format(url))
             self.close()
@@ -395,12 +394,13 @@ def show_update_window(name='Testing Window', current='1.0', new='1.1', icon=CON
         def do_ignore(self):
             from resources.libs import logging
             from resources.libs import tools
-            logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}] [User Selected: Ignore 3 Days]".format(CONFIG.BUILDVERSION, CONFIG.LATESTVERSION), level=xbmc.LOGNOTICE)
-            logging.log("[Check Updates] [Next Check: {0}]".format(str(tools.get_date(days=3))), level=xbmc.LOGNOTICE)
-            CONFIG.set_setting('lastbuildcheck', str(tools.get_date(days=3)))
+            
+            logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}] [User Selected: Ignore {2} Days]".format(CONFIG.BUILDVERSION, CONFIG.BUILDLATEST, CONFIG.UPDATECHECK), level=xbmc.LOGNOTICE)
+            logging.log("[Check Updates] [Next Check: {0}]".format(str(tools.get_date(days=CONFIG.UPDATECHECK))), level=xbmc.LOGNOTICE)
             self.close()
 
         def onAction(self, action):
+            id = action.getId()
             if action.getId() in BACK_ACTIONS:
                 self.do_ignore()
 
@@ -412,7 +412,7 @@ def show_update_window(name='Testing Window', current='1.0', new='1.1', icon=CON
             elif controlid == self.ignore:
                 self.do_ignore()
 
-    update = UpdateWindow("BuildUpdate.xml", CONFIG.ADDON_PATH, 'Default', name=name, current=current, new=new, icon=icon, fanart=fanart)
+    update = UpdateWindow("build_update_prompt.xml", CONFIG.ADDON_PATH, 'Default', name=name, current=current, new=new, icon=icon, fanart=fanart)
     update.doModal()
     del update
 
