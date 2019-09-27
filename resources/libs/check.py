@@ -1,4 +1,5 @@
 import xbmc
+import xbmcgui
 
 import glob
 import os
@@ -16,14 +17,15 @@ from resources.libs.config import CONFIG
 
 
 def check_paths():
-    from resources.libs import gui
     from resources.libs import logging
-
+    
+    dialog = xbmcgui.Dialog()
+    
     logging.log("[Path Check] Started", level=xbmc.LOGNOTICE)
 
     path = os.path.split(CONFIG.ADDON_PATH)
     if not CONFIG.ADDON_ID == path[1]:
-        gui.DIALOG.ok(CONFIG.ADDONTITLE,
+        dialog.ok(CONFIG.ADDONTITLE,
                       '[COLOR {0}]Please make sure that the plugin folder is the same as the add-on id.[/COLOR]'.format(
                           CONFIG.COLOR2),
                       '[COLOR {0}]Plugin ID:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1,
@@ -212,15 +214,17 @@ def check_build_update():
 
 
 def check_skin():
-    from resources.libs import gui
     from resources.libs import logging
     from resources.libs import tools
 
+    dialog = xbmcgui.Dialog()
+    
     logging.log("[Build Check] Invalid Skin Check Start")
+    
     gotoskin = False
     if not CONFIG.DEFAULTSKIN == '':
         if os.path.exists(os.path.join(CONFIG.ADDONS, CONFIG.DEFAULTSKIN)):
-            if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+            if dialog.yesno(CONFIG.ADDONTITLE,
                                 "[COLOR {0}]It seems that the skin has been set back to [COLOR {1}]{2}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.SKIN[5:].title()),
                                 "Would you like to set the skin back to:[/COLOR]",
                                 '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.DEFAULTNAME)):
@@ -254,10 +258,10 @@ def check_skin():
                 logging.log("ID not found for {0}".format(folder), level=xbmc.LOGNOTICE)
         if len(skinlist) > 0:
             if len(skinlist) > 1:
-                if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                if dialog.yesno(CONFIG.ADDONTITLE,
                                     "[COLOR {0}]It seems that the skin has been set back to [COLOR {1}]{2}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.SKIN[5:].title()),
                                     "Would you like to view a list of avaliable skins?[/COLOR]"):
-                    choice = gui.DIALOG.select("Select skin to switch to!", skinname)
+                    choice = dialog.select("Select skin to switch to!", skinname)
                     if choice == -1:
                         logging.log("Skin was not reset", level=xbmc.LOGNOTICE)
                         CONFIG.set_setting('defaultskinignore', 'true')
@@ -268,7 +272,7 @@ def check_skin():
                     logging.log("Skin was not reset", level=xbmc.LOGNOTICE)
                     CONFIG.set_setting('defaultskinignore', 'true')
             else:
-                if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                if dialog.yesno(CONFIG.ADDONTITLE,
                                     "[COLOR {0}]It seems that the skin has been set back to [COLOR {1}]{2}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.SKIN[5:].title()),
                                     "Would you like to set the skin back to:[/COLOR]",
                                     '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, skinname[0])):
@@ -290,10 +294,12 @@ def check_skin():
 
 
 def check_sources():
-    from resources.libs import gui
     from resources.libs import logging
     from resources.libs import tools
 
+    dialog = xbmcgui.Dialog()
+    progress_dialog = xbmcgui.DialogProgress()
+    
     if not os.path.exists(CONFIG.SOURCES):
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            "[COLOR {0}]No sources.xml File Found![/COLOR]".format(CONFIG.COLOR2))
@@ -307,11 +313,11 @@ def check_sources():
 
     if len(match) > 0:
         match2 = re.compile('<source>.+?<name>(.+?)</name>.+?<path pathversion="1">(.+?)</path>.+?<allowsharing>(.+?)</allowsharing>.+?</source>').findall(match[0])
-        gui.DP.create(CONFIG.ADDONTITLE, "[COLOR {0}]Scanning Sources for Broken links[/COLOR]".format(CONFIG.COLOR2))
+        progress_dialog.create(CONFIG.ADDONTITLE, "[COLOR {0}]Scanning Sources for Broken links[/COLOR]".format(CONFIG.COLOR2))
         for name, path, sharing in match2:
             x += 1
             perc = int(tools.percentage(x, len(match2)))
-            gui.DP.update(perc,
+            progress_dialog.update(perc,
                           '',
                           "[COLOR {0}]Checking [COLOR {1}]{2}[/COLOR]:[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, name),
                           "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, path))
@@ -322,7 +328,7 @@ def check_sources():
 
         logging.log("Bad Sources: {0}".format(len(bad)), level=xbmc.LOGNOTICE)
         if len(bad) > 0:
-            choice = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+            choice = dialog.yesno(CONFIG.ADDONTITLE,
                                       "[COLOR {0}]{1}[/COLOR][COLOR {2}] Source(s) have been found Broken".format(CONFIG.COLOR1, len(bad), CONFIG.COLOR2),
                                       "Would you like to Remove all or choose one by one?[/COLOR]",
                                       yeslabel="[B][COLOR springgreen]Remove All[/COLOR][/B]",
@@ -332,7 +338,7 @@ def check_sources():
             else:
                 for name, path, sharing, working in bad:
                     logging.log("{0} sources: {1}, {2}".format(name, path, working), level=xbmc.LOGNOTICE)
-                    if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                    if dialog.yesno(CONFIG.ADDONTITLE,
                                         "[COLOR {0}]{1}[/COLOR][COLOR {2}] was reported as non working".format(CONFIG.COLOR1, name, CONFIG.COLOR2),
                                         "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, path),
                                         "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, working),
@@ -351,7 +357,7 @@ def check_sources():
                 alive = len(match) - len(bad)
                 kept = len(bad) - len(remove)
                 removed = len(remove)
-                gui.DIALOG.ok(CONFIG.ADDONTITLE,
+                dialog.ok(CONFIG.ADDONTITLE,
                               "[COLOR {0}]Checking sources for broken paths has been completed".format(CONFIG.COLOR2),
                               "Working: [COLOR {0}]{1}[/COLOR] | Kept: [COLOR {2}]{3}[/COLOR] | Removed: [COLOR {4}]{5}[/COLOR][/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, alive, CONFIG.COLOR1, kept, CONFIG.COLOR1, removed))
             else:
@@ -364,16 +370,17 @@ def check_sources():
 
 
 def check_repos():
-    from resources.libs import gui
     from resources.libs import logging
     from resources.libs import tools
 
-    gui.DP.create(CONFIG.ADDONTITLE, '[COLOR {0}]Checking Repositories...[/COLOR]'.format(CONFIG.COLOR2))
+    progress_dialog = xbmcgui.DialogProgress()
+    
+    progress_dialog.create(CONFIG.ADDONTITLE, '[COLOR {0}]Checking Repositories...[/COLOR]'.format(CONFIG.COLOR2))
     badrepos = []
     xbmc.executebuiltin('UpdateAddonRepos')
     repolist = glob.glob(os.path.join(CONFIG.ADDONS, 'repo*'))
     if len(repolist) == 0:
-        gui.DP.close()
+        progress_dialog.close()
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            "[COLOR {0}]No Repositories Found![/COLOR]".format(CONFIG.COLOR2))
         return
@@ -381,19 +388,19 @@ def check_repos():
     start = 0
     while start < sleeptime:
         start += 1
-        if gui.DP.iscanceled():
+        if progress_dialog.iscanceled():
             break
         perc = int(tools.percentage(start, sleeptime))
-        gui.DP.update(perc,
+        progress_dialog.update(perc,
                       '',
                       '[COLOR {0}]Checking: [/COLOR][COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, repolist[start-1].replace(CONFIG.ADDONS, '')[1:]))
         xbmc.sleep(1000)
-    if gui.DP.iscanceled():
-        gui.DP.close()
+    if progress_dialog.iscanceled():
+        progress_dialog.close()
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            "[COLOR {0}]Enabling Addons Cancelled[/COLOR]".format(CONFIG.COLOR2))
         sys.exit()
-    gui.DP.close()
+    progress_dialog.close()
     logfile = logging.grab_log()
     fails = re.compile('CRepositoryUpdateJob(.+?)failed').findall(logfile)
     for item in fails:

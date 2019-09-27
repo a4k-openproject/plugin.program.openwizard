@@ -60,7 +60,7 @@ def _external(source, loc):
     filename = display[1]
 
     file = os.path.join(CONFIG.PACKAGES, filename)
-    downloader.download(source, file, gui.DP)
+    downloader.download(source, file)
     gui.DP.update(0, 'Installing External Backup', '', 'Please Wait')
 
     _finish(file, loc, filename)
@@ -72,7 +72,7 @@ def _finish(file, loc, zname):
     from resources.libs import gui
     from resources.libs import tools
 
-    percent, errors, error = extract.all(file, loc, gui.DP)
+    percent, errors, error = extract.all(file, loc)
     db.fix_metas()
     CONFIG.clear_setting('build')
     gui.DP.close()

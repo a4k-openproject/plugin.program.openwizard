@@ -18,6 +18,7 @@
 ################################################################################
 
 import xbmc
+import xbmcgui
 
 import sys
 try:  # Python 3
@@ -29,21 +30,23 @@ from resources.libs.config import CONFIG
 from resources.libs import logging
 
 
-def all(_in, _out, dp=None, ignore=None, title=None):
-    if dp:
-        return all_with_progress(_in, _out, dp, ignore, title)
-    else:
-        return all_no_progress(_in, _out, ignore)
+def all(_in, _out, ignore=None, title=None):
+    progress_dialog = xbmcgui.DialogProgress()
+    progress_dialog.create(CONFIG.ADDONTITLE, "Extracting Content", '', '')
+    
+    return all_with_progress(_in, _out, progress_dialog, ignore, title)
+    
+    # return all_no_progress(_in, _out, ignore)
 
 
-def all_no_progress(_in, _out, ignore):
-    try:
-        zin = zipfile.ZipFile(_in, 'r')
-        zin.extractall(_out)
-    except Exception as e:
-        logging.log(str(e))
-        return False
-    return True
+# def all_no_progress(_in, _out, ignore):
+    # try:
+        # zin = zipfile.ZipFile(_in, 'r')
+        # zin.extractall(_out)
+    # except Exception as e:
+        # logging.log(str(e))
+        # return False
+    # return True
 
 
 def all_with_progress(_in, _out, dp, ignore, title):
@@ -80,6 +83,7 @@ def all_with_progress(_in, _out, dp, ignore, title):
     title = title if title else zipit[-1].replace('.zip', '')
 
     for item in zin.infolist():
+        
         try:
             str(item.filename).encode('ascii')
         except UnicodeDecodeError:
@@ -88,19 +92,20 @@ def all_with_progress(_in, _out, dp, ignore, title):
         except UnicodeEncodeError:
             logging.log("[ASCII Check] Illegal character found in file: {0}".format(item.filename))
             continue
+            
         count += 1
         prog = int(count / nFiles * 100)
         size += item.file_size
         file = str(item.filename).split('/')
         skip = False
-        line1 = '{0} [COLOR {1}][B][Errors:{2}][/B][/COLOR]'.format(title,
+        line1 = '{0} [COLOR {1}][B][Errors:{2}][/B][/COLOR]\n'.format(title,
                                                                     CONFIG.COLOR2,
                                                                     errors)
         line2 = '[COLOR {0}][B]File:[/B][/COLOR] [COLOR {1}]{2}/{3}[/COLOR] '.format(CONFIG.COLOR2,
                                                                                      CONFIG.COLOR1,
                                                                                      count,
                                                                                      int(nFiles))
-        line2 += '[COLOR {0}][B]Size:[/B][/COLOR] [COLOR {1}]{2}/{3}[/COLOR]'.format(CONFIG.COLOR2,
+        line2 += '[COLOR {0}][B]Size:[/B][/COLOR] [COLOR {1}]{2}/{3}[/COLOR]\n'.format(CONFIG.COLOR2,
                                                                                      CONFIG.COLOR1,
                                                                                      tools.convert_size(size),
                                                                                      zipsize)
@@ -153,9 +158,11 @@ def all_with_progress(_in, _out, dp, ignore, title):
         dp.update(prog, line1, line2, line3)
         if dp.iscanceled():
             break
+            
     if dp.iscanceled():
         dp.close()
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            "[COLOR {0}]Extract Cancelled[/COLOR]".format(CONFIG.COLOR2))
         sys.exit()
+        
     return prog, errors, error

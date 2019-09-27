@@ -18,6 +18,7 @@
 ################################################################################
 
 import xbmc
+import xbmcgui
 
 import sys
 import time
@@ -30,15 +31,12 @@ except ImportError:  # Python 2
 from resources.libs.config import CONFIG
 
 
-def download(url, dest, dp=None):
-    if dp is None:
-        from resources.libs import gui
-
-        dp = gui.DP
-        dp.create(CONFIG.ADDONTITLE, "Downloading Content", ' ', ' ')
-    dp.update(0)
+def download(url, dest):
+    progress_dialog = xbmcgui.DialogProgress()
+    progress_dialog.create(CONFIG.ADDONTITLE, "Downloading Content", ' ', ' ')
+    progress_dialog.update(0)
     start_time = time.time()
-    urlretrieve(url, dest, lambda nb, bs, fs: _pbhook(nb, bs, fs, dp, start_time))
+    urlretrieve(url, dest, lambda nb, bs, fs: _pbhook(nb, bs, fs, progress_dialog, start_time))
 
 
 def _pbhook(numblocks, blocksize, filesize, dp, start_time):

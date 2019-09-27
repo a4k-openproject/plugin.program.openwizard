@@ -60,8 +60,8 @@ def auto_install_repo():
 
                     from resources.libs import downloader
                     from resources.libs import extract
-                    downloader.download(CONFIG.REPOZIPURL + installzip, lib, gui.DP)
-                    extract.all(lib, CONFIG.ADDONS, gui.DP)
+                    downloader.download(CONFIG.REPOZIPURL + installzip, lib)
+                    extract.all(lib, CONFIG.ADDONS)
 
                     try:
                         repoxml = os.path.join(CONFIG.ADDONS, CONFIG.REPOID, 'addon.xml')

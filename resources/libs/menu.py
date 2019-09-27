@@ -1195,11 +1195,11 @@ def wizard_menu(name, type, theme=None, over=False):
                 os.remove(lib)
             except:
                 pass
-            downloader.download(buildzip, lib, gui.DP)
+            downloader.download(buildzip)
             xbmc.sleep(500)
             title = '[COLOR {0}][B]Installing:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name)
             gui.DP.update(0, title, '', 'Please Wait')
-            extract.all(lib, CONFIG.USERDATA, gui.DP, title=title)
+            extract.all(lib, CONFIG.USERDATA, title=title)
             gui.DP.close()
             skin.skin_to_default('Build Install')
             skin.look_and_feel_data('save')
@@ -1267,11 +1267,11 @@ def wizard_menu(name, type, theme=None, over=False):
                 os.remove(lib)
             except:
                 pass
-            downloader.download(buildzip, lib, gui.DP)
+            downloader.download(buildzip, lib)
             xbmc.sleep(500)
             title = '[COLOR {0}][B]Installing:[/B][/COLOR] [COLOR {1}]{2} v{3}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name, check.check_build(name, 'version'))
             gui.DP.update(0, title, '', 'Please Wait')
-            percent, errors, error = extract.all(lib, CONFIG.HOME, gui.DP, title=title)
+            percent, errors, error = extract.all(lib, CONFIG.HOME, title=title)
             if int(float(percent)) > 0:
                 db.fix_metas()
                 skin.look_and_feel_data('save')
@@ -1368,7 +1368,7 @@ def wizard_menu(name, type, theme=None, over=False):
                 os.remove(lib)
             except:
                 pass
-            downloader.download(themezip, lib, gui.DP)
+            downloader.download(themezip, lib)
             xbmc.sleep(500)
             gui.DP.update(0,"", "Installing {0}".format(name))
             test = False
@@ -1383,7 +1383,7 @@ def wizard_menu(name, type, theme=None, over=False):
                     xbmc.sleep(500)
             title = '[COLOR {0}][B]Installing Theme:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, theme)
             gui.DP.update(0, title,'', 'Please Wait')
-            percent, errors, error = extract.all(lib, CONFIG.HOME, gui.DP, title=title)
+            percent, errors, error = extract.all(lib, CONFIG.HOME, title=title)
             CONFIG.set_setting('buildtheme', theme)
             logging.log('INSTALLED {0}: [ERRORS:{1}]'.format(percent, errors))
             gui.DP.close()
