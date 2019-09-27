@@ -47,10 +47,10 @@ def wizard_update(startup=None):
                     pass
                 from resources.libs import downloader
                 from resources.libs import extract
-                downloader.download(zip, lib, gui.DP)
+                downloader.download(zip, lib)
                 xbmc.sleep(2000)
                 gui.DP.update(0, "", "Installing {0} update".format(CONFIG.ADDONTITLE))
-                percent, errors, error = extract.all(lib, CONFIG.ADDONS, gui.DP, True)
+                percent, errors, error = extract.all(lib, CONFIG.ADDONS, True)
                 gui.DP.close()
                 xbmc.sleep(1000)
                 force_update()

@@ -1,4 +1,5 @@
 import xbmc
+import xbmcgui
 
 import glob
 import os
@@ -14,21 +15,22 @@ from resources.libs.config import CONFIG
 
 def wipe():
     from resources.libs import db
-    from resources.libs import gui
     from resources.libs import logging
     from resources.libs import tools
     from resources.libs import update
 
     exclude_dirs = CONFIG.EXCLUDES
     exclude_dirs.append('My_Builds')
-        
+    
+    progress_dialog = xbmcgui.DialogProgress()
+    
     update.addon_updates('set')
     xbmcPath = os.path.abspath(CONFIG.HOME)
-    gui.DP.create(CONFIG.ADDONTITLE,
+    progress_dialog.create(CONFIG.ADDONTITLE,
                   "[COLOR {0}]Calculating files and folders".format(CONFIG.COLOR2), '', 'Please Wait![/COLOR]')
     total_files = sum([len(files) for r, d, files in os.walk(xbmcPath)])
     del_file = 0
-    gui.DP.update(0, "[COLOR {0}]Gathering Excludes list.[/COLOR]".format(CONFIG.COLOR2))
+    progress_dialog.update(0, "[COLOR {0}]Gathering Excludes list.[/COLOR]".format(CONFIG.COLOR2))
     if CONFIG.KEEPREPOS == 'true':
         repos = glob.glob(os.path.join(CONFIG.ADDONS, 'repo*/'))
         for item in repos:
@@ -62,7 +64,7 @@ def wipe():
     for item in CONFIG.DEPENDENCIES:
         exclude_dirs.append(item)
 
-    gui.DP.update(0, "[COLOR {0}]Clearing out files and folders:".format(CONFIG.COLOR2))
+    progress_dialog.update(0, "[COLOR {0}]Clearing out files and folders:".format(CONFIG.COLOR2))
     latestAddonDB = db.latest_db('Addons')
     for root, dirs, files in os.walk(xbmcPath, topdown=True):
         dirs[:] = [d for d in dirs if d not in exclude_dirs]
@@ -94,41 +96,40 @@ def wipe():
                         logging.log("-> {0}".format(str(e)), level=xbmc.LOGNOTICE)
                         db.purge_db_file(os.path.join(root, name))
             else:
-                gui.DP.update(int(tools.percentage(del_file, total_files)), '',
+                progress_dialog.update(int(tools.percentage(del_file, total_files)), '',
                               '[COLOR {0}]File: [/COLOR][COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name), '')
                 try:
                     os.remove(os.path.join(root, name))
                 except Exception as e:
                     logging.log("Error removing {0}".format(os.path.join(root, name)), level=xbmc.LOGNOTICE)
                     logging.log("-> / {0}".format(str(e)), level=xbmc.LOGNOTICE)
-        if gui.DP.iscanceled():
-            gui.DP.close()
+        if progress_dialog.iscanceled():
+            progress_dialog.close()
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                "[COLOR {0}]Fresh Start Cancelled[/COLOR]".format(CONFIG.COLOR2))
             return False
     for root, dirs, files in os.walk(xbmcPath, topdown=True):
         dirs[:] = [d for d in dirs if d not in exclude_dirs]
         for name in dirs:
-            gui.DP.update(100, '',
+            progress_dialog.update(100, '',
                           'Cleaning Up Empty Folder: [COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, name), '')
             if name not in ["Database", "userdata", "temp", "addons", "addon_data"]:
                 shutil.rmtree(os.path.join(root, name), ignore_errors=True, onerror=None)
-        if gui.DP.iscanceled():
-            gui.DP.close()
+        if progress_dialog.iscanceled():
+            progress_dialog.close()
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                "[COLOR {0}]Fresh Start Cancelled[/COLOR]".format(CONFIG.COLOR2))
             return False
-    gui.DP.close()
+    progress_dialog.close()
     CONFIG.clear_setting('build')
 
 
 def fresh_start(install=None, over=False):
     from resources.libs import db
-    from resources.libs import gui
     from resources.libs import logging
     from resources.libs import tools
     
-
+    dialog = xbmcgui.Dialog()
     
     if CONFIG.KEEPTRAKT == 'true':
         from resources.libs import traktit
@@ -150,20 +151,20 @@ def fresh_start(install=None, over=False):
         yes_pressed = 1
 
     elif install == 'restore':
-        yes_pressed = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+        yes_pressed = dialog.yesno(CONFIG.ADDONTITLE,
                                        "[COLOR {0}]Do you wish to restore your".format(CONFIG.COLOR2),
                                        "Kodi configuration to default settings",
                                        "Before installing the local backup?[/COLOR]",
                                        nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
                                        yeslabel='[B][COLOR springgreen]Continue[/COLOR][/B]')
     elif install:
-        yes_pressed = gui.DIALOG.yesno(CONFIG.ADDONTITLE, "[COLOR {0}]Do you wish to restore your".format(CONFIG.COLOR2),
+        yes_pressed = dialog.yesno(CONFIG.ADDONTITLE, "[COLOR {0}]Do you wish to restore your".format(CONFIG.COLOR2),
                                        "Kodi configuration to default settings",
                                        "Before installing [COLOR {0}]{1}[/COLOR]?".format(CONFIG.COLOR1, install),
                                        nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
                                        yeslabel='[B][COLOR springgreen]Continue[/COLOR][/B]')
     else:
-        yes_pressed = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+        yes_pressed = dialog.yesno(CONFIG.ADDONTITLE,
                                        "[COLOR {0}]Do you wish to restore your".format(CONFIG.COLOR2),
                                        "Kodi configuration to default settings?[/COLOR]",
                                        nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
@@ -180,7 +181,7 @@ def fresh_start(install=None, over=False):
 
             menu.wizard_menu(install, 'normal', over=True)
         else:
-            gui.DIALOG.ok(CONFIG.ADDONTITLE, "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(CONFIG.COLOR2))
+            dialog.ok(CONFIG.ADDONTITLE, "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(CONFIG.COLOR2))
             from resources.libs import update
             update.addon_updates('reset')
             tools.kill_kodi(True)
@@ -195,17 +196,19 @@ def install_addon_pack(name, url):
     from resources.libs import downloader
     from resources.libs import db
     from resources.libs import extract
-    from resources.libs import gui
     from resources.libs import logging
     from resources.libs import tools
 
+    progress_dialog = xbmcgui.DialogProgress()
+    
     if not tools.check_url(url):
         logging.log_notify("[COLOR {0}]Addon Installer[/COLOR]".format(CONFIG.COLOR1),
                            '[COLOR {0}]{1}:[/COLOR] [COLOR {2}]Invalid Zip Url![/COLOR]'.format(CONFIG.COLOR1, name, CONFIG.COLOR2))
         return
     if not os.path.exists(CONFIG.PACKAGES):
         os.makedirs(CONFIG.PACKAGES)
-    gui.DP.create(CONFIG.ADDONTITLE,
+    
+    progress_dialog.create(CONFIG.ADDONTITLE,
                   '[COLOR {0}][B]Downloading:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name),
                   '', '[COLOR {0}]Please Wait[/COLOR]'.format(CONFIG.COLOR2))
     urlsplits = url.split('/')
@@ -214,13 +217,13 @@ def install_addon_pack(name, url):
         os.remove(lib)
     except:
         pass
-    downloader.download(url, lib, gui.DP)
+    downloader.download(url, lib)
     title = '[COLOR {0}][B]Installing:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name)
-    gui.DP.update(0, title, '', '[COLOR {0}]Please Wait[/COLOR]'.format(CONFIG.COLOR2))
-    percent, errors, error = extract.all(lib, CONFIG.ADDONS, gui.DP, title=title)
+    progress_dialog.update(0, title, '', '[COLOR {0}]Please Wait[/COLOR]'.format(CONFIG.COLOR2))
+    percent, errors, error = extract.all(lib, CONFIG.ADDONS, title=title)
     installed = db.grab_addons(lib)
     db.addon_database(installed, 1, True)
-    gui.DP.close()
+    progress_dialog.close()
     logging.log_notify("[COLOR {0}]Addon Installer[/COLOR]".format(CONFIG.COLOR1),
                        '[COLOR {0}]{1}: Installed![/COLOR]'.format(CONFIG.COLOR2, name))
     xbmc.executebuiltin('UpdateAddonRepos()')
@@ -232,18 +235,20 @@ def install_skin(name, url):
     from resources.libs import downloader
     from resources.libs import db
     from resources.libs import extract
-    from resources.libs import gui
     from resources.libs import logging
     from resources.libs import skin
     from resources.libs import tools
 
+    progress_dialog = xbmcgui.DialogProgress()
+    
     if not tools.check_url(url):
         logging.log_notify("[COLOR {0}]Addon Installer[/COLOR]".format(CONFIG.COLOR1),
                            '[COLOR {0}]{1}:[/COLOR] [COLOR {2}]Invalid Zip Url![/COLOR]'.format(CONFIG.COLOR1, name, CONFIG.COLOR2))
         return
     if not os.path.exists(CONFIG.PACKAGES):
         os.makedirs(CONFIG.PACKAGES)
-    gui.DP.create(CONFIG.ADDONTITLE,
+    
+    progress_dialog.create(CONFIG.ADDONTITLE,
                   '[COLOR {0}][B]Downloading:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name),
                   '', '[COLOR {0}]Please Wait[/COLOR]'.format(CONFIG.COLOR2))
     urlsplits = url.split('/')
@@ -252,13 +257,13 @@ def install_skin(name, url):
         os.remove(lib)
     except:
         pass
-    downloader.download(url, lib, gui.DP)
+    downloader.download(url, lib)
     title = '[COLOR {0}][B]Installing:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name)
-    gui.DP.update(0, title, '', '[COLOR {0}]Please Wait[/COLOR]'.format(CONFIG.COLOR2))
-    percent, errors, error = extract.all(lib, CONFIG.HOME, gui.DP, title=title)
+    progress_dialog.update(0, title, '', '[COLOR {0}]Please Wait[/COLOR]'.format(CONFIG.COLOR2))
+    percent, errors, error = extract.all(lib, CONFIG.HOME, title=title)
     installed = db.grab_addons(lib)
     db.addon_database(installed, 1, True)
-    gui.DP.close()
+    progress_dialog.close()
     logging.log_notify("[COLOR {0}]Addon Installer[/COLOR]".format(CONFIG.COLOR1),
                        '[COLOR {0}]{1}: Installed![/COLOR]'.format(CONFIG.COLOR2, name))
     xbmc.executebuiltin('UpdateAddonRepos()')
@@ -275,18 +280,20 @@ def install_addon_from_url(name, url):
     from resources.libs import downloader
     from resources.libs import db
     from resources.libs import extract
-    from resources.libs import gui
     from resources.libs import logging
     from resources.libs import skin
     from resources.libs import tools
 
+    progress_dialog = xbmcgui.DialogProgress()
+    
     if not tools.check_url(url):
         logging.log_notify("[COLOR {0}]Addon Installer[/COLOR]".format(CONFIG.COLOR1),
                            '[COLOR {0}]{1}:[/COLOR] [COLOR {2}]Invalid Zip Url![/COLOR]'.format(CONFIG.COLOR1, name, CONFIG.COLOR2))
         return
     if not os.path.exists(CONFIG.PACKAGES):
         os.makedirs(CONFIG.PACKAGES)
-    gui.DP.create(CONFIG.ADDONTITLE,
+    
+    progress_dialog.create(CONFIG.ADDONTITLE,
                   '[COLOR {0}][B]Downloading:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name),
                   '', '[COLOR {0}]Please Wait[/COLOR]'.format(CONFIG.COLOR2))
     urlsplits = url.split('/')
@@ -295,17 +302,17 @@ def install_addon_from_url(name, url):
         os.remove(lib)
     except:
         pass
-    downloader.download(url, lib, gui.DP)
+    downloader.download(url, lib)
     title = '[COLOR {0}][B]Installing:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name)
-    gui.DP.update(0, title, '', '[COLOR {0}]Please Wait[/COLOR]'.format(CONFIG.COLOR2))
-    percent, errors, error = extract.all(lib, CONFIG.ADDONS, gui.DP, title=title)
-    gui.DP.update(0, title, '', '[COLOR {0}]Installing Dependencies[/COLOR]'.format(CONFIG.COLOR2))
+    progress_dialog.update(0, title, '', '[COLOR {0}]Please Wait[/COLOR]'.format(CONFIG.COLOR2))
+    percent, errors, error = extract.all(lib, CONFIG.ADDONS, title=title)
+    progress_dialog.update(0, title, '', '[COLOR {0}]Installing Dependencies[/COLOR]'.format(CONFIG.COLOR2))
     installed(name)
     installlist = db.grab_addons(lib)
     logging.log(str(installlist))
     db.addon_database(installlist, 1, True)
-    install_dependency(name, gui.DP)
-    gui.DP.close()
+    install_dependency(name, progress_dialog)
+    progress_dialog.close()
 
     xbmc.executebuiltin('UpdateAddonRepos()')
     xbmc.executebuiltin('UpdateLocalAddons()')
@@ -326,10 +333,11 @@ def install_addon(plugin, url):
         from resources.libs import downloader
         from resources.libs import db
         from resources.libs import extract
-        from resources.libs import gui
         from resources.libs import skin
         from resources.libs import tools
 
+        dialog = xbmcgui.Dialog()
+        
         if url is None:
             url = CONFIG.ADDONFILE
         if tools.check_url(url):
@@ -339,7 +347,7 @@ def install_addon(plugin, url):
                 for name, url, repository, repositoryxml, repositoryurl, icon, fanart, adult, description in match:
                     if os.path.exists(os.path.join(CONFIG.ADDONS, plugin)):
                         do = ['Launch Addon', 'Remove Addon']
-                        selected = gui.DIALOG.select("[COLOR {0}]Addon already installed what would you like to do?[/COLOR]".format(CONFIG.COLOR2), do)
+                        selected = dialog.select("[COLOR {0}]Addon already installed what would you like to do?[/COLOR]".format(CONFIG.COLOR2), do)
                         if selected == 0:
                             xbmc.executebuiltin('RunAddon({0})'.format(plugin))
                             xbmc.sleep(500)
@@ -350,7 +358,7 @@ def install_addon(plugin, url):
                                 tools.remove_folder(os.path.join(CONFIG.ADDONS, plugin))
                             except:
                                 pass
-                            if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                            if dialog.yesno(CONFIG.ADDONTITLE,
                                                 "[COLOR {0}]Would you like to remove the addon_data for:".format(CONFIG.COLOR2),
                                                 "[COLOR {0}]{1}[/COLOR]?[/COLOR]".format(CONFIG.COLOR1, plugin),
                                                 yeslabel="[B][COLOR springgreen]Yes Remove[/COLOR][/B]",
@@ -363,7 +371,7 @@ def install_addon(plugin, url):
                     repo = os.path.join(CONFIG.ADDONS, repository)
                     if repository.lower() != 'none' and not os.path.exists(repo):
                         logging.log("Repository not installed, installing it")
-                        if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                        if dialog.yesno(CONFIG.ADDONTITLE,
                                             "[COLOR {0}]Would you like to install the repository for [COLOR {1}]{2}[/COLOR]: ".format(CONFIG.COLOR2, CONFIG.COLOR1, plugin),
                                             "[COLOR {0}]{1}[/COLOR]?[/COLOR]".format(CONFIG.COLOR1, repository),
                                             yeslabel="[B][COLOR springgreen]Yes Install[/COLOR][/B]",
@@ -437,17 +445,19 @@ def install_from_kodi(plugin, over=True):
         return False
 
 
-def install_dependency(name, DP=None):
+def install_dependency(name):
     from resources.libs import db
     from resources.libs import tools
 
+    progress_dialog = xbmcgui.DialogProgress()
+    
     dep = os.path.join(CONFIG.ADDONS, name, 'addon.xml')
     if os.path.exists(dep):
         match = tools.parse_dom(tools.read_from_file(dep), 'import', ret='addon')
         for depends in match:
             if 'xbmc.python' not in depends:
-                if DP is not None:
-                    DP.update(0, '', '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, depends))
+                progress_dialog.update(0, '', '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, depends))
+                
                 try:
                     add = tools.get_addon_by_id(id=depends)
                     name2 = tools.get_addon_info(add, 'name')
@@ -477,10 +487,13 @@ def install_apk(apk, url):
     from resources.libs import logging
     from resources.libs import tools
 
+    dialog = xbmcgui.Dialog()
+    progress_dialog = xbmcgui.DialogProgress()
+    
     logging.log(apk)
     logging.log(url)
     if tools.platform() == 'android':
-        yes = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+        yes = dialog.yesno(CONFIG.ADDONTITLE,
                                "[COLOR {0}]Would you like to download and install: ".format(CONFIG.COLOR2),
                                "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, apk),
                                yeslabel="[B][COLOR springgreen]Download[/COLOR][/B]",
@@ -496,7 +509,7 @@ def install_apk(apk, url):
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                '[COLOR {0}]APK Installer: Invalid Apk Url![/COLOR]'.format(CONFIG.COLOR2))
             return
-        gui.DP.create(CONFIG.ADDONTITLE,
+        progress_dialog.create(CONFIG.ADDONTITLE,
                       '[COLOR {0}][B]Downloading:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, display),
                       '', 'Please Wait')
         lib = os.path.join(CONFIG.PACKAGES, "{0}.apk".format(apk.replace('\\', '').replace('/', '').replace(':', '').replace('*', '').replace('?', '').replace('"', '').replace('<', '').replace('>', '').replace('|', '')))
@@ -504,9 +517,9 @@ def install_apk(apk, url):
             os.remove(lib)
         except:
             pass
-        downloader.download(url, lib, gui.DP)
+        downloader.download(url, lib)
         xbmc.sleep(100)
-        gui.DP.close()
+        progress_dialog.close()
         gui.show_apk_warning(apk)
         xbmc.executebuiltin('StartAndroidActivity("","android.intent.action.VIEW","application/vnd.android.package-archive","file:{0}")'.format(lib))
     else:
