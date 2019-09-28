@@ -1214,6 +1214,9 @@ def wizard_menu(name, type, theme=None, over=False):
     elif type == 'fresh':
         install.fresh_start(name)
     elif type == 'normal':
+        skin.look_and_feel_data('save')
+        skin.skin_to_default('Build Install') 
+    
         if name == 'normal':
             if CONFIG.KEEPTRAKT == 'true':
                 from resources.libs import traktit
@@ -1227,6 +1230,7 @@ def wizard_menu(name, type, theme=None, over=False):
                 from resources.libs import loginit
                 loginit.auto_update('all')
                 CONFIG.set_setting('loginlastsave', tools.get_date(days=3))
+                
         temp_kodiv = int(CONFIG.KODIV)
         buildv = int(float(check.check_build(name, 'kodi')))
         if not temp_kodiv == buildv:
@@ -1274,8 +1278,6 @@ def wizard_menu(name, type, theme=None, over=False):
             percent, errors, error = extract.all(lib, CONFIG.HOME, title=title)
             if int(float(percent)) > 0:
                 db.fix_metas()
-                skin.look_and_feel_data('save')
-                skin.skin_to_default('Build Install')
                 CONFIG.set_setting('buildname', name)
                 CONFIG.set_setting('buildversion', check.check_build(name, 'version'))
                 CONFIG.set_setting('buildtheme', '')

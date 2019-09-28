@@ -16,6 +16,7 @@ from resources.libs.config import CONFIG
 def wipe():
     from resources.libs import db
     from resources.libs import logging
+    from resources.libs import skin
     from resources.libs import tools
     from resources.libs import update
 
@@ -23,6 +24,8 @@ def wipe():
     exclude_dirs.append('My_Builds')
     
     progress_dialog = xbmcgui.DialogProgress()
+    
+    skin.skin_to_default('Fresh Install')
     
     update.addon_updates('set')
     xbmcPath = os.path.abspath(CONFIG.HOME)
@@ -120,6 +123,7 @@ def wipe():
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                "[COLOR {0}]Fresh Start Cancelled[/COLOR]".format(CONFIG.COLOR2))
             return False
+            
     progress_dialog.close()
     CONFIG.clear_setting('build')
 
