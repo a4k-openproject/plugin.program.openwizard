@@ -304,9 +304,9 @@ def auto_update(who):
             elif su == '':
                 debrid_it('update', who)
             elif not u == su:
-                from resources.libs import gui
+                dialog = xbmcgui.Dialog()
 
-                if gui.DIALOG.yesno("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                if dialog.yesno("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                     "[COLOR {0}]Would you like to save the [COLOR {1}]Debrid Info[/COLOR] for [COLOR {2}]{3}[/COLOR]?".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1, n),
                                     "Addon: [COLOR springgreen][B]{0}[/B][/COLOR]".format(u),
                                     "Saved:[/COLOR] [COLOR red][B]{0}[/B][/COLOR]".format(su) if not su == '' else 'Saved:[/COLOR] [COLOR red][B]None[/B][/COLOR]',
@@ -334,9 +334,9 @@ def import_list(who):
             m = re.compile('<debrid><id>{0}</id><value>(.+?)</value></debrid>'.format(d)).findall(g)
             if len(m) > 0:
                 if not m[0] == su:
-                    from resources.libs import gui
+                    dialog = xbmcgui.Dialog()
 
-                    if gui.DIALOG.yesno("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                    if dialog.yesno("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                         "[COLOR {0}]Would you like to import the [COLOR {1}]Debrid Info[/COLOR] for [COLOR {2}]{3}[/COLOR]?".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1, n),
                                         "File: [COLOR springgreen][B]{0}[/B][/COLOR]".format(m[0]),
                                         "Saved:[/COLOR] [COLOR red][B]{0}[/B][/COLOR]".format(su) if not su == '' else 'Saved:[/COLOR] [COLOR red][B]None[/B][/COLOR]',
@@ -362,9 +362,9 @@ def activate_debrid(who):
             else:
                 xbmc.executebuiltin(DEBRIDID[who]['activate'])
         else:
-            from resources.libs import gui
+            dialog = xbmcgui.Dialog()
 
-            gui.DIALOG.ok("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+            dialog.ok("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                           '{0} is not currently installed.'.format(DEBRIDID[who]['name']))
     else:
         xbmc.executebuiltin('Container.Refresh()')

@@ -255,6 +255,8 @@ def autoConfig(msg='', TxtColor='0xFFFFFFFF', Font='font12', BorderWidth=10):
 
 
         def doWrite(self):
+            dialog = xbmcgui.Dialog()
+            
             if self.Button0.isSelected():
                 buffermode = 0
             elif self.Button1.isSelected():
@@ -264,7 +266,7 @@ def autoConfig(msg='', TxtColor='0xFFFFFFFF', Font='font12', BorderWidth=10):
             elif self.Button3.isSelected():
                 buffermode = 3
             if os.path.exists(CONFIG.ADVANCED):
-                choice = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                choice = dialog.yesno(CONFIG.ADDONTITLE,
                                           "[COLOR {0}]There is currently an active [COLOR {1}]advancedsettings.xml[/COLOR], would you like to remove it and continue?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1),
                                           yeslabel="[B][COLOR springgreen]Remove Settings[/COLOR][/B]",
                                           nolabel="[B][COLOR red]Cancel Write[/COLOR][/B]")
@@ -408,9 +410,11 @@ def QautoConfig(msg='', TxtColor='0xFFFFFFFF', Font='font10', BorderWidth=10):
 
 
         def doWrite(self):
+            dialog = xbmcgui.Dialog()
+            
             buffermode = 2
             if os.path.exists(CONFIG.ADVANCED):
-                choice = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                choice = dialog.yesno(CONFIG.ADDONTITLE,
                                           "[COLOR {0}]There is currently an active [COLOR {1}]advancedsettings.xml[/COLOR], would you like to remove it and continue?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1),
                                           yeslabel="[B][COLOR green]Remove Settings[/COLOR][/B]",
                                           nolabel="[B][COLOR red]Cancel Write[/COLOR][/B]")
@@ -480,18 +484,19 @@ def QautoConfig(msg='', TxtColor='0xFFFFFFFF', Font='font10', BorderWidth=10):
 
 
 def write_advanced(name, url):
-    from resources.libs import gui
     from resources.libs import tools
     from resources.libs import logging
+    
+    dialog = xbmcgui.Dialog()
 
     if tools.check_url(url):
         if os.path.exists(CONFIG.ADVANCED):
-            choice = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+            choice = dialog.yesno(CONFIG.ADDONTITLE,
                                       "[COLOR {0}]Would you like to overwrite your current Advanced Settings with [COLOR {1}]{}[/COLOR]?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, name),
                                       yeslabel="[B][COLOR springgreen]Overwrite[/COLOR][/B]",
                                       nolabel="[B][COLOR red]Cancel[/COLOR][/B]")
         else:
-            choice = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+            choice = dialog.yesno(CONFIG.ADDONTITLE,
                                       "[COLOR {0}]Would you like to download and install [COLOR {1}]{2}[/COLOR]?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, name),
                                       yeslabel="[B][COLOR springgreen]Install[/COLOR][/B]",
                                       nolabel="[B][COLOR red]Cancel[/COLOR][/B]")
@@ -499,7 +504,7 @@ def write_advanced(name, url):
         if choice == 1:
             file = tools.open_url(url)
             tools.write_to_file(CONFIG.ADVANCED, file)
-            gui.DIALOG.ok(CONFIG.ADDONTITLE,
+            dialog.ok(CONFIG.ADDONTITLE,
                           '[COLOR {0}]AdvancedSettings.xml file has been successfully written. Once you click okay it will force close kodi.[/COLOR]'.format(CONFIG.COLOR2))
             tools.kill_kodi(True)
         else:

@@ -1,4 +1,5 @@
 import xbmc
+import xbmcgui
 import xbmcvfs
 
 import os
@@ -87,7 +88,7 @@ def check_log():
 
 
 def log_notify(title, message, times=2000, icon=CONFIG.ADDON_ICON, sound=False):
-    from resources.libs import gui
+    dialog = xbmcgui.Dialog()
     dialog.notification(title, message, icon, int(times), sound)
 
 
@@ -122,7 +123,6 @@ def grab_log(file=False, old=False, wizard=False):
 
 
 def upload_log():
-    # UploadLog()
     files = get_files()
     for item in files:
         filetype = item[0]

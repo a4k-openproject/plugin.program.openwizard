@@ -127,9 +127,9 @@ def clear_packages(over=None):
                     if over:
                         yes = 1
                     else:
-                        from resources.libs import gui
-
-                        yes = gui.DIALOG.yesno("[COLOR {0}]Delete Package Files".format(CONFIG.COLOR2),
+                        dialog = xbmcgui.Dialog()
+                    
+                        yes = dialog.yesno("[COLOR {0}]Delete Package Files".format(CONFIG.COLOR2),
                                            "[COLOR {0}]{1}[/COLOR] files found / [COLOR {2}]{3}[/COLOR] in size.".format(
                                            CONFIG.COLOR1, str(file_count), CONFIG.COLOR1, size),
                                            "Do you want to delete them?[/COLOR]",
@@ -196,9 +196,9 @@ def clear_packages_startup():
 
 
 def clear_archive():
-    from resources.libs import gui
+    dialog = xbmcgui.Dialog()
 
-    if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+    if dialog.yesno(CONFIG.ADDONTITLE,
                         '[COLOR {0}]Would you like to clear the \'Archive_Cache\' folder?[/COLOR]'.format(CONFIG.COLOR2),
                         nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
                         yeslabel='[B][COLOR springgreen]Yes Clear[/COLOR][/B]'):
@@ -208,9 +208,9 @@ def clear_archive():
 
 
 def clear_function_cache():
-    from resources.libs import gui
+    dialog = xbmcgui.Dialog()
 
-    if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+    if dialog.yesno(CONFIG.ADDONTITLE,
                         '[COLOR {0}]Would you like to clear resolver function caches?[/COLOR]'.format(CONFIG.COLOR2),
                         nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
                         yeslabel='[B][COLOR springgreen]Clear Cache[/COLOR][/B]'):
@@ -428,9 +428,9 @@ def clear_crash():
     for file in glob.glob(os.path.join(CONFIG.LOGPATH, '*crashlog*.*')):
         files.append(file)
     if len(files) > 0:
-        from resources.libs import gui
+        dialog = xbmcgui.Dialog()
 
-        if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+        if dialog.yesno(CONFIG.ADDONTITLE,
                             '[COLOR {0}]Would you like to delete the Crash logs?'.format(CONFIG.COLOR2),
                             '[COLOR {0}]{1}[/COLOR] Files Found[/COLOR]'.format(CONFIG.COLOR1, len(files)),
                             yeslabel="[B][COLOR springgreen]Remove Logs[/COLOR][/B]",
@@ -462,10 +462,10 @@ def toggle_cache(state):
     else:
         if state not in ['includevideo', 'includeall'] and CONFIG.get_setting('includeall') == 'true':
             try:
-                from resources.libs import gui
+                dialog = xbmcgui.Dialog()
 
                 item = titlelist[cachelist.index(state)]
-                gui.DIALOG.ok(CONFIG.ADDONTITLE,
+                dialog.ok(CONFIG.ADDONTITLE,
                               "[COLOR {0}]You will need to turn off [COLOR {1}]Include All Addons[/COLOR] to disable[/COLOR] [COLOR {2}]{3}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1, item))
             except:
                 logging.log_notify("[COLOR {0}]Toggle Cache[/COLOR]".format(CONFIG.COLOR1),
@@ -476,9 +476,9 @@ def toggle_cache(state):
 
 
 def total_clean():
-    from resources.libs import gui
+    dialog = xbmcgui.Dialog()
 
-    if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+    if dialog.yesno(CONFIG.ADDONTITLE,
                         '[COLOR {0}]Would you like to clear cache, packages and thumbnails?[/COLOR]'.format(CONFIG.COLOR2),
                         nolabel='[B][COLOR red]Cancel Process[/COLOR][/B]',
                         yeslabel='[B][COLOR springgreen]Clean All[/COLOR][/B]'):
@@ -490,7 +490,8 @@ def total_clean():
 
 def clear_thumbs(type=None):
     from resources.libs import db
-    from resources.libs import gui
+    
+    dialog = xbmcgui.Dialog()
 
     thumb_locations = {CONFIG.THUMBNAILS,
                        os.path.join(CONFIG.ADDON_DATA, 'script.module.metadatautils', 'animatedgifs'),
@@ -500,7 +501,7 @@ def clear_thumbs(type=None):
     if type is not None:
         choice = 1
     else:
-        choice = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+        choice = dialog.yesno(CONFIG.ADDONTITLE,
                                   '[COLOR {0}]Would you like to delete the {1} and related thumbnail folders?'.format(CONFIG.COLOR2, latest),
                                   "They will repopulate on the next startup[/COLOR]",
                                   nolabel='[B][COLOR red]Don\'t Delete[/COLOR][/B]',
@@ -523,8 +524,9 @@ def remove_addon(addon, name, over=False):
     if over is not False:
         yes = 1
     else:
-        from resources.libs import gui
-        yes = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+        dialog = xbmcgui.Dialog()
+        
+        yes = dialog.yesno(CONFIG.ADDONTITLE,
                                '[COLOR {0}]Are you sure you want to delete the add-on:'.format(CONFIG.COLOR2),
                                'Name: [COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, name),
                                'ID: [COLOR {0}]{1}[/COLOR][/COLOR]'.format(CONFIG.COLOR1, addon),
@@ -548,10 +550,10 @@ def remove_addon(addon, name, over=False):
 
 
 def remove_addon_data(addon):
-    from resources.libs import gui
+    dialog = xbmcgui.Dialog()
 
     if addon == 'all':  # clear ALL addon data
-        if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+        if dialog.yesno(CONFIG.ADDONTITLE,
                             '[COLOR {0}]Would you like to remove [COLOR {1}]ALL[/COLOR] addon data stored in your userdata folder?[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1),
                             yeslabel='[B][COLOR springgreen]Remove Data[/COLOR][/B]',
                             nolabel='[B][COLOR red]Don\'t Remove[/COLOR][/B]'):
@@ -560,7 +562,7 @@ def remove_addon_data(addon):
             logging.log_notify('[COLOR {0}]Remove Addon Data[/COLOR]'.format(CONFIG.COLOR1),
                                '[COLOR {0}]Cancelled![/COLOR]'.format(CONFIG.COLOR2))
     elif addon == 'uninstalled':  # clear addon data for uninstalled addons
-        if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+        if dialog.yesno(CONFIG.ADDONTITLE,
                             '[COLOR {0}]Would you like to remove [COLOR {1}]ALL[/COLOR] addon data stored in your userdata folder for uninstalled addons?[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1),
                             yeslabel='[B][COLOR springgreen]Remove Data[/COLOR][/B]',
                             nolabel='[B][COLOR red]Don\'t Remove[/COLOR][/B]'):
@@ -582,7 +584,7 @@ def remove_addon_data(addon):
             logging.log_notify('[COLOR {0}]Remove Add-on Data[/COLOR]'.format(CONFIG.COLOR1),
                                '[COLOR {0}]Cancelled![/COLOR]'.format(CONFIG.COLOR2))
     elif addon == 'empty':  # clear empty folders from addon_data
-        if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+        if dialog.yesno(CONFIG.ADDONTITLE,
                             '[COLOR {0}]Would you like to remove [COLOR {1}]ALL[/COLOR] empty addon data folders in your userdata folder?[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1),
                             yeslabel='[B][COLOR springgreen]Remove Data[/COLOR][/B]',
                             nolabel='[B][COLOR red]Don\'t Remove[/COLOR][/B]'):
@@ -598,7 +600,7 @@ def remove_addon_data(addon):
             logging.log_notify("[COLOR {0}]Protected Plugin[/COLOR]".format(CONFIG.COLOR1),
                                "[COLOR {0}]Not allowed to remove add-on data[/COLOR]".format(CONFIG.COLOR2))
         elif os.path.exists(addon_data):
-            if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+            if dialog.yesno(CONFIG.ADDONTITLE,
                                 '[COLOR {0}]Would you also like to remove the add-on data for:[/COLOR]'.format(CONFIG.COLOR2),
                                 '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, addon),
                                 yeslabel='[B][COLOR springgreen]Remove Data[/COLOR][/B]',
@@ -614,10 +616,11 @@ def remove_addon_data(addon):
 
 
 def remove_addon_menu():
-    from resources.libs import gui
     from resources.libs import logging
     from resources.libs import tools
     from resources.libs import update
+    
+    dialog = xbmcgui.Dialog()
 
     fold = glob.glob(os.path.join(CONFIG.ADDONS, '*/'))
     addonnames = []
@@ -645,7 +648,7 @@ def remove_addon_menu():
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            "[COLOR {0}]No Addons To Remove[/COLOR]".format(CONFIG.COLOR2))
         return
-    selected = gui.DIALOG.multiselect("{0}: Select the addons you wish to remove.".format(CONFIG.ADDONTITLE), addonnames)
+    selected = dialog.multiselect("{0}: Select the addons you wish to remove.".format(CONFIG.ADDONTITLE), addonnames)
     if not selected:
         return
     if len(selected) > 0:
@@ -655,7 +658,7 @@ def remove_addon_menu():
 
         xbmc.sleep(500)
 
-        gui.DIALOG.ok(CONFIG.ADDONTITLE, "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(CONFIG.COLOR2))
+        dialog.ok(CONFIG.ADDONTITLE, "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(CONFIG.COLOR2))
         
         update.addon_updates('reset')
         tools.kill_kodi(True)

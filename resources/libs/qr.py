@@ -1,3 +1,5 @@
+import xbmcgui
+
 import os
 
 from resources.libs.config import CONFIG
@@ -15,9 +17,10 @@ def generate_code(url, filename):
 
 
 def create_code():
-    from resources.libs import gui
     from resources.libs import logging
     from resources.libs import tools
+    
+    dialog = xbmcgui.Dialog()
 
     url = tools.get_keyboard('', "{0}: Insert the URL for the QR Code.".format(CONFIG.ADDONTITLE))
     if not url:
@@ -34,7 +37,7 @@ def create_code():
         return
     working = tools.check_url(url)
     if not working:
-        if not gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+        if not dialog.yesno(CONFIG.ADDONTITLE,
                                 "[COLOR {0}]It seems the URL you entered isn\'t working, Would you like to create it anyways?[/COLOR]".format(CONFIG.COLOR2),
                                 "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, working),
                                 yeslabel="[B][COLOR red]Yes Create[/COLOR][/B]",
@@ -43,6 +46,6 @@ def create_code():
     name = tools.get_keyboard('', "{0}: Insert the name for the QR Code.".format(CONFIG.ADDONTITLE))
     name = "QR_Code_{0}".format(tools.id_generator(6)) if name == "" else name
     image = generate_code(url, name)
-    gui.DIALOG.ok(CONFIG.ADDONTITLE,
+    dialog.ok(CONFIG.ADDONTITLE,
                   "[COLOR {0}]The QR Code image has been created and is located in the addon_data directory:[/COLOR]".format(CONFIG.COLOR2),
                   "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, image.replace(CONFIG.HOME, '')))

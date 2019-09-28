@@ -120,7 +120,7 @@ def depends_list(plugin):
 
 
 def purge_db():
-    from resources.libs import gui
+    dialog = xbmcgui.Dialog()
 
     DB = []
     display = []
@@ -133,7 +133,7 @@ def purge_db():
                 DB.append(found)
                 dir = found.replace('\\', '/').split('/')
                 display.append('({0}) {1}'.format(dir[len(dir)-2], dir[len(dir)-1]))
-    choice = gui.DIALOG.multiselect("[COLOR {0}]Select DB File to Purge[/COLOR]".format(CONFIG.COLOR2), display)
+    choice = dialog.multiselect("[COLOR {0}]Select DB File to Purge[/COLOR]".format(CONFIG.COLOR2), display)
     if choice is None or len(choice) == 0:
         logging.log_notify("[COLOR {0}]Purge Database[/COLOR]".format(CONFIG.COLOR1),
                            "[COLOR {0}]Cancelled[/COLOR]".format(CONFIG.COLOR2))
@@ -197,10 +197,12 @@ def toggle_addon(id, value, over=None):
     query = '{{"jsonrpc":"2.0", "method":"Addons.SetAddonEnabled","params":{{"addonid":"{0}","enabled":{1}}}, "id":1}}'.format(addonid, value)
     response = xbmc.executeJSONRPC(query)
     if 'error' in response and over is None:
-        from resources.libs import gui
         from resources.libs import update
+        
+        dialog = xbmcgui.Dialog()
+        
         v = 'Enabling' if value == 'true' else 'Disabling'
-        gui.DIALOG.ok(CONFIG.ADDONTITLE,
+        dialog.ok(CONFIG.ADDONTITLE,
                       "[COLOR {0}]Error {1} [COLOR {2}]{3}[/COLOR]".format(CONFIG.COLOR2, v, CONFIG.COLOR1, id),
                       "Check to make sure the add-on list is up to date and try again.[/COLOR]")
         update.force_update()
@@ -289,11 +291,12 @@ def fix_metas():
 
 
 def hide_password():
-    from resources.libs import gui
     from resources.libs import tools
     from resources.libs import logging
+    
+    dialog = xbmcgui.Dialog()
 
-    if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+    if dialog.yesno(CONFIG.ADDONTITLE,
                         "[COLOR {0}]Would you like to [COLOR {1}]hide[/COLOR] all passwords when typing in the add-on settings menus?[/COLOR]".format(CONFIG.COLOR2),
                         yeslabel="[B][COLOR springgreen]Hide Passwords[/COLOR][/B]",
                         nolabel="[B][COLOR red]No Cancel[/COLOR][/B]"):
@@ -322,11 +325,12 @@ def hide_password():
 
 
 def unhide_password():
-    from resources.libs import gui
     from resources.libs import tools
     from resources.libs import logging
+    
+    dialog = xbmcgui.Dialog()
 
-    if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+    if dialog.yesno(CONFIG.ADDONTITLE,
                         "[COLOR {0}]Would you like to [COLOR {1}]unhide[/COLOR] all passwords when typing in the add-on settings menus?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1),
                         yeslabel="[B][COLOR springgreen]Unhide Passwords[/COLOR][/B]",
                         nolabel="[B][COLOR red]No Cancel[/COLOR][/B]"):

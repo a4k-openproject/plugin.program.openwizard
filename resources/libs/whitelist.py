@@ -1,4 +1,5 @@
 import xbmc
+import xbmcgui
 import xbmcvfs
 
 import glob
@@ -27,6 +28,8 @@ def whitelist(do):
     addonids = []
     addonfolds = []
 
+    dialog = xbmcgui.Dialog()
+    
     if do == 'edit':
         fold = glob.glob(os.path.join(CONFIG.ADDONS, '*/'))
         for folder in sorted(fold, key=lambda x: x):
@@ -82,7 +85,7 @@ def whitelist(do):
                 tempaddonnames.append("[B][COLOR {0}]{1}[/COLOR][/B]".format(CONFIG.COLOR1, name))
         choice = 1
         while choice not in [-1, 0]:
-            choice = gui.DIALOG.select("{0}: Select the add-ons you wish to the whitelist.".format(CONFIG.ADDONTITLE), tempaddonnames)
+            choice = dialog.select("{0}: Select the add-ons you wish to the whitelist.".format(CONFIG.ADDONTITLE), tempaddonnames)
             if choice == -1:
                 break
             elif choice == 0:
@@ -134,7 +137,7 @@ def whitelist(do):
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                "[COLOR {0}]No items in whitelist[/COLOR]".format(CONFIG.COLOR2))
     elif do == 'import':
-        source = gui.DIALOG.browse(1, '[COLOR {0}]Select the whitelist file to import[/COLOR]'.format(CONFIG.COLOR2),
+        source = dialog.browse(1, '[COLOR {0}]Select the whitelist file to import[/COLOR]'.format(CONFIG.COLOR2),
                                    'files', '.txt', False, False, CONFIG.HOME)
         logging.log(str(source))
         if not source.endswith('.txt'):
@@ -165,20 +168,20 @@ def whitelist(do):
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                "[COLOR {0}]{1} Item(s) Added[/COLOR]".format(CONFIG.COLOR2, count))
     elif do == 'export':
-        source = gui.DIALOG.browse(3,
+        source = dialog.browse(3,
                                    '[COLOR {0}]Select where you wish to export the whitelist file[/COLOR]'.format(CONFIG.COLOR2),
                                    'files', '.txt', False, False, CONFIG.HOME)
         logging.log(str(source))
         try:
             xbmcvfs.copy(CONFIG.WHITELIST, os.path.join(source, 'whitelist.txt'))
-            gui.DIALOG.ok(CONFIG.ADDONTITLE,
+            dialog.ok(CONFIG.ADDONTITLE,
                           "[COLOR {0}]Whitelist has been exported to:[/COLOR]".format(CONFIG.COLOR2),
                           "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, os.path.join(source, 'whitelist.txt')))
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                "[COLOR {0}]Whitelist Exported[/COLOR]".format(CONFIG.COLOR2))
         except Exception as e:
             logging.log("Export Error: {0}".format(str(e)), level=xbmc.LOGERROR)
-            if not gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+            if not dialog.yesno(CONFIG.ADDONTITLE,
                                     "[COLOR {0}]The location you selected isn\'t writable would you like to select another one?[/COLOR]".format(CONFIG.COLOR2),
                                     yeslabel="[B][COLOR springgreen]Change Location[/COLOR][/B]",
                                     nolabel="[B][COLOR red]No Cancel[/COLOR][/B]"):
@@ -187,7 +190,7 @@ def whitelist(do):
             else:
                 whitelist(do='export')
     elif do == 'clear':
-        if not gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+        if not dialog.yesno(CONFIG.ADDONTITLE,
                                 "[COLOR {0}]Are you sure you want to clear your whitelist?".format(CONFIG.COLOR2),
                                 "This process can't be undone.[/COLOR]",
                                 yeslabel="[B][COLOR springgreen]Yes Remove[/COLOR][/B]",
