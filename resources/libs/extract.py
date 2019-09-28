@@ -35,18 +35,6 @@ def all(_in, _out, ignore=None, title=None):
     progress_dialog.create(CONFIG.ADDONTITLE, "Extracting Content", '', '')
     
     return all_with_progress(_in, _out, progress_dialog, ignore, title)
-    
-    # return all_no_progress(_in, _out, ignore)
-
-
-# def all_no_progress(_in, _out, ignore):
-    # try:
-        # zin = zipfile.ZipFile(_in, 'r')
-        # zin.extractall(_out)
-    # except Exception as e:
-        # logging.log(str(e))
-        # return False
-    # return True
 
 
 def all_with_progress(_in, _out, dp, ignore, title):
@@ -98,18 +86,20 @@ def all_with_progress(_in, _out, dp, ignore, title):
         size += item.file_size
         file = str(item.filename).split('/')
         skip = False
-        line1 = '{0} [COLOR {1}][B][Errors:{2}][/B][/COLOR]\n'.format(title,
+        
+        line1 = '{0} [COLOR {1}][B][Errors:{2}][/B][/COLOR]'.format(title,
                                                                     CONFIG.COLOR2,
                                                                     errors)
         line2 = '[COLOR {0}][B]File:[/B][/COLOR] [COLOR {1}]{2}/{3}[/COLOR] '.format(CONFIG.COLOR2,
                                                                                      CONFIG.COLOR1,
                                                                                      count,
                                                                                      int(nFiles))
-        line2 += '[COLOR {0}][B]Size:[/B][/COLOR] [COLOR {1}]{2}/{3}[/COLOR]\n'.format(CONFIG.COLOR2,
+        line2 += '[COLOR {0}][B]Size:[/B][/COLOR] [COLOR {1}]{2}/{3}[/COLOR]'.format(CONFIG.COLOR2,
                                                                                      CONFIG.COLOR1,
                                                                                      tools.convert_size(size),
                                                                                      zipsize)
         line3 = '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, item.filename)
+        
         if item.filename == 'userdata/sources.xml' and CONFIG.KEEPSOURCES == 'true':
             skip = True
         elif item.filename == 'userdata/favourites.xml' and CONFIG.KEEPFAVS == 'true':

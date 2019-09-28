@@ -30,7 +30,7 @@ except ImportError:
 
 from resources.libs.config import CONFIG
 
-DEFAULT_SKINS = ['skin.confluence', 'skin.estuary', 'skin.estouchy']
+DEFAULT_SKINS = ['skin.estuary', 'skin.estouchy']
 
 
 def _get_old(old_key):
@@ -44,49 +44,54 @@ def _get_old(old_key):
                 return response['result']['value']
     except:
         pass
+        # need to be logging error here
+        
     return None
-
-
+    
+    
 def _set_new(new_key, value):
     try:
         new = '"{0}"'.format(new_key)
         value = '"{0}"'.format(value)
         query = '{{"jsonrpc":"2.0","method":"Settings.SetSettingValue","params":{{"setting":{0},"value":{1}}}, "id":1}}'.format(new, value)
         response = xbmc.executeJSONRPC(query)
-    except:
+    except Exception as e:
         pass
+        # need to be logging error here
+        
     return None
 
 
 def _swap_skins(skin):
-    old_key = 'lookandfeel.skin'
-    value = skin
-    current_skin = _get_old(old_key)
-    new_key = old_key
-    _set_new(new_key, value)
+    _set_new('lookandfeel.skin', skin)
+    
+    return _dialog_watch()
 
 
 def switch_to_skin(goto, title="Error"):
-    _swap_skins(goto)
+    from resources.libs import logging
+    
+    result = _swap_skins(goto)
 
-    if not _dialog_watch():
-        from resources.libs import logging
+    if result:
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
-                           '[COLOR {0}]{1}: Skin Swap Timed Out![/COLOR]'.format(CONFIG.COLOR2, title))
-        return False
-
-    return True
+                           '[COLOR {0}]{1}: Skin Swap Success![/COLOR]'.format(CONFIG.COLOR2, title))
+    else:
+        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                           '[COLOR {0}]{1}: Skin Swap Failed![/COLOR]'.format(CONFIG.COLOR2, title))
+                           
+    return result
 
 
 def skin_to_default(title):
-    if CONFIG.SKIN not in DEFAULT_SKINS:
+    if _get_old('lookandfeel.skin') not in DEFAULT_SKINS:
         skin = 'skin.estuary'
         return switch_to_skin(skin, title)
     else:
         from resources.libs import logging
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            '[COLOR {0}]{1}: Skipping Skin Swap[/COLOR]'.format(CONFIG.COLOR2, title))
-        return True
+        return False
 
 
 def look_and_feel_data(do='save'):
@@ -95,6 +100,7 @@ def look_and_feel_data(do='save'):
     scan = ['lookandfeel.enablerssfeeds', 'lookandfeel.font', 'lookandfeel.rssedit', 'lookandfeel.skincolors',
             'lookandfeel.skintheme', 'lookandfeel.skinzoom', 'lookandfeel.soundskin', 'lookandfeel.startupwindow',
             'lookandfeel.stereostrength']
+            
     if do == 'save':
         for item in scan:
             query = '{{"jsonrpc":"2.0", "method":"Settings.GetSettingValue","params":{{"setting":"{0}"}}, "id":1}}'.format(item)
@@ -131,12 +137,12 @@ def swap_us():
 
 def _dialog_watch():
     x = 0
-    while not xbmc.getCondVisibility("Window.isVisible(yesnodialog)") and x < 10:
+    while not xbmc.getCondVisibility("Window.isVisible(yesnodialog)") and x < 100:
         x += 1
         xbmc.sleep(100)
 
-        if xbmc.getCondVisibility("Window.isVisible(yesnodialog)"):
-            xbmc.executebuiltin('SendClick(yesnodialog, 11)')
-            return True
-
-    return False
+    if xbmc.getCondVisibility("Window.isVisible(yesnodialog)"):
+        xbmc.executebuiltin('SendClick(yesnodialog, 11)')
+        return True
+    else:
+        return False
