@@ -28,12 +28,13 @@ except ImportError:  # Python 2
 
 from resources.libs.config import CONFIG
 from resources.libs import logging
+from resources.libs import menu    
 
 _url = sys.argv[0]
 _handle = int(sys.argv[1])
 
 
-def log_params(params):
+def _log_params(params):
     logstring = '{0}: '.format(_url)
     for param in params:
         logstring += '[ {0}: {1} ] '.format(param, params[param])
@@ -41,27 +42,20 @@ def log_params(params):
     logging.log(logstring, level=xbmc.LOGDEBUG)
 
 
-def route(paramstring):
+def _route(paramstring):
     params = dict(parse_qsl(paramstring))
-    log_params(params)
+    _log_params(params)
 
-    mode = None
-    url = None
-    name = None
-
-    if 'mode' in params:
-        mode = params['mode']
-    else:
-        from resources.libs import menu
+    mode = params['mode'] if 'mode' in params else None
+    url = params['url'] if 'url' in params else None
+    name = params['name'] if 'name' in params else None
+    
+    # MAIN MENU
+    if mode is None:
         menu.main_menu()
-
-    if 'url' in params:
-        url = params['url']
-    if 'name' in params:
-        name = params['name']
-
+    
     # SETTINGS
-    if mode == 'settings':  # Open Aftermath settings
+    elif mode == 'settings':  # Open Aftermath settings
         CONFIG.open_settings(name)
         xbmc.executebuiltin('Container.Refresh()')
     elif mode == 'opensettings':  # Open other addons' settings
@@ -71,19 +65,15 @@ def route(paramstring):
     elif mode == 'togglesetting':  # Toggle a setting
         CONFIG.set_setting(name, 'false' if CONFIG.get_setting(name) == 'true' else 'true')
         xbmc.executebuiltin('Container.Refresh()')
-
+        
     # MENU SECTIONS
-    if mode == 'builds':  # Builds
-        from resources.libs import menu
+    elif mode == 'builds':  # Builds
         menu.build_menu()
     elif mode == 'viewbuild':  # Builds -> "Your Build"
-        from resources.libs import menu
         menu.view_build(name)
     elif mode == 'theme':  # Builds -> "Your Build" -> "Your Theme"
-        from resources.libs import menu
         menu.wizard_menu(name, mode, url)
     elif mode == 'install':  # Builds -> Fresh Install/Standard Install/Apply guifix
-        from resources.libs import menu
         menu.wizard_menu(name, url)
     elif mode == 'addonpack':  # Install Addon Pack
         from resources.libs import install
@@ -98,8 +88,6 @@ def route(paramstring):
         from resources.libs import yt
         yt.build_video(name)
     elif mode == 'maint':  # Maintenance + Maintenance -> any "Tools" section
-        from resources.libs import menu
-        
         if name == 'clean':
             menu.clean_maint_menu()
         elif name == 'addon':
@@ -113,10 +101,8 @@ def route(paramstring):
         elif name is None:
             menu.maint_menu()
     elif mode == 'advancedsetting':  # Maintenance -> System Tweaks/Fixes -> Advanced Settings
-        from resources.libs import menu
         menu.advanced_window(name)
     elif mode == 'enableaddons':  # Maintenance - > Addon Tools -> Enable/Disable Addons
-        from resources.libs import menu
         menu.enable_addons()
     elif mode == 'toggleaddon':
         from resources.libs import db
@@ -127,71 +113,53 @@ def route(paramstring):
         clear.toggle_cache(name)
         xbmc.executebuiltin('Container.Refresh()')
     elif mode == 'changefeq':  # Maintenance - Auto Clean Frequency
-        from resources.libs import menu
         menu.change_freq()
         xbmc.executebuiltin('Container.Refresh()')
     elif mode == 'systeminfo':  # Maintenance -> System Tweaks/Fixes -> System Information
-        from resources.libs import menu
         menu.system_info()
     elif mode == 'nettools':  # Maintenance -> Misc Maintenance -> Network Tools
-        from resources.libs import menu
         menu.net_tools()
     elif mode == 'runspeedtest':  # Maintenance -> Misc Maintenance -> Network Tools -> Speed Test -> Run Speed Test
-        from resources.libs import menu
         menu.run_speed_test()
         xbmc.executebuiltin('Container.Refresh()')
     elif mode == 'clearspeedtest':  # Maintenance -> Misc Maintenance -> Network Tools -> Speed Test -> Clear Results
-        from resources.libs import menu
         menu.clear_speed_test()
         xbmc.executebuiltin('Container.Refresh()')
     elif mode == 'viewspeedtest':  # Maintenance -> Misc Maintenance -> Network Tools -> Speed Test -> any previous test
-        from resources.libs import menu
         menu.view_speed_test(name)
         xbmc.executebuiltin('Container.Refresh()')
     elif mode == 'viewIP':  # Maintenance -> Misc Maintenance -> Network Tools -> View IP Address & MAC Address
-        from resources.libs import menu
         menu.view_ip()
     elif mode == 'speedtest':  # Maintenance -> Misc Maintenance -> Network Tools -> Speed Test
-        from resources.libs import menu
         menu.speed_test()
     elif mode == 'apk':  # APK Installer
-        from resources.libs import menu
         menu.apk_menu(url)
     elif mode == 'apkscrape':  # APK Installer -> Official Kodi APK's
-        from resources.libs import menu
         menu.apk_scraper()
     elif mode == 'apkinstall':
         from resources.libs import install
         install.install_apk(name, url)
     elif mode == 'removeaddondata':  # Maintenance - > Addon Tools -> Remove Addon Data
-        from resources.libs import menu
         menu.remove_addon_data_menu()
     elif mode == 'savedata':  # Save Data + Builds -> Save Data Menu
-        from resources.libs import menu
         menu.save_menu()
     elif mode == 'youtube':  # "YouTube Section"
-        from resources.libs import menu
         menu.youtube_menu(url)
     elif mode == 'viewVideo':  # View  Video
         from resources.libs import yt
         yt.play_video(url)
     elif mode == 'addons':  # Addon Installer
-        from resources.libs import menu
         menu.addon_menu(url)
     elif mode == 'addoninstall':  # Install Addon
         from resources.libs import install
         install.install_addon(name, url)
     elif mode == 'trakt':  # Save Data -> Keep Trakt Data
-        from resources.libs import menu
         menu.trakt_menu()
     elif mode == 'realdebrid':  # Save Data -> Keep Debrid
-        from resources.libs import menu
         menu.debrid_menu()
     elif mode == 'login':  # Save Data -> Keep Login Info
-        from resources.libs import menu
         menu.login_menu()
     elif mode == 'developer':  # Developer  Menu
-        from resources.libs import menu
         menu.developer()
 
     # MAINTENANCE FUNCTIONS
@@ -356,8 +324,7 @@ def route(paramstring):
     elif mode == 'restoreextaddondata':  # Restore External Addon Data
         from resources.libs import restore
         restore.Restore().restore('addondata', external=True)
-
-    if mode == 'wizardupdate':  # Wizard Update
+    elif mode == 'wizardupdate':  # Wizard Update
         from resources.libs import update
         update.wizard_update()
     elif mode == 'forceupdate':  # Addon Tools -> Force Update Addons
@@ -365,7 +332,7 @@ def route(paramstring):
         update.force_update()
 
     # ADVANCED SETTINGS
-    if mode == 'autoadvanced':  # Advanced Settings AutoConfig
+    elif mode == 'autoadvanced':  # Advanced Settings AutoConfig
         from resources.libs import advanced
         advanced.autoConfig()
         xbmc.executebuiltin('Container.Refresh()')
@@ -475,10 +442,15 @@ def route(paramstring):
     elif mode == 'contact':  # Contact
         from resources.libs import gui
         gui.show_contact(CONFIG.CONTACT)
-
+    
+    
+def _create_directory():
+    xbmcplugin.setContent(_handle, 'videos')
     xbmcplugin.endOfDirectory(_handle)
+    menu.set_view()
 
 
 if __name__ == '__main__':
-    route(sys.argv[2][1:])
+    _route(sys.argv[2][1:])
+    _create_directory()
 

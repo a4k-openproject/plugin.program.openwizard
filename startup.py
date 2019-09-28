@@ -136,7 +136,7 @@ def installed_build_check():
     #     check.check_skin()
 
     if not CONFIG.EXTRACT == '100' and not CONFIG.BUILDNAME == "":
-        logging.log("[Installed Check] Build was extracted {0}/100 with [ERRORS: {1}]".format(CONFIG.EXTRACT, CONFIG.EXTERROR), level=xbmc.LOGNOTICE)
+        logging.log("[Build Installed Check] Build was extracted {0}/100 with [ERRORS: {1}]".format(CONFIG.EXTRACT, CONFIG.EXTERROR), level=xbmc.LOGNOTICE)
         yes = dialog.yesno(CONFIG.ADDONTITLE,
                                '[COLOR {0}]{1}[/COLOR] [COLOR {2}]was not installed correctly!'.format(CONFIG.COLOR1, CONFIG.COLOR2, CONFIG.BUILDNAME),
                                'Installed: [COLOR {0}]{1}[/COLOR] / Error Count: [COLOR {2}]{3}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.EXTRACT, CONFIG.COLOR1, CONFIG.EXTERROR),
@@ -145,11 +145,11 @@ def installed_build_check():
         CONFIG.clear_setting('build')
         if yes:
             xbmc.executebuiltin("PlayMedia(plugin://{0}/?mode=install&name={1}&url=fresh)".format(CONFIG.ADDON_ID, quote_plus(CONFIG.BUILDNAME)))
-            logging.log("[Installed Check] Fresh Install Re-activated", level=xbmc.LOGNOTICE)
+            logging.log("[Build Installed Check] Fresh Install Re-activated", level=xbmc.LOGNOTICE)
         else:
-            logging.log("[Installed Check] Reinstall Ignored")
+            logging.log("[Build Installed Check] Reinstall Ignored")
     elif CONFIG.SKIN in ['skin.confluence', 'skin.estuary', 'skin.estouchy']:
-        logging.log("[Installed Check] Incorrect skin: {0}".format(CONFIG.SKIN), level=xbmc.LOGNOTICE)
+        logging.log("[Build Installed Check] Incorrect skin: {0}".format(CONFIG.SKIN), level=xbmc.LOGNOTICE)
         defaults = CONFIG.get_setting('defaultskin')
         if not defaults == '':
             if os.path.exists(os.path.join(CONFIG.ADDONS, defaults)):
@@ -158,7 +158,7 @@ def installed_build_check():
         if not CONFIG.SKIN == defaults and not CONFIG.BUILDNAME == "":
             gui_xml = check.check_build(CONFIG.BUILDNAME, 'gui')
             if gui_xml == 'http://':
-                logging.log("[Installed Check] Guifix was set to http://", level=xbmc.LOGNOTICE)
+                logging.log("[Build Installed Check] Guifix was set to http://", level=xbmc.LOGNOTICE)
                 dialog.ok(CONFIG.ADDONTITLE,
                               "[COLOR {0}]It looks like the skin settings was not applied to the build.".format(CONFIG.COLOR2),
                               "Sadly no gui fix was attached to the build",
@@ -171,32 +171,32 @@ def installed_build_check():
                                        nolabel='[B]No, Cancel[/B]', yeslabel='[B]Apply Fix[/B]')
                 if yes:
                     xbmc.executebuiltin("PlayMedia(plugin://{0}/?mode=install&name={1}&url=gui)".format(CONFIG.ADDON_ID, quote_plus(CONFIG.BUILDNAME)))
-                    logging.log("[Installed Check] Guifix attempting to install")
+                    logging.log("[Build Installed Check] Guifix attempting to install")
                 else:
-                    logging.log('[Installed Check] Guifix url working but cancelled: {0}'.format(gui), level=xbmc.LOGNOTICE)
+                    logging.log('[Build Installed Check] Guifix url working but cancelled: {0}'.format(gui), level=xbmc.LOGNOTICE)
             else:
                 dialog.ok(CONFIG.ADDONTITLE,
                               "[COLOR {0}]It looks like the skin settings was not applied to the build.".format(CONFIG.COLOR2),
                               "Sadly no gui fix was attatched to the build",
                               "You will need to reinstall the build and make sure to do a force close[/COLOR]")
-                logging.log('[Installed Check] Guifix url not working: {0}'.format(gui), level=xbmc.LOGNOTICE)
+                logging.log('[Build Installed Check] Guifix url not working: {0}'.format(gui), level=xbmc.LOGNOTICE)
     else:
-        logging.log('[Installed Check] Install seems to be completed correctly', level=xbmc.LOGNOTICE)
+        logging.log('[Build Installed Check] Install seems to be completed correctly', level=xbmc.LOGNOTICE)
 
     update.addon_updates('reset')
 
     if CONFIG.KEEPTRAKT == 'true':
         from resources.libs import traktit
         traktit.trakt_it('restore', 'all')
-        logging.log('[Installed Check] Restoring Trakt Data', level=xbmc.LOGNOTICE)
+        logging.log('[Build Installed Check] Restoring Trakt Data', level=xbmc.LOGNOTICE)
     if CONFIG.KEEPDEBRID == 'true':
         from resources.libs import debridit
         debridit.debrid_it('restore', 'all')
-        logging.log('[Installed Check] Restoring Real Debrid Data', level=xbmc.LOGNOTICE)
+        logging.log('[Build Installed Check] Restoring Real Debrid Data', level=xbmc.LOGNOTICE)
     if CONFIG.KEEPLOGIN == 'true':
         from resources.libs import loginit
         loginit.login_it('restore', 'all')
-        logging.log('[Installed Check] Restoring Login Data', level=xbmc.LOGNOTICE)
+        logging.log('[Build Installed Check] Restoring Login Data', level=xbmc.LOGNOTICE)
 
     CONFIG.clear_setting('install')
 
@@ -317,13 +317,13 @@ else:
 
 # BUILD INSTALL PROMPT
 if CONFIG.BUILDNAME == '':
-    logging.log("[Build Installed Check] Build Not Installed", level=xbmc.LOGNOTICE)
+    logging.log("[Current Build Check] Build Not Installed", level=xbmc.LOGNOTICE)
     gui.show_build_prompt()
 else:
-    logging.log("[Build Installed Check] Build Installed: {0}".format(CONFIG.BUILDNAME), level=xbmc.LOGNOTICE)
+    logging.log("[Current Build Check] Build Installed: {0}".format(CONFIG.BUILDNAME), level=xbmc.LOGNOTICE)
 
 # BUILD UPDATE CHECK
-if CONFIG.BUILDCHECK <= str(tools.get_date(days=CONFIG.UPDATECHECK, now=True)):
+if CONFIG.BUILDNAME is not == '' and CONFIG.BUILDCHECK <= str(tools.get_date(days=CONFIG.UPDATECHECK, now=True)):
     logging.log("[Build Update Check] Started", level=xbmc.LOGNOTICE)
     build_update_check()
 else:
@@ -352,10 +352,10 @@ else:
 
 # INSTALLED BUILD CHECK
 if CONFIG.INSTALLED == 'true':
-    logging.log("[Installed Check] Started", level=xbmc.LOGNOTICE)
+    logging.log("[Build Installed Check] Started", level=xbmc.LOGNOTICE)
     installed_build_check()
 else:
-    logging.log("[Installed Check] Not Enabled", level=xbmc.LOGNOTICE)
+    logging.log("[Build Installed Check] Not Enabled", level=xbmc.LOGNOTICE)
 
 # SAVE TRAKT
 if CONFIG.KEEPTRAKT == 'true':
