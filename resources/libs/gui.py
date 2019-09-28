@@ -72,6 +72,7 @@ def while_window(window, active=False, count=0, counter=15):
         logging.log("{0} is {1}".format(window, windowopen))
         windowopen = xbmc.getCondVisibility('Window.IsActive({0})'.format(window))
         xbmc.sleep(250)
+        
     return active
 
 
@@ -312,16 +313,20 @@ def show_build_prompt():
 
         def do_build_menu(self):
             from resources.libs import logging
-            logging.log("[Check Updates] [User Selected: Open Build Menu] [Next Check: {0}]".format(str(CONFIG.BUILDCHECK)),
+            
+            logging.log("[Current Build Check] [User Selected: Open Build Menu] [Next Check: {0}]".format(str(CONFIG.BUILDCHECK)),
                         level=xbmc.LOGNOTICE)
             CONFIG.set_setting('lastbuildcheck', str(CONFIG.BUILDCHECK))
+            
             url = 'plugin://{0}/?mode=builds'.format(CONFIG.ADDON_ID)
-            xbmc.executebuiltin('ActivateWindow(10025, "{0}", return)'.format(url))
+            
+            xbmc.executebuiltin('RunPlugin({0})'.format(url))
+
             self.close()
 
         def do_ignore(self):
             from resources.libs import logging
-            logging.log("[First Run] [User Selected: Ignore Build Menu] [Next Check: {0}]".format(str(CONFIG.BUILDCHECK)),
+            logging.log("[Current Build Check] [User Selected: Ignore Build Menu] [Next Check: {0}]".format(str(CONFIG.BUILDCHECK)),
                         level=xbmc.LOGNOTICE)
             CONFIG.set_setting('lastbuildcheck', str(CONFIG.BUILDCHECK))
             self.close()

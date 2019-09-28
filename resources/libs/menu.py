@@ -78,8 +78,6 @@ def main_menu():
     if CONFIG.DEVELOPER == 'true':
         add_dir('Developer Menu', 'developer', icon=CONFIG.ADDON_ICON, themeit=CONFIG.THEME1)
 
-    set_view()
-
 
 def build_menu():
     from resources.libs import check
@@ -107,6 +105,7 @@ def build_menu():
                 continue
             view_build(match[0][0])
             return
+            
     add_file('Kodi Version: {0}'.format(CONFIG.KODIV), '', icon=CONFIG.ICONBUILDS, themeit=CONFIG.THEME3)
     add_dir('Save Data Menu', 'savedata', icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME3)
     add_separator()
@@ -165,8 +164,6 @@ def build_menu():
     else:
         add_file('Text file for builds not formatted correctly.', '', icon=CONFIG.ICONBUILDS, themeit=CONFIG.THEME3)
 
-    set_view()
-
 
 def view_build(name):
     from resources.libs import check
@@ -220,8 +217,6 @@ def view_build(name):
                     themeicon = themeicon if themeicon == 'http://' else icon
                     themefanart = themefanart if themefanart == 'http://' else fanart
                     add_file(themename if not themename == CONFIG.BUILDTHEME else "[B]{0} (Installed)[/B]".format(themename), 'theme', name, themename, description=description, fanart=themefanart, icon=themeicon, themeit=CONFIG.THEME3)
-
-    set_view()
 
 
 # commented lines in this method are for x64 apks
@@ -363,8 +358,6 @@ def apk_menu(url=None):
     else:
         logging.log("[APK Menu] No APK list added.")
 
-    set_view()
-
 
 def addon_menu(url=None):
     from resources.libs import logging
@@ -421,8 +414,6 @@ def addon_menu(url=None):
     else:
         logging.log("[Addon Menu] No Addon list added.")
 
-    set_view()
-
 
 def youtube_menu(url=None):
     from resources.libs import logging
@@ -455,8 +446,6 @@ def youtube_menu(url=None):
     else:
         logging.log("[YouTube Menu] No YouTube list added.")
 
-    set_view()
-
 
 def maint_menu():
     add_dir('[B]Cleaning Tools[/B]', 'maint', 'clean', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
@@ -464,8 +453,6 @@ def maint_menu():
     add_dir('[B]Misc Maintenance[/B]', 'maint', 'misc', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
     add_dir('[B]Back up/Restore[/B]', 'maint', 'backup', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
     add_dir('[B]System Tweaks/Fixes[/B]', 'maint', 'tweaks', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
-
-    set_view()
 
     
 def clean_maint_menu():
@@ -642,8 +629,6 @@ def net_tools():
         add_separator()
     add_dir('View IP Address & MAC Address', 'viewIP', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
 
-    set_view()
-
 
 def view_ip():
     from resources.libs import speedtest
@@ -656,8 +641,6 @@ def view_ip():
     add_file('[COLOR {0}]State:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, state), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
     add_file('[COLOR {0}]Country:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, country), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
     add_file('[COLOR {0}]ISP:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, isp), '', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME2)
-
-    set_view()
 
 
 def speed_test():
@@ -849,8 +832,6 @@ def save_menu():
         add_file('Import My Whitelist', 'whitelist', 'import', icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME1)
         add_file('Export My Whitelist', 'whitelist', 'export', icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME1)
 
-    set_view()
-
 
 def trakt_menu():
     from resources.libs import traktit
@@ -898,8 +879,6 @@ def trakt_menu():
     add_file('Import Trakt Data', 'importtrakt', 'all', icon=CONFIG.ICONTRAKT, themeit=CONFIG.THEME3)
     add_file('Clear All Addon Trakt Data', 'addontrakt', 'all', icon=CONFIG.ICONTRAKT, themeit=CONFIG.THEME3)
     add_file('Clear All Saved Trakt Data', 'cleartrakt', 'all', icon=CONFIG.ICONTRAKT, themeit=CONFIG.THEME3)
-
-    set_view()
 
 
 def debrid_menu():
@@ -950,8 +929,6 @@ def debrid_menu():
     add_file('Clear All Addon Debrid Data', 'addondebrid', 'all', icon=CONFIG.ICONDEBRID, themeit=CONFIG.THEME3)
     add_file('Clear All Saved Debrid Data', 'cleardebrid', 'all', icon=CONFIG.ICONDEBRID, themeit=CONFIG.THEME3)
 
-    set_view()
-
 
 def login_menu():
     from resources.libs import loginit
@@ -1000,8 +977,6 @@ def login_menu():
     add_file('Clear All Addon Login Info', 'addonlogin', 'all', icon=CONFIG.ICONLOGIN, themeit=CONFIG.THEME3)
     add_file('Clear All Saved Login Info', 'clearlogin', 'all', icon=CONFIG.ICONLOGIN, themeit=CONFIG.THEME3)
 
-    set_view()
-
 
 def enable_addons():
     from resources.libs import tools
@@ -1041,8 +1016,6 @@ def enable_addons():
             add_file("{0} {1}".format(state, name), 'toggleaddon', addid, goto, icon=icon, fanart=fanart)
     if len(addonnames) == 0:
         add_file("No Addons Found to Enable or Disable.", '', icon=CONFIG.ICONMAINT)
-
-    set_view()
 
 
 def advanced_window(url=None):
@@ -1109,8 +1082,6 @@ def remove_addon_data_menu():
     else:
         add_file('No Addon data folder found.', '', themeit=CONFIG.THEME3)
 
-    set_view()
-
 
 def change_freq():
     from resources.libs import gui
@@ -1129,8 +1100,6 @@ def developer():
     add_file('Test Update', 'testupdate', themeit=CONFIG.THEME1)
     add_file('Test Build Prompt', 'testbuildprompt', themeit=CONFIG.THEME1)
     add_file('Test Save Data Settings', 'testsavedata', themeit=CONFIG.THEME1)
-
-    set_view()
 
 ###########################
 #      Build Install      #
@@ -1411,7 +1380,7 @@ def wizard_menu(name, type, theme=None, over=False):
                 else:
                     xbmc.executebuiltin("ReloadSkin()")
                     xbmc.sleep(1000)
-                    xbmc.executebuiltin("Container.Refresh")
+                    xbmc.executebuiltin("Container.Refresh()")
         else:
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                '[COLOR {0}]Theme Install: Cancelled![/COLOR]'.format(CONFIG.COLOR2))
@@ -1517,11 +1486,8 @@ def add_menu_item(display, mode, name, url, menu, description, overwrite, fanart
     return ok
 
 
-def set_view(viewtype='viewType'):
+def set_view(viewtype=50):
     if CONFIG.get_setting('auto-view') == 'true':
-        views = CONFIG.get_setting(viewtype)
-        if views == '50' and CONFIG.SKIN == 'skin.estuary':
-            views = '55'
-        if views == '500' and CONFIG.SKIN == 'skin.estuary':
-            views = '50'
+        views = CONFIG.get_setting('viewType')
+        
         xbmc.executebuiltin("Container.SetViewMode({0})".format(views))
