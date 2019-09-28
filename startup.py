@@ -51,7 +51,9 @@ def auto_install_repo():
                 workingrepo = tools.check_url(CONFIG.REPOZIPURL + installzip)
 
                 if workingrepo:
-                    gui.DP.create(CONFIG.ADDONTITLE, 'Downloading Repo...', '', 'Please Wait')
+                    progress_dialog = xbmcgui.DialogProgress()
+                    
+                    progress_dialog.create(CONFIG.ADDONTITLE, 'Downloading Repo...', '', 'Please Wait')
                     tools.ensure_folders(CONFIG.PACKAGES)
                     lib = os.path.join(CONFIG.PACKAGES, installzip)
 
@@ -76,7 +78,7 @@ def auto_install_repo():
                     # Add wizard to add-on database
                     db.addon_database(CONFIG.REPOID, 1)
 
-                    gui.DP.close()
+                    progress_dialog.close()
                     xbmc.sleep(500)
 
                     logging.log("[Auto Install Repo] Successfully Installed", level=xbmc.LOGNOTICE)
@@ -135,7 +137,7 @@ def installed_build_check():
 
     if not CONFIG.EXTRACT == '100' and not CONFIG.BUILDNAME == "":
         logging.log("[Installed Check] Build was extracted {0}/100 with [ERRORS: {1}]".format(CONFIG.EXTRACT, CONFIG.EXTERROR), level=xbmc.LOGNOTICE)
-        yes = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+        yes = dialog.yesno(CONFIG.ADDONTITLE,
                                '[COLOR {0}]{1}[/COLOR] [COLOR {2}]was not installed correctly!'.format(CONFIG.COLOR1, CONFIG.COLOR2, CONFIG.BUILDNAME),
                                'Installed: [COLOR {0}]{1}[/COLOR] / Error Count: [COLOR {2}]{3}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.EXTRACT, CONFIG.COLOR1, CONFIG.EXTERROR),
                                'Would you like to try again?[/COLOR]',
@@ -157,12 +159,12 @@ def installed_build_check():
             gui_xml = check.check_build(CONFIG.BUILDNAME, 'gui')
             if gui_xml == 'http://':
                 logging.log("[Installed Check] Guifix was set to http://", level=xbmc.LOGNOTICE)
-                gui.DIALOG.ok(CONFIG.ADDONTITLE,
+                dialog.ok(CONFIG.ADDONTITLE,
                               "[COLOR {0}]It looks like the skin settings was not applied to the build.".format(CONFIG.COLOR2),
                               "Sadly no gui fix was attached to the build",
                               "You will need to reinstall the build and make sure to do a force close[/COLOR]")
             elif tools.check_url(gui):
-                yes = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                yes = dialog.yesno(CONFIG.ADDONTITLE,
                                        '{0} was not installed correctly!'.format(CONFIG.BUILDNAME),
                                        'It looks like the skin settings was not applied to the build.',
                                        'Would you like to apply the GuiFix?',
@@ -173,7 +175,7 @@ def installed_build_check():
                 else:
                     logging.log('[Installed Check] Guifix url working but cancelled: {0}'.format(gui), level=xbmc.LOGNOTICE)
             else:
-                gui.DIALOG.ok(CONFIG.ADDONTITLE,
+                dialog.ok(CONFIG.ADDONTITLE,
                               "[COLOR {0}]It looks like the skin settings was not applied to the build.".format(CONFIG.COLOR2),
                               "Sadly no gui fix was attatched to the build",
                               "You will need to reinstall the build and make sure to do a force close[/COLOR]")

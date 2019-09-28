@@ -1,5 +1,6 @@
 import xbmc
 import xbmcaddon
+import xbmcgui
 
 import os
 import random
@@ -364,7 +365,7 @@ def kill_kodi(over=None):
         choice = 1
     else:
         from resources.libs import gui
-        choice = gui.DIALOG.yesno('Force Close Kodi',
+        choice = dialog.yesno('Force Close Kodi',
                                   '[COLOR {0}]You are about to close Kodi'.format(CONFIG.COLOR2),
                                   'Would you like to continue?[/COLOR]',
                                   nolabel='[B][COLOR red] No Cancel[/COLOR][/B]',
@@ -391,9 +392,11 @@ def convert_special(url, over=False):
     from resources.libs import gui
     from resources.libs import logging
 
+    progress_dialog = xbmcgui.DialogProgress()
+    
     total = file_count(url)
     start = 0
-    gui.DP.create(CONFIG.ADDONTITLE,
+    progress_dialog.create(CONFIG.ADDONTITLE,
                   "[COLOR {0}]Changing Physical Paths To Special".format(CONFIG.COLOR2),
                   "",
                   "Please Wait[/COLOR]")
@@ -402,7 +405,7 @@ def convert_special(url, over=False):
             start += 1
             perc = int(percentage(start, total))
             if file.endswith(".xml") or file.endswith(".hash") or file.endswith("properies"):
-                gui.DP.update(perc,
+                progress_dialog.update(perc,
                               "[COLOR {0}]Scanning: [COLOR {1}]{2}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, root.replace(CONFIG.HOME, '')),
                               "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, file),
                               "Please Wait[/COLOR]")
@@ -412,12 +415,12 @@ def convert_special(url, over=False):
                 b = a.replace(CONFIG.HOME, 'special://home/').replace(encodedpath, 'special://home/').replace(encodedpath2, 'special://home/')
                 write_to_file(os.path.join(root, file), b)
 
-                if gui.DP.iscanceled():
-                    gui.DP.close()
+                if progress_dialog.iscanceled():
+                    progress_dialog.close()
                     logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                        "[COLOR {0}]Convert Path Cancelled[/COLOR]".format(CONFIG.COLOR2))
                     sys.exit()
-    gui.DP.close()
+    progress_dialog.close()
     logging.log("[Convert Paths to Special] Complete", level=xbmc.LOGNOTICE)
     if not over:
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
@@ -444,8 +447,11 @@ def reload_fix(default=None):
     from resources.libs import skin
     from resources.libs import update
 
-    gui.DIALOG.ok(CONFIG.ADDONTITLE,
+    dialog = xbmcgui.Dialog()
+    
+    dialog.ok(CONFIG.ADDONTITLE,
                   "[COLOR {0}]WARNING: Sometimes Reloading the Profile causes Kodi to crash. While Kodi is Reloading the Profile Please Do Not Press Any Buttons![/COLOR]".format(CONFIG.COLOR2))
+                  
     if not os.path.exists(CONFIG.PACKAGES):
         os.makedirs(CONFIG.PACKAGES)
     if default is None:
@@ -482,15 +488,18 @@ def replace_html_codes(txt):
 def ascii_check(use=None, over=False):
     from resources.libs import gui
     from resources.libs import logging
+    
+    dialog = xbmcgui.Dialog()
+    progress_dialog = xbmcgui.DialogProgress()
 
     if use is None:
-        source = gui.DIALOG.browse(3,
+        source = dialog.browse(3,
                                    '[COLOR {0}]Select the folder you want to scan[/COLOR]'.format(CONFIG.COLOR2),
                                    'files', '', False, False, CONFIG.HOME)
         if over:
             yes = 1
         else:
-            yes = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+            yes = dialog.yesno(CONFIG.ADDONTITLE,
                                    '[COLOR {0}]Do you want to [COLOR {1}]delete[/COLOR] all filenames with special characters or would you rather just [COLOR {2}]scan and view[/COLOR] the results in the log?[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1),
                                    yeslabel='[B][COLOR springgreen]Delete[/COLOR][/B]',
                                    nolabel='[B][COLOR red]Scan[/COLOR][/B]')
@@ -514,14 +523,14 @@ def ascii_check(use=None, over=False):
     prog = []
     logging.log("Source file: ({0})".format(str(source)), level=xbmc.LOGNOTICE)
 
-    gui.DP.create(CONFIG.ADDONTITLE, 'Please wait...')
+    progress_dialog.create(CONFIG.ADDONTITLE, 'Please wait...')
     for base, dirs, files in os.walk(source):
         dirs[:] = [d for d in dirs]
         files[:] = [f for f in files]
         for file in files:
             prog.append(file)
             prog2 = int(len(prog) / float(items) * 100)
-            gui.DP.update(prog2, "[COLOR {0}]Checking for non ASCII files".format(CONFIG.COLOR2),
+            progress_dialog.update(prog2, "[COLOR {0}]Checking for non ASCII files".format(CONFIG.COLOR2),
                           '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, file), 'Please Wait[/COLOR]')
             try:
                 file.encode('ascii')
@@ -551,12 +560,12 @@ def ascii_check(use=None, over=False):
                     f1 += 1
                     logging.log("[ASCII Check] File Found: {0} ".format(badfile), level=xbmc.LOGERROR)
                 pass
-        if gui.DP.iscanceled():
-            gui.DP.close()
+        if progress_dialog.iscanceled():
+            progress_dialog.close()
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                "[COLOR {0}]ASCII Check Cancelled[/COLOR]".format(CONFIG.COLOR2))
             sys.exit()
-    gui.DP.close()
+    progress_dialog.close()
     afiles.close()
     afails.close()
     total = int(f1) + int(f2)
@@ -597,9 +606,9 @@ def ensure_folders(folder=None):
                 xbmcvfs.mkdirs(f)
 
     except Exception as e:
-        from resources.libs import gui
+        dialog = xbmcgui.Dialog()
 
-        gui.DIALOG.ok(CONFIG.ADDONTITLE,
+        dialog.ok(CONFIG.ADDONTITLE,
                       "[COLOR {0}]Error creating add-on directories:[/COLOR]".format(CONFIG.COLOR2),
                       "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name))
 

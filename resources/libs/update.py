@@ -1,4 +1,5 @@
 import xbmc
+import xbmcgui
 
 import os
 import re
@@ -21,15 +22,16 @@ def wizard_update(startup=None):
     from resources.libs import logging
     from resources.libs import tools
 
+    dialog = xbmcgui.Dialog()
+    progress_dialog = xbmcgui.DialogProgress()
+    
     if tools.check_url(CONFIG.BUILDFILE):
         try:
             wid, ver, zip = check.check_wizard('all')
         except:
             return
         if ver > CONFIG.ADDON_VERSION:
-            from resources.libs import gui
-
-            yes = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+            yes = dialog.yesno(CONFIG.ADDONTITLE,
                                    '[COLOR {0}]There is a new version of the [COLOR {1}]{2}[/COLOR]!'.format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                    'Would you like to download [COLOR {0}]v{1}[/COLOR]?[/COLOR]'.format(CONFIG.COLOR1, ver),
                                    nolabel='[B][COLOR red]Remind Me Later[/COLOR][/B]',
@@ -38,7 +40,7 @@ def wizard_update(startup=None):
                 from resources.libs import tools
 
                 logging.log("[Auto Update Wizard] Installing wizard v{0}".format(ver), level=xbmc.LOGNOTICE)
-                gui.DP.create(CONFIG.ADDONTITLE, '[COLOR {0}]Downloading Update...'.format(CONFIG.COLOR2), '',
+                progress_dialog.create(CONFIG.ADDONTITLE, '[COLOR {0}]Downloading Update...'.format(CONFIG.COLOR2), '',
                               'Please Wait[/COLOR]')
                 lib = os.path.join(CONFIG.PACKAGES, '{0}-{1}.zip'.format(CONFIG.ADDON_ID, ver))
                 try:
@@ -49,9 +51,9 @@ def wizard_update(startup=None):
                 from resources.libs import extract
                 downloader.download(zip, lib)
                 xbmc.sleep(2000)
-                gui.DP.update(0, "", "Installing {0} update".format(CONFIG.ADDONTITLE))
+                progress_dialog.update(0, "", "Installing {0} update".format(CONFIG.ADDONTITLE))
                 percent, errors, error = extract.all(lib, CONFIG.ADDONS, True)
-                gui.DP.close()
+                progress_dialog.close()
                 xbmc.sleep(1000)
                 force_update()
                 xbmc.sleep(1000)
