@@ -19,6 +19,7 @@
 
 import xbmc
 import xbmcaddon
+import xbmcgui
 import xbmcvfs
 
 import sys
@@ -61,13 +62,13 @@ def cleanup_backup():
         elif os.path.isfile(item):
             list.append(base)
     list = ['--- Remove All Items ---'] + list
-    selected = gui.DIALOG.select("{0}: Select the items to remove from the 'My_Builds' folder.".format(CONFIG.ADDONTITLE), list)
+    selected = dialog.select("{0}: Select the items to remove from the 'My_Builds' folder.".format(CONFIG.ADDONTITLE), list)
 
     if selected == -1:
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            "[COLOR {0}]Clean Up Cancelled![/COLOR]".format(CONFIG.COLOR2))
     elif selected == 0:
-        if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+        if dialog.yesno(CONFIG.ADDONTITLE,
                             "[COLOR {0}]Would you like to clean up all items in your 'My_Builds' folder?[/COLOR]".format(CONFIG.COLOR2),
                             "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.MYBUILDS),
                             yeslabel="[B][COLOR springgreen]Clean Up[/COLOR][/B]",
@@ -82,7 +83,7 @@ def cleanup_backup():
         path = filelist[selected-1]
         passed = False
 
-        if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+        if dialog.yesno(CONFIG.ADDONTITLE,
                             "[COLOR {0}]Would you like to remove [COLOR {1}]{2}[/COLOR] from the 'My_Builds' folder?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, list[selected]),
                             "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, path),
                             yeslabel="[B][COLOR springgreen]Clean Up[/COLOR][/B]",
@@ -112,7 +113,10 @@ def cleanup_backup():
 
 
 def _backup_addon_pack(name=""):
-    if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+    dialog = xbmcgui.Dialog()
+    progress_dialog = xbmcgui.DialogProgress()
+    
+    if dialog.yesno(CONFIG.ADDONTITLE,
                         "[COLOR {0}]Are you sure you wish to create an Addon Pack?[/COLOR]".format(CONFIG.COLOR2),
                         nolabel="[B][COLOR red]Cancel Backup[/COLOR][/B]",
                         yeslabel="[B][COLOR springgreen]Create Pack[/COLOR][/B]"):
@@ -132,7 +136,7 @@ def _backup_addon_pack(name=""):
                 zipf = zipfile.ZipFile(tempzipname, mode='w')
             except:
                 logging.log("Unable to create {0}.zip".format(name), level=xbmc.LOGERROR)
-                if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                if dialog.yesno(CONFIG.ADDONTITLE,
                                     "[COLOR {0}]We are unable to write to the current backup directory, would you like to change the location?[/COLOR]".format(
                                         CONFIG.COLOR2),
                                     yeslabel="[B][COLOR springgreen]Change Directory[/COLOR][/B]",
@@ -162,25 +166,25 @@ def _backup_addon_pack(name=""):
                     addonnames.append(foldername)
                     addonfolds.append(foldername)
 
-        selected = gui.DIALOG.multiselect(
+        selected = dialog.multiselect(
             "{0}: Select the add-ons you wish to add to the zip.".format(CONFIG.ADDONTITLE), addonnames)
         if selected is None:
             selected = []
 
         logging.log(selected)
-        gui.DP.create(CONFIG.ADDONTITLE,
+        progress_dialog.create(CONFIG.ADDONTITLE,
                       '[COLOR {0}][B]Creating Zip File:[/B][/COLOR]'.format(CONFIG.COLOR2), '', 'Please Wait')
         if len(selected) > 0:
             added = []
             for item in selected:
                 added.append(addonfolds[item])
-                gui.DP.update(0, "", "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, addonfolds[item]))
+                progress_dialog.update(0, "", "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, addonfolds[item]))
                 for base, dirs, files in os.walk(os.path.join(CONFIG.ADDONS, addonfolds[item])):
                     files[:] = [f for f in files if f not in CONFIG.EXCLUDE_FILES]
                     for file in files:
                         if file.endswith('.pyo'):
                             continue
-                        gui.DP.update(0, "", "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, addonfolds[item]),
+                        progress_dialog.update(0, "", "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, addonfolds[item]),
                                       "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, file))
                         fn = os.path.join(base, file)
                         zipf.write(fn, fn[len(CONFIG.ADDONS):], zipfile.ZIP_DEFLATED)
@@ -192,25 +196,28 @@ def _backup_addon_pack(name=""):
                             continue
                         if depends in added:
                             continue
-                        gui.DP.update(0, "", "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, depends))
+                        progress_dialog.update(0, "", "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, depends))
                         for base, dirs, files in os.walk(os.path.join(CONFIG.ADDONS, depends)):
                             files[:] = [f for f in files if f not in CONFIG.EXCLUDE_FILES]
                             for file in files:
                                 if file.endswith('.pyo'):
                                     continue
-                                gui.DP.update(0, "", "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, depends),
+                                progress_dialog.update(0, "", "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, depends),
                                               "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, file))
                                 fn = os.path.join(base, file)
                                 zipf.write(fn, fn[len(CONFIG.ADDONS):], zipfile.ZIP_DEFLATED)
                                 added.append(depends)
-        gui.DIALOG.ok(CONFIG.ADDONTITLE,
+        dialog.ok(CONFIG.ADDONTITLE,
                       "[COLOR {0}]{1}[/COLOR] [COLOR {2}]Backup successful:[/COLOR]".format(CONFIG.COLOR1, name,
                                                                                             CONFIG.COLOR2),
                       "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, zipname))
 
 
 def _backup_build(name=""):
-    if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+    dialog = xbmcgui.Dialog()
+    progress_dialog = xbmcgui.DialogProgress()
+
+    if dialog.yesno(CONFIG.ADDONTITLE,
                         "[COLOR {0}]Are you sure you wish to backup the current build?[/COLOR]".format(CONFIG.COLOR2),
                     nolabel="[B][COLOR red]Cancel Backup[/COLOR][/B]",
                     yeslabel="[B][COLOR springgreen]Backup Build[/COLOR][/B]"):
@@ -227,7 +234,7 @@ def _backup_build(name=""):
         ITEM = []
         exclude_dirs = CONFIG.EXCLUDE_DIRS
 
-        if not gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+        if not dialog.yesno(CONFIG.ADDONTITLE,
                                 "[COLOR {0}]Do you want to include your addon_data folder?".format(CONFIG.COLOR2),
                                 "This contains [COLOR {0}]ALL[/COLOR] add-on settings including passwords but may also contain important information such as skin shortcuts. We recommend [COLOR {0}]MANUALLY[/COLOR] removing the addon_data folders that aren\'t required.".format(CONFIG.COLOR1, CONFIG.COLOR1),
                                 "[COLOR {0}]{1}[/COLOR] addon_data is ignored[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDON_ID),
@@ -246,7 +253,7 @@ def _backup_build(name=""):
                 zipf = zipfile.ZipFile(tempzipname, mode='w')
             except:
                 logging.log("Unable to create {0}.zip".format(name), level=xbmc.LOGERROR)
-                if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                if dialog.yesno(CONFIG.ADDONTITLE,
                                 "[COLOR {0}]We are unable to write to the current backup directory, would you like to change the location?[/COLOR]".format(CONFIG.COLOR2),
                                 yeslabel="[B][COLOR springgreen]Change Directory[/COLOR][/B]",
                                 nolabel="[B][COLOR red]Cancel[/COLOR][/B]"):
@@ -254,7 +261,7 @@ def _backup_build(name=""):
                     return
                 else:
                     return
-        gui.DP.create("[COLOR {0}]{1}[/COLOR][COLOR {2}]: Creating Zip[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+        progress_dialog.create("[COLOR {0}]{1}[/COLOR][COLOR {2}]: Creating Zip[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
                   "[COLOR {0}]Creating backup zip".format(CONFIG.COLOR2), "", "Please Wait...[/COLOR]")
 
         for base, dirs, files in os.walk(CONFIG.HOME):
@@ -320,7 +327,7 @@ def _backup_build(name=""):
                 try:
                     for_progress += 1
                     progress = tools.percentage(for_progress, N_ITEM)
-                    gui.DP.update(int(progress),
+                    progress_dialog.update(int(progress),
                               '[COLOR {0}]Creating backup zip: [COLOR {1}]{2}[/COLOR] / [COLOR {3}]{4}[/COLOR]'.format(
                               CONFIG.COLOR2, CONFIG.COLOR1, for_progress, CONFIG.COLOR1, N_ITEM),
                                   '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, file), '')
@@ -355,8 +362,8 @@ def _backup_build(name=""):
                     except Exception as e:
                         logging.log("[Back Up] Type = build: Unable to backup {0}".format(file), level=xbmc.LOGNOTICE)
                         logging.log("{0} / {1}".format(Exception, e))
-                    if gui.DP.iscanceled():
-                        gui.DP.close()
+                    if progress_dialog.iscanceled():
+                        progress_dialog.close()
                         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                   "[COLOR {0}]Backup Cancelled[/COLOR]".format(CONFIG.COLOR2))
                         sys.exit()
@@ -386,7 +393,7 @@ def _backup_build(name=""):
                                     extractsize += os.path.getsize(fn)
         zipf.close()
         xbmc.sleep(500)
-        gui.DP.close()
+        progress_dialog.close()
 
         backup('guifix', name)
 
@@ -398,7 +405,7 @@ def _backup_build(name=""):
 
         _backup_info(name, extractsize, programs, video, music, picture, repos, scripts)
 
-        gui.DIALOG.ok(CONFIG.ADDONTITLE,
+        dialog.ok(CONFIG.ADDONTITLE,
                       "[COLOR {0}]{1}[/COLOR] [COLOR {2}]Backup successful:[/COLOR]".format(CONFIG.COLOR1, name, CONFIG.COLOR2),
                       "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, zipname))
 
@@ -425,6 +432,8 @@ def _backup_info(name, extractsize, programs, video, music, picture, repos, scri
 
 
 def _backup_guifix(name=""):
+    dialog = xbmcgui.Dialog()
+
     if name == "":
         guiname = tools.get_keyboard("", "Please enter a name for the GUI Fix zip")
         if not guiname:
@@ -445,7 +454,7 @@ def _backup_guifix(name=""):
                 zipf = zipfile.ZipFile(tempguizipname, mode='w')
             except:
                 logging.log("Unable to create {0}_guisettings.zip".format(guiname), level=xbmc.LOGERROR)
-                if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                if dialog.yesno(CONFIG.ADDONTITLE,
                                 "[COLOR {0}]We are unable to write to the current backup directory, would you like to change the location?[/COLOR]".format(CONFIG.COLOR2),
                                 yeslabel="[B][COLOR springgreen]Change Directory[/COLOR][/B]",
                                 nolabel="[B][COLOR red]Cancel[/COLOR][/B]"):
@@ -460,7 +469,7 @@ def _backup_guifix(name=""):
             for fold in match:
                 fd = os.path.split(fold[:-1])[1]
                 if fd not in ['skin.confluence', 'skin.estuary', 'skin.estouchy']:
-                    if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                    if dialog.yesno(CONFIG.ADDONTITLE,
                                     "[COLOR {0}]Would you like to add the following skin folder to the GUI Fix Zip File?[/COLOR]".format(CONFIG.COLOR2),
                                     "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, fd),
                                     yeslabel="[B][COLOR springgreen]Add Skin[/COLOR][/B]",
@@ -493,12 +502,14 @@ def _backup_guifix(name=""):
     else:
         logging.log("[Back Up] Type = guifix: guisettings.xml not found", level=xbmc.LOGNOTICE)
     if name == "":
-        gui.DIALOG.ok(CONFIG.ADDONTITLE, "[COLOR {0}]GUI Fix backup successful:[/COLOR]".format(CONFIG.COLOR2),
+        dialog.ok(CONFIG.ADDONTITLE, "[COLOR {0}]GUI Fix backup successful:[/COLOR]".format(CONFIG.COLOR2),
                   "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, guizipname))
 
 
 def _backup_theme(name=""):
-    if not gui.DIALOG.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+    dialog = xbmcgui.Dialog()
+
+    if not dialog.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
                         "[COLOR {0}]Would you like to create a theme backup?[/COLOR]".format(CONFIG.COLOR2),
                         yeslabel="[B][COLOR springgreen]Continue[/COLOR][/B]",
                         nolabel="[B][COLOR red]No Cancel[/COLOR][/B]"):
@@ -521,7 +532,7 @@ def _backup_theme(name=""):
             zipf = zipfile.ZipFile(tempzipname, mode='w')
         except:
             logging.log("Unable to create {0}.zip".format(themename), level=xbmc.LOGERROR)
-            if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+            if dialog.yesno(CONFIG.ADDONTITLE,
                             "[COLOR {0}]We are unable to write to the current backup directory, would you like to change the location?[/COLOR]".format(CONFIG.COLOR2),
                             yeslabel="[B][COLOR springgreen]Change Directory[/COLOR][/B]",
                             nolabel="[B][COLOR red]Cancel[/COLOR][/B]"):
@@ -536,13 +547,13 @@ def _backup_theme(name=""):
             skinfold = os.path.join(CONFIG.SKIN, 'media')
             match2 = glob.glob(os.path.join(skinfold, '*.xbt'))
             if len(match2) > 1:
-                if gui.DIALOG.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+                if dialog.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
                                 "[COLOR {0}]Would you like to go through the Texture Files for?[/COLOR]".format(CONFIG.COLOR2),
                                 "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.SKIN),
                                 yeslabel="[B][COLOR springgreen]Add Textures[/COLOR][/B]",
                                 nolabel="[B][COLOR red]Skip Textures[/COLOR][/B]"):
                     for xbt in match2:
-                        if gui.DIALOG.yesno(
+                        if dialog.yesno(
                                 '[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
                                 "[COLOR {0}]Would you like to add the Texture File [COLOR {1}]{2}[/COLOR]?".format(
                                 CONFIG.COLOR1, CONFIG.COLOR2, xbt.replace(skinfold, "")[1:]),
@@ -554,7 +565,7 @@ def _backup_theme(name=""):
                             zipf.write(fn, fn2, zipfile.ZIP_DEFLATED)
             else:
                 for xbt in match2:
-                    if gui.DIALOG.yesno(
+                    if dialog.yesno(
                             '[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
                             "[COLOR {0}]Would you like to add the Texture File [COLOR {1}]{2}[/COLOR]?".format(
                             CONFIG.COLOR2, CONFIG.COLOR1, xbt.replace(skinfold, "")[1:]),
@@ -566,7 +577,7 @@ def _backup_theme(name=""):
                         zipf.write(fn, fn2, zipfile.ZIP_DEFLATED)
             ad_skin = os.path.join(CONFIG.ADDON_DATA, CONFIG.SKIN, 'settings.xml')
             if os.path.exists(ad_skin):
-                if gui.DIALOG.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+                if dialog.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
                                 "[COLOR {0}]Would you like to go add the [COLOR {1}]settings.xml[/COLOR] in [COLOR {2}]/addon_data/[/COLOR] for?".format(
                                 CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1), "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.SKIN),
                                 yeslabel="[B][COLOR springgreen]Add Settings[/COLOR][/B]",
@@ -575,7 +586,7 @@ def _backup_theme(name=""):
                     zipf.write(ad_skin, ad_skin2, zipfile.ZIP_DEFLATED)
             match = tools.parse_dom(tools.read_from_file(os.path.join(CONFIG.SKIN, 'addon.xml')), 'import', ret='addon')
             if 'script.skinshortcuts' in match:
-                if gui.DIALOG.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+                if dialog.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
                                 "[COLOR {0}]Would you like to go add the [COLOR {1}]settings.xml[/COLOR] for [COLOR {2}]script.skinshortcuts[/COLOR]?".format(
                                 CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1),
                                     yeslabel="[B][COLOR springgreen]Add Settings[/COLOR][/B]",
@@ -585,12 +596,12 @@ def _backup_theme(name=""):
                         for file in files:
                             fn = os.path.join(base, file)
                             zipf.write(fn, fn[len(CONFIG.HOME):], zipfile.ZIP_DEFLATED)
-        if gui.DIALOG.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+        if dialog.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
                         "[COLOR {0}]Would you like to include a [COLOR {1}]Backgrounds[/COLOR] folder?[/COLOR]".format(
                         CONFIG.COLOR2, CONFIG.COLOR1),
                             yeslabel="[B][COLOR springgreen]Yes Include[/COLOR][/B]",
                         nolabel="[B][COLOR red]No Continue[/COLOR][/B]"):
-            fn = gui.DIALOG.browse(0, 'Select location of backgrounds', 'files', '', True, False, CONFIG.HOME, False)
+            fn = dialog.browse(0, 'Select location of backgrounds', 'files', '', True, False, CONFIG.HOME, False)
             if not fn == CONFIG.HOME:
                 for base, dirs, files in os.walk(fn):
                     dirs[:] = [d for d in dirs if d not in CONFIG.EXCLUDE_DIRS]
@@ -603,13 +614,13 @@ def _backup_theme(name=""):
                             logging.log("[Back Up] Type = theme: Unable to backup {0}".format(file), level=xbmc.LOGNOTICE)
                             logging.log("Backup Error: {0}".format(str(e)), level=xbmc.LOGNOTICE)
             text = db.latest_db('Textures')
-            if gui.DIALOG.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+            if dialog.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
                             "[COLOR {0}]Would you like to include the [COLOR {1}]{2}[/COLOR]?[/COLOR]".format(
                             CONFIG.COLOR2, CONFIG.COLOR1, text),
                                 yeslabel="[B][COLOR springgreen]Yes Include[/COLOR][/B]",
                             nolabel="[B][COLOR red]No Continue[/COLOR][/B]"):
                 zipf.write(os.path.join(CONFIG.DATABASE, text), '/userdata/Database/{0}'.format(text), zipfile.ZIP_DEFLATED)
-        if gui.DIALOG.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+        if dialog.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
                         "[COLOR {0}]Would you like to include any addons?[/COLOR]".format(CONFIG.COLOR2),
                         yeslabel="[B][COLOR springgreen]Yes Include[/COLOR][/B]",
                         nolabel="[B][COLOR red]No Continue[/COLOR][/B]"):
@@ -633,7 +644,7 @@ def _backup_theme(name=""):
                     else:
                         addonnames.append(foldername)
                         addonfolds.append(foldername)
-            selected = gui.DIALOG.multiselect("{0}: Select the add-ons you wish to add to the zip.".format(CONFIG.ADDONTITLE), addonnames)
+            selected = dialog.multiselect("{0}: Select the add-ons you wish to add to the zip.".format(CONFIG.ADDONTITLE), addonnames)
             if selected is None:
                 selected = []
             if len(selected) > 0:
@@ -663,7 +674,7 @@ def _backup_theme(name=""):
                                     fn = os.path.join(base, file)
                                     zipf.write(fn, fn[len(CONFIG.HOME):], zipfile.ZIP_DEFLATED)
                                     added.append(depends)
-        if gui.DIALOG.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+        if dialog.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
                         "[COLOR {0}]Would you like to include the [COLOR {1}]guisettings.xml[/COLOR]?[/COLOR]".format(
                         CONFIG.COLOR2, CONFIG.COLOR1),
                             yeslabel="[B][COLOR springgreen]Yes Include[/COLOR][/B]",
@@ -672,7 +683,7 @@ def _backup_theme(name=""):
     except Exception as e:
         zipf.close()
         logging.log("[Back Up] Type = theme: {0}".format(str(e)), level=xbmc.LOGNOTICE)
-        gui.DIALOG.ok(CONFIG.ADDONTITLE, "[COLOR {0}]{1}[/COLOR][COLOR {2}] theme zip failed:[/COLOR]".format(CONFIG.COLOR1, themename, CONFIG.COLOR2),
+        dialog.ok(CONFIG.ADDONTITLE, "[COLOR {0}]{1}[/COLOR][COLOR {2}] theme zip failed:[/COLOR]".format(CONFIG.COLOR1, themename, CONFIG.COLOR2),
                   "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, str(e)))
         if not tempzipname == '':
             try:
@@ -691,12 +702,15 @@ def _backup_theme(name=""):
         if success == 0:
             xbmcvfs.copy(tempzipname, zipname)
             xbmcvfs.delete(tempzipname)
-    gui.DIALOG.ok(CONFIG.ADDONTITLE, "[COLOR {0}]{1}[/COLOR][COLOR {2}] theme zip successful:[/COLOR]".format(CONFIG.COLOR1, themename, CONFIG.COLOR2),
+    dialog.ok(CONFIG.ADDONTITLE, "[COLOR {0}]{1}[/COLOR][COLOR {2}] theme zip successful:[/COLOR]".format(CONFIG.COLOR1, themename, CONFIG.COLOR2),
               "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, zipname))
 
 
 def _backup_addon_data(name=""):
-    if gui.DIALOG.yesno(CONFIG.ADDONTITLE, "[COLOR {0}]Are you sure you wish to backup the current addon_data?[/COLOR]".format(CONFIG.COLOR2),
+    dialog = xbmcgui.Dialog()
+    progress_dialog = xbmcgui.DialogProgress()
+
+    if dialog.yesno(CONFIG.ADDONTITLE, "[COLOR {0}]Are you sure you wish to backup the current addon_data?[/COLOR]".format(CONFIG.COLOR2),
                     nolabel="[B][COLOR red]Cancel Backup[/COLOR][/B]",
                     yeslabel="[B][COLOR springgreen]Backup Addon_Data[/COLOR][/B]"):
         if name == "":
@@ -715,7 +729,7 @@ def _backup_addon_data(name=""):
                 zipf = zipfile.ZipFile(tempzipname, mode='w')
             except:
                 logging.log("Unable to create {0}_addondata.zip".format(name), level=xbmc.LOGERROR)
-                if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                if dialog.yesno(CONFIG.ADDONTITLE,
                                 "[COLOR {0}]We are unable to write to the current backup directory, would you like to change the location?[/COLOR]".format(CONFIG.COLOR2),
                                 yeslabel="[B][COLOR springgreen]Change Directory[/COLOR][/B]",
                                 nolabel="[B][COLOR red]Cancel[/COLOR][/B]"):
@@ -727,7 +741,7 @@ def _backup_addon_data(name=""):
         ITEM = []
         tools.convert_special(CONFIG.ADDON_DATA, True)
         tools.ascii_check(CONFIG.ADDON_DATA, True)
-        gui.DP.create("[COLOR {0}]{1}[/COLOR][COLOR {2}]: Creating Zip[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+        progress_dialog.create("[COLOR {0}]{1}[/COLOR][COLOR {2}]: Creating Zip[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
                   "[COLOR {0}]Creating back up zip".format(CONFIG.COLOR2), "", "Please Wait...[/COLOR]")
         for base, dirs, files in os.walk(CONFIG.ADDON_DATA):
             dirs[:] = [d for d in dirs if d not in CONFIG.EXCLUDE_DIRS]
@@ -762,7 +776,7 @@ def _backup_addon_data(name=""):
                 try:
                     for_progress += 1
                     progress = tools.percentage(for_progress, N_ITEM)
-                    gui.DP.update(int(progress),
+                    progress_dialog.update(int(progress),
                               '[COLOR {0}]Creating back up zip: [COLOR{1}]{2}[/COLOR] / [COLOR{3}]{4}[/COLOR]'.format(
                               CONFIG.COLOR2, CONFIG.COLOR1, for_progress, CONFIG.COLOR1, N_ITEM),
                                   '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, file),
@@ -801,8 +815,8 @@ def _backup_addon_data(name=""):
             if success == 0:
                 xbmcvfs.copy(tempzipname, zipname)
                 xbmcvfs.delete(tempzipname)
-        gui.DP.close()
-        gui.DIALOG.ok(CONFIG.ADDONTITLE, "[COLOR {0}]{1}[/COLOR] [COLOR {2}]backup successful:[/COLOR]".format(CONFIG.COLOR1, name, CONFIG.COLOR2),
+        progress_dialog.close()
+        dialog.ok(CONFIG.ADDONTITLE, "[COLOR {0}]{1}[/COLOR] [COLOR {2}]backup successful:[/COLOR]".format(CONFIG.COLOR1, name, CONFIG.COLOR2),
                   "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, zipname))
 
 
@@ -813,7 +827,9 @@ def backup(type, name=''):
         if not os.path.exists(CONFIG.MYBUILDS):
             xbmcvfs.mkdirs(CONFIG.MYBUILDS)
     except Exception as e:
-        gui.DIALOG.ok(CONFIG.ADDONTITLE,
+        dialog = xbmcgui.Dialog()
+        
+        dialog.ok(CONFIG.ADDONTITLE,
                       "[COLOR {0}]Error making Back Up directories:[/COLOR]".format(CONFIG.COLOR2),
                       "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, str(e)))
         return

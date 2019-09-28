@@ -1116,7 +1116,7 @@ def change_freq():
     from resources.libs import gui
     from resources.libs import logging
 
-    change = gui.DIALOG.select("[COLOR {0}]How often would you list to Auto Clean on Startup?[/COLOR]".format(CONFIG.COLOR2), CONFIG.CLEANFREQ)
+    change = dialog.select("[COLOR {0}]How often would you list to Auto Clean on Startup?[/COLOR]".format(CONFIG.COLOR2), CONFIG.CLEANFREQ)
     if not change == -1:
         CONFIG.set_setting('autocleanfeq', str(change))
         logging.log_notify('[COLOR {0}]Auto Clean Up[/COLOR]'.format(CONFIG.COLOR1),
@@ -1149,7 +1149,10 @@ def wizard_menu(name, type, theme=None, over=False):
     from resources.libs import test
     from resources.libs import tools
     from resources.libs import update
-
+   
+    dialog = xbmcgui.Dialog()
+    progress_dialog = xbmcgui.DialogProgress()
+    
     if not over:
         testbuild = check.check_build(name, 'url')
         if not testbuild:
@@ -1167,13 +1170,13 @@ def wizard_menu(name, type, theme=None, over=False):
             if over:
                 yes = 1
             else:
-                yes = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                yes = dialog.yesno(CONFIG.ADDONTITLE,
                                        '[COLOR {0}]Would you like to apply the guifix for:'.format(CONFIG.COLOR2),
                                        '[COLOR {0}]{1}[/COLOR]?[/COLOR]'.format(CONFIG.COLOR1, name),
                                        nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
                                        yeslabel='[B][COLOR springgreen]Apply Fix[/COLOR][/B]')
         else:
-            yes = gui.DIALOG.yesno("{0} - [COLOR red]WARNING!![/COLOR]".format(CONFIG.ADDONTITLE),
+            yes = dialog.yesno("{0} - [COLOR red]WARNING!![/COLOR]".format(CONFIG.ADDONTITLE),
                                    "[COLOR {0}][COLOR {1}]{2}[/COLOR] community build is not currently installed.".format(CONFIG.COLOR2, CONFIG.COLOR1, name),
                                    "Would you like to apply the guiFix anyways?.[/COLOR]",
                                    nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
@@ -1187,7 +1190,7 @@ def wizard_menu(name, type, theme=None, over=False):
                 return
             if not os.path.exists(CONFIG.PACKAGES):
                 os.makedirs(CONFIG.PACKAGES)
-            gui.DP.create(CONFIG.ADDONTITLE,
+            progress_dialog.create(CONFIG.ADDONTITLE,
                           '[COLOR {0}][B]Downloading GuiFix:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name),
                           '', 'Please Wait')
             lib = os.path.join(CONFIG.PACKAGES, '{0}_guisettings.zip'.format(zipname))
@@ -1198,15 +1201,15 @@ def wizard_menu(name, type, theme=None, over=False):
             downloader.download(buildzip)
             xbmc.sleep(500)
             title = '[COLOR {0}][B]Installing:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name)
-            gui.DP.update(0, title, '', 'Please Wait')
+            progress_dialog.update(0, title, '', 'Please Wait')
             extract.all(lib, CONFIG.USERDATA, title=title)
-            gui.DP.close()
+            progress_dialog.close()
             skin.skin_to_default('Build Install')
             skin.look_and_feel_data('save')
             installed = db.grab_addons(lib)
             db.addon_database(installed, 1, True)
 
-            gui.DIALOG.ok(CONFIG.ADDONTITLE, "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(CONFIG.COLOR2))
+            dialog.ok(CONFIG.ADDONTITLE, "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(CONFIG.COLOR2))
             tools.kill_kodi('true')
         else:
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
@@ -1238,7 +1241,7 @@ def wizard_menu(name, type, theme=None, over=False):
         else:
             warning = False
         if warning:
-            yes_pressed = gui.DIALOG.yesno("{0} - [COLOR red]WARNING!![/COLOR]".format(CONFIG.ADDONTITLE),
+            yes_pressed = dialog.yesno("{0} - [COLOR red]WARNING!![/COLOR]".format(CONFIG.ADDONTITLE),
                                            '[COLOR {0}]There is a chance that the skin will not appear correctly'.format(CONFIG.COLOR2),
                                            'When installing a {0} build on a Kodi {1} install'.format(check.check_build(name, 'kodi'), CONFIG.KODIV),
                                            'Would you still like to install: [COLOR {0}]{1} v{2}[/COLOR]?[/COLOR]'.format(CONFIG.COLOR1, name, check.check_build(name, 'version')),
@@ -1248,7 +1251,7 @@ def wizard_menu(name, type, theme=None, over=False):
             if over:
                 yes_pressed = 1
             else:
-                yes_pressed = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                yes_pressed = dialog.yesno(CONFIG.ADDONTITLE,
                                                '[COLOR {0}]Would you like to Download and Install:'.format(CONFIG.COLOR2),
                                                '[COLOR {0}]{1} v{2}[/COLOR]?[/COLOR]'.format(CONFIG.COLOR1, name, check.check_build(name, 'version')),
                                                nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
@@ -1263,7 +1266,7 @@ def wizard_menu(name, type, theme=None, over=False):
                 return
             if not os.path.exists(CONFIG.PACKAGES):
                 os.makedirs(CONFIG.PACKAGES)
-            gui.DP.create(CONFIG.ADDONTITLE,
+            progress_dialog.create(CONFIG.ADDONTITLE,
                           '[COLOR {0}][B]Downloading:[/B][/COLOR] [COLOR {1}]{2} v{3}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name, check.check_build(name, 'version')),
                           '', 'Please Wait')
             lib = os.path.join(CONFIG.PACKAGES, '{0}.zip'.format(zipname))
@@ -1274,7 +1277,7 @@ def wizard_menu(name, type, theme=None, over=False):
             downloader.download(buildzip, lib)
             xbmc.sleep(500)
             title = '[COLOR {0}][B]Installing:[/B][/COLOR] [COLOR {1}]{2} v{3}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name, check.check_build(name, 'version'))
-            gui.DP.update(0, title, '', 'Please Wait')
+            progress_dialog.update(0, title, '', 'Please Wait')
             percent, errors, error = extract.all(lib, CONFIG.HOME, title=title)
             if int(float(percent)) > 0:
                 db.fix_metas()
@@ -1292,7 +1295,7 @@ def wizard_menu(name, type, theme=None, over=False):
                 except:
                     pass
                 if int(float(errors)) > 0:
-                    yes = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                    yes = dialog.yesno(CONFIG.ADDONTITLE,
                                            '[COLOR {0}][COLOR {1}]{2} v{3}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name, check.check_build(name, 'version')),
                                            'Completed: [COLOR {0}]{1}{2}[/COLOR] [Errors:[COLOR {3}]{4}[/COLOR]]'.format(CONFIG.COLOR1, percent, '%', CONFIG.COLOR1, errors),
                                            'Would you like to view the errors?[/COLOR]',
@@ -1302,13 +1305,13 @@ def wizard_menu(name, type, theme=None, over=False):
                         if isinstance(errors, unicode):
                             error = error.encode('utf-8')
                         gui.show_text_box("Viewing Build Install Error", error)
-                gui.DP.close()
+                progress_dialog.close()
                 themefile = check.theme_count(name)
                 if not themefile == False:
                     wizard_menu(name, 'theme')
                 db.addon_database(CONFIG.ADDON_ID, 1)
                 
-                gui.DIALOG.ok(CONFIG.ADDONTITLE, "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(CONFIG.COLOR2))
+                dialog.ok(CONFIG.ADDONTITLE, "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(CONFIG.COLOR2))
                 tools.kill_kodi(True)
             else:
                 if isinstance(errors, unicode):
@@ -1324,13 +1327,13 @@ def wizard_menu(name, type, theme=None, over=False):
             if not themefile == 'http://' and tools.check_url(themefile):
                 themelist = check.theme_count(name, False)
                 if len(themelist) > 0:
-                    if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+                    if dialog.yesno(CONFIG.ADDONTITLE,
                                         "[COLOR {0}]The Build [COLOR {1}]{2}[/COLOR] comes with [COLOR {3}]{4}[/COLOR] different themes".format(CONFIG.COLOR2, CONFIG.COLOR1, name, CONFIG.COLOR1, len(themelist)),
                                         "Would you like to install one now?[/COLOR]",
                                         yeslabel="[B][COLOR springgreen]Install Theme[/COLOR][/B]",
                                         nolabel="[B][COLOR red]Cancel Themes[/COLOR][/B]"):
                         logging.log("Theme List: {0}".format(str(themelist)))
-                        ret = gui.DIALOG.select(CONFIG.ADDONTITLE, themelist)
+                        ret = dialog.select(CONFIG.ADDONTITLE, themelist)
                         logging.log("Theme install selected: {0}".format(ret))
                         if not ret == -1:
                             theme = themelist[ret]
@@ -1347,7 +1350,7 @@ def wizard_menu(name, type, theme=None, over=False):
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                    '[COLOR {0}]Theme Install: None Found![/COLOR]'.format(CONFIG.COLOR2))
         else:
-            installtheme = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
+            installtheme = dialog.yesno(CONFIG.ADDONTITLE,
                                             '[COLOR {0}]Would you like to install the theme:'.format(CONFIG.COLOR2),
                                             '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, theme),
                                             'for [COLOR {0}]{1} v{2}[/COLOR]?[/COLOR]'.format(CONFIG.COLOR1, name, check.check_build(name, 'version')),
@@ -1362,7 +1365,7 @@ def wizard_menu(name, type, theme=None, over=False):
                 return False
             if not os.path.exists(CONFIG.PACKAGES):
                 os.makedirs(CONFIG.PACKAGES)
-            gui.DP.create(CONFIG.ADDONTITLE,
+            progress_dialog.create(CONFIG.ADDONTITLE,
                           '[COLOR {0}][B]Downloading:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, theme),
                           '', 'Please Wait')
             lib = os.path.join(CONFIG.PACKAGES, '{0}.zip'.format(zipname))
@@ -1372,7 +1375,7 @@ def wizard_menu(name, type, theme=None, over=False):
                 pass
             downloader.download(themezip, lib)
             xbmc.sleep(500)
-            gui.DP.update(0,"", "Installing {0}".format(name))
+            progress_dialog.update(0,"", "Installing {0}".format(name))
             test = False
             if url not in ["fresh", "normal"]:
                 test = test.test_theme(lib) if not CONFIG.SKIN in ['skin.confluence', 'skin.estuary', 'skin.estouchy'] else False
@@ -1384,11 +1387,11 @@ def wizard_menu(name, type, theme=None, over=False):
                         return False
                     xbmc.sleep(500)
             title = '[COLOR {0}][B]Installing Theme:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, theme)
-            gui.DP.update(0, title,'', 'Please Wait')
+            progress_dialog.update(0, title,'', 'Please Wait')
             percent, errors, error = extract.all(lib, CONFIG.HOME, title=title)
             CONFIG.set_setting('buildtheme', theme)
             logging.log('INSTALLED {0}: [ERRORS:{1}]'.format(percent, errors))
-            gui.DP.close()
+            progress_dialog.close()
             if url not in ["fresh", "normal"]:
                 update.force_update()
                 installed = db.grab_addons(lib)

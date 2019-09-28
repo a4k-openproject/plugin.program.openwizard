@@ -88,7 +88,7 @@ def check_log():
 
 def log_notify(title, message, times=2000, icon=CONFIG.ADDON_ICON, sound=False):
     from resources.libs import gui
-    gui.DIALOG.notification(title, message, icon, int(times), sound)
+    dialog.notification(title, message, icon, int(times), sound)
 
 
 def grab_log(file=False, old=False, wizard=False):
@@ -334,9 +334,9 @@ def show_result(message, url=None):
                 pass
         except Exception as e:
             log(str(e), xbmc.LOGNOTICE)
-            confirm = gui.DIALOG.ok(CONFIG.ADDONTITLE, "[COLOR %s]%s[/COLOR]" % (CONFIG.COLOR2, message))
+            confirm = dialog.ok(CONFIG.ADDONTITLE, "[COLOR %s]%s[/COLOR]" % (CONFIG.COLOR2, message))
     else:
-        confirm = gui.DIALOG.ok(CONFIG.ADDONTITLE, "[COLOR %s]%s[/COLOR]" % (CONFIG.COLOR2, message))
+        confirm = dialog.ok(CONFIG.ADDONTITLE, "[COLOR %s]%s[/COLOR]" % (CONFIG.COLOR2, message))
 
 
 def view_log_file():
@@ -348,7 +348,7 @@ def view_log_file():
 
     if oldlog and mainlog:
 
-        which = gui.DIALOG.select(CONFIG.ADDONTITLE,
+        which = dialog.select(CONFIG.ADDONTITLE,
                                   ["View {0}".format(mainlog.replace(CONFIG.LOG, "")), "View {0}".format(oldlog.replace(CONFIG.LOG, ""))])
         if which == -1:
             log_notify('[COLOR {0}]View Log[/COLOR]'.format(CONFIG.COLOR1),

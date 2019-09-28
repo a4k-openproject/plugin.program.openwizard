@@ -12,9 +12,6 @@ except ImportError:  # Python 3
 from resources.libs.config import CONFIG
 
 
-DIALOG = xbmcgui.Dialog()
-DP = xbmcgui.DialogProgress()
-
 ACTION_PREVIOUS_MENU = 10  # ESC action
 ACTION_NAV_BACK = 92  # Backspace action
 ACTION_MOVE_LEFT = 1  # Left arrow key
