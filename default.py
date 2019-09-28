@@ -65,8 +65,8 @@ def route(paramstring):
         CONFIG.open_settings(name)
         xbmc.executebuiltin('Container.Refresh()')
     elif mode == 'opensettings':  # Open other addons' settings
-        id = eval(url.upper()+'ID')[name]['plugin']
-        CONFIG.open_settings(id)
+        settings_id = eval(url.upper()+'ID')[name]['plugin']
+        CONFIG.open_settings(settings_id)
         xbmc.executebuiltin('Container.Refresh()')
     elif mode == 'togglesetting':  # Toggle a setting
         CONFIG.set_setting(name, 'false' if CONFIG.get_setting(name) == 'true' else 'true')
@@ -286,7 +286,8 @@ def route(paramstring):
         clear.remove_addon_data(name)
     elif mode == 'resetaddon':  # Addon Tools -> Remove Addon Data -> Remove  Wizard Addon Data
         from resources.libs import tools
-        total = tools.clean_house(CONFIG.ADDON_DATA, ignore=True)
+        
+        tools.clean_house(CONFIG.ADDON_DATA, ignore=True)
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            "[COLOR {0}]Addon_Data reset[/COLOR]".format(CONFIG.COLOR2))
 
