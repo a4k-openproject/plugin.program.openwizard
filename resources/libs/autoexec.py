@@ -22,8 +22,9 @@
 # WhiteCream thread for clicking yes on dialog for unknown sources
 
 import xbmc
-import xbmcvfs
 import xbmcaddon
+import xbmcgui
+import xbmcvfs
 
 import os
 import glob
@@ -45,6 +46,8 @@ def main():
         def __init__(self):
             from resources.libs import db
             
+            dialog = xbmcgui.Dialog()
+            
             self.databasepath = CONFIG.DATABASE
             self.addons = CONFIG.ADDONS
             self.tempauto = os.path.join(CONFIG.USERDATA, 'autoexec_temp.py')
@@ -52,8 +55,7 @@ def main():
             self.dbfilename = os.path.join(self.databasepath, self.dbfilename)
             self.swap_us()
             if not os.path.exists(self.dbfilename):
-                from resources.libs import gui
-                gui.DIALOG.notification("AutoExec.py", "No Addons27.db file")
+                dialog.notification("AutoExec.py", "No Addons27.db file")
                 logging.log("DB File not found.")
 
             self.addonlist = glob.glob(os.path.join(self.addons, '*/'))
@@ -82,6 +84,8 @@ def main():
             xbmc.executebuiltin("ReloadSkin()")
 
         def swap_us(self):
+            dialog = xbmcgui.Dialog()
+        
             new = '"addons.unknownsources"'
             value = 'true'
             query = '{{"jsonrpc":"2.0", "method":"Settings.GetSettingValue","params":{{"setting":{0}}}, "id":1}}'.format(new)
@@ -92,7 +96,7 @@ def main():
                 xbmc.sleep(200)
                 query = '{{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{{"setting":{0},"value":{1}}, "id":1}}'.format(new, value)
                 response = xbmc.executeJSONRPC(query)
-                gui.DIALOG.notification("AutoExec.py", "Unknown Sources: Enabled")
+                dialog.notification("AutoExec.py", "Unknown Sources: Enabled")
                 logging.log("Unknown Sources Set Settings: {0}".format(str(response)), level=xbmc.LOGDEBUG)
 
         def dialog_watch(self):
@@ -128,16 +132,17 @@ def main():
             except Exception:
                 logging.log("Erroring enabling addon: {0}".format(addon), level=xbmc.LOGERROR)
 
-    from resources.libs import gui
+    dialog = xbmcgui.Dialog()
+                
     try:
-        gui.DIALOG.notification("AutoExec.py", "Starting Script...")
+        dialog.notification("AutoExec.py", "Starting Script...")
         firstRun = EnableAll()
-        gui.DIALOG.notification("AutoExec.py", "All Addons Enabled")
+        dialog.notification("AutoExec.py", "All Addons Enabled")
         xbmcvfs.delete('special://userdata/autoexec.py')
         xbmcvfs.copy('special://home/userdata/autoexec_temp.py', 'special://userdata/autoexec.py')
         xbmcvfs.delete('special://userdata/autoexec_temp.py')
     except Exception as e:
-        gui.DIALOG.notification("AutoExec.py", "Error Check LogFile")
+        dialog.notification("AutoExec.py", "Error Check LogFile")
         logging.log(str(e), level=xbmc.LOGERROR)
         xbmcvfs.delete('special://userdata/autoexec.py')
         xbmcvfs.copy('special://home/userdata/autoexec_temp.py', 'special://userdata/autoexec.py')

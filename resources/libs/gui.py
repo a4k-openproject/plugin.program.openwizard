@@ -488,7 +488,7 @@ def show_notification(msg='', test=False):
 
 def show_log_viewer(window_title="Viewing Log File", window_msg=None, default=None, ext_buttons=False):
     from resources.libs import logging
-
+    
     class LogViewer(xbmcgui.WindowXMLDialog):
         def __init__(self, *args, **kwargs):
             self.default = kwargs['default']
