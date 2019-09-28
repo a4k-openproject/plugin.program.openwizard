@@ -890,7 +890,7 @@ def trakt_menu():
                 else:
                     add_file('[COLOR red]Saved Data: Not Saved[/COLOR]', 'savetrakt', trakt, icon=icon, fanart=fanart, menu=menu2)
             else:
-                add_file('[COLOR springgreen]Saved Data: {0|[/COLOR]'.format(user), '', icon=icon, fanart=fanart, menu=menu2)
+                add_file('[COLOR springgreen]Saved Data: {0}[/COLOR]'.format(user), '', icon=icon, fanart=fanart, menu=menu2)
 
     add_separator()
     add_file('Save All Trakt Data', 'savetrakt', 'all', icon=CONFIG.ICONTRAKT, themeit=CONFIG.THEME3)
