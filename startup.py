@@ -72,8 +72,8 @@ def auto_install_repo():
                         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name[0]),
                                            "[COLOR {0}]Add-on updated[/COLOR]".format(CONFIG.COLOR2),
                                            icon=os.path.join(CONFIG.ADDONS, CONFIG.REPOID, 'icon.png'))
-                    except:
-                        pass
+                    except Exception as e:
+                        logging.log(str(e), level=xbmc.LOGERROR)
 
                     # Add wizard to add-on database
                     db.addon_database(CONFIG.REPOID, 1)
@@ -103,16 +103,16 @@ def show_notification():
     if not CONFIG.NOTIFY == 'true':
         url = tools.check_url(CONFIG.NOTIFICATION)
         if url:
-            id, msg = gui.split_notify(CONFIG.NOTIFICATION)
-            if id:
+            note_id, msg = gui.split_notify(CONFIG.NOTIFICATION)
+            if note_id:
                 try:
-                    id = int(id)
-                    if id == CONFIG.NOTEID:
+                    note_id = int(note_id)
+                    if note_id == CONFIG.NOTEID:
                         if CONFIG.NOTEDISMISS == 'false':
                             gui.show_notification(msg)
                         else:
                             logging.log("[Notifications] id[{0}] Dismissed".format(int(id)), level=xbmc.LOGNOTICE)
-                    elif id > CONFIG.NOTEID:
+                    elif note_id > CONFIG.NOTEID:
                         logging.log("[Notifications] id: {0}".format(str(id)), level=xbmc.LOGNOTICE)
                         CONFIG.set_setting('noteid', str(id))
                         CONFIG.set_setting('notedismiss', 'false')
