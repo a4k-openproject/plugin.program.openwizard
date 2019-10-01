@@ -1,4 +1,5 @@
 import xbmc
+import xbmcgui
 
 import glob
 import os

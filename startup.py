@@ -323,7 +323,7 @@ else:
     logging.log("[Current Build Check] Build Installed: {0}".format(CONFIG.BUILDNAME), level=xbmc.LOGNOTICE)
 
 # BUILD UPDATE CHECK
-if CONFIG.BUILDNAME is not == '' and CONFIG.BUILDCHECK <= str(tools.get_date(days=CONFIG.UPDATECHECK, now=True)):
+if CONFIG.BUILDNAME != '' and CONFIG.BUILDCHECK <= str(tools.get_date(days=CONFIG.UPDATECHECK, now=True)):
     logging.log("[Build Update Check] Started", level=xbmc.LOGNOTICE)
     build_update_check()
 else:
