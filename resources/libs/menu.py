@@ -1486,8 +1486,8 @@ def add_menu_item(display, mode, name, url, menu, description, overwrite, fanart
     return ok
 
 
-def set_view(viewtype=50):
+def set_view():
     if CONFIG.get_setting('auto-view') == 'true':
-        views = CONFIG.get_setting('viewType')
+        viewType = CONFIG.get_setting('viewType')
         
-        xbmc.executebuiltin("Container.SetViewMode({0})".format(views))
+        xbmc.executebuiltin("Container.SetViewMode({0})".format(viewType))
