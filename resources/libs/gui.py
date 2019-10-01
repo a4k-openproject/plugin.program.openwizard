@@ -320,9 +320,9 @@ def show_build_prompt():
             
             url = 'plugin://{0}/?mode=builds'.format(CONFIG.ADDON_ID)
             
-            xbmc.executebuiltin('RunPlugin({0})'.format(url))
-
             self.close()
+            
+            xbmc.executebuiltin('ActivateWindow(Programs, {0}, return)'.format(url))
 
         def do_ignore(self):
             from resources.libs import logging

@@ -445,7 +445,7 @@ def _route(paramstring):
     
     
 def _create_directory():
-    xbmcplugin.setContent(_handle, 'videos')
+    xbmcplugin.setContent(_handle, 'programs')
     xbmcplugin.endOfDirectory(_handle)
     menu.set_view()
 
