@@ -319,7 +319,7 @@ class LogURLopener(FancyURLopener):
 
 
 def show_result(message, url=None):
-    from resources.libs import gui
+    from resources.libs.gui import window
 
     if url:
         try:
@@ -327,7 +327,7 @@ def show_result(message, url=None):
             
             fn = url.split('/')[-2]
             imagefile = qr.generate_code(url, fn)
-            gui.show_qr_code("loguploader.xml", imagefile, message)
+            window.show_qr_code("loguploader.xml", imagefile, message)
             try:
                 os.remove(imagefile)
             except:
@@ -340,7 +340,7 @@ def show_result(message, url=None):
 
 
 def view_log_file():
-    from resources.libs import gui
+    from resources.libs.gui import window
 
     mainlog = grab_log(file=True)
     oldlog = grab_log(file=True, old=True)
@@ -366,7 +366,7 @@ def view_log_file():
     logtype = mainlog if which == 0 else oldlog
     msg = grab_log() if which == 0 else grab_log(old=True)
 
-    gui.show_log_viewer("Viewing Log File: {0}".format(logtype), msg, ext_buttons=True)
+    window.show_log_viewer("Viewing Log File: {0}".format(logtype), msg, ext_buttons=True)
 
 
 def error_list(file):
@@ -414,7 +414,7 @@ def error_checking(log=None, count=None, last=None):
     if count is not None:
         return len(errors)
     elif len(errors) > 0:
-        from resources.libs import gui
+        from resources.libs.gui import window
         
         if last is None:
             i = 0
@@ -422,10 +422,10 @@ def error_checking(log=None, count=None, last=None):
             for item in errors:
                 i += 1
                 string += "[B][COLOR red]ERROR NUMBER {0}:[/B][/COLOR] {1}\n".format(str(i), item.replace(CONFIG.HOME, '/').replace('                                        ', ''))
-            gui.show_log_viewer("Viewing Errors in Log", string)
+            window.show_log_viewer("Viewing Errors in Log", string)
         else:
             string = "[B][COLOR red]Last Error in Log:[/B][/COLOR] {0}\n".format(errors[0].replace(CONFIG.HOME, '/').replace('                                        ', ''))
-            gui.show_log_viewer("Viewing Last Error in Log", string)
+            window.show_log_viewer("Viewing Last Error in Log", string)
 
     else:
         log_notify('[COLOR {0}]View Error Log[/COLOR]'.format(CONFIG.COLOR1),

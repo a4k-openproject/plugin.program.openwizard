@@ -18,6 +18,7 @@
 ################################################################################
 
 import xbmc
+import xbmcgui
 
 from datetime import datetime
 from datetime import timedelta
@@ -33,7 +34,7 @@ from resources.libs.config import CONFIG
 from resources.libs import clear
 from resources.libs import check
 from resources.libs import db
-from resources.libs import gui
+from resources.libs.gui import window
 from resources.libs import logging
 from resources.libs import skin
 from resources.libs import tools
@@ -103,20 +104,20 @@ def show_notification():
     if not CONFIG.NOTIFY == 'true':
         url = tools.check_url(CONFIG.NOTIFICATION)
         if url:
-            note_id, msg = gui.split_notify(CONFIG.NOTIFICATION)
+            note_id, msg = window.split_notify(CONFIG.NOTIFICATION)
             if note_id:
                 try:
                     note_id = int(note_id)
                     if note_id == CONFIG.NOTEID:
                         if CONFIG.NOTEDISMISS == 'false':
-                            gui.show_notification(msg)
+                            window.show_notification(msg)
                         else:
                             logging.log("[Notifications] id[{0}] Dismissed".format(int(id)), level=xbmc.LOGNOTICE)
                     elif note_id > CONFIG.NOTEID:
                         logging.log("[Notifications] id: {0}".format(str(id)), level=xbmc.LOGNOTICE)
                         CONFIG.set_setting('noteid', str(id))
                         CONFIG.set_setting('notedismiss', 'false')
-                        gui.show_notification(msg=msg)
+                        window.show_notification(msg=msg)
                         logging.log("[Notifications] Complete", level=xbmc.LOGNOTICE)
                 except Exception as e:
                     logging.log("Error on Notifications Window: {0}".format(str(e)), level=xbmc.LOGERROR)
@@ -134,6 +135,8 @@ def installed_build_check():
     # db.kodi_17_fix()
     # if CONFIG.SKIN in ['skin.confluence', 'skin.estuary', 'skin.estouchy']:
     #     check.check_skin()
+
+    dialog = xbmcgui.Dialog()
 
     if not CONFIG.EXTRACT == '100' and not CONFIG.BUILDNAME == "":
         logging.log("[Build Installed Check] Build was extracted {0}/100 with [ERRORS: {1}]".format(CONFIG.EXTRACT, CONFIG.EXTERROR), level=xbmc.LOGNOTICE)
@@ -309,7 +312,7 @@ tools.ensure_folders()
 # FIRST RUN SETTINGS
 if CONFIG.FIRSTRUN == 'true':
     logging.log("[First Run] Showing Save Data Settings", level=xbmc.LOGNOTICE)
-    gui.show_save_data_settings()
+    window.show_save_data_settings()
 
     CONFIG.set_setting('first_install', 'false')
 else:
@@ -318,7 +321,7 @@ else:
 # BUILD INSTALL PROMPT
 if CONFIG.BUILDNAME == '':
     logging.log("[Current Build Check] Build Not Installed", level=xbmc.LOGNOTICE)
-    gui.show_build_prompt()
+    window.show_build_prompt()
 else:
     logging.log("[Current Build Check] Build Installed: {0}".format(CONFIG.BUILDNAME), level=xbmc.LOGNOTICE)
 

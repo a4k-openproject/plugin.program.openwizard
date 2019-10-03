@@ -39,9 +39,9 @@ from resources.libs.config import CONFIG
 from resources.libs import db
 from resources.libs import downloader
 from resources.libs import extract
-from resources.libs import gui
 from resources.libs import logging
 from resources.libs import tools
+from resources.libs.gui import window
 
 
 def cleanup_backup():

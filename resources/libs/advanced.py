@@ -28,9 +28,9 @@ except ImportError:  # Python 2
     from urllib import quote_plus
 
 from resources.libs.config import CONFIG
-from resources.libs import gui
 from resources.libs import logging
 from resources.libs import tools
+from resources.libs.gui import window
 
 
 def writeAdvanced():
@@ -56,9 +56,9 @@ def autoConfig(msg='', TxtColor='0xFFFFFFFF', Font='font12', BorderWidth=10):
         scr = {}
 
         def __init__(self, msg='', L=0, T=0, W=1280, H=720, TxtColor='0xFFFFFFFF', Font='font12', BorderWidth=10):
-            buttonfocus, buttonnofocus = gui.get_artwork('button')
-            radiobgfocus, radiobgnofocus, radiofocus, radionofocus = gui.get_artwork('radio')
-            slidernibfocus, slidernibnofocus, sliderfocus, slidernofocus = gui.get_artwork('slider')
+            buttonfocus, buttonnofocus = window.get_artwork('button')
+            radiobgfocus, radiobgnofocus, radiofocus, radionofocus = window.get_artwork('radio')
+            slidernibfocus, slidernibnofocus, sliderfocus, slidernofocus = window.get_artwork('slider')
             image_path = os.path.join(CONFIG.ART, 'ContentPanel.png')
             boxbg = os.path.join(CONFIG.ART, 'bgg2.png')
             self.border = xbmcgui.ControlImage(L, T, W, H, image_path)
@@ -324,11 +324,11 @@ def autoConfig(msg='', TxtColor='0xFFFFFFFF', Font='font12', BorderWidth=10):
                 self.updateCurrent(self.CURLTimeout)
             elif F == self.readBufferFactor:
                 self.updateCurrent(self.readBufferFactor)
-            elif F in [self.Button0, self.Button1, self.Button2, self.Button3] and action in [gui.ACTION_MOUSE_LEFT_CLICK, gui.ACTION_SELECT_ITEM]:
+            elif F in [self.Button0, self.Button1, self.Button2, self.Button3] and action in [window.ACTION_MOUSE_LEFT_CLICK, window.ACTION_SELECT_ITEM]:
                 self.updateCurrent(F)
-            elif action == gui.ACTION_PREVIOUS_MENU:
+            elif action == window.ACTION_PREVIOUS_MENU:
                 self.close()
-            elif action == gui.ACTION_NAV_BACK:
+            elif action == window.ACTION_NAV_BACK:
                 self.close()
 
     maxW = 1280
@@ -347,7 +347,7 @@ def QautoConfig(msg='', TxtColor='0xFFFFFFFF', Font='font10', BorderWidth=10):
         scr = {}
 
         def __init__(self, msg='', L=0, T=0, W=1280, H=720, TxtColor='0xFFFFFFFF', Font='font10', BorderWidth=10):
-            buttonfocus, buttonnofocus = gui.get_artwork('button')
+            buttonfocus, buttonnofocus = window.get_artwork('button')
             self.BG = xbmcgui.ControlImage(L+BorderWidth, T+BorderWidth, W-(BorderWidth*2), H-(BorderWidth*2), CONFIG.ADDON_FANART, aspectRatio=0)
             self.addControl(self.BG)
             top = T+BorderWidth
@@ -467,9 +467,9 @@ def QautoConfig(msg='', TxtColor='0xFFFFFFFF', Font='font10', BorderWidth=10):
                 F = self.getFocus()
             except:
                 F = False
-            if action == gui.ACTION_PREVIOUS_MENU:
+            if action == window.ACTION_PREVIOUS_MENU:
                 self.close()
-            elif action == gui.ACTION_NAV_BACK:
+            elif action == window.ACTION_NAV_BACK:
                 self.close()
 
     maxW = 1280
@@ -519,10 +519,10 @@ def write_advanced(name, url):
 
 
 def view_advanced():
-    from resources.libs import gui
     from resources.libs import tools
+    from resources.libs.gui import window
 
-    gui.show_text_box(CONFIG.ADDONTITLE, tools.read_from_file(CONFIG.ADVANCED).replace('\t', '    '))
+    window.show_text_box(CONFIG.ADDONTITLE, tools.read_from_file(CONFIG.ADVANCED).replace('\t', '    '))
 
 
 def remove_advanced():

@@ -247,11 +247,11 @@ def dispatch(paramstring):
     elif mode == 'uploadlog':  # Upload Log File
         logging.upload_log()
     elif mode == 'viewlog':  # View kodi.log
-        from resources.libs import gui
-        gui.show_log_viewer()
+        from resources.libs.gui import window
+        window.show_log_viewer()
     elif mode == 'viewwizlog':  # View wizard.log
-        from resources.libs import gui
-        gui.show_log_viewer(CONFIG.WIZLOG)
+        from resources.libs.gui import window
+        window.show_log_viewer(CONFIG.WIZLOG)
     elif mode == 'viewerrorlog':  # View errors in log
         logging.error_checking()
     elif mode == 'viewerrorlast':  # View last error in log
@@ -424,8 +424,8 @@ def dispatch(paramstring):
         test.test_first_run()
 
     elif mode == 'contact':  # Contact
-        from resources.libs import gui
-        gui.show_contact(CONFIG.CONTACT)
+        from resources.libs.gui import window
+        window.show_contact(CONFIG.CONTACT)
 
     _handle = int(sys.argv[1])
     xbmcplugin.setContent(_handle, 'programs')
