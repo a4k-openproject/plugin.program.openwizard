@@ -208,15 +208,21 @@ def clear_archive():
             tools.clean_house(CONFIG.ARCHIVE_CACHE)
 
 
-def clear_function_cache():
+def clear_function_cache(over=False):
     dialog = xbmcgui.Dialog()
 
-    if dialog.yesno(CONFIG.ADDONTITLE,
-                        '[COLOR {0}]Would you like to clear resolver function caches?[/COLOR]'.format(CONFIG.COLOR2),
-                        nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
-                        yeslabel='[B][COLOR springgreen]Clear Cache[/COLOR][/B]'):
+    if not over:
+        if dialog.yesno(CONFIG.ADDONTITLE,
+                            '[COLOR {0}]Would you like to clear resolver function caches?[/COLOR]'.format(CONFIG.COLOR2),
+                            nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
+                            yeslabel='[B][COLOR springgreen]Clear Cache[/COLOR][/B]'):
+            clear = True
+    else:
+        clear = True
+        
+    if clear:
         if xbmc.getCondVisibility('System.HasAddon(script.module.resolveurl)'):
-            xbmc.executebuiltin('RunPlugin(plugin://script.module.resolveurl/?mode=reset_cache)')
+                xbmc.executebuiltin('RunPlugin(plugin://script.module.resolveurl/?mode=reset_cache)')
         if xbmc.getCondVisibility('System.HasAddon(script.module.urlresolver)'):
             xbmc.executebuiltin('RunPlugin(plugin://script.module.urlresolver/?mode=reset_cache)')
 
@@ -483,8 +489,9 @@ def total_clean():
                         '[COLOR {0}]Would you like to clear cache, packages and thumbnails?[/COLOR]'.format(CONFIG.COLOR2),
                         nolabel='[B][COLOR red]Cancel Process[/COLOR][/B]',
                         yeslabel='[B][COLOR springgreen]Clean All[/COLOR][/B]'):
+        clear_archive()
         clear_cache()
-        clear_function_cache()
+        clear_function_cache(over=True)
         clear_packages('total')
         clear_thumbs('total')
 
