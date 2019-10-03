@@ -12,5 +12,6 @@
     <summary lang="en">[B][COLOR dodgerblue]Aftermath[/COLOR][/B] Wizard</summary>
     <description lang="en">[B][COLOR dodgerblue]Aftermath[/COLOR][/B] Wizard offers many maintenance features, selective add-on data saving, and automated build installs.</description>
     <platform>all</platform>
+    <reuselanguageinvoker>false</reuselanguageinvoker>
   </extension>
 </addon>
