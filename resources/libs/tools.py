@@ -364,7 +364,8 @@ def kill_kodi(over=None):
     if over:
         choice = 1
     else:
-        from resources.libs import gui
+        dialog = xbmcgui.Dialog()
+        
         choice = dialog.yesno('Force Close Kodi',
                                   '[COLOR {0}]You are about to close Kodi'.format(CONFIG.COLOR2),
                                   'Would you like to continue?[/COLOR]',
@@ -389,8 +390,8 @@ def chunks(s, n):
 
 
 def convert_special(url, over=False):
-    from resources.libs import gui
     from resources.libs import logging
+    from resources.libs.gui import window
 
     progress_dialog = xbmcgui.DialogProgress()
     
@@ -442,10 +443,10 @@ def redo_thumbs():
 
 def reload_fix(default=None):
     from resources.libs import db
-    from resources.libs import gui
     from resources.libs import logging
     from resources.libs import skin
     from resources.libs import update
+    from resources.libs.gui import window
 
     dialog = xbmcgui.Dialog()
     
@@ -486,8 +487,8 @@ def replace_html_codes(txt):
 
 
 def ascii_check(use=None, over=False):
-    from resources.libs import gui
     from resources.libs import logging
+    from resources.libs.gui import window
     
     dialog = xbmcgui.Dialog()
     progress_dialog = xbmcgui.DialogProgress()
@@ -579,10 +580,10 @@ def ascii_check(use=None, over=False):
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                  "[COLOR {0}]ASCII Check: {1} Removed / {2} Failed.[/COLOR]".format(CONFIG.COLOR2, f1, f2))
             else:
-                gui.show_text_box("Viewing Removed ASCII Files",
+                window.show_text_box("Viewing Removed ASCII Files",
                                   "[COLOR yellow][B]{0} Files Removed:[/B][/COLOR]\n {1}\n\n[COLOR yellow][B]{2} Files Failed:[B][/COLOR]\n {3}".format(f1, msg, f2, msg2))
         else:
-            gui.show_text_box("Viewed Found ASCII Files", "[COLOR yellow][B]{0} Files Found:[/B][/COLOR]\n {1}".format(f1, msg))
+            window.show_text_box("Viewed Found ASCII Files", "[COLOR yellow][B]{0} Files Found:[/B][/COLOR]\n {1}".format(f1, msg))
     else:
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            "[COLOR {0}]ASCII Check: None Found.[/COLOR]".format(CONFIG.COLOR2))

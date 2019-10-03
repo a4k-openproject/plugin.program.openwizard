@@ -34,18 +34,18 @@ def test_gui(path):
 
 
 def test_notify():
-    from resources.libs import gui
     from resources.libs import logging
     from resources.libs import tools
+    from resources.libs.gui import window
 
     if tools.check_url(CONFIG.NOTIFICATION):
         try:
-            id, msg = gui.split_notify(CONFIG.NOTIFICATION)
+            id, msg = window.split_notify(CONFIG.NOTIFICATION)
             if not id:
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                    "[COLOR {0}]Notification: Not Formatted Correctly[/COLOR]".format(CONFIG.COLOR2))
                 return
-            gui.show_notification(msg, True)
+            window.show_notification(msg, True)
         except Exception as e:
             logging.log("Error on Notifications Window: {0}".format(str(e)), level=xbmc.LOGERROR)
     else:
@@ -55,21 +55,21 @@ def test_notify():
 
 def test_update():
     from resources.libs import check
-    from resources.libs import gui
+    from resources.libs.gui import window
 
     if CONFIG.BUILDNAME == "":
-        gui.show_update_window()
+        window.show_update_window()
     else:
-        gui.show_update_window(CONFIG.BUILDNAME, CONFIG.BUILDVERSION, CONFIG.BUILDLATEST, check.check_build(CONFIG.BUILDNAME, 'icon'), check.check_build(CONFIG.BUILDNAME, 'fanart'))
+        window.show_update_window(CONFIG.BUILDNAME, CONFIG.BUILDVERSION, CONFIG.BUILDLATEST, check.check_build(CONFIG.BUILDNAME, 'icon'), check.check_build(CONFIG.BUILDNAME, 'fanart'))
 
 
 def test_first_run():
-    from resources.libs import gui
-
-    gui.show_build_prompt()
+    from resources.libs.gui import window
+    
+    window.show_build_prompt()
 
 
 def test_save_data_settings():
-    from resources.libs import gui
+    from resources.libs.gui import window
 
-    gui.show_save_data_settings()
+    window.show_save_data_settings()

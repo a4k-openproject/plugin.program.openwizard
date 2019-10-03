@@ -430,18 +430,18 @@ def install_addon(plugin, url):
 
 
 def install_from_kodi(plugin, over=True):
-    from resources.libs import gui
+    from resources.libs.gui import window
 
     if over:
         xbmc.sleep(2000)
 
     xbmc.executebuiltin('RunPlugin(plugin://{0})'.format(plugin))
-    if not gui.while_window('yesnodialog'):
+    if not window.while_window('yesnodialog'):
         return False
     xbmc.sleep(500)
-    if gui.while_window('okdialog'):
+    if window.while_window('okdialog'):
         return False
-    gui.while_window('progressdialog')
+    window.while_window('progressdialog')
     if os.path.exists(os.path.join(CONFIG.ADDONS, plugin)):
         return True
     else:
@@ -486,9 +486,9 @@ def installed(addon):
 
 def install_apk(apk, url):
     from resources.libs import downloader
-    from resources.libs import gui
     from resources.libs import logging
     from resources.libs import tools
+    from resources.libs.gui import window
 
     dialog = xbmcgui.Dialog()
     progress_dialog = xbmcgui.DialogProgress()
@@ -523,7 +523,7 @@ def install_apk(apk, url):
         downloader.download(url, lib)
         xbmc.sleep(100)
         progress_dialog.close()
-        gui.show_apk_warning(apk)
+        window.show_apk_warning(apk)
         xbmc.executebuiltin('StartAndroidActivity("","android.intent.action.VIEW","application/vnd.android.package-archive","file:{0}")'.format(lib))
     else:
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),

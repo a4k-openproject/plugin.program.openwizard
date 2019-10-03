@@ -667,10 +667,10 @@ def clear_speed_test():
 
 
 def view_speed_test(img=None):
-    from resources.libs import gui
+    from resources.libs.gui import window
 
     img = os.path.join(CONFIG.SPEEDTEST, img)
-    gui.show_speed_test(img)
+    window.show_speed_test(img)
 
 
 def run_speed_test():
@@ -1083,7 +1083,7 @@ def remove_addon_data_menu():
 
 
 def change_freq():
-    from resources.libs import gui
+    from resources.libs.gui import window
     from resources.libs import logging
 
     change = dialog.select("[COLOR {0}]How often would you list to Auto Clean on Startup?[/COLOR]".format(CONFIG.COLOR2), CONFIG.CLEANFREQ)
@@ -1110,13 +1110,13 @@ def wizard_menu(name, type, theme=None, over=False):
     from resources.libs import db
     from resources.libs import downloader
     from resources.libs import extract
-    from resources.libs import gui
     from resources.libs import install
     from resources.libs import logging
     from resources.libs import skin
     from resources.libs import test
     from resources.libs import tools
     from resources.libs import update
+    from resources.libs.gui import window
    
     dialog = xbmcgui.Dialog()
     progress_dialog = xbmcgui.DialogProgress()
@@ -1272,7 +1272,7 @@ def wizard_menu(name, type, theme=None, over=False):
                     if yes:
                         if isinstance(errors, unicode):
                             error = error.encode('utf-8')
-                        gui.show_text_box("Viewing Build Install Error", error)
+                        window.show_text_box("Viewing Build Install Error", error)
                 progress_dialog.close()
                 themefile = check.theme_count(name)
                 if not themefile == False:
@@ -1284,7 +1284,7 @@ def wizard_menu(name, type, theme=None, over=False):
             else:
                 if isinstance(errors, unicode):
                     error = error.encode('utf-8')
-                gui.show_text_box("Viewing Error Installing Build", error)
+                window.show_text_box("Viewing Error Installing Build", error)
         else:
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                '[COLOR {0}]Build Install: Cancelled![/COLOR]'.format(CONFIG.COLOR2))
