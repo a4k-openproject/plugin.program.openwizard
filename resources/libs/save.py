@@ -34,7 +34,8 @@ from resources.libs import logging
 
 def import_save_data():
     from resources.libs import tools
-    from resources.libs.gui import window
+
+    dialog = xbmcgui.Dialog()
 
     TEMP = os.path.join(CONFIG.ADDON_DATA, 'temp')
     if not os.path.exists(TEMP):
@@ -185,7 +186,8 @@ def export_save_data():
     from resources.libs import debridit
     from resources.libs import loginit
     from resources.libs import traktit
-    from resources.libs.gui import window
+
+    dialog = xbmcgui.Dialog()
 
     dir = [CONFIG.TRAKTFOLD, CONFIG.DEBRIDFOLD, CONFIG.LOGINFOLD]
     keepx = [CONFIG.KEEPADVANCED, CONFIG.KEEPSOURCES, CONFIG.KEEPFAVS, CONFIG.KEEPPROFILES, CONFIG.KEEPPLAYERCORE]
