@@ -129,7 +129,6 @@ def wipe():
 
 
 def fresh_start(install=None, over=False):
-    from resources.libs import db
     from resources.libs import logging
     from resources.libs import tools
     
@@ -181,7 +180,7 @@ def fresh_start(install=None, over=False):
         elif install == 'restore':
             return True
         elif install:
-            from resources.libs import menu
+            from resources.libs.gui import menu
 
             menu.wizard_menu(install, 'normal', over=True)
         else:
