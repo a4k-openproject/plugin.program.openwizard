@@ -1,5 +1,5 @@
 ################################################################################
-#      Copyright (C) 2015 OpenELEQ                                             #
+#      Copyright (C) 2019 drinfernoo                                           #
 #                                                                              #
 #  This Program is free software; you can redistribute it and/or modify        #
 #  it under the terms of the GNU General Public License as published by        #
@@ -16,7 +16,6 @@
 #  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.       #
 #  http://www.gnu.org/copyleft/gpl.html                                        #
 ################################################################################
-
 
 import xbmc
 
