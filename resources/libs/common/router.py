@@ -153,6 +153,9 @@ def dispatch(paramstring):
     elif mode == 'unknownsources':  # Misc Maintenance -> Enable Unknown Sources
         from resources.libs import skin
         skin.swap_us()
+    elif mode == 'enabledebug':  # Misc Maintenance -> Enable Debug Logging
+        from resources.libs import logging
+        logging.swap_debug()
     elif mode == 'asciicheck':  # System Tweaks -> Scan for Non-Ascii Files
         from resources.libs import tools
         tools.ascii_check()

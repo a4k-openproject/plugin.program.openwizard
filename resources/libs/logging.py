@@ -340,6 +340,8 @@ class LogURLopener(FancyURLopener):
 def show_result(message, url=None):
     from resources.libs.gui import window
 
+    dialog = xbmcgui.Dialog()
+
     if url:
         try:
             from resources.libs import qr
@@ -365,6 +367,8 @@ def view_log_file():
     oldlog = grab_log(file=True, old=True)
     which = 0
 
+    dialog = xbmcgui.Dialog()
+
     if oldlog and mainlog:
 
         which = dialog.select(CONFIG.ADDONTITLE,
@@ -386,6 +390,39 @@ def view_log_file():
     msg = grab_log() if which == 0 else grab_log(old=True)
 
     window.show_log_viewer("Viewing Log File: {0}".format(logtype), msg, ext_buttons=True)
+
+
+def swap_debug():
+    import threading
+
+    new = '"debug.showloginfo"'
+    value = 'true'
+    query = '{{"jsonrpc":"2.0", "method":"Settings.GetSettingValue","params":{{"setting":{0}}}, "id":1}}'.format(new)
+    response = xbmc.executeJSONRPC(query)
+    log("Debug Logging Get Settings: {0}".format(str(response)))
+    if 'false' in response:
+        threading.Thread(target=_dialog_watch).start()
+        xbmc.sleep(200)
+        query = '{{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{{"setting":{0},"value":{1}}}, "id":1}}'.format(
+            new, value)
+        response = xbmc.executeJSONRPC(query)
+        log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                           '[COLOR {0}]Debug Logging:[/COLOR] [COLOR {1}]Enabled[/COLOR]'.format(CONFIG.COLOR1,
+                                                                                                   CONFIG.COLOR2))
+        log("Debug Logging Set Settings: {0}".format(str(response)))
+
+
+def _dialog_watch():
+    x = 0
+    while not xbmc.getCondVisibility("Window.isVisible(yesnodialog)") and x < 100:
+        x += 1
+        xbmc.sleep(100)
+
+    if xbmc.getCondVisibility("Window.isVisible(yesnodialog)"):
+        xbmc.executebuiltin('SendClick(yesnodialog, 11)')
+        return True
+    else:
+        return False
 
 
 def error_list(file):

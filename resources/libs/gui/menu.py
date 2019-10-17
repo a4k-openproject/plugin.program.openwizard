@@ -590,6 +590,7 @@ def misc_maint_menu():
     directory.add_file('Kodi 17 Fix', 'kodi17fix', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
     directory.add_dir('Network Tools', 'nettools', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
     directory.add_file('Enable Unknown Sources', 'unknownsources', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    directory.add_file('Enable Debug Logging', 'enabledebug', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
     directory.add_file('Reload Skin', 'forceskin', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
     directory.add_file('Reload Profile', 'forceprofile', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
     directory.add_file('Force Close Kodi', 'forceclose', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
