@@ -166,7 +166,7 @@ def installed_build_check():
                               "[COLOR {0}]It looks like the skin settings was not applied to the build.".format(CONFIG.COLOR2),
                               "Sadly no gui fix was attached to the build",
                               "You will need to reinstall the build and make sure to do a force close[/COLOR]")
-            elif tools.check_url(gui):
+            elif tools.check_url(gui_xml):
                 yes = dialog.yesno(CONFIG.ADDONTITLE,
                                        '{0} was not installed correctly!'.format(CONFIG.BUILDNAME),
                                        'It looks like the skin settings was not applied to the build.',
@@ -176,13 +176,13 @@ def installed_build_check():
                     xbmc.executebuiltin("PlayMedia(plugin://{0}/?mode=install&name={1}&url=gui)".format(CONFIG.ADDON_ID, quote_plus(CONFIG.BUILDNAME)))
                     logging.log("[Build Installed Check] Guifix attempting to install")
                 else:
-                    logging.log('[Build Installed Check] Guifix url working but cancelled: {0}'.format(gui), level=xbmc.LOGNOTICE)
+                    logging.log('[Build Installed Check] Guifix url working but cancelled: {0}'.format(gui_xml), level=xbmc.LOGNOTICE)
             else:
                 dialog.ok(CONFIG.ADDONTITLE,
                               "[COLOR {0}]It looks like the skin settings was not applied to the build.".format(CONFIG.COLOR2),
                               "Sadly no gui fix was attatched to the build",
                               "You will need to reinstall the build and make sure to do a force close[/COLOR]")
-                logging.log('[Build Installed Check] Guifix url not working: {0}'.format(gui), level=xbmc.LOGNOTICE)
+                logging.log('[Build Installed Check] Guifix url not working: {0}'.format(gui_xml), level=xbmc.LOGNOTICE)
     else:
         logging.log('[Build Installed Check] Install seems to be completed correctly', level=xbmc.LOGNOTICE)
 
