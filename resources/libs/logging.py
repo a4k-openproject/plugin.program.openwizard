@@ -396,11 +396,11 @@ def swap_debug():
     import threading
 
     new = '"debug.showloginfo"'
-    value = 'true'
     query = '{{"jsonrpc":"2.0", "method":"Settings.GetSettingValue","params":{{"setting":{0}}}, "id":1}}'.format(new)
     response = xbmc.executeJSONRPC(query)
     log("Debug Logging Get Settings: {0}".format(str(response)))
     if 'false' in response:
+        value = 'true'
         threading.Thread(target=_dialog_watch).start()
         xbmc.sleep(200)
         query = '{{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{{"setting":{0},"value":{1}}}, "id":1}}'.format(
@@ -409,6 +409,17 @@ def swap_debug():
         log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            '[COLOR {0}]Debug Logging:[/COLOR] [COLOR {1}]Enabled[/COLOR]'.format(CONFIG.COLOR1,
                                                                                                    CONFIG.COLOR2))
+        log("Debug Logging Set Settings: {0}".format(str(response)))
+    elif 'true' in response:
+        value = 'false'
+        threading.Thread(target=_dialog_watch).start()
+        xbmc.sleep(200)
+        query = '{{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{{"setting":{0},"value":{1}}}, "id":1}}'.format(
+            new, value)
+        response = xbmc.executeJSONRPC(query)
+        log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                   '[COLOR {0}]Debug Logging:[/COLOR] [COLOR {1}]Disabled[/COLOR]'.format(CONFIG.COLOR1,
+                                                                                         CONFIG.COLOR2))
         log("Debug Logging Set Settings: {0}".format(str(response)))
 
 
