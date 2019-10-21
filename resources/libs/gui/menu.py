@@ -500,7 +500,8 @@ def clean_maint_menu():
     directory.add_file('Clear Packages: [COLOR springgreen][B]{0}[/B][/COLOR]'.format(tools.convert_size(sizepack)), 'clearpackages', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
     directory.add_file('Clear Thumbnails: [COLOR springgreen][B]{0}[/B][/COLOR]'.format(tools.convert_size(sizethumb)), 'clearthumb', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
     if os.path.exists(CONFIG.ARCHIVE_CACHE):
-        directory.add_file('Clear Archive_Cache: [COLOR springgreen][B]{0}[/B][/COLOR]'.format(tools.convert_size(archive)), 'cleararchive', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        directory.add_file('Clear Archive_Cache: [COLOR springgreen][B]{0}[/B][/COLOR]'.format(
+            tools.convert_size(archive)), 'cleararchive', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
     directory.add_file('Clear Old Thumbnails', 'oldThumbs', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
     directory.add_file('Clear Crash Logs', 'clearcrash', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
     directory.add_file('Purge Databases', 'purgedb', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
@@ -585,7 +586,8 @@ def misc_maint_menu():
 
     errors = int(logging.error_checking(count=True))
     errorsfound = str(errors) + ' Error(s) Found' if errors > 0 else 'None Found'
-    wizlogsize = ': [COLOR red]Not Found[/COLOR]' if not os.path.exists(CONFIG.WIZLOG) else ": [COLOR springgreen]{0}[/COLOR]".format(tools.convert_size(os.path.getsize(CONFIG.WIZLOG)))
+    wizlogsize = ': [COLOR red]Not Found[/COLOR]' if not os.path.exists(CONFIG.WIZLOG) else ": [COLOR springgreen]{0}[/COLOR]".format(
+        tools.convert_size(os.path.getsize(CONFIG.WIZLOG)))
 
     directory.add_file('Kodi 17 Fix', 'kodi17fix', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
     directory.add_dir('Network Tools', 'nettools', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
@@ -731,12 +733,12 @@ def system_info():
             xbmc.sleep(200)
         data.append(temp)
         x += 1
-    storage_free = data[8] if 'Una' in data[8] else tools.convert_size(int(float(data[8][:-8]))*1024*1024)
-    storage_used = data[9] if 'Una' in data[9] else tools.convert_size(int(float(data[9][:-8]))*1024*1024)
-    storage_total = data[10] if 'Una' in data[10] else tools.convert_size(int(float(data[10][:-8]))*1024*1024)
-    ram_free = tools.convert_size(int(float(data[11][:-2]))*1024*1024)
-    ram_used = tools.convert_size(int(float(data[12][:-2]))*1024*1024)
-    ram_total = tools.convert_size(int(float(data[13][:-2]))*1024*1024)
+    storage_free = data[8] if 'Una' in data[8] else tools.convert_size(int(float(data[8][:-8])) * 1024 * 1024)
+    storage_used = data[9] if 'Una' in data[9] else tools.convert_size(int(float(data[9][:-8])) * 1024 * 1024)
+    storage_total = data[10] if 'Una' in data[10] else tools.convert_size(int(float(data[10][:-8])) * 1024 * 1024)
+    ram_free = tools.convert_size(int(float(data[11][:-2])) * 1024 * 1024)
+    ram_used = tools.convert_size(int(float(data[12][:-2])) * 1024 * 1024)
+    ram_total = tools.convert_size(int(float(data[13][:-2])) * 1024 * 1024)
 
     picture = []
     music = []
