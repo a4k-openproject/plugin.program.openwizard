@@ -36,8 +36,9 @@ except ImportError:
 
 from datetime import datetime
 
-from resources.libs.config import CONFIG
-from resources.libs import logging
+from resources.libs.common.config import CONFIG
+from resources.libs.common import logging
+from resources.libs.common import tools
 
 
 def addon_database(addon=None, state=1, array=False):
@@ -128,7 +129,6 @@ def purge_db_file(name):
 def depends_list(plugin):
     addonxml = os.path.join(CONFIG.ADDONS, plugin, 'addon.xml')
     if os.path.exists(addonxml):
-        from resources.libs import tools
 
         match  = tools.parse_dom(tools.read_from_file(addonxml), 'import', ret='addon')
         items  = []

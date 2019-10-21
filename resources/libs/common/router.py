@@ -8,8 +8,8 @@ try:  # Python 3
 except ImportError:  # Python 2
     from urlparse import parse_qsl
 
-from resources.libs.config import CONFIG
-from resources.libs import logging
+from resources.libs.common.config import CONFIG
+from resources.libs.common import logging
 from resources.libs.gui import menu
 
 
@@ -154,22 +154,22 @@ def dispatch(paramstring):
         from resources.libs import skin
         skin.swap_us()
     elif mode == 'enabledebug':  # Misc Maintenance -> Enable Debug Logging
-        from resources.libs import logging
+        from resources.libs.common import logging
         logging.swap_debug()
     elif mode == 'asciicheck':  # System Tweaks -> Scan for Non-Ascii Files
-        from resources.libs import tools
+        from resources.libs.common import tools
         tools.ascii_check()
     elif mode == 'convertpath':  # System Tweaks -> Convert Special Paths
-        from resources.libs import tools
+        from resources.libs.common import tools
         tools.convert_special(CONFIG.HOME)
     elif mode == 'fixaddonupdate':  # System Tweaks -> Fix Addons not Updating
         from resources.libs import db
         db.fix_update()
     elif mode == 'forceprofile':  # Misc Maintenance -> Reload Profile
-        from resources.libs import tools
+        from resources.libs.common import tools
         tools.reload_profile(tools.get_info_label('System.ProfileName'))
     elif mode == 'forceclose':  # Misc Maintenance -> Force Close Kodi
-        from resources.libs import tools
+        from resources.libs.common import tools
         tools.kill_kodi()
     elif mode == 'forceskin':  # Misc Maintenance -> Reload Skin
         xbmc.executebuiltin("ReloadSkin()")
@@ -240,7 +240,7 @@ def dispatch(paramstring):
         from resources.libs import clear
         clear.remove_addon_data(name)
     elif mode == 'resetaddon':  # Addon Tools -> Remove Addon Data -> Remove  Wizard Addon Data
-        from resources.libs import tools
+        from resources.libs.common import tools
 
         tools.clean_house(CONFIG.ADDON_DATA, ignore=True)
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
@@ -260,7 +260,7 @@ def dispatch(paramstring):
     elif mode == 'viewerrorlast':  # View last error in log
         logging.error_checking(last=True)
     elif mode == 'clearwizlog':  # Clear wizard.log
-        from resources.libs import tools
+        from resources.libs.common import tools
         tools.remove_file(CONFIG.WIZLOG)
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            "[COLOR {0}]Wizard Log Cleared![/COLOR]".format(CONFIG.COLOR2))
@@ -434,5 +434,5 @@ def dispatch(paramstring):
     xbmcplugin.setContent(_handle, 'programs')
     xbmcplugin.endOfDirectory(_handle)
 
-    from resources.libs.gui.menu import directory
+    from resources.libs.gui import directory
     directory.set_view()

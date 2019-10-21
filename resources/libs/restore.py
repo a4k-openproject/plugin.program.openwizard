@@ -30,7 +30,7 @@ except ImportError:  # Python 2
     from urllib import quote_plus
     from resources.libs import zipfile
 
-from resources.libs.config import CONFIG
+from resources.libs.common.config import CONFIG
 
 
 def _local(file, loc):
@@ -71,8 +71,8 @@ def _external(source, loc):
 def _finish(file, loc, zname):
     from resources.libs import db
     from resources.libs import extract
-    from resources.libs import tools
-    
+    from resources.libs.common import tools
+
     dialog = xbmcgui.Dialog()
     progress_dialog = xbmcgui.DialogProgress()
 
@@ -91,7 +91,9 @@ def _finish(file, loc, zname):
                             'Would you like to view the errors?[/COLOR]',
                             nolabel='[B][COLOR red]No Thanks[/COLOR][/B]',
                             yeslabel='[B][COLOR springgreen]View Errors[/COLOR][/B]'):
-            gui.show_text_box("Viewing Errors", error.replace('\t', ''))
+
+            from resources.libs.gui import window
+            window.show_text_box("Viewing Errors", error.replace('\t', ''))
     CONFIG.set_setting('installed', 'true')
     CONFIG.set_setting('extract', str(percent))
     CONFIG.set_setting('errors', str(errors))
@@ -108,14 +110,14 @@ def _finish(file, loc, zname):
 
 class Restore:
     def __init__(self):
-        from resources.libs import tools
+        from resources.libs.common import tools
         tools.ensure_folders()
 
         self.external = False
         self.location = 'Local'
 
     def _choose(self, loc):
-        from resources.libs import logging
+        from resources.libs.common import logging
         from resources.libs import skin
 
         dialog = xbmcgui.Dialog()
@@ -140,7 +142,7 @@ class Restore:
 
             _local(file, loc)
         elif self.external:
-            from resources.libs import tools
+            from resources.libs.common import tools
 
             source = dialog.browse(1,
                                        '[COLOR {0}]Select the backup file you want to restore[/COLOR]'.format(

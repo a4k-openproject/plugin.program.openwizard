@@ -37,11 +37,8 @@ except ImportError:  # Python 2
 
 from resources.libs.config import CONFIG
 from resources.libs import db
-from resources.libs import downloader
-from resources.libs import extract
-from resources.libs import logging
-from resources.libs import tools
-from resources.libs.gui import window
+from resources.libs.common import logging
+from resources.libs.common import tools
 
 
 def cleanup_backup():

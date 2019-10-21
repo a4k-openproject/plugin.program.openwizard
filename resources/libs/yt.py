@@ -57,7 +57,7 @@ try:
 except ImportError:
     import json
 
-from resources.libs.config import CONFIG
+from resources.libs.common.config import CONFIG
 
 dp            =  xbmcgui.DialogProgress()
 MAX_REC_DEPTH = 5
@@ -572,7 +572,7 @@ def play_video(url):
         elif len(a[-2]) > 5:
             url = a[-2]
 
-    from resources.libs import logging
+    from resources.libs.common import logging
     logging.log("YouTube URL: {0}".format(url))
 
     if xbmc.getCondVisibility('System.HasAddon(plugin.video.youtube)') == 1:
@@ -584,8 +584,9 @@ def play_video(url):
 
 
 def build_video(name):
-    from resources.libs import logging
-    from resources.libs import tools
+    from resources.libs import check
+    from resources.libs.common import logging
+    from resources.libs.common import tools
 
     if tools.check_url(CONFIG.BUILDFILE):
         videofile = check.check_build(name, 'preview')

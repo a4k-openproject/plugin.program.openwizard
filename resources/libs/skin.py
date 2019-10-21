@@ -27,7 +27,7 @@ try:
 except ImportError:
     import simplejson
 
-from resources.libs.config import CONFIG
+from resources.libs.common.config import CONFIG
 
 DEFAULT_SKINS = ['skin.estuary', 'skin.estouchy']
 
@@ -68,8 +68,8 @@ def _swap_skins(skin):
 
 
 def switch_to_skin(goto, title="Error"):
-    from resources.libs import logging
-    
+    from resources.libs.common import logging
+
     result = _swap_skins(goto)
 
     if result:
@@ -87,14 +87,14 @@ def skin_to_default(title):
         skin = 'skin.estuary'
         return switch_to_skin(skin, title)
     else:
-        from resources.libs import logging
+        from resources.libs.common import logging
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            '[COLOR {0}]{1}: Skipping Skin Swap[/COLOR]'.format(CONFIG.COLOR2, title))
         return False
 
 
 def look_and_feel_data(do='save'):
-    from resources.libs import logging
+    from resources.libs.common import logging
 
     scan = ['lookandfeel.enablerssfeeds', 'lookandfeel.font', 'lookandfeel.rssedit', 'lookandfeel.skincolors',
             'lookandfeel.skintheme', 'lookandfeel.skinzoom', 'lookandfeel.soundskin', 'lookandfeel.startupwindow',
@@ -117,7 +117,7 @@ def look_and_feel_data(do='save'):
 
 
 def swap_us():
-    from resources.libs import logging
+    from resources.libs.common import logging
 
     new = '"addons.unknownsources"'
     query = '{{"jsonrpc":"2.0", "method":"Settings.GetSettingValue","params":{{"setting":{0}}}, "id":1}}'.format(new)

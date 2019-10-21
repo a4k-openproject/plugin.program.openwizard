@@ -21,7 +21,7 @@ import xbmcgui
 
 import os
 
-from resources.libs.config import CONFIG
+from resources.libs.common.config import CONFIG
 
 
 def generate_code(url, filename):
@@ -36,9 +36,9 @@ def generate_code(url, filename):
 
 
 def create_code():
-    from resources.libs import logging
-    from resources.libs import tools
-    
+    from resources.libs.common import logging
+    from resources.libs.common import tools
+
     dialog = xbmcgui.Dialog()
 
     url = tools.get_keyboard('', "{0}: Insert the URL for the QR Code.".format(CONFIG.ADDONTITLE))

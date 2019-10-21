@@ -26,8 +26,8 @@ try:  # Python 3
 except ImportError:  # Python 2
     from resources.libs import zipfile
 
-from resources.libs.config import CONFIG
-from resources.libs import logging
+from resources.libs.common.config import CONFIG
+from resources.libs.common import logging, tools
 
 
 def all(_in, _out, ignore=None, title=None):
@@ -38,7 +38,6 @@ def all(_in, _out, ignore=None, title=None):
 
 
 def all_with_progress(_in, _out, dp, ignore, title):
-    from resources.libs import tools
     from resources.libs import whitelist
 
     count = 0

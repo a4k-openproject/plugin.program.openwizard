@@ -24,7 +24,7 @@ import xbmcvfs
 import os
 import re
 
-from resources.libs.config import CONFIG
+from resources.libs.common.config import CONFIG
 
 try:  # Python 3
     from urllib.parse import urlencode
@@ -41,7 +41,7 @@ REPLACES = (('//.+?:.+?@', '//USER:PASSWORD@'), ('<user>.+?</user>', '<user>USER
 
 
 def log(msg, level=xbmc.LOGDEBUG):
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     if not os.path.exists(CONFIG.PLUGIN_DATA):
         os.makedirs(CONFIG.PLUGIN_DATA)
@@ -77,7 +77,7 @@ def log(msg, level=xbmc.LOGDEBUG):
 
 
 def check_log():
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     next = tools.get_date(days=1)
     lines = tools.read_from_file(CONFIG.WIZLOG).split('\n')
@@ -112,7 +112,7 @@ def log_notify(title, message, times=2000, icon=CONFIG.ADDON_ICON, sound=False):
 
 
 def grab_log(file=False, old=False, wizard=False):
-    from resources.libs import tools
+    from resources.libs.common import tools
     if wizard:
         if not os.path.exists(CONFIG.WIZLOG):
             return False
@@ -208,7 +208,7 @@ def get_files():
         else:
             show_result("No wizard log file found")
     if CONFIG.KEEPCRASHLOG:
-        from resources.libs import tools
+        from resources.libs.common import tools
         crashlog_path = ''
         items = []
         if xbmc.getCondVisibility('system.platform.osx'):
@@ -282,7 +282,7 @@ def post_log(data, name):
 
 # CURRENTLY NOT IN USE
 def copy_to_clipboard(txt):
-    from resources.libs import tools
+    from resources.libs.common import tools
     import subprocess
 
     platform = tools.platform()
@@ -437,7 +437,7 @@ def _dialog_watch():
 
 
 def error_list(file):
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     errors = []
     b = tools.read_from_file(file).replace('\n', '[CR]').replace('\r', '')

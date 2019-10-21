@@ -28,13 +28,11 @@ try:  # Python 3
 except ImportError:  # Python 2
     from resources.libs import zipfile
 
-from resources.libs.config import CONFIG
-from resources.libs import logging
+from resources.libs.common.config import CONFIG
+from resources.libs.common import logging, tools
 
 
 def import_save_data():
-    from resources.libs import tools
-
     dialog = xbmcgui.Dialog()
 
     TEMP = os.path.join(CONFIG.ADDON_DATA, 'temp')

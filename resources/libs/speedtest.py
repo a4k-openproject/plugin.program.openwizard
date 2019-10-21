@@ -53,8 +53,8 @@ except ImportError:
     from httplib import HTTPSConnection
     from Queue import Queue
 
-from resources.libs.config import CONFIG
-from resources.libs import logging
+from resources.libs.common.config import CONFIG
+from resources.libs.common import logging, tools
 
 __version__ = '0.3.5'
 user_agent = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36 SE 2.X MetaSr 1.0'
@@ -530,7 +530,6 @@ def speedtest(list=False, mini=None, server=None, share=True, simple=False, src=
 def net_info():
     import json
     from resources.libs import logging
-    from resources.libs import tools
 
     infoLabel = ['Network.IPAddress',
                  'Network.MacAddress']

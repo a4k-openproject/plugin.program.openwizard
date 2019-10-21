@@ -34,9 +34,9 @@ from resources.libs.config import CONFIG
 
 def wipe():
     from resources.libs import db
-    from resources.libs import logging
+    from resources.libs.common import logging
     from resources.libs import skin
-    from resources.libs import tools
+    from resources.libs.common import tools
     from resources.libs import update
 
     exclude_dirs = CONFIG.EXCLUDES
@@ -148,9 +148,9 @@ def wipe():
 
 
 def fresh_start(install=None, over=False):
-    from resources.libs import logging
-    from resources.libs import tools
-    
+    from resources.libs.common import logging
+    from resources.libs.common import tools
+
     dialog = xbmcgui.Dialog()
     
     if CONFIG.KEEPTRAKT == 'true':
@@ -218,8 +218,8 @@ def install_addon_pack(name, url):
     from resources.libs import downloader
     from resources.libs import db
     from resources.libs import extract
-    from resources.libs import logging
-    from resources.libs import tools
+    from resources.libs.common import logging
+    from resources.libs.common import tools
 
     progress_dialog = xbmcgui.DialogProgress()
     
@@ -257,9 +257,9 @@ def install_skin(name, url):
     from resources.libs import downloader
     from resources.libs import db
     from resources.libs import extract
-    from resources.libs import logging
+    from resources.libs.common import logging
     from resources.libs import skin
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     progress_dialog = xbmcgui.DialogProgress()
     
@@ -302,9 +302,9 @@ def install_addon_from_url(name, url):
     from resources.libs import downloader
     from resources.libs import db
     from resources.libs import extract
-    from resources.libs import logging
+    from resources.libs.common import logging
     from resources.libs import skin
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     progress_dialog = xbmcgui.DialogProgress()
     
@@ -348,7 +348,7 @@ def install_addon_from_url(name, url):
 
 
 def install_addon(plugin, url):
-    from resources.libs import logging
+    from resources.libs.common import logging
 
     if not CONFIG.ADDONFILE == 'http://':
         from resources.libs import clear
@@ -356,7 +356,7 @@ def install_addon(plugin, url):
         from resources.libs import db
         from resources.libs import extract
         from resources.libs import skin
-        from resources.libs import tools
+        from resources.libs.common import tools
 
         dialog = xbmcgui.Dialog()
         
@@ -469,7 +469,7 @@ def install_from_kodi(plugin, over=True):
 
 def install_dependency(name):
     from resources.libs import db
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     progress_dialog = xbmcgui.DialogProgress()
     
@@ -492,8 +492,8 @@ def installed(addon):
     url = os.path.join(CONFIG.ADDONS, addon, 'addon.xml')
     if os.path.exists(url):
         try:
-            from resources.libs import logging
-            from resources.libs import tools
+            from resources.libs.common import logging
+            from resources.libs.common import tools
 
             name = tools.parse_dom(tools.read_from_file(url), 'addon', ret='name', attrs={'id': addon})
             icon = os.path.join(CONFIG.ADDONS, addon, 'icon.png')  # read from infolabel?
@@ -505,8 +505,8 @@ def installed(addon):
 
 def install_apk(apk, url):
     from resources.libs import downloader
-    from resources.libs import logging
-    from resources.libs import tools
+    from resources.libs.common import logging
+    from resources.libs.common import tools
     from resources.libs.gui import window
 
     dialog = xbmcgui.Dialog()

@@ -30,14 +30,13 @@ try:  # Python 3
 except ImportError:  # Python 2
     from urllib import quote_plus
 
-from resources.libs.config import CONFIG
+from resources.libs.common.config import CONFIG
 from resources.libs import clear
 from resources.libs import check
 from resources.libs import db
 from resources.libs.gui import window
-from resources.libs import logging
+from resources.libs.common import logging, tools
 from resources.libs import skin
-from resources.libs import tools
 from resources.libs import update
 
 

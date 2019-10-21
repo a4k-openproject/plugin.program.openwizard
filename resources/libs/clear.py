@@ -29,9 +29,9 @@ from datetime import timedelta
 
 import sqlite3 as database
 
-from resources.libs.config import CONFIG
-from resources.libs import logging
-from resources.libs import tools
+from resources.libs.common.config import CONFIG
+from resources.libs.common import logging
+from resources.libs.common import tools
 
 
 def get_cache_size():
