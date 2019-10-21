@@ -58,7 +58,7 @@ except ImportError:  # Python 2
     from urlparse import urlparse
     import HTMLParser
 
-from resources.libs.config import CONFIG
+from resources.libs.common.config import CONFIG
 
 
 #########################
@@ -80,7 +80,7 @@ def write_to_file(file, content, mode='w'):
 
 
 def remove_folder(path):
-    from resources.libs import logging
+    from resources.libs.common import logging
 
     logging.log("Deleting Folder: {0}".format(path), level=xbmc.LOGNOTICE)
     try:
@@ -90,7 +90,7 @@ def remove_folder(path):
 
 
 def remove_file(path):
-    from resources.libs import logging
+    from resources.libs.common import logging
 
     logging.log("Deleting File: {0}".format(path), level=xbmc.LOGNOTICE)
     try:
@@ -109,13 +109,13 @@ def empty_folder(folder):
             shutil.rmtree(os.path.join(root))
             total += 1
 
-            from resources.libs import logging
+            from resources.libs.common import logging
             logging.log("Empty Folder: {0}".format(root), level=xbmc.LOGNOTICE)
     return total
 
 
 def clean_house(folder, ignore=False):
-    from resources.libs import logging
+    from resources.libs.common import logging
 
     logging.log(folder)
     total_files = 0
@@ -391,7 +391,7 @@ def kill_kodi(over=None):
                                   nolabel='[B][COLOR red] No Cancel[/COLOR][/B]',
                                   yeslabel='[B][COLOR springgreen]Force Close Kodi[/COLOR][/B]')
     if choice == 1:
-        from resources.libs import logging
+        from resources.libs.common import logging
         logging.log("Force Closing Kodi: Platform[{0}]".format(str(platform())), level=xbmc.LOGNOTICE)
         os._exit(1)
 
@@ -409,8 +409,7 @@ def chunks(s, n):
 
 
 def convert_special(url, over=False):
-    from resources.libs import logging
-    from resources.libs.gui import window
+    from resources.libs.common import logging
 
     progress_dialog = xbmcgui.DialogProgress()
     
@@ -462,10 +461,9 @@ def redo_thumbs():
 
 def reload_fix(default=None):
     from resources.libs import db
-    from resources.libs import logging
+    from resources.libs.common import logging
     from resources.libs import skin
     from resources.libs import update
-    from resources.libs.gui import window
 
     dialog = xbmcgui.Dialog()
     
@@ -506,7 +504,7 @@ def replace_html_codes(txt):
 
 
 def ascii_check(use=None, over=False):
-    from resources.libs import logging
+    from resources.libs.common import logging
     from resources.libs.gui import window
     
     dialog = xbmcgui.Dialog()
@@ -666,8 +664,8 @@ def get_info_label(label):
 
 def check_url(url):
     import requests
-    from resources.libs import logging
-    
+    from resources.libs.common import logging
+
     if _is_url(url):
         try:
             response = requests.head(url, headers={'user-agent': CONFIG.USER_AGENT}, allow_redirects=True)

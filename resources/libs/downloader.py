@@ -28,7 +28,7 @@ try:  # Python 3
 except ImportError:  # Python 2
     from urllib import urlretrieve
 
-from resources.libs.config import CONFIG
+from resources.libs.common.config import CONFIG
 
 
 def download(url, dest):
@@ -40,7 +40,7 @@ def download(url, dest):
 
 
 def _pbhook(numblocks, blocksize, filesize, dp, start_time):
-    from resources.libs import logging
+    from resources.libs.common import logging
 
     try:
         percent = min(numblocks * blocksize * 100 / filesize, 100)

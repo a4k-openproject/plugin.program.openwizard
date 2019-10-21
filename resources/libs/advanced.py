@@ -27,9 +27,9 @@ try:  # Python 3
 except ImportError:  # Python 2
     from urllib import quote_plus
 
-from resources.libs.config import CONFIG
-from resources.libs import logging
-from resources.libs import tools
+from resources.libs.common.config import CONFIG
+from resources.libs.common import logging
+from resources.libs.common import tools
 from resources.libs.gui import window
 
 
@@ -484,8 +484,8 @@ def QautoConfig(msg='', TxtColor='0xFFFFFFFF', Font='font10', BorderWidth=10):
 
 
 def write_advanced(name, url):
-    from resources.libs import tools
-    from resources.libs import logging
+    from resources.libs.common import tools
+    from resources.libs.common import logging
     
     dialog = xbmcgui.Dialog()
 

@@ -32,12 +32,12 @@ except ImportError:
     from urllib2 import urlopen
     from urllib2 import Request
 
-from resources.libs.config import CONFIG
+from resources.libs.common.config import CONFIG
 
 
 def check_paths():
-    from resources.libs import logging
-    
+    from resources.libs.common import logging
+
     dialog = xbmcgui.Dialog()
     
     logging.log("[Path Check] Started", level=xbmc.LOGNOTICE)
@@ -57,7 +57,7 @@ def check_paths():
 
 
 def check_build(name, ret):
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     if not tools.check_url(CONFIG.BUILDFILE):
         return False
@@ -97,7 +97,7 @@ def check_build(name, ret):
 
 
 def check_info(name):
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     if not tools.check_url(name):
         return False
@@ -111,8 +111,8 @@ def check_info(name):
 
 
 def build_info(name):
-    from resources.libs import logging
-    from resources.libs import tools
+    from resources.libs.common import logging
+    from resources.libs.common import tools
     from resources.libs.gui import window
 
     if tools.check_url(CONFIG.BUILDFILE):
@@ -163,7 +163,7 @@ def build_info(name):
 
 
 def check_theme(name, theme, ret):
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     themeurl = check_build(name, 'theme')
     if not tools.check_url(themeurl):
@@ -187,7 +187,7 @@ def check_theme(name, theme, ret):
 
 
 def check_wizard(ret):
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     if not tools.check_url(CONFIG.BUILDFILE):
         return False
@@ -206,8 +206,8 @@ def check_wizard(ret):
 
 
 def check_build_update():
-    from resources.libs import logging
-    from resources.libs import tools
+    from resources.libs.common import logging
+    from resources.libs.common import tools
     from resources.libs.gui import window
 
     bf = tools.open_url(CONFIG.BUILDFILE)
@@ -233,8 +233,8 @@ def check_build_update():
 
 
 def check_skin():
-    from resources.libs import logging
-    from resources.libs import tools
+    from resources.libs.common import logging
+    from resources.libs.common import tools
 
     dialog = xbmcgui.Dialog()
     
@@ -313,8 +313,8 @@ def check_skin():
 
 
 def check_sources():
-    from resources.libs import logging
-    from resources.libs import tools
+    from resources.libs.common import logging
+    from resources.libs.common import tools
 
     dialog = xbmcgui.Dialog()
     progress_dialog = xbmcgui.DialogProgress()
@@ -389,8 +389,8 @@ def check_sources():
 
 
 def check_repos():
-    from resources.libs import logging
-    from resources.libs import tools
+    from resources.libs.common import logging
+    from resources.libs.common import tools
 
     progress_dialog = xbmcgui.DialogProgress()
     
@@ -439,7 +439,7 @@ def check_repos():
 
 def build_count():
     from resources.libs import test
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     link = tools.open_url(CONFIG.BUILDFILE).replace('\n', '').replace('\r', '').replace('\t', '')
     match = re.compile('name="(.+?)".+?odi="(.+?)".+?dult="(.+?)"').findall(link)
@@ -471,7 +471,7 @@ def build_count():
 
 
 def theme_count(name, count=True):
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     themefile = check_build(name, 'theme')
     if themefile == 'http://' or not themefile:

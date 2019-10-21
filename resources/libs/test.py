@@ -17,12 +17,14 @@
 #  http://www.gnu.org/copyleft/gpl.html                                        #
 ################################################################################
 
+import xbmc
+
 try:  # Python 3
     import zipfile
 except ImportError:  # Python 2
     from resources.libs import zipfile
 
-from resources.libs.config import CONFIG
+from resources.libs.common.config import CONFIG
 
 
 def str_test(teststr):
@@ -34,7 +36,7 @@ def str_test(teststr):
 
 
 def test_theme(path):
-    from resources.libs import logging
+    from resources.libs.common import logging
 
     zfile = zipfile.ZipFile(path)
     for item in zfile.infolist():
@@ -53,8 +55,8 @@ def test_gui(path):
 
 
 def test_notify():
-    from resources.libs import logging
-    from resources.libs import tools
+    from resources.libs.common import logging
+    from resources.libs.common import tools
     from resources.libs.gui import window
 
     if tools.check_url(CONFIG.NOTIFICATION):

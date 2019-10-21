@@ -28,7 +28,7 @@ try:  # Python 3
 except ImportError:  # Python 2
     from urllib import quote_plus
 
-from resources.libs.config import CONFIG
+from resources.libs.common.config import CONFIG
 
 
 def set_view():

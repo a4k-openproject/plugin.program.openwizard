@@ -34,7 +34,7 @@ except ImportError:  # Python 2
     from urllib import urlretrieve
     from urlparse import urljoin
 
-from resources.libs.config import CONFIG
+from resources.libs.common.config import CONFIG
 from resources.libs.gui import directory
 
 ###########################
@@ -239,8 +239,8 @@ def view_build(name):
 
 # commented lines in this method are for x64 apks
 def apk_scraper():
-    from resources.libs import logging
-    from resources.libs import tools
+    from resources.libs.common import logging
+    from resources.libs.common import tools
 
     kodiurl1 = 'https://mirrors.kodi.tv/releases/android/arm/'
     kodiurl2 = 'https://mirrors.kodi.tv/releases/android/arm/old/'
@@ -335,8 +335,8 @@ def apk_scraper():
 
 
 def apk_menu(url=None):
-    from resources.libs import logging
-    from resources.libs import tools
+    from resources.libs.common import logging
+    from resources.libs.common import tools
 
     if not url:
         directory.add_dir('Official Kodi APK\'s', 'apkscrape', 'kodi', icon=CONFIG.ICONAPK, themeit=CONFIG.THEME1)
@@ -378,8 +378,8 @@ def apk_menu(url=None):
 
 
 def addon_menu(url=None):
-    from resources.libs import logging
-    from resources.libs import tools
+    from resources.libs.common import logging
+    from resources.libs.common import tools
 
     if not CONFIG.ADDONFILE == 'http://':
         if not url:
@@ -434,8 +434,8 @@ def addon_menu(url=None):
 
 
 def youtube_menu(url=None):
-    from resources.libs import logging
-    from resources.libs import tools
+    from resources.libs.common import logging
+    from resources.libs.common import tools
 
     if not CONFIG.YOUTUBEFILE == 'http://':
         if not url:
@@ -475,7 +475,7 @@ def maint_menu():
     
 def clean_maint_menu():
     from resources.libs import clear
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     on = '[B][COLOR springgreen]ON[/COLOR][/B]'
     off = '[B][COLOR red]OFF[/COLOR][/B]'
@@ -580,8 +580,8 @@ def addon_maint_menu():
     
 
 def misc_maint_menu():
-    from resources.libs import logging
-    from resources.libs import tools
+    from resources.libs.common import logging
+    from resources.libs.common import tools
 
     errors = int(logging.error_checking(count=True))
     errorsfound = str(errors) + ' Error(s) Found' if errors > 0 else 'None Found'
@@ -679,7 +679,7 @@ def speed_test():
 
 
 def clear_speed_test():
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     speedimg = glob.glob(os.path.join(CONFIG.SPEEDTEST, '*.png'))
     for file in speedimg:
@@ -694,7 +694,7 @@ def view_speed_test(img=None):
 
 
 def run_speed_test():
-    from resources.libs import logging
+    from resources.libs.common import logging
     from resources.libs import speedtest
 
     try:
@@ -711,8 +711,8 @@ def run_speed_test():
 
 
 def system_info():
-    from resources.libs import logging
-    from resources.libs import tools
+    from resources.libs.common import logging
+    from resources.libs.common import tools
     from resources.libs import speedtest
 
     infoLabel = ['System.FriendlyName', 'System.BuildVersion', 'System.CpuUsage', 'System.ScreenMode',
@@ -998,7 +998,7 @@ def login_menu():
 
 
 def enable_addons():
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     directory.add_file("[I][B][COLOR red]!!Notice: Disabling Some Addons Can Cause Issues!![/COLOR][/B][/I]", '', icon=CONFIG.ICONMAINT)
     fold = glob.glob(os.path.join(CONFIG.ADDONS, '*/'))
@@ -1038,8 +1038,8 @@ def enable_addons():
 
 
 def advanced_window(url=None):
-    from resources.libs import logging
-    from resources.libs import tools
+    from resources.libs.common import logging
+    from resources.libs.common import tools
 
     if not CONFIG.ADVANCEDFILE == 'http://':
         if url is None:
@@ -1103,8 +1103,9 @@ def remove_addon_data_menu():
 
 
 def change_freq():
-    from resources.libs.gui import window
-    from resources.libs import logging
+    from resources.libs.common import logging
+
+    dialog = xbmcgui.Dialog()
 
     change = dialog.select("[COLOR {0}]How often would you list to Auto Clean on Startup?[/COLOR]".format(CONFIG.COLOR2), CONFIG.CLEANFREQ)
     if not change == -1:
@@ -1131,10 +1132,9 @@ def wizard_menu(name, type, theme=None, over=False):
     from resources.libs import downloader
     from resources.libs import extract
     from resources.libs import install
-    from resources.libs import logging
+    from resources.libs.common import logging
     from resources.libs import skin
-    from resources.libs import test
-    from resources.libs import tools
+    from resources.libs.common import tools
     from resources.libs import update
     from resources.libs.gui import window
    

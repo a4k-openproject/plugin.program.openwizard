@@ -23,14 +23,14 @@ import xbmcgui
 import os
 import re
 
-from resources.libs.config import CONFIG
+from resources.libs.common.config import CONFIG
 
 
 def force_update(silent=False):
     xbmc.executebuiltin('UpdateAddonRepos()')
     xbmc.executebuiltin('UpdateLocalAddons()')
     if not silent:
-        from resources.libs import logging
+        from resources.libs.common import logging
 
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            '[COLOR {0}]Forcing Addon Updates[/COLOR]'.format(CONFIG.COLOR2))
@@ -38,8 +38,9 @@ def force_update(silent=False):
 
 def wizard_update(startup=None):
     from resources.libs import check
-    from resources.libs import logging
-    from resources.libs import tools
+    from resources.libs.common import logging
+    from resources.libs.common import tools
+    from resources.libs.gui import window
 
     dialog = xbmcgui.Dialog()
     progress_dialog = xbmcgui.DialogProgress()
@@ -56,7 +57,7 @@ def wizard_update(startup=None):
                                    nolabel='[B][COLOR red]Remind Me Later[/COLOR][/B]',
                                    yeslabel="[B][COLOR springgreen]Update Wizard[/COLOR][/B]")
             if yes:
-                from resources.libs import tools
+                from resources.libs.common import tools
 
                 logging.log("[Auto Update Wizard] Installing wizard v{0}".format(ver), level=xbmc.LOGNOTICE)
                 progress_dialog.create(CONFIG.ADDONTITLE, '[COLOR {0}]Downloading Update...'.format(CONFIG.COLOR2), '',
@@ -80,7 +81,7 @@ def wizard_update(startup=None):
                                    '[COLOR {0}]Add-on updated[/COLOR]'.format(CONFIG.COLOR2))
                 logging.log("[Auto Update Wizard] Wizard updated to v{0}".format(ver), level=xbmc.LOGNOTICE)
                 tools.remove_file(os.path.join(CONFIG.ADDONDATA, 'settings.xml'))
-                gui.show_save_data_settings()
+                window.show_save_data_settings()
                 if startup:
                     xbmc.executebuiltin('RunScript({0}/startup.py)'.format(CONFIG.PLUGIN))
                 return
