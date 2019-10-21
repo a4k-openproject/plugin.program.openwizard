@@ -357,8 +357,8 @@ def QautoConfig(msg='', TxtColor='0xFFFFFFFF', Font='font10', BorderWidth=10):
             self.Header=xbmcgui.ControlLabel(L, top, W, 30, header, font='font13', textColor=TxtColor, alignment=0x00000002)
             self.addControl(self.Header)
             top += 30+BorderWidth
-            freeMemory = int(float(tools.get_info_label('System.Memory(free)')[:-2])*.33)
-            recMemory = int(float(tools.get_info_label('System.Memory(free)')[:-2])*.23)
+            freeMemory = int(float(tools.get_info_label('System.Memory(free)')[:-2]) * .33)
+            recMemory = int(float(tools.get_info_label('System.Memory(free)')[:-2]) * .23)
             self.videomin = 0
             self.videomax = freeMemory if freeMemory < 2000 else 2000
             self.recommendedVideo = recMemory if recMemory < 500 else 500

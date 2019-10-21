@@ -223,7 +223,8 @@ def save_trakt():
         traktit.auto_update('all')
         CONFIG.set_setting('traktlastsave', str(tools.get_date(days=3)))
     else:
-        logging.log("[Trakt Data] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.TRAKTSAVE, str(tools.get_date())), level=xbmc.LOGNOTICE)
+        logging.log("[Trakt Data] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.TRAKTSAVE, str(
+            tools.get_date())), level=xbmc.LOGNOTICE)
 
 
 def save_debrid():
@@ -233,7 +234,8 @@ def save_debrid():
         debridit.auto_update('all')
         CONFIG.set_setting('debridlastsave', str(tools.get_date(days=3)))
     else:
-        logging.log("[Debrid Data] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.DEBRIDSAVE, str(tools.get_date())), level=xbmc.LOGNOTICE)
+        logging.log("[Debrid Data] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.DEBRIDSAVE, str(
+            tools.get_date())), level=xbmc.LOGNOTICE)
 
 
 def save_login():
@@ -243,7 +245,8 @@ def save_login():
         loginit.auto_update('all')
         CONFIG.set_setting('loginlastsave', str(tools.get_date(days=3)))
     else:
-        logging.log("[Login Info] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.LOGINSAVE, str(tools.get_date())), level=xbmc.LOGNOTICE)
+        logging.log("[Login Info] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.LOGINSAVE, str(
+            tools.get_date())), level=xbmc.LOGNOTICE)
 
 
 def auto_clean():
