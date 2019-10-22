@@ -31,12 +31,14 @@ def dispatch(paramstring):
     params = _log_params(paramstring)
 
     mode = params['mode'] if 'mode' in params else None
+    action = params['action'] if 'action' in params else None
     url = params['url'] if 'url' in params else None
     name = params['name'] if 'name' in params else None
 
     # MAIN MENU
     if mode is None:
-        menu.main_menu()
+        from resources.libs.gui.main_menu import MainMenu
+        MainMenu().get_listing()
 
     # SETTINGS
     elif mode == 'settings':  # Open Aftermath settings
@@ -52,38 +54,46 @@ def dispatch(paramstring):
 
     # MENU SECTIONS
     elif mode == 'builds':  # Builds
-        menu.build_menu()
+        from resources.libs.gui.build_menu import BuildMenu
+        BuildMenu().get_listing()
     elif mode == 'viewbuild':  # Builds -> "Your Build"
-        menu.view_build(name)
+        from resources.libs.gui.build_menu import BuildMenu
+        BuildMenu().view_build(name)
+    elif mode == 'buildinfo':  # Builds -> Build Info
+        from resources.libs.gui.build_menu import BuildMenu
+        BuildMenu().build_info(name)
+    elif mode == 'buildpreview':  # Builds -> Build Preview
+        from resources.libs.gui.build_menu import BuildMenu
+        BuildMenu().build_video(name)
     elif mode == 'theme':  # Builds -> "Your Build" -> "Your Theme"
-        menu.wizard_menu(name, mode, url)
+        from resources.libs.wizard import Wizard
+        Wizard().install(name, mode, url)
     elif mode == 'install':  # Builds -> Fresh Install/Standard Install/Apply guifix
-        menu.wizard_menu(name, url)
+        from resources.libs.wizard import Wizard
+        Wizard().install(name, url)
     elif mode == 'addonpack':  # Install Addon Pack
         from resources.libs import install
         install.install_addon_pack(name, url)
     elif mode == 'skinpack':  # Install Skin Pack
         from resources.libs import install
         install.install_skin(name, url)
-    elif mode == 'buildinfo':  # Builds -> Build Info
-        from resources.libs import check
-        check.build_info(name)
-    elif mode == 'buildpreview':  # Builds -> Build Preview
-        from resources.libs import yt
-        yt.build_video(name)
+
     elif mode == 'maint':  # Maintenance + Maintenance -> any "Tools" section
+        from resources.libs.gui.maintenance_menu import MaintenanceMenu
+
         if name == 'clean':
-            menu.clean_maint_menu()
+            MaintenanceMenu().clean_menu()
         elif name == 'addon':
-            menu.addon_maint_menu()
+            MaintenanceMenu().addon_menu()
         elif name == 'misc':
-            menu.misc_maint_menu()
+            MaintenanceMenu().misc_menu()
         elif name == 'backup':
-            menu.backup_maint_menu()
+            MaintenanceMenu().backup_menu()
         elif name == 'tweaks':
-            menu.tweaks_maint_menu()
+            MaintenanceMenu().tweaks_menu()
         elif name is None:
-            menu.maint_menu()
+            MaintenanceMenu().get_listing()
+
     elif mode == 'advancedsetting':  # Maintenance -> System Tweaks/Fixes -> Advanced Settings
         menu.advanced_window(name)
     elif mode == 'enableaddons':  # Maintenance - > Addon Tools -> Enable/Disable Addons

@@ -580,18 +580,3 @@ def play_video(url):
     xbmc.sleep(2000)
     if xbmc.Player().isPlayingVideo() == 0:
         PlayVideo(url)
-
-
-def build_video(name):
-    from resources.libs import check
-    from resources.libs.common import logging
-    from resources.libs.common import tools
-
-    if tools.check_url(CONFIG.BUILDFILE):
-        videofile = check.check_build(name, 'preview')
-        if videofile and not videofile == 'http://':
-            play_video(videofile)
-        else:
-            logging.log("[{0}]Unable to find url for video preview".format(name))
-    else:
-        logging.log("Build text file not working: {0}".format(CONFIG.BUILDFILE))
