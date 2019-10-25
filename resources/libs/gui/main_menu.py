@@ -57,7 +57,7 @@ class MainMenu:
             directory.add_dir(build, {'mode': 'viewbuild'}, CONFIG.BUILDNAME, themeit=CONFIG.THEME4)
 
             from resources.libs.gui.build_menu import BuildMenu
-            themefile = BuildMenu.theme_count(CONFIG.BUILDNAME)
+            themefile = BuildMenu().theme_count(CONFIG.BUILDNAME)
             if themefile:
                 directory.add_file('None' if CONFIG.BUILDTHEME == "" else CONFIG.BUILDTHEME, {'mode': 'theme', 'name': CONFIG.BUILDNAME},
                                    themeit=CONFIG.THEME5)
