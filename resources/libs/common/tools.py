@@ -188,6 +188,31 @@ def file_count(home, excludes=True):
         for file in files:
             item.append(file)
     return len(item)
+    
+
+def ensure_folders(folder=None):
+    import xbmcvfs
+
+    name = ''
+    folders = [CONFIG.BACKUPLOCATION, CONFIG.MYBUILDS, CONFIG.USERDATA, CONFIG.ADDON_DATA, CONFIG.PACKAGES]
+
+    try:
+        if folder is not None and not os.path.exists(folder):
+            name = folder
+            xbmcvfs.mkdirs(folder)
+            return
+
+        for f in folders:
+            if not os.path.exists(f):
+                name = f
+                xbmcvfs.mkdirs(f)
+
+    except Exception as e:
+        dialog = xbmcgui.Dialog()
+
+        dialog.ok(CONFIG.ADDONTITLE,
+                      "[COLOR {0}]Error creating add-on directories:[/COLOR]".format(CONFIG.COLOR2),
+                      "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name))
 
 #########################
 #  Utility Functions    #
@@ -606,29 +631,14 @@ def ascii_check(use=None, over=False):
                            "[COLOR {0}]ASCII Check: None Found.[/COLOR]".format(CONFIG.COLOR2))
 
 
-def ensure_folders(folder=None):
-    import xbmcvfs
-
-    name = ''
-    folders = [CONFIG.BACKUPLOCATION, CONFIG.MYBUILDS, CONFIG.USERDATA, CONFIG.ADDON_DATA, CONFIG.PACKAGES]
-
-    try:
-        if folder is not None and not os.path.exists(folder):
-            name = folder
-            xbmcvfs.mkdirs(folder)
-            return
-
-        for f in folders:
-            if not os.path.exists(f):
-                name = f
-                xbmcvfs.mkdirs(f)
-
-    except Exception as e:
-        dialog = xbmcgui.Dialog()
-
-        dialog.ok(CONFIG.ADDONTITLE,
-                      "[COLOR {0}]Error creating add-on directories:[/COLOR]".format(CONFIG.COLOR2),
-                      "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name))
+def clean_text(text):
+    return text.replace('\n', '')\
+                .replace('\r', '')\
+                .replace('\t', '')\
+                .replace('gui=""', 'gui="http://"')\
+                .replace('theme=""', 'theme="http://"')\
+                .replace('adult=""', 'adult="no"')
+                
 
 
 #########################

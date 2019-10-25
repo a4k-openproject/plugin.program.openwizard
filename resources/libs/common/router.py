@@ -66,7 +66,7 @@ def dispatch(paramstring):
         BuildMenu().build_video(name)
     elif mode == 'theme':  # Builds -> "Your Build" -> "Your Theme"
         from resources.libs.wizard import Wizard
-        Wizard().install(name, mode, url)
+        Wizard().install(mode, name, url, True)
     elif mode == 'install':  # Builds -> Fresh Install/Standard Install/Apply guifix
         from resources.libs.wizard import Wizard
         Wizard().install(name, url)

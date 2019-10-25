@@ -148,9 +148,9 @@ class Wizard:
                 self.dialogProgress.close()
 
                 from resources.libs.gui.build_menu import BuildMenu
-                themefile = BuildMenu.theme_count(name)
+                themecount = BuildMenu().theme_count(name)
 
-                if themefile:
+                if themecount > 0:
                     self.install(name, 'theme')
 
                 db.addon_database(CONFIG.ADDON_ID, 1)
@@ -221,7 +221,7 @@ class Wizard:
 
             if tools.check_url(themefile):
                 from resources.libs.gui.build_menu import BuildMenu
-                themes = BuildMenu.theme_count(name, False)
+                themes = BuildMenu().theme_count(name, False)
                 if len(themes) > 0:
                     if self.dialog.yesno(CONFIG.ADDONTITLE,
                                     "[COLOR {0}]The Build [COLOR {1}]{2}[/COLOR] comes with [COLOR {3}]{4}[/COLOR] different themes".format(
@@ -255,6 +255,7 @@ class Wizard:
                                                                                                             'version')),
                                         yeslabel="[B][COLOR springgreen]Install Theme[/COLOR][/B]",
                                         nolabel="[B][COLOR red]Cancel Themes[/COLOR][/B]")
+                                        
         if installtheme:
             themezip = check.check_theme(name, theme, 'url')
             zipname = name.replace('\\', '').replace('/', '').replace(':', '').replace('*', '').replace('?', '').replace('"', '').replace('<', '').replace('>', '').replace('|', '')
@@ -275,15 +276,15 @@ class Wizard:
             xbmc.sleep(500)
             self.dialogProgress.update(0, "", "Installing {0}".format(name))
 
-            test = False
+            test1 = False
             test2 = False
             if type not in ["fresh", "normal"]:
                 from resources.libs import skin
                 from resources.libs import test
-                test = test.test_theme(lib) if CONFIG.SKIN not in skin.DEFAULT_SKINS else False
+                test1 = test.test_theme(lib) if CONFIG.SKIN not in skin.DEFAULT_SKINS else False
                 test2 = test.test_gui(lib) if CONFIG.SKIN not in skin.DEFAULT_SKINS else False
 
-                if test:
+                if test1:
                     skin.look_and_feel_data('save')
                     swap = skin.skin_to_default('Theme Install')
 
@@ -314,7 +315,7 @@ class Wizard:
                     gotoskin = CONFIG.get_setting('defaultskin')
                     skin.switch_to_skin(gotoskin, "Theme Installer")
                     skin.look_and_feel_data('restore')
-                elif test:
+                elif test1:
                     skin.look_and_feel_data('save')
                     skin.skin_to_default("Theme Install")
                     gotoskin = CONFIG.get_setting('defaultskin')
@@ -328,17 +329,11 @@ class Wizard:
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                '[COLOR {0}]Theme Install: Cancelled![/COLOR]'.format(CONFIG.COLOR2))
 
-    def install(self, name, type, theme=None, over=False):
-        self.over = over
-
+    def install(self, type, name, theme=None, over=False):
         tools.ensure_folders(CONFIG.PACKAGES)
 
-        buildurl = check.check_build(name, 'url')
-        if not tools.check_url(buildurl):
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
-                               "[COLOR {0}]Build URL Error: {1}[/COLOR]".format(CONFIG.COLOR2, buildurl))
-            return
-
+        self.over = over
+        
         if type in ['fresh', 'normal']:
             self._install(name, type)
         elif type == 'gui':

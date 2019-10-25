@@ -33,15 +33,9 @@ from resources.libs.gui import directory
 class BuildMenu:
 
     def __init__(self):
-        self.bf = tools.open_url(CONFIG.BUILDFILE)
-
-        if self.bf:
-            self.link = self.bf.replace('\n', '')\
-                .replace('\r', '')\
-                .replace('\t', '')\
-                .replace('gui=""', 'gui="http://"')\
-                .replace('theme=""', 'theme="http://"')\
-                .replace('adult=""', 'adult="no"')
+        if tools.check_url(CONFIG.BUILDFILE):
+            self.bf = tools.open_url(CONFIG.BUILDFILE)
+            self.link = tools.clean_text(self.bf)
 
             self.match = re.compile('name="(.+?)".+?ersion="(.+?)".+?rl="(.+?)".+?ui="(.+?)".+?odi="(.+?)".+?heme="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"').findall(self.link)
 
@@ -58,7 +52,7 @@ class BuildMenu:
                 menu = self.create_install_menu(name)
                 directory.add_dir('[{0}] {1} (v{2})'.format(float(kodi), name, version), {'mode': 'viewbuild', 'name': name}, description=description, fanart=fanart, icon=icon, menu=menu, themeit=CONFIG.THEME2)
 
-    def theme_count(name, count=True):
+    def theme_count(self, name, count=True):
         from resources.libs import check
         from resources.libs.common import tools
 
@@ -67,17 +61,17 @@ class BuildMenu:
         if not tools.check_url(themefile):
             return False
 
-        link = tools.open_url(themefile).replace('\n', '').replace('\r', '').replace('\t', '')
-        match = re.compile('name="(.+?)".+?dult="(.+?)"').findall(link)
+        themetext = tools.open_url(themefile)
+        link = tools.clean_text(themetext)
+        match = re.compile('name="(.+?)"').findall(link)
 
         if len(match) == 0:
             return False
 
         themes = []
-        for item, adult in match:
-            if not CONFIG.SHOWADULT == 'true' and adult.lower() == 'yes':
-                continue
+        for item in match:
             themes.append(item)
+            
         if len(themes) > 0:
             if count:
                 return len(themes)
@@ -165,55 +159,62 @@ class BuildMenu:
         match = re.compile(
             'name="%s".+?ersion="(.+?)".+?rl="(.+?)".+?ui="(.+?)".+?odi="(.+?)".+?heme="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?review="(.+?)".+?dult="(.+?)".+?nfo="(.+?)".+?escription="(.+?)"' % name).findall(
             self.link)
+            
         for version, url, gui, kodi, themefile, icon, fanart, preview, adult, info, description in match:
-            icon = icon
-            fanart = fanart
             build = '{0} (v{1})'.format(name, version)
-            if CONFIG.BUILDNAME == name and version > CONFIG.BUILDVERSION:
+            
+            updatecheck = CONFIG.BUILDNAME == name and version > CONFIG.BUILDVERSION
+            versioncheck = True if float(CONFIG.KODIV) == float(kodi) else False
+            previewcheck = tools.check_url(preview)
+            guicheck =  tools.check_url(gui)
+            themecheck = tools.check_url(themefile)
+            
+            if updatecheck:
                 build = '{0} [COLOR red][CURRENT v{1}][/COLOR]'.format(build, CONFIG.BUILDVERSION)
+                
             directory.add_file(build, description=description, fanart=fanart, icon=icon, themeit=CONFIG.THEME4)
             directory.add_separator()
             directory.add_dir('Save Data Menu', {'mode': 'savedata'}, icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME3)
             directory.add_file('Build Information', {'mode': 'buildinfo', 'name': name}, description=description, fanart=fanart,
                                icon=icon, themeit=CONFIG.THEME3)
-            if not preview == "http://":
+                               
+            if previewcheck:
                 directory.add_file('View Video Preview', {'mode': 'buildpreview', 'name': name}, description=description, fanart=fanart,
                                    icon=icon, themeit=CONFIG.THEME3)
-            temp1 = int(float(CONFIG.KODIV))
-            temp2 = int(float(kodi))
-            if not temp1 == temp2:
-                warning = True
-            else:
-                warning = False
-            if warning:
+            
+            if versioncheck:
                 directory.add_file(
-                    '[I]Build designed for Kodi v{0} (installed: v{1})[/I]'.format(str(kodi), str(CONFIG.KODIV)), '',
+                    '[I]Build designed for Kodi v{0} (installed: v{1})[/I]'.format(str(kodi), str(CONFIG.KODIV)),
                     fanart=fanart, icon=icon, themeit=CONFIG.THEME3)
+                    
             directory.add_separator('INSTALL')
             directory.add_file('Fresh Install', {'mode': 'install', 'name': name, 'url': 'fresh'}, description=description, fanart=fanart,
                                icon=icon, themeit=CONFIG.THEME1)
             directory.add_file('Standard Install', {'mode': 'install', 'name': name, 'url': 'normal'}, description=description, fanart=fanart,
                                icon=icon, themeit=CONFIG.THEME1)
-            if not gui == 'http://':
+                               
+            if guicheck:
                 directory.add_file('Apply guiFix', {'mode': 'install', 'name': name, 'url': 'gui'}, description=description, fanart=fanart,
                                    icon=icon, themeit=CONFIG.THEME1)
-            if not themefile == 'http://':
-                themecheck = tools.open_url(themefile)
-                if themecheck:
-                    directory.add_separator('THEMES', fanart=fanart, icon=icon)
-                    link = themecheck.replace('\n', '').replace('\r', '').replace('\t', '')
-                    match = re.compile(
-                        'name="(.+?)".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"').findall(
-                        link)
-                    for themename, themeurl, themeicon, themefanart, themeadult, description in match:
-                        if CONFIG.SHOWADULT != 'true' and themeadult.lower() == 'yes':
-                            continue
-                        themeicon = themeicon if themeicon == 'http://' else icon
-                        themefanart = themefanart if themefanart == 'http://' else fanart
-                        directory.add_file(
-                            themename if not themename == CONFIG.BUILDTHEME else "[B]{0} (Installed)[/B]".format(
-                                themename), {'mode': 'theme', 'name': name, 'url': themename}, description=description, fanart=themefanart,
-                            icon=themeicon, themeit=CONFIG.THEME3)
+                                   
+            if themecheck:
+                directory.add_separator('THEMES', fanart=fanart, icon=icon)
+                
+                theme = tools.open_url(themefile)
+                link = tools.clean_text(theme)
+                match = re.compile('name="(.+?)".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"').findall(link)
+                for themename, themeurl, themeicon, themefanart, themeadult, description in match:
+                    adultcheck = CONFIG.SHOWADULT != 'true' and themeadult.lower() == 'yes'
+                    
+                    if adultcheck:
+                        continue
+                        
+                    themetitle = themename if not themename == CONFIG.BUILDTHEME else "[B]{0} (Installed)[/B]".format(themename)
+                    themeicon = themeicon if tools.check_url(themeicon) else icon
+                    themefanart = themefanart if tools.check_url(themefanart) else fanart
+                    
+                    directory.add_file(themetitle, {'mode': 'theme', 'name': name, 'url': themename}, description=description, fanart=themefanart,
+                        icon=themeicon, themeit=CONFIG.THEME3)
 
     def build_info(self, name):
         from resources.libs import check
@@ -235,10 +236,7 @@ class BuildMenu:
                 else:
                     extend = False
 
-                if tools.check_url(theme):
-                    themes = self.theme_count(name, count=False)
-                else:
-                    themes = False
+                themes = self.theme_count(name, count=False)
 
                 msg = "[COLOR {0}]Build Name:[/COLOR] [COLOR {1}]{2}[/COLOR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, name)
                 msg += "[COLOR {0}]Build Version:[/COLOR] [COLOR {1}]{2}[/COLOR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, version)
@@ -271,7 +269,7 @@ class BuildMenu:
         from resources.libs import yt
         from resources.libs.common import logging
         from resources.libs.common import tools
-
+        
         if tools.check_url(CONFIG.BUILDFILE):
             videofile = check.check_build(name, 'preview')
             if tools.check_url(videofile):
