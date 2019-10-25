@@ -1,3 +1,22 @@
+################################################################################
+#      Copyright (C) 2019 drinfernoo                                           #
+#                                                                              #
+#  This Program is free software; you can redistribute it and/or modify        #
+#  it under the terms of the GNU General Public License as published by        #
+#  the Free Software Foundation; either version 2, or (at your option)         #
+#  any later version.                                                          #
+#                                                                              #
+#  This Program is distributed in the hope that it will be useful,             #
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                #
+#  GNU General Public License for more details.                                #
+#                                                                              #
+#  You should have received a copy of the GNU General Public License           #
+#  along with XBMC; see the file COPYING.  If not, write to                    #
+#  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.       #
+#  http://www.gnu.org/copyleft/gpl.html                                        #
+################################################################################
+
 import xbmc
 import xbmcgui
 
@@ -9,7 +28,7 @@ try:  # Python 3
 except ImportError:  # Python 3
     from urllib import quote_plus
 
-from resources.libs.config import CONFIG
+from resources.libs.common.config import CONFIG
 
 
 ACTION_PREVIOUS_MENU = 10  # ESC action
@@ -57,7 +76,7 @@ def get_artwork(file):
 
 
 def while_window(window, active=False, count=0, counter=15):
-    from resources.libs import logging
+    from resources.libs.common import logging
 
     windowopen = xbmc.getCondVisibility('Window.IsActive({0})'.format(window))
     logging.log("{0} is {1}".format(window, windowopen))
@@ -312,8 +331,8 @@ def show_build_prompt():
             self.setFocusId(self.buildmenu)
 
         def do_build_menu(self):
-            from resources.libs import logging
-            
+            from resources.libs.common import logging
+
             logging.log("[Current Build Check] [User Selected: Open Build Menu] [Next Check: {0}]".format(str(CONFIG.BUILDCHECK)),
                         level=xbmc.LOGNOTICE)
             CONFIG.set_setting('lastbuildcheck', str(CONFIG.BUILDCHECK))
@@ -325,7 +344,7 @@ def show_build_prompt():
             xbmc.executebuiltin('ActivateWindow(Programs, {0}, return)'.format(url))
 
         def do_ignore(self):
-            from resources.libs import logging
+            from resources.libs.common import logging
             logging.log("[Current Build Check] [User Selected: Ignore Build Menu] [Next Check: {0}]".format(str(CONFIG.BUILDCHECK)),
                         level=xbmc.LOGNOTICE)
             CONFIG.set_setting('lastbuildcheck', str(CONFIG.BUILDCHECK))
@@ -374,9 +393,9 @@ def show_update_window(name='Testing Window', current='1.0', new='1.1', icon=CON
             self.setProperty('dialog.imageicon', self.icon)
 
         def do_fresh_install(self):
-            from resources.libs import logging
-            from resources.libs import tools
-            
+            from resources.libs.common import logging
+            from resources.libs.common import tools
+
             logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}] [User Selected: Fresh Install build]".format(CONFIG.BUILDVERSION, CONFIG.BUILDLATEST), level=xbmc.LOGNOTICE)
             logging.log("[Check Updates] [Next Check: {0}]".format(str(tools.get_date(days=CONFIG.UPDATECHECK))), level=xbmc.LOGNOTICE)
             url = 'plugin://{0}/?mode=install&name={1}&url=fresh'.format(CONFIG.ADDON_ID, quote_plus(CONFIG.BUILDNAME))
@@ -384,9 +403,9 @@ def show_update_window(name='Testing Window', current='1.0', new='1.1', icon=CON
             self.close()
 
         def do_normal_install(self):
-            from resources.libs import logging
-            from resources.libs import tools
-            
+            from resources.libs.common import logging
+            from resources.libs.common import tools
+
             logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}] [User Selected: Normal Install build]".format(CONFIG.BUILDVERSION, CONFIG.BUILDLATEST), level=xbmc.LOGNOTICE)
             logging.log("[Check Updates] [Next Check: {0}]".format(str(tools.get_date(days=CONFIG.UPDATECHECK))), level=xbmc.LOGNOTICE)
             url = 'plugin://{0}/?mode=install&name={1}&url=normal'.format(CONFIG.ADDON_ID, quote_plus(CONFIG.BUILDNAME))
@@ -394,9 +413,9 @@ def show_update_window(name='Testing Window', current='1.0', new='1.1', icon=CON
             self.close()
 
         def do_ignore(self):
-            from resources.libs import logging
-            from resources.libs import tools
-            
+            from resources.libs.common import logging
+            from resources.libs.common import tools
+
             logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}] [User Selected: Ignore {2} Days]".format(CONFIG.BUILDVERSION, CONFIG.BUILDLATEST, CONFIG.UPDATECHECK), level=xbmc.LOGNOTICE)
             logging.log("[Check Updates] [Next Check: {0}]".format(str(tools.get_date(days=CONFIG.UPDATECHECK))), level=xbmc.LOGNOTICE)
             self.close()
@@ -420,7 +439,7 @@ def show_update_window(name='Testing Window', current='1.0', new='1.1', icon=CON
 
 
 def split_notify(notify):
-    from resources.libs import tools
+    from resources.libs.common import tools
     link = tools.open_url(notify).replace('\r', '').replace('\t', '').replace('\n', '[CR]')
     if link.find('|||') == -1:
         return False, False
@@ -459,7 +478,7 @@ def show_notification(msg='', test=False):
                 self.getControl(self.titleimage).setImage(CONFIG.HEADERIMAGE)
 
         def do_remind(self):
-            from resources.libs import logging
+            from resources.libs.common import logging
             if not test:
                 CONFIG.set_setting("notedismiss", "false")
             logging.log("[Notification] NotifyID {0} Remind Me Later".format(CONFIG.get_setting('noteid')),
@@ -467,7 +486,7 @@ def show_notification(msg='', test=False):
             self.close()
 
         def do_dismiss(self):
-            from resources.libs import logging
+            from resources.libs.common import logging
             if not test:
                 CONFIG.set_setting("notedismiss", "true")
             logging.log("[Notification] NotifyID {0} Dismissed".format(CONFIG.get_setting('noteid')),
@@ -492,15 +511,15 @@ def show_notification(msg='', test=False):
 
 
 def show_log_viewer(window_title="Viewing Log File", window_msg=None, default=None, ext_buttons=False):
-    from resources.libs import logging
-    
+    from resources.libs.common import logging
+
     class LogViewer(xbmcgui.WindowXMLDialog):
         def __init__(self, *args, **kwargs):
             self.default = kwargs['default']
 
         def onInit(self):
-            from resources.libs import tools
-            
+            from resources.libs.common import tools
+
             self.title = 101
             self.msg = 102
             self.scrollbar = 103

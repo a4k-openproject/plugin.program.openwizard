@@ -57,7 +57,7 @@ try:
 except ImportError:
     import json
 
-from resources.libs.config import CONFIG
+from resources.libs.common.config import CONFIG
 
 dp            =  xbmcgui.DialogProgress()
 MAX_REC_DEPTH = 5
@@ -451,9 +451,8 @@ def DecryptSignatureNew(s, playerUrl):
         playerData = urllib2.urlopen(request).read()
         playerData = playerData.decode('utf-8', 'ignore')
     
-    except Exception, e:
-        #print str(e)
-        print 'Failed to decode playerData'
+    except Exception as e:
+        print('Failed to decode playerData: {0}'.format(str(e)))
         return ''
         
     # get main function name 
@@ -491,8 +490,8 @@ def DecryptSignatureNew(s, playerUrl):
     try:
         algoCodeObj = compile(fullAlgoCode, '', 'exec')
     
-    except:
-        print 'Failed to obtain decryptSignature code'
+    except Exception as e:
+        print('Failed to obtain decryptSignature code: {0}'.format(str(e)))
         return ''
 
     # for security allow only flew python global function in algo code
@@ -505,8 +504,8 @@ def DecryptSignatureNew(s, playerUrl):
     try:
         exec(algoCodeObj, vGlobals, vLocals)
     
-    except:
-        print 'decryptSignature code failed to exceute correctly'
+    except Exception as e:
+        print('decryptSignature code failed to exceute correctly: {0}'.format(str(e)))
         return ''
 
     #print 'Decrypted signature = [%s]' % vLocals['outSignature']
@@ -520,8 +519,8 @@ def _getfullAlgoCode(mainFunName, recDepth=0):
     global allLocalVarNamesTab
     
     if MAX_REC_DEPTH <= recDepth:
-        print '_getfullAlgoCode: Maximum recursion depth exceeded'
-        return 
+        print('_getfullAlgoCode: Maximum recursion depth exceeded')
+        return
 
     funBody = _getLocalFunBody(mainFunName)
     if funBody != '':
@@ -572,7 +571,7 @@ def play_video(url):
         elif len(a[-2]) > 5:
             url = a[-2]
 
-    from resources.libs import logging
+    from resources.libs.common import logging
     logging.log("YouTube URL: {0}".format(url))
 
     if xbmc.getCondVisibility('System.HasAddon(plugin.video.youtube)') == 1:
@@ -581,17 +580,3 @@ def play_video(url):
     xbmc.sleep(2000)
     if xbmc.Player().isPlayingVideo() == 0:
         PlayVideo(url)
-
-
-def build_video(name):
-    from resources.libs import logging
-    from resources.libs import tools
-
-    if tools.check_url(CONFIG.BUILDFILE):
-        videofile = check.check_build(name, 'preview')
-        if videofile and not videofile == 'http://':
-            play_video(videofile)
-        else:
-            logging.log("[{0}]Unable to find url for video preview".format(name))
-    else:
-        logging.log("Build text file not working: {0}".format(CONFIG.BUILDFILE))

@@ -1,5 +1,5 @@
 ################################################################################
-#      Copyright (C) 2015 Surfacingx                                           #
+#      Copyright (C) 2019 drinfernoo                                           #
 #                                                                              #
 #  This Program is free software; you can redistribute it and/or modify        #
 #  it under the terms of the GNU General Public License as published by        #
@@ -35,13 +35,10 @@ except ImportError:  # Python 2
     from urllib import quote_plus
     from resources.libs import zipfile
 
-from resources.libs.config import CONFIG
+from resources.libs.common.config import CONFIG
 from resources.libs import db
-from resources.libs import downloader
-from resources.libs import extract
-from resources.libs import gui
-from resources.libs import logging
-from resources.libs import tools
+from resources.libs.common import logging
+from resources.libs.common import tools
 
 
 def cleanup_backup():
@@ -49,6 +46,8 @@ def cleanup_backup():
     logging.log(folder, level=xbmc.LOGNOTICE)
     list = []
     filelist = []
+
+    dialog = xbmcgui.Dialog()
 
     if len(folder) == 0:
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),

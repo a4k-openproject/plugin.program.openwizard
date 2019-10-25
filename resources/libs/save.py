@@ -1,4 +1,24 @@
+################################################################################
+#      Copyright (C) 2019 drinfernoo                                           #
+#                                                                              #
+#  This Program is free software; you can redistribute it and/or modify        #
+#  it under the terms of the GNU General Public License as published by        #
+#  the Free Software Foundation; either version 2, or (at your option)         #
+#  any later version.                                                          #
+#                                                                              #
+#  This Program is distributed in the hope that it will be useful,             #
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                #
+#  GNU General Public License for more details.                                #
+#                                                                              #
+#  You should have received a copy of the GNU General Public License           #
+#  along with XBMC; see the file COPYING.  If not, write to                    #
+#  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.       #
+#  http://www.gnu.org/copyleft/gpl.html                                        #
+################################################################################
+
 import xbmc
+import xbmcgui
 import xbmcvfs
 
 import os
@@ -8,13 +28,12 @@ try:  # Python 3
 except ImportError:  # Python 2
     from resources.libs import zipfile
 
-from resources.libs.config import CONFIG
-from resources.libs import logging
+from resources.libs.common.config import CONFIG
+from resources.libs.common import logging, tools
 
 
 def import_save_data():
-    from resources.libs import gui
-    from resources.libs import tools
+    dialog = xbmcgui.Dialog()
 
     TEMP = os.path.join(CONFIG.ADDON_DATA, 'temp')
     if not os.path.exists(TEMP):
@@ -163,9 +182,10 @@ def import_save_data():
 
 def export_save_data():
     from resources.libs import debridit
-    from resources.libs import gui
     from resources.libs import loginit
     from resources.libs import traktit
+
+    dialog = xbmcgui.Dialog()
 
     dir = [CONFIG.TRAKTFOLD, CONFIG.DEBRIDFOLD, CONFIG.LOGINFOLD]
     keepx = [CONFIG.KEEPADVANCED, CONFIG.KEEPSOURCES, CONFIG.KEEPFAVS, CONFIG.KEEPPROFILES, CONFIG.KEEPPLAYERCORE]
@@ -175,7 +195,7 @@ def export_save_data():
     source = dialog.browse(3, '[COLOR {0}]Select where you wish to export the SaveData zip?[/COLOR]'.format(CONFIG.COLOR2),
                                'files', '', False, True, CONFIG.HOME)
     source = xbmc.translatePath(source)
-    tempzip = os.path.join(CONFIG.MYBUILDS, 'SaveData.zip')
+    tempzip = os.path.join(source, 'SaveData.zip')
     superfold = os.path.join(CONFIG.ADDON_DATA, 'plugin.program.super.favourites')
     zipf = zipfile.ZipFile(tempzip, mode='w')
     for fold in dir:
@@ -193,11 +213,7 @@ def export_save_data():
         if keepx[CONFIG.XMLS.index(item)] == 'true' and os.path.exists(os.path.join(CONFIG.USERDATA, item)):
             zipf.write(os.path.join(CONFIG.USERDATA, item), os.path.join('xmls', item), zipfile.ZIP_DEFLATED)
     zipf.close()
-    if source != CONFIG.MYBUILDS:
-        try:
-            xbmcvfs.copy(tempzip, os.path.join(source, 'SaveData.zip'))
-        except:
-            pass
+    
     dialog.ok(CONFIG.ADDONTITLE,
                   "[COLOR {0}]Save data has been backed up to:[/COLOR]".format(CONFIG.COLOR2),
                   "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, os.path.join(source, 'SaveData.zip')))

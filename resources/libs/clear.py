@@ -1,3 +1,22 @@
+################################################################################
+#      Copyright (C) 2019 drinfernoo                                           #
+#                                                                              #
+#  This Program is free software; you can redistribute it and/or modify        #
+#  it under the terms of the GNU General Public License as published by        #
+#  the Free Software Foundation; either version 2, or (at your option)         #
+#  any later version.                                                          #
+#                                                                              #
+#  This Program is distributed in the hope that it will be useful,             #
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                #
+#  GNU General Public License for more details.                                #
+#                                                                              #
+#  You should have received a copy of the GNU General Public License           #
+#  along with XBMC; see the file COPYING.  If not, write to                    #
+#  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.       #
+#  http://www.gnu.org/copyleft/gpl.html                                        #
+################################################################################
+
 import xbmc
 import xbmcgui
 
@@ -10,13 +29,13 @@ from datetime import timedelta
 
 import sqlite3 as database
 
-from resources.libs.config import CONFIG
-from resources.libs import logging
-from resources.libs import tools
+from resources.libs.common.config import CONFIG
+from resources.libs.common import logging
+from resources.libs.common import tools
 
 
 def get_cache_size():
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     PROFILEADDONDATA = os.path.join(CONFIG.PROFILE, 'addon_data')
 
@@ -116,7 +135,7 @@ def get_cache_size():
 
 
 def clear_packages(over=None):
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     if os.path.exists(CONFIG.PACKAGES):
         try:
@@ -156,7 +175,7 @@ def clear_packages(over=None):
 
 
 def clear_packages_startup():
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     start = datetime.utcnow() - timedelta(minutes=3)
     file_count = 0
@@ -204,7 +223,7 @@ def clear_archive():
                         nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
                         yeslabel='[B][COLOR springgreen]Yes Clear[/COLOR][/B]'):
         if os.path.exists(CONFIG.ARCHIVE_CACHE):
-            from resources.libs import tools
+            from resources.libs.common import tools
             tools.clean_house(CONFIG.ARCHIVE_CACHE)
 
 
@@ -379,7 +398,7 @@ def clear_cache(over=None):
 
 def old_thumbs():
     from resources.libs import db
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     dbfile = os.path.join(CONFIG.DATABASE, db.latest_db('Textures'))
     use = 30
@@ -544,7 +563,7 @@ def remove_addon(addon, name, over=False):
         folder = os.path.join(CONFIG.ADDONS, addon)
         logging.log("Removing Add-on: {0}".format(addon))
 
-        from resources.libs import tools
+        from resources.libs.common import tools
         tools.clean_house(folder)
         xbmc.sleep(200)
         try:
@@ -624,8 +643,8 @@ def remove_addon_data(addon):
 
 
 def remove_addon_menu():
-    from resources.libs import logging
-    from resources.libs import tools
+    from resources.libs.common import logging
+    from resources.libs.common import tools
     from resources.libs import update
     
     dialog = xbmcgui.Dialog()

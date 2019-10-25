@@ -1,3 +1,22 @@
+################################################################################
+#      Copyright (C) 2019 drinfernoo                                           #
+#                                                                              #
+#  This Program is free software; you can redistribute it and/or modify        #
+#  it under the terms of the GNU General Public License as published by        #
+#  the Free Software Foundation; either version 2, or (at your option)         #
+#  any later version.                                                          #
+#                                                                              #
+#  This Program is distributed in the hope that it will be useful,             #
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                #
+#  GNU General Public License for more details.                                #
+#                                                                              #
+#  You should have received a copy of the GNU General Public License           #
+#  along with XBMC; see the file COPYING.  If not, write to                    #
+#  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.       #
+#  http://www.gnu.org/copyleft/gpl.html                                        #
+################################################################################
+
 import xbmc
 import xbmcgui
 
@@ -13,12 +32,12 @@ except ImportError:
     from urllib2 import urlopen
     from urllib2 import Request
 
-from resources.libs.config import CONFIG
+from resources.libs.common.config import CONFIG
 
 
 def check_paths():
-    from resources.libs import logging
-    
+    from resources.libs.common import logging
+
     dialog = xbmcgui.Dialog()
     
     logging.log("[Path Check] Started", level=xbmc.LOGNOTICE)
@@ -38,7 +57,7 @@ def check_paths():
 
 
 def check_build(name, ret):
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     if not tools.check_url(CONFIG.BUILDFILE):
         return False
@@ -78,7 +97,7 @@ def check_build(name, ret):
 
 
 def check_info(name):
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     if not tools.check_url(name):
         return False
@@ -91,60 +110,8 @@ def check_info(name):
         return False
 
 
-def build_info(name):
-    from resources.libs import gui
-    from resources.libs import logging
-    from resources.libs import tools
-
-    if tools.check_url(CONFIG.BUILDFILE):
-        if check_build(name, 'url'):
-            name, version, url, minor, gui_ignore, kodi, theme, icon, fanart, preview, adult, info, description = check_build(name, 'all')
-            adult = 'Yes' if adult.lower() == 'yes' else 'No'
-            extend = False
-            if not info == "http://":
-                try:
-                    tname, extracted, zipsize, skin, created, programs, video, music, picture, repos, scripts = check_info(info)
-                    extend = True
-                except:
-                    extend = False
-            if extend:
-                msg = "[COLOR {0}]Build Name:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, name)
-                msg += "[COLOR {0}]Build Version:[/COLOR] v[COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, version)
-                msg += "[COLOR {0}]Latest Update:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, created)
-                if not theme == "http://":
-                    themecount = theme_count(name, False)
-                    msg += "[COLOR {0}]Build Theme(s):[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, ', '.join(themecount))
-                msg += "[COLOR {0}]Kodi Version:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, kodi)
-                msg += "[COLOR {0}]Extracted Size:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, tools.convert_size(int(float(extracted))))
-                msg += "[COLOR {0}]Zip Size:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, tools.convert_size(int(float(zipsize))))
-                msg += "[COLOR {0}]Skin Name:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, skin)
-                msg += "[COLOR {0}]Adult Content:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, adult)
-                msg += "[COLOR {0}]Description:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, description)
-                msg += "[COLOR {0}]Programs:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, programs)
-                msg += "[COLOR {0}]Video:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, video)
-                msg += "[COLOR {0}]Music:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, music)
-                msg += "[COLOR {0}]Pictures:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, picture)
-                msg += "[COLOR {0}]Repositories:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, repos)
-                msg += "[COLOR {0}]Scripts:[/COLOR] [COLOR {1}]{2}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, scripts)
-            else:
-                msg  = "[COLOR {0}]Build Name:[/COLOR] [COLOR {1}]{2}[/COLOR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, name)
-                msg += "[COLOR {0}]Build Version:[/COLOR] [COLOR {1}]{2}[/COLOR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, version)
-                if not theme == "http://":
-                    themecount = theme_count(name, False)
-                    msg += "[COLOR {0}]Build Theme(s):[/COLOR] [COLOR {1}]{2}[/COLOR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, ', '.join(themecount))
-                msg += "[COLOR {0}]Kodi Version:[/COLOR] [COLOR {1}]{2}[/COLOR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, kodi)
-                msg += "[COLOR {0}]Adult Content:[/COLOR] [COLOR {1}]{2}[/COLOR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, adult)
-                msg += "[COLOR {0}]Description:[/COLOR] [COLOR {1}]{2}[/COLOR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, description)
-
-            gui.show_text_box("Viewing Build Info: {0}".format(name), msg)
-        else:
-            logging.log("Invalid Build Name!")
-    else:
-        logging.log("Build text file not working: {0}".format(CONFIG.BUILDFILE))
-
-
 def check_theme(name, theme, ret):
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     themeurl = check_build(name, 'theme')
     if not tools.check_url(themeurl):
@@ -168,7 +135,7 @@ def check_theme(name, theme, ret):
 
 
 def check_wizard(ret):
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     if not tools.check_url(CONFIG.BUILDFILE):
         return False
@@ -187,9 +154,9 @@ def check_wizard(ret):
 
 
 def check_build_update():
-    from resources.libs import gui
-    from resources.libs import logging
-    from resources.libs import tools
+    from resources.libs.common import logging
+    from resources.libs.common import tools
+    from resources.libs.gui import window
 
     bf = tools.open_url(CONFIG.BUILDFILE)
     if not bf:
@@ -204,7 +171,7 @@ def check_build_update():
         if version > CONFIG.BUILDVERSION:
             if CONFIG.DISABLEUPDATE == 'false':
                 logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}] Opening Update Window".format(CONFIG.BUILDVERSION, version), level=xbmc.LOGNOTICE)
-                gui.show_update_window(CONFIG.BUILDNAME, CONFIG.BUILDVERSION, version, icon, fanart)
+                window.show_update_window(CONFIG.BUILDNAME, CONFIG.BUILDVERSION, version, icon, fanart)
             else:
                 logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}] Update Window Disabled".format(CONFIG.BUILDVERSION, version), level=xbmc.LOGNOTICE)
         else:
@@ -214,8 +181,8 @@ def check_build_update():
 
 
 def check_skin():
-    from resources.libs import logging
-    from resources.libs import tools
+    from resources.libs.common import logging
+    from resources.libs.common import tools
 
     dialog = xbmcgui.Dialog()
     
@@ -294,8 +261,8 @@ def check_skin():
 
 
 def check_sources():
-    from resources.libs import logging
-    from resources.libs import tools
+    from resources.libs.common import logging
+    from resources.libs.common import tools
 
     dialog = xbmcgui.Dialog()
     progress_dialog = xbmcgui.DialogProgress()
@@ -370,8 +337,8 @@ def check_sources():
 
 
 def check_repos():
-    from resources.libs import logging
-    from resources.libs import tools
+    from resources.libs.common import logging
+    from resources.libs.common import tools
 
     progress_dialog = xbmcgui.DialogProgress()
     
@@ -412,7 +379,7 @@ def check_repos():
         msg = "[COLOR {0}]Below is a list of Repositories that did not resolve.  This does not mean that they are Depreciated, sometimes hosts go down for a short period of time.  Please do serveral scans of your repository list before removing a repository just to make sure it is broken.[/COLOR][CR][CR][COLOR {1}]".format(CONFIG.COLOR2, CONFIG.COLOR1)
         msg += '[CR]'.join(badrepos)
         msg += '[/COLOR]'
-        gui.show_text_box("Viewing Broken Repositories", msg)
+        window.show_text_box("Viewing Broken Repositories", msg)
     else:
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            "[COLOR {0}]All Repositories Working![/COLOR]".format(CONFIG.COLOR2))
@@ -420,7 +387,7 @@ def check_repos():
 
 def build_count():
     from resources.libs import test
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     link = tools.open_url(CONFIG.BUILDFILE).replace('\n', '').replace('\r', '').replace('\t', '')
     match = re.compile('name="(.+?)".+?odi="(.+?)".+?dult="(.+?)"').findall(link)
@@ -450,27 +417,4 @@ def build_count():
                 count17 += 1
     return total, count17, count18, count19, adultcount, hidden
 
-
-def theme_count(name, count=True):
-    from resources.libs import tools
-
-    themefile = check_build(name, 'theme')
-    if themefile == 'http://' or not themefile:
-        return False
-    link = tools.open_url(themefile).replace('\n', '').replace('\r', '').replace('\t', '')
-    match = re.compile('name="(.+?)".+?dult="(.+?)"').findall(link)
-    if len(match) == 0:
-        return False
-    themes = []
-    for item, adult in match:
-        if not CONFIG.SHOWADULT == 'true' and adult.lower() == 'yes':
-            continue
-        themes.append(item)
-    if len(themes) > 0:
-        if count:
-            return len(themes)
-        else:
-            return themes
-    else:
-        return False
 

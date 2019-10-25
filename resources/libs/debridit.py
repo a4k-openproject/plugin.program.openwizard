@@ -1,5 +1,5 @@
 ################################################################################
-#      Copyright (C) 2015 Surfacingx                                           #
+#      Copyright (C) 2019 drinfernoo                                           #
 #                                                                              #
 #  This Program is free software; you can redistribute it and/or modify        #
 #  it under the terms of the GNU General Public License as published by        #
@@ -24,9 +24,8 @@ import os
 import re
 import time
 
-from resources.libs.config import CONFIG
-from resources.libs import logging
-from resources.libs import tools
+from resources.libs.common.config import CONFIG
+from resources.libs.common import logging, tools
 
 ORDER = ['gaiard', 'gaiapm', 'pmzer', 'serenrd', 'serenpm', 'rurlrd', 'rurlpm', 'urlrd', 'urlpm']
 

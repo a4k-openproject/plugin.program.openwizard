@@ -1,5 +1,5 @@
 ################################################################################
-#      Copyright (C) 2015 Surfacingx/NaN                                       #
+#      Copyright (C) 2019  drinfernoo                                       #
 #                                                                              #
 #  This Program is free software; you can redistribute it and/or modify        #
 #  it under the terms of the GNU General Public License as published by        #
@@ -37,8 +37,8 @@ except ImportError:
 
 from datetime import datetime
 
-from resources.libs.config import CONFIG
-from resources.libs import logging
+from resources.libs.common.config import CONFIG
+from resources.libs.common import logging, tools
 
 
 def main():
@@ -64,7 +64,6 @@ def main():
                 addonxml = os.path.join(folder, 'addon.xml')
                 if os.path.exists(addonxml):
                     fold = folder.replace(self.addons, '')[1:-1]
-                    from resources.libs import tools
                     aid = tools.parse_dom(tools.read_from_file(addonxml), 'addon', ret='id')
                     try:
                         if len(aid) > 0:

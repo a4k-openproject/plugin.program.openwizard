@@ -1,3 +1,22 @@
+################################################################################
+#      Copyright (C) 2019 drinfernoo                                           #
+#                                                                              #
+#  This Program is free software; you can redistribute it and/or modify        #
+#  it under the terms of the GNU General Public License as published by        #
+#  the Free Software Foundation; either version 2, or (at your option)         #
+#  any later version.                                                          #
+#                                                                              #
+#  This Program is distributed in the hope that it will be useful,             #
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                #
+#  GNU General Public License for more details.                                #
+#                                                                              #
+#  You should have received a copy of the GNU General Public License           #
+#  along with XBMC; see the file COPYING.  If not, write to                    #
+#  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.       #
+#  http://www.gnu.org/copyleft/gpl.html                                        #
+################################################################################
+
 import xbmc
 import xbmcgui
 
@@ -6,7 +25,7 @@ import os
 import re
 import shutil
 
-from resources.libs.config import CONFIG
+from resources.libs.common.config import CONFIG
 
 ###########################
 #      Fresh Install      #
@@ -15,9 +34,9 @@ from resources.libs.config import CONFIG
 
 def wipe():
     from resources.libs import db
-    from resources.libs import logging
+    from resources.libs.common import logging
     from resources.libs import skin
-    from resources.libs import tools
+    from resources.libs.common import tools
     from resources.libs import update
 
     exclude_dirs = CONFIG.EXCLUDES
@@ -129,10 +148,9 @@ def wipe():
 
 
 def fresh_start(install=None, over=False):
-    from resources.libs import db
-    from resources.libs import logging
-    from resources.libs import tools
-    
+    from resources.libs.common import logging
+    from resources.libs.common import tools
+
     dialog = xbmcgui.Dialog()
     
     if CONFIG.KEEPTRAKT == 'true':
@@ -181,9 +199,9 @@ def fresh_start(install=None, over=False):
         elif install == 'restore':
             return True
         elif install:
-            from resources.libs import menu
+            from resources.libs.wizard import Wizard
 
-            menu.wizard_menu(install, 'normal', over=True)
+            Wizard.install(install, 'normal', over=True)
         else:
             dialog.ok(CONFIG.ADDONTITLE, "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(CONFIG.COLOR2))
             from resources.libs import update
@@ -200,8 +218,8 @@ def install_addon_pack(name, url):
     from resources.libs import downloader
     from resources.libs import db
     from resources.libs import extract
-    from resources.libs import logging
-    from resources.libs import tools
+    from resources.libs.common import logging
+    from resources.libs.common import tools
 
     progress_dialog = xbmcgui.DialogProgress()
     
@@ -239,9 +257,9 @@ def install_skin(name, url):
     from resources.libs import downloader
     from resources.libs import db
     from resources.libs import extract
-    from resources.libs import logging
+    from resources.libs.common import logging
     from resources.libs import skin
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     progress_dialog = xbmcgui.DialogProgress()
     
@@ -284,9 +302,9 @@ def install_addon_from_url(name, url):
     from resources.libs import downloader
     from resources.libs import db
     from resources.libs import extract
-    from resources.libs import logging
+    from resources.libs.common import logging
     from resources.libs import skin
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     progress_dialog = xbmcgui.DialogProgress()
     
@@ -330,7 +348,7 @@ def install_addon_from_url(name, url):
 
 
 def install_addon(plugin, url):
-    from resources.libs import logging
+    from resources.libs.common import logging
 
     if not CONFIG.ADDONFILE == 'http://':
         from resources.libs import clear
@@ -338,7 +356,7 @@ def install_addon(plugin, url):
         from resources.libs import db
         from resources.libs import extract
         from resources.libs import skin
-        from resources.libs import tools
+        from resources.libs.common import tools
 
         dialog = xbmcgui.Dialog()
         
@@ -431,18 +449,18 @@ def install_addon(plugin, url):
 
 
 def install_from_kodi(plugin, over=True):
-    from resources.libs import gui
+    from resources.libs.gui import window
 
     if over:
         xbmc.sleep(2000)
 
     xbmc.executebuiltin('RunPlugin(plugin://{0})'.format(plugin))
-    if not gui.while_window('yesnodialog'):
+    if not window.while_window('yesnodialog'):
         return False
     xbmc.sleep(500)
-    if gui.while_window('okdialog'):
+    if window.while_window('okdialog'):
         return False
-    gui.while_window('progressdialog')
+    window.while_window('progressdialog')
     if os.path.exists(os.path.join(CONFIG.ADDONS, plugin)):
         return True
     else:
@@ -451,7 +469,7 @@ def install_from_kodi(plugin, over=True):
 
 def install_dependency(name):
     from resources.libs import db
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     progress_dialog = xbmcgui.DialogProgress()
     
@@ -474,8 +492,8 @@ def installed(addon):
     url = os.path.join(CONFIG.ADDONS, addon, 'addon.xml')
     if os.path.exists(url):
         try:
-            from resources.libs import logging
-            from resources.libs import tools
+            from resources.libs.common import logging
+            from resources.libs.common import tools
 
             name = tools.parse_dom(tools.read_from_file(url), 'addon', ret='name', attrs={'id': addon})
             icon = os.path.join(CONFIG.ADDONS, addon, 'icon.png')  # read from infolabel?
@@ -487,9 +505,9 @@ def installed(addon):
 
 def install_apk(apk, url):
     from resources.libs import downloader
-    from resources.libs import gui
-    from resources.libs import logging
-    from resources.libs import tools
+    from resources.libs.common import logging
+    from resources.libs.common import tools
+    from resources.libs.gui import window
 
     dialog = xbmcgui.Dialog()
     progress_dialog = xbmcgui.DialogProgress()
@@ -524,7 +542,7 @@ def install_apk(apk, url):
         downloader.download(url, lib)
         xbmc.sleep(100)
         progress_dialog.close()
-        gui.show_apk_warning(apk)
+        window.show_apk_warning(apk)
         xbmc.executebuiltin('StartAndroidActivity("","android.intent.action.VIEW","application/vnd.android.package-archive","file:{0}")'.format(lib))
     else:
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),

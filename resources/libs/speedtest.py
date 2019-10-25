@@ -1,3 +1,22 @@
+################################################################################
+#      Copyright (C) 2019 drinfernoo                                           #
+#                                                                              #
+#  This Program is free software; you can redistribute it and/or modify        #
+#  it under the terms of the GNU General Public License as published by        #
+#  the Free Software Foundation; either version 2, or (at your option)         #
+#  any later version.                                                          #
+#                                                                              #
+#  This Program is distributed in the hope that it will be useful,             #
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                #
+#  GNU General Public License for more details.                                #
+#                                                                              #
+#  You should have received a copy of the GNU General Public License           #
+#  along with XBMC; see the file COPYING.  If not, write to                    #
+#  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.       #
+#  http://www.gnu.org/copyleft/gpl.html                                        #
+################################################################################
+
 import xbmc
 import xbmcgui
 
@@ -34,8 +53,8 @@ except ImportError:
     from httplib import HTTPSConnection
     from Queue import Queue
 
-from resources.libs.config import CONFIG
-from resources.libs import logging
+from resources.libs.common.config import CONFIG
+from resources.libs.common import logging, tools
 
 __version__ = '0.3.5'
 user_agent = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36 SE 2.X MetaSr 1.0'
@@ -510,8 +529,7 @@ def speedtest(list=False, mini=None, server=None, share=True, simple=False, src=
 
 def net_info():
     import json
-    from resources.libs import logging
-    from resources.libs import tools
+    from resources.libs.common import logging
 
     infoLabel = ['Network.IPAddress',
                  'Network.MacAddress']
@@ -552,7 +570,7 @@ def net_info():
 
 
 def get_ip():
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     site = 'http://whatismyipaddress.com/'
     if not tools.check_url(site):
