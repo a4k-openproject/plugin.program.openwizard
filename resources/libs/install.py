@@ -349,19 +349,20 @@ def install_addon_from_url(name, url):
 
 def install_addon(plugin, url):
     from resources.libs.common import logging
+    from resources.libs.common import tools
 
-    if not CONFIG.ADDONFILE == 'http://':
+    if tools.check_url(CONFIG.ADDONFILE):
         from resources.libs import clear
         from resources.libs import downloader
         from resources.libs import db
         from resources.libs import extract
         from resources.libs import skin
-        from resources.libs.common import tools
 
         dialog = xbmcgui.Dialog()
         
         if url is None:
             url = CONFIG.ADDONFILE
+            
         if tools.check_url(url):
             link = tools.open_url(url).replace('\n', '').replace('\r', '').replace('\t', '').replace('repository=""', 'repository="none"').replace('repositoryurl=""', 'repositoryurl="http://"').replace('repositoryxml=""', 'repositoryxml="http://"')
             match = re.compile('name="(.+?)".+?lugin="%s".+?rl="(.+?)".+?epository="(.+?)".+?epositoryxml="(.+?)".+?epositoryurl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"' % plugin).findall(link)

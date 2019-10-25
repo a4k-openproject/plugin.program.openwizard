@@ -152,18 +152,9 @@ class Restore:
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                    "[COLOR {0}]External Restore: Cancelled[/COLOR]".format(CONFIG.COLOR2))
                 return
-            if not source.startswith('http'):
+            if not tools.check_url(source):
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                    "[COLOR {0}]External Restore: Invalid URL[/COLOR]".format(CONFIG.COLOR2))
-                return
-            try:
-                work = tools.check_url(source)
-            except:
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
-                                   "[COLOR {0}]External Restore: Error Valid URL[/COLOR]".format(CONFIG.COLOR2))
-                logging.log("Not a working url, if source was local then use local restore option",
-                            level=xbmc.LOGNOTICE)
-                logging.log("External Source: {0}".format(source), level=xbmc.LOGNOTICE)
                 return
 
             skin.skin_to_default("Restore")
