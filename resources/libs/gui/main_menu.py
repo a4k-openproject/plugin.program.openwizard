@@ -82,6 +82,6 @@ class MainMenu:
         if errors > 0:
             directory.add_file('View Last Error In Log', {'mode': 'viewerrorlast'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
         directory.add_separator()
-        directory.add_file('Settings', {'mode': 'settings'}, CONFIG.ADDON_ID, icon=CONFIG.ICONSETTINGS, themeit=CONFIG.THEME1)
+        directory.add_file('Settings', {'mode': 'settings', 'name': CONFIG.ADDON_ID}, icon=CONFIG.ICONSETTINGS, themeit=CONFIG.THEME1)
         if CONFIG.DEVELOPER == 'true':
             directory.add_dir('Developer Menu', {'mode': 'developer'}, icon=CONFIG.ADDON_ICON, themeit=CONFIG.THEME1)

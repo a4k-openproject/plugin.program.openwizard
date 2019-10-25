@@ -54,14 +54,14 @@ def add_separator(middle='', fanart=CONFIG.ADDON_FANART, icon=CONFIG.ADDON_ICON,
         add_file(ret[:40], fanart=fanart, icon=icon, themeit=themeit)
 
 
-def add_file(display, params={}, menu=None, description=CONFIG.ADDONTITLE, overwrite=True,
+def add_file(display, params=None, menu=None, description=CONFIG.ADDONTITLE, overwrite=True,
              fanart=CONFIG.ADDON_FANART, icon=CONFIG.ADDON_ICON, themeit=None, isFolder=False):
 
     # isFolder = False
     _add_menu_item(display, params, menu, description, overwrite, fanart, icon, themeit, isFolder)
 
 
-def add_dir(display, params={}, menu=None, description=CONFIG.ADDONTITLE, overwrite=True,
+def add_dir(display, params=None, menu=None, description=CONFIG.ADDONTITLE, overwrite=True,
             fanart=CONFIG.ADDON_FANART, icon=CONFIG.ADDON_ICON, themeit=None, isFolder=True):
 
     # isFolder = True
@@ -72,10 +72,10 @@ def _add_menu_item(display, params, menu, description, overwrite, fanart, icon, 
     # the plugin id, i.e. "plugin://plugin.program.aftermath/"
     u = sys.argv[0]
 
-    # build URI to send to router
-    u += "?mode={0}".format(quote_plus(params.get(['mode'], "")))
-    for param in params:
-        u += "&{0}={1}".format(param, quote_plus(params.get([param], "")))
+    if params is not None:
+        for param in params:
+            # build URI to send to router
+            u += "{0}{1}={2}".format('?' if param == 'mode' else '&', param, quote_plus(params.get(param, "")))
 
     # format item label using themes from uservar
     if themeit is not None:
