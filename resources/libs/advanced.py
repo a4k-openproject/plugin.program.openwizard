@@ -519,15 +519,15 @@ def write_advanced(name, url):
 
 
 def view_advanced():
-    from resources.libs import tools
+    from resources.libs.common import tools
     from resources.libs.gui import window
 
     window.show_text_box(CONFIG.ADDONTITLE, tools.read_from_file(CONFIG.ADVANCED).replace('\t', '    '))
 
 
 def remove_advanced():
-    from resources.libs import tools
-    from resources.libs import logging
+    from resources.libs.common import tools
+    from resources.libs.common import logging
 
     if os.path.exists(CONFIG.ADVANCED):
         tools.remove_file(CONFIG.ADVANCED)
