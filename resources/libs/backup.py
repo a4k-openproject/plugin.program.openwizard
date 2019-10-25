@@ -35,7 +35,7 @@ except ImportError:  # Python 2
     from urllib import quote_plus
     from resources.libs import zipfile
 
-from resources.libs.config.common import CONFIG
+from resources.libs.common.config import CONFIG
 from resources.libs import db
 from resources.libs.common import logging
 from resources.libs.common import tools
