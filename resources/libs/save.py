@@ -195,7 +195,7 @@ def export_save_data():
     source = dialog.browse(3, '[COLOR {0}]Select where you wish to export the SaveData zip?[/COLOR]'.format(CONFIG.COLOR2),
                                'files', '', False, True, CONFIG.HOME)
     source = xbmc.translatePath(source)
-    tempzip = os.path.join(CONFIG.MYBUILDS, 'SaveData.zip')
+    tempzip = os.path.join(source, 'SaveData.zip')
     superfold = os.path.join(CONFIG.ADDON_DATA, 'plugin.program.super.favourites')
     zipf = zipfile.ZipFile(tempzip, mode='w')
     for fold in dir:
@@ -213,11 +213,7 @@ def export_save_data():
         if keepx[CONFIG.XMLS.index(item)] == 'true' and os.path.exists(os.path.join(CONFIG.USERDATA, item)):
             zipf.write(os.path.join(CONFIG.USERDATA, item), os.path.join('xmls', item), zipfile.ZIP_DEFLATED)
     zipf.close()
-    if source != CONFIG.MYBUILDS:
-        try:
-            xbmcvfs.copy(tempzip, os.path.join(source, 'SaveData.zip'))
-        except:
-            pass
+    
     dialog.ok(CONFIG.ADDONTITLE,
                   "[COLOR {0}]Save data has been backed up to:[/COLOR]".format(CONFIG.COLOR2),
                   "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, os.path.join(source, 'SaveData.zip')))
