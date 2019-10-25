@@ -25,7 +25,7 @@ import os
 import re
 import shutil
 
-from resources.libs.config.common import CONFIG
+from resources.libs.common.config import CONFIG
 
 ###########################
 #      Fresh Install      #
