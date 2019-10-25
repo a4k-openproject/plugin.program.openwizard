@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.program.aftermath" name="[B][COLOR dodgerblue]Aftermath[/COLOR][/B] Wizard" version="0.6.0" provider-name="drinfernoo">
+<addon id="plugin.program.soultv" name="[B][COLOR grey]Soul TV[/COLOR][/B] Helper" version="0.6.0" provider-name="Seoul">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
     <import addon="script.module.requests"/>
@@ -9,9 +9,8 @@
   </extension>
   <extension point="xbmc.service" library="startup.py" start="startup" />
   <extension point="xbmc.addon.metadata">
-    <summary lang="en">[B][COLOR dodgerblue]Aftermath[/COLOR][/B] Wizard</summary>
-    <description lang="en">[B][COLOR dodgerblue]Aftermath[/COLOR][/B] Wizard offers many maintenance features, selective add-on data saving, and automated build installs.</description>
+    <summary lang="en">soultv.github.io</summary>
+    <description lang="en">soultvstudio@gmail.com</description>
     <platform>all</platform>
-    <reuselanguageinvoker>false</reuselanguageinvoker>
   </extension>
 </addon>

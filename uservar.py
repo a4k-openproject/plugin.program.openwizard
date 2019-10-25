@@ -13,11 +13,11 @@ ART = os.path.join(PATH, 'resources', 'art')
 #########################################################
 #        User Edit Variables                            #
 #########################################################
-ADDONTITLE = '[B][COLOR dodgerblue]Aftermath[/COLOR][/B] Wizard'
-BUILDERNAME = 'Aftermath'
-EXCLUDES = [ADDON_ID, 'repository.aftermath']
+ADDONTITLE = '[B][COLOR grey]Soul TV[/COLOR][/B] Helper'
+BUILDERNAME = 'Seoul'
+EXCLUDES = [ADDON_ID, 'repository.soultv', 'pvr.iptvsimpleclient', 'inputstream.adaptive', 'inputstream.rtmp', 'service.coreelec.settings', 'service.libreelec.settings']
 # Text File with build info in it.
-BUILDFILE = 'http://'
+BUILDFILE = 'https://raw.githubusercontent.com/SoulTV/soultv.github.io/master/Helper%20Files/text/builds.txt'
 # How often you would like it to check for build updates in days
 # 0 being every startup of kodi
 UPDATECHECK = 0
@@ -29,7 +29,7 @@ YOUTUBEFILE = 'http://'
 # Text File for addon installer.  Leave as 'http://' to ignore
 ADDONFILE = 'http://'
 # Text File for advanced settings.  Leave as 'http://' to ignore
-ADVANCEDFILE = 'http://'
+ADVANCEDFILE = 'https://raw.githubusercontent.com/SoulTV/soultv.github.io/master/Helper%20Files/text/advanced.txt'
 #########################################################
 
 #########################################################
@@ -60,10 +60,10 @@ SPACER = '='
 
 # You can edit these however you want, just make sure that you have a %s in each of the
 # THEME's so it grabs the text from the menu item
-COLOR1 = 'dodgerblue'
-COLOR2 = 'white'
+COLOR1 = 'grey'
+COLOR2 = 'grey'
 # Primary menu items   / {0} is the menu item and is required
-THEME1 = '[COLOR '+COLOR1+'][B][I]([COLOR '+COLOR2+']Aftermath[/COLOR])[/I][/B][/COLOR] [COLOR '+COLOR2+']{0}[/COLOR]'
+THEME1 = '[COLOR '+COLOR1+'][B][I]([COLOR '+COLOR2+']Soul TV[/COLOR])[/I][/B][/COLOR] [COLOR '+COLOR2+']{0}[/COLOR]'
 # Build Names          / {0} is the menu item and is required
 THEME2 = '[COLOR '+COLOR2+']{0}[/COLOR]'
 # Alternate items      / {0} is the menu item and is required
@@ -77,17 +77,17 @@ THEME5 = '[COLOR '+COLOR1+']Current Theme:[/COLOR] [COLOR '+COLOR2+']{0}[/COLOR]
 # Enable 'Contact' menu item 'Yes' hide or 'No' dont hide
 HIDECONTACT = 'No'
 # You can add \n to do line breaks
-CONTACT = 'Thank you for choosing Aftermath Wizard.\n\nContact us on Github at http://www.github.com/drinfernoo/plugin.program.aftermath/'
+CONTACT = 'Thank you for choosing Soul TV.\n\nContact us at soultvstudio@gmail.com'
 # Images used for the contact window.  http:// for default icon and fanart
 CONTACTICON = os.path.join(ART, 'qricon.png')
-CONTACTFANART = 'http://'
+CONTACTFANART = 'https://raw.githubusercontent.com/SoulTV/soultv.github.io/master/Helper%20Files/Images/fanart.jpg'
 #########################################################
 
 #########################################################
 #        Auto Update For Those With No Repo             #
 #########################################################
 # Enable Auto Update 'Yes' or 'No'
-AUTOUPDATE = 'Yes'
+AUTOUPDATE = 'No'
 # Url to wizard version
 WIZARDFILE = BUILDFILE
 #########################################################
@@ -98,11 +98,11 @@ WIZARDFILE = BUILDFILE
 # Enable Auto Install 'Yes' or 'No'
 AUTOINSTALL = 'Yes'
 # Addon ID for the repository
-REPOID = 'repository.aftermath'
+REPOID = 'repository.soultv'
 # Url to Addons.xml file in your repo folder(this is so we can get the latest version)
-REPOADDONXML = 'https://raw.githubusercontent.com/drinfernoo/repository.aftermath/master/zips/addons.xml'
+REPOADDONXML = 'https://raw.githubusercontent.com/SoulTV/soultv.github.io/master/zips/addons.xml'
 # Url to folder zip is located in
-REPOZIPURL = 'https://raw.githubusercontent.com/drinfernoo/repository.aftermath/master/zips/repository.aftermath/'
+REPOZIPURL = 'https://github.com/SoulTV/soultv.github.io/raw/master/zips/repository.soultv/'
 #########################################################
 
 #########################################################
@@ -116,7 +116,7 @@ NOTIFICATION = 'http://'
 HEADERTYPE = 'Text'
 # Font size of header
 FONTHEADER = 'Font14'
-HEADERMESSAGE = '[B][COLOR dodgerblue]Aftermath[/COLOR][/B] Wizard'
+HEADERMESSAGE = '[B][COLOR grey]Soul TV[/COLOR][/B] Helper'
 # url to image if using Image 424x180
 HEADERIMAGE = 'http://'
 # Font for Notification Window
