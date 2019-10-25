@@ -73,9 +73,14 @@ def _add_menu_item(display, params, menu, description, overwrite, fanart, icon, 
     u = sys.argv[0]
 
     if params is not None:
+        u += "?{0}={1}".format('mode', quote_plus(params.get('mode', "")))
+        
         for param in params:
+            if param == 'mode':
+                continue
+                
             # build URI to send to router
-            u += "{0}{1}={2}".format('?' if param == 'mode' else '&', param, quote_plus(params.get(param, "")))
+            u += "&{0}={1}".format(param, quote_plus(params.get(param, "")))
 
     # format item label using themes from uservar
     if themeit is not None:
