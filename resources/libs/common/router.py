@@ -31,7 +31,6 @@ def dispatch(paramstring):
     params = _log_params(paramstring)
 
     mode = params['mode'] if 'mode' in params else None
-    action = params['action'] if 'action' in params else None
     url = params['url'] if 'url' in params else None
     name = params['name'] if 'name' in params else None
 
