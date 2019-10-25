@@ -146,18 +146,17 @@ def apk_menu(url=None):
     if not url:
         directory.add_dir('Official Kodi APK\'s', {'mode': 'apkscrape', 'name': 'kodi'}, icon=CONFIG.ICONAPK, themeit=CONFIG.THEME1)
         directory.add_separator()
-    if not CONFIG.APKFILE == 'http://':
+        
+    APKWORKING = tools.check_url(CONFIG.APKFILE)
+    
+    if APKWORKING:
         if not url:
             TEMPAPKFILE = tools.open_url(CONFIG.APKFILE)
-            if not TEMPAPKFILE:
-                APKWORKING = tools.check_url(CONFIG.APKFILE)
         else:
             TEMPAPKFILE = tools.open_url(url)
-            if not TEMPAPKFILE:
-                APKWORKING = tools.check_url(url)
+            
         if TEMPAPKFILE:
-            link = TEMPAPKFILE.replace('\n', '').replace('\r', '').replace('\t', '')
-            match = re.compile('name="(.+?)".+?ection="(.+?)".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"').findall(link)
+            match = re.compile('name="(.+?)".+?ection="(.+?)".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"').findall(TEMPAPKFILE)
             if len(match) > 0:
                 x = 0
                 for aname, section, url, icon, fanart, adult, description in match:
@@ -186,7 +185,7 @@ def addon_menu(url=None):
     from resources.libs.common import logging
     from resources.libs.common import tools
 
-    if not CONFIG.ADDONFILE == 'http://':
+    if tools.check_url(CONFIG.ADDONFILE):
         if not url:
             TEMPADDONFILE = tools.open_url(CONFIG.ADDONFILE)
             if not TEMPADDONFILE:
@@ -242,7 +241,7 @@ def youtube_menu(url=None):
     from resources.libs.common import logging
     from resources.libs.common import tools
 
-    if not CONFIG.YOUTUBEFILE == 'http://':
+    if tools.check_url(CONFIG.YOUTUBEFILE):
         if not url:
             TEMPYOUTUBEFILE = tools.open_url(CONFIG.YOUTUBEFILE)
             if not TEMPYOUTUBEFILE:
@@ -671,15 +670,14 @@ def advanced_window(url=None):
     from resources.libs.common import logging
     from resources.libs.common import tools
 
-    if not CONFIG.ADVANCEDFILE == 'http://':
+    ADVANCEDWORKING = tools.check_url(CONFIG.ADVANCEDFILE)
+    
+    if ADVANCEDWORKING:
         if url is None:
             TEMPADVANCEDFILE = tools.open_url(CONFIG.ADVANCEDFILE)
-            if not TEMPADVANCEDFILE:
-                ADVANCEDWORKING = tools.check_url(CONFIG.ADVANCEDFILE)
         else:
             TEMPADVANCEDFILE = tools.open_url(url)
-            if not TEMPADVANCEDFILE:
-                ADVANCEDWORKING = tools.check_url(url)
+            
         directory.add_file('Quick Configure advancedsettings.xml', {'mode': 'autoadvanced'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         if os.path.exists(CONFIG.ADVANCED):
             directory.add_file('View Current advancedsettings.xml', {'mode': 'currentsettings'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)

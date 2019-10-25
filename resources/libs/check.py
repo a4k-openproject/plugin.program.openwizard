@@ -288,10 +288,9 @@ def check_sources():
                           '',
                           "[COLOR {0}]Checking [COLOR {1}]{2}[/COLOR]:[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, name),
                           "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, path))
-            if 'http' in path:
-                working = tools.check_url(path)
-                if not working:
-                    bad.append([name, path, sharing, working])
+            working = tools.check_url(path)
+            if not working:
+                bad.append([name, path, sharing, working])
 
         logging.log("Bad Sources: {0}".format(len(bad)), level=xbmc.LOGNOTICE)
         if len(bad) > 0:
