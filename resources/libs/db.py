@@ -163,7 +163,7 @@ def purge_db():
 
 
 def kodi_17_fix():
-    from resources.libs import tools
+    from resources.libs.common import tools
     from resources.libs import update
 
     addonlist = glob.glob(os.path.join(CONFIG.ADDONS, '*/'))
@@ -193,7 +193,7 @@ def kodi_17_fix():
 
 
 def toggle_addon(id, value, over=None):
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     logging.log("Toggling {0}".format(id))
     addonid = id
@@ -229,7 +229,7 @@ def toggle_addon(id, value, over=None):
 
 
 def toggle_dependency(name, dp=None):
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     dep = os.path.join(CONFIG.ADDONS, name, 'addon.xml')
     if os.path.exists(dep):
@@ -249,7 +249,7 @@ def toggle_dependency(name, dp=None):
 # NOT CURRENTLY IN USE, BROKEN DUE TO DEAD NaN LINK
 # def toggle_adult():
 #     from resources.libs import gui
-#     from resources.libs import tools
+#     from resources.libs.common import tools
 #
 #     do = gui.DIALOG.yesno(CONFIG.ADDONTITLE,
 #                           "[COLOR {0}]Would you like to [COLOR {1}]Enable[/COLOR] or [COLOR {2}]Disable[/COLOR] all Adult add-ons?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1),
@@ -285,7 +285,7 @@ def toggle_dependency(name, dp=None):
 
 
 def create_temp(plugin):
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     temp = os.path.join(CONFIG.PLUGIN, 'resources', 'tempaddon.xml')
     r = tools.read_from_file(temp)
@@ -298,7 +298,7 @@ def create_temp(plugin):
 
 
 def fix_metas():
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     idlist = []
     for item in idlist:
@@ -311,8 +311,8 @@ def fix_metas():
 
 
 def hide_password():
-    from resources.libs import tools
-    from resources.libs import logging
+    from resources.libs.common import tools
+    from resources.libs.common import logging
     
     dialog = xbmcgui.Dialog()
 
@@ -345,8 +345,8 @@ def hide_password():
 
 
 def unhide_password():
-    from resources.libs import tools
-    from resources.libs import logging
+    from resources.libs.common import tools
+    from resources.libs.common import logging
     
     dialog = xbmcgui.Dialog()
 
@@ -393,7 +393,7 @@ def fix_update():
         logging.log("Unable to remove {0}, Purging DB".format(dbfile))
         purge_db_file(dbfile)
 
-    from resources.libs import tools
+    from resources.libs.common import tools
     tools.kill_kodi(over=True)
 
 

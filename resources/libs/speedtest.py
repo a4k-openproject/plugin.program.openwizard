@@ -529,7 +529,7 @@ def speedtest(list=False, mini=None, server=None, share=True, simple=False, src=
 
 def net_info():
     import json
-    from resources.libs import logging
+    from resources.libs.common import logging
 
     infoLabel = ['Network.IPAddress',
                  'Network.MacAddress']
@@ -570,7 +570,7 @@ def net_info():
 
 
 def get_ip():
-    from resources.libs import tools
+    from resources.libs.common import tools
 
     site = 'http://whatismyipaddress.com/'
     if not tools.check_url(site):
