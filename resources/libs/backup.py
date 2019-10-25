@@ -35,7 +35,7 @@ except ImportError:  # Python 2
     from urllib import quote_plus
     from resources.libs import zipfile
 
-from resources.libs.config import CONFIG
+from resources.libs.config.common import CONFIG
 from resources.libs import db
 from resources.libs.common import logging
 from resources.libs.common import tools
@@ -46,6 +46,8 @@ def cleanup_backup():
     logging.log(folder, level=xbmc.LOGNOTICE)
     list = []
     filelist = []
+
+    dialog = xbmcgui.Dialog()
 
     if len(folder) == 0:
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),

@@ -344,6 +344,15 @@ def dispatch(paramstring):
         from resources.libs import advanced
         advanced.write_advanced(name, url)
 
+    # SAVE DATA
+    elif mode == 'managedata':
+        from resources.libs import save
+        
+        if name == 'import':
+            save.import_save_data()
+        elif name == 'export':
+            save.export_save_data()
+        
     # TRAKT
     elif mode == 'savetrakt':  # Save Trakt Data
         from resources.libs import traktit
