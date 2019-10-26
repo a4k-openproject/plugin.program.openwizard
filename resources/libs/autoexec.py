@@ -38,7 +38,8 @@ except ImportError:
 from datetime import datetime
 
 from resources.libs.common.config import CONFIG
-from resources.libs.common import logging, tools
+from resources.libs.common import logging
+from resources.libs.common import tools
 
 
 def main():

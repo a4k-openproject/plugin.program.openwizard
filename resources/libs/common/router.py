@@ -167,7 +167,6 @@ def dispatch(paramstring):
         from resources.libs import skin
         skin.swap_us()
     elif mode == 'enabledebug':  # Misc Maintenance -> Enable Debug Logging
-        from resources.libs.common import logging
         logging.swap_debug()
     elif mode == 'asciicheck':  # System Tweaks -> Scan for Non-Ascii Files
         from resources.libs.common import tools

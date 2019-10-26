@@ -27,7 +27,8 @@ except ImportError:  # Python 2
     from resources.libs import zipfile
 
 from resources.libs.common.config import CONFIG
-from resources.libs.common import logging, tools
+from resources.libs.common import logging
+from resources.libs.common import tools
 
 
 def all(_in, _out, ignore=None, title=None):

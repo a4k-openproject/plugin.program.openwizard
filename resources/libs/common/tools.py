@@ -625,7 +625,7 @@ def ascii_check(use=None, over=False):
                 window.show_text_box("Viewing Removed ASCII Files",
                                   "[COLOR yellow][B]{0} Files Removed:[/B][/COLOR]\n {1}\n\n[COLOR yellow][B]{2} Files Failed:[B][/COLOR]\n {3}".format(f1, msg, f2, msg2))
         else:
-            window.show_text_box("Viewed Found ASCII Files", "[COLOR yellow][B]{0} Files Found:[/B][/COLOR]\n {1}".format(f1, msg))
+            window.show_text_box("Viewing Found ASCII Files", "[COLOR yellow][B]{0} Files Found:[/B][/COLOR]\n {1}".format(f1, msg))
     else:
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            "[COLOR {0}]ASCII Check: None Found.[/COLOR]".format(CONFIG.COLOR2))
