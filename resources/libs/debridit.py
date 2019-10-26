@@ -25,7 +25,8 @@ import re
 import time
 
 from resources.libs.common.config import CONFIG
-from resources.libs.common import logging, tools
+from resources.libs.common import logging
+from resources.libs.common import tools
 
 ORDER = ['gaiard', 'gaiapm', 'pmzer', 'serenrd', 'serenpm', 'rurlrd', 'rurlpm', 'urlrd', 'urlpm']
 

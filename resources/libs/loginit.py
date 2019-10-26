@@ -25,7 +25,8 @@ import re
 import time
 
 from resources.libs.common.config import CONFIG
-from resources.libs.common import logging, tools
+from resources.libs.common import logging
+from resources.libs.common import tools
 
 ORDER = ['fanart-exodusredux', 'fanart-gaia', 'fanart-metadatautils', 'fanart-premiumizer', 'fanart-realizer', 'fanart-scrubs', 'fanart-seren', 'fanart-thecrew', 'fanart-venom', 'fanart-yoda', 'imdb-exodusredux', 'imdb-gaia', 'imdb-premiumizer', 'imdb-realizer', 'imdb-scrubs', 'imdb-thecrew', 'imdb-venom', 'imdb-yoda', 'kitsu-wonderfulsubs', 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-metadatautils', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-premiumizer', 'tmdb-realizer', 'tmdb-scrubs', 'tmdb-seren', 'tmdb-thecrew', 'tmdb-venom', 'tmdb-yoda', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-premiumizer', 'tvdb-realizer', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
 

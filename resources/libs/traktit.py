@@ -24,7 +24,8 @@ import re
 import time
 
 from resources.libs.common.config import CONFIG
-from resources.libs.common import logging, tools
+from resources.libs.common import logging
+from resources.libs.common import tools
 
 ORDER = ['exodusredux', 'gaia', 'openmeta', 'premiumizer', 'realizer', 'scrubs', 'seren', 'thecrew', 'trakt', 'venom', 'yoda']
 

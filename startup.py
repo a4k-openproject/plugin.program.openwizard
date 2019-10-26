@@ -35,7 +35,8 @@ from resources.libs import clear
 from resources.libs import check
 from resources.libs import db
 from resources.libs.gui import window
-from resources.libs.common import logging, tools
+from resources.libs.common import logging
+from resources.libs.common import tools
 from resources.libs import skin
 from resources.libs import update
 

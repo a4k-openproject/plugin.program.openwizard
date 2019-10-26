@@ -93,7 +93,7 @@ class MaintenanceMenu:
             directory.add_file(
                 '--- Clear Old Thumbs on Startup: {0}'.format(thumbs.replace('true', on).replace('false', off)),
                 {'mode': 'togglesetting', 'name': 'clearthumbs'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        directory.add_file('Clear Video Cache', '', fanart=CONFIG.ADDON_FANART, icon=CONFIG.ICONMAINT,
+        directory.add_file('Clear Video Cache', fanart=CONFIG.ADDON_FANART, icon=CONFIG.ICONMAINT,
                            themeit=CONFIG.THEME1)
         directory.add_file(
             'Include Video Cache in Clear Cache: {0}'.format(includevid.replace('true', on).replace('false', off)),

@@ -26,7 +26,8 @@ import os
 import re
 
 from resources.libs.common.config import CONFIG
-from resources.libs.common import logging, tools
+from resources.libs.common import logging
+from resources.libs.common import tools
 from resources.libs.gui import window
 
 
