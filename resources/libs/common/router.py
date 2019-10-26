@@ -33,6 +33,7 @@ def dispatch(paramstring):
     mode = params['mode'] if 'mode' in params else None
     url = params['url'] if 'url' in params else None
     name = params['name'] if 'name' in params else None
+    action = params['action'] if 'action' in params else None
 
     # MAIN MENU
     if mode is None:
@@ -64,12 +65,15 @@ def dispatch(paramstring):
     elif mode == 'buildpreview':  # Builds -> Build Preview
         from resources.libs.gui.build_menu import BuildMenu
         BuildMenu().build_video(name)
-    elif mode == 'theme':  # Builds -> "Your Build" -> "Your Theme"
-        from resources.libs.wizard import Wizard
-        Wizard().install(mode, name, url, True)
     elif mode == 'install':  # Builds -> Fresh Install/Standard Install/Apply guifix
         from resources.libs.wizard import Wizard
-        Wizard().install(url, name)
+        
+        if action in ['fresh', 'normal']:
+            Wizard().build(action, name)
+        elif action == 'gui':
+            Wizard().build(name)
+        elif action == 'theme':  # Builds -> "Your Build" -> "Your Theme"
+            Wizard().theme(name, url)
     elif mode == 'addonpack':  # Install Addon Pack
         from resources.libs import install
         install.install_addon_pack(name, url)
