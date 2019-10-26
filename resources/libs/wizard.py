@@ -35,17 +35,15 @@ from resources.libs.common.config import CONFIG
 class Wizard:
 
     def __init__(self):
+        tools.ensure_folders(CONFIG.PACKAGES)
+        
         self.dialog = xbmcgui.Dialog()
         self.dialogProgress = xbmcgui.DialogProgress()
 
-        self.over = False
-
-    def _install(self, type, name):
+    def build(self, type, name, over=False):
         if type == 'fresh':
             from resources.libs import install
             install.fresh_start(name)
-
-        from resources.libs.gui import window
 
         skin.look_and_feel_data('save')
         skin.skin_to_default('Build Install')
@@ -83,7 +81,7 @@ class Wizard:
                                        nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
                                        yeslabel='[B][COLOR springgreen]Yes, Install[/COLOR][/B]')
         else:
-            if self.over:
+            if over:
                 yes_pressed = 1
             else:
                 yes_pressed = self.dialog.yesno(CONFIG.ADDONTITLE,
@@ -144,6 +142,7 @@ class Wizard:
                                        nolabel='[B][COLOR red]No Thanks[/COLOR][/B]',
                                        yeslabel='[B][COLOR springgreen]View Errors[/COLOR][/B]')
                     if yes_pressed:
+                        from resources.libs.gui import window
                         window.show_text_box("Viewing Build Install Errors", error)
                 self.dialogProgress.close()
 
@@ -158,14 +157,15 @@ class Wizard:
                 self.dialog.ok(CONFIG.ADDONTITLE, "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(CONFIG.COLOR2))
                 tools.kill_kodi(True)
             else:
+                from resources.libs.gui import window
                 window.show_text_box("Viewing Build Install Errors", error)
         else:
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                '[COLOR {0}]Build Install: Cancelled![/COLOR]'.format(CONFIG.COLOR2))
 
-    def _gui(self, name):
+    def gui(self, name, over=False):
         if name == CONFIG.BUILDNAME:
-            if self.over:
+            if over:
                 yes_pressed = 1
             else:
                 yes_pressed = self.dialog.yesno(CONFIG.ADDONTITLE,
@@ -213,7 +213,7 @@ class Wizard:
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                '[COLOR {0}]GuiFix: Cancelled![/COLOR]'.format(CONFIG.COLOR2))
 
-    def _theme(self, type, name, theme):
+    def theme(self, name, theme, over=False):
         installtheme = False
 
         if not theme:
@@ -278,20 +278,20 @@ class Wizard:
 
             test1 = False
             test2 = False
-            if type not in ["fresh", "normal"]:
-                from resources.libs import skin
-                from resources.libs import test
-                test1 = test.test_theme(lib) if CONFIG.SKIN not in skin.DEFAULT_SKINS else False
-                test2 = test.test_gui(lib) if CONFIG.SKIN not in skin.DEFAULT_SKINS else False
+            
+            from resources.libs import skin
+            from resources.libs import test
+            test1 = test.test_theme(lib) if CONFIG.SKIN not in skin.DEFAULT_SKINS else False
+            test2 = test.test_gui(lib) if CONFIG.SKIN not in skin.DEFAULT_SKINS else False
 
-                if test1:
-                    skin.look_and_feel_data('save')
-                    swap = skin.skin_to_default('Theme Install')
+            if test1:
+                skin.look_and_feel_data('save')
+                swap = skin.skin_to_default('Theme Install')
 
-                    if not swap:
-                        return False
+                if not swap:
+                    return False
 
-                    xbmc.sleep(500)
+                xbmc.sleep(500)
 
             title = '[COLOR {0}][B]Installing Theme:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2,
                                                                                                 CONFIG.COLOR1,
@@ -302,41 +302,28 @@ class Wizard:
             logging.log('INSTALLED {0}: [ERRORS:{1}]'.format(percent, errors))
             self.dialogProgress.close()
 
-            if type not in ["fresh", "normal"]:
-                from resources.libs import update
+            from resources.libs import update
 
-                update.force_update()
-                installed = db.grab_addons(lib)
-                db.addon_database(installed, 1, True)
+            update.force_update()
+            installed = db.grab_addons(lib)
+            db.addon_database(installed, 1, True)
 
-                if test2:
-                    skin.look_and_feel_data('save')
-                    skin.skin_to_default("Theme Install")
-                    gotoskin = CONFIG.get_setting('defaultskin')
-                    skin.switch_to_skin(gotoskin, "Theme Installer")
-                    skin.look_and_feel_data('restore')
-                elif test1:
-                    skin.look_and_feel_data('save')
-                    skin.skin_to_default("Theme Install")
-                    gotoskin = CONFIG.get_setting('defaultskin')
-                    skin.switch_to_skin(gotoskin, "Theme Installer")
-                    skin.look_and_feel_data('restore')
-                else:
-                    xbmc.executebuiltin("ReloadSkin()")
-                    xbmc.sleep(1000)
-                    xbmc.executebuiltin("Container.Refresh()")
+            if test2:
+                skin.look_and_feel_data('save')
+                skin.skin_to_default("Theme Install")
+                gotoskin = CONFIG.get_setting('defaultskin')
+                skin.switch_to_skin(gotoskin, "Theme Installer")
+                skin.look_and_feel_data('restore')
+            elif test1:
+                skin.look_and_feel_data('save')
+                skin.skin_to_default("Theme Install")
+                gotoskin = CONFIG.get_setting('defaultskin')
+                skin.switch_to_skin(gotoskin, "Theme Installer")
+                skin.look_and_feel_data('restore')
+            else:
+                xbmc.executebuiltin("ReloadSkin()")
+                xbmc.sleep(1000)
+                xbmc.executebuiltin("Container.Refresh()")
         else:
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                '[COLOR {0}]Theme Install: Cancelled![/COLOR]'.format(CONFIG.COLOR2))
-
-    def install(self, type, name, theme=None, over=False):
-        tools.ensure_folders(CONFIG.PACKAGES)
-
-        self.over = over
-        
-        if type in ['fresh', 'normal']:
-            self._install(type, name)
-        elif type == 'gui':
-            self._gui(name)
-        elif type == 'theme':
-            self._theme(type, name, theme)
