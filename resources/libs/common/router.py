@@ -263,10 +263,10 @@ def dispatch(paramstring):
         logging.upload_log()
     elif mode == 'viewlog':  # View kodi.log
         from resources.libs.gui import window
-        window.show_log_viewer()
+        logging.view_log_file()
     elif mode == 'viewwizlog':  # View wizard.log
         from resources.libs.gui import window
-        window.show_log_viewer(CONFIG.WIZLOG)
+        window.show_log_viewer(log_file=CONFIG.WIZLOG)
     elif mode == 'viewerrorlog':  # View errors in log
         logging.error_checking()
     elif mode == 'viewerrorlast':  # View last error in log

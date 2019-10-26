@@ -365,31 +365,49 @@ def view_log_file():
 
     mainlog = grab_log(file=True)
     oldlog = grab_log(file=True, old=True)
+    wizlog = grab_log(file=True, wizard=True)
+    
+    choices = []
+    logfiles = {'mainlog': "View {0}".format(os.path.basename(mainlog)), 'oldlog': "View {0}".format(os.path.basename(oldlog)), 'wizlog': "View {0}".format(os.path.basename(wizlog))}
+    
     which = 0
+    logtype = oldlog
+    msg = grab_log(old=True)
+    
+    if mainlog:
+        choices.append(logfiles['mainlog'])
+    if oldlog:
+        choices.append(logfiles['oldlog'])
+    if wizlog:
+        choices.append(logfiles['wizlog'])
 
     dialog = xbmcgui.Dialog()
 
-    if oldlog and mainlog:
-
-        which = dialog.select(CONFIG.ADDONTITLE,
-                                  ["View {0}".format(mainlog.replace(CONFIG.LOG, "")), "View {0}".format(oldlog.replace(CONFIG.LOG, ""))])
+    if len(choices) > 0:
+        which = dialog.select(CONFIG.ADDONTITLE, choices)
         if which == -1:
             log_notify('[COLOR {0}]View Log[/COLOR]'.format(CONFIG.COLOR1),
                        '[COLOR {0}]View Log Cancelled![/COLOR]'.format(CONFIG.COLOR2))
             return
-    elif not mainlog and not oldlog:
+        elif which == 0:
+            logtype = mainlog
+        elif which == 1:
+            logtype = oldlog
+        elif which == 2:
+            logtype = wizlog
+    elif len(choices) == 0:
         log_notify('[COLOR {0}]View Log[/COLOR]'.format(CONFIG.COLOR1),
                    '[COLOR {0}]No Log File Found![/COLOR]'.format(CONFIG.COLOR2))
         return
-    elif mainlog:
-        which = 0
-    elif oldlog:
-        which = 1
+    else:
+        if mainlog:
+            logtype = mainlog
+        elif oldlog:
+            logtype = oldlog
+        elif wizlog:
+            logtype = wizlog
 
-    logtype = mainlog if which == 0 else oldlog
-    msg = grab_log() if which == 0 else grab_log(old=True)
-
-    window.show_log_viewer("Viewing Log File: {0}".format(logtype), msg, ext_buttons=True)
+    window.show_log_viewer("Viewing Log File", log_file=logtype, ext_buttons=True)
 
 
 def swap_debug():

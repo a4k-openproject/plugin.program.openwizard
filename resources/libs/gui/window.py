@@ -510,12 +510,12 @@ def show_notification(msg='', test=False):
     del notify
 
 
-def show_log_viewer(window_title="Viewing Log File", window_msg=None, default=None, ext_buttons=False):
+def show_log_viewer(window_title="Viewing Log File", window_msg=None, log_file=None, ext_buttons=False):
     from resources.libs.common import logging
 
     class LogViewer(xbmcgui.WindowXMLDialog):
         def __init__(self, *args, **kwargs):
-            self.default = kwargs['default']
+            self.log_file = kwargs['log_file']
 
         def onInit(self):
             from resources.libs.common import tools
@@ -530,10 +530,10 @@ def show_log_viewer(window_title="Viewing Log File", window_msg=None, default=No
             self.closebutton = 205
 
             if window_msg is None:
-                self.logmsg = tools.read_from_file(self.default)
+                self.logmsg = tools.read_from_file(self.log_file)
             else:
                 self.logmsg = window_msg
-            self.logfile = os.path.basename(self.default)
+            self.logfile = os.path.basename(self.log_file)
             
             self.buttons = 'true' if ext_buttons else 'false'
             
@@ -575,9 +575,9 @@ def show_log_viewer(window_title="Viewing Log File", window_msg=None, default=No
             if action.getId() in BACK_ACTIONS:
                 self.close()
 
-    if default is None:
-        default = logging.grab_log(file=True)
+    if log_file is None:
+        log_file = logging.grab_log(file=True)
         
-    lv = LogViewer("log_viewer.xml", CONFIG.ADDON_PATH, 'Default', default=default)
+    lv = LogViewer("log_viewer.xml", CONFIG.ADDON_PATH, 'Default', log_file=log_file)
     lv.doModal()
     del lv
