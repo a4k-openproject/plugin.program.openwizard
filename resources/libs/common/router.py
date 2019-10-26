@@ -69,7 +69,7 @@ def dispatch(paramstring):
         Wizard().install(mode, name, url, True)
     elif mode == 'install':  # Builds -> Fresh Install/Standard Install/Apply guifix
         from resources.libs.wizard import Wizard
-        Wizard().install(name, url)
+        Wizard().install(url, name)
     elif mode == 'addonpack':  # Install Addon Pack
         from resources.libs import install
         install.install_addon_pack(name, url)

@@ -40,7 +40,7 @@ class Wizard:
 
         self.over = False
 
-    def _install(self, name, type):
+    def _install(self, type, name):
         if type == 'fresh':
             from resources.libs import install
             install.fresh_start(name)
@@ -213,7 +213,7 @@ class Wizard:
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                '[COLOR {0}]GuiFix: Cancelled![/COLOR]'.format(CONFIG.COLOR2))
 
-    def _theme(self, name, type, theme):
+    def _theme(self, type, name, theme):
         installtheme = False
 
         if not theme:
@@ -335,8 +335,8 @@ class Wizard:
         self.over = over
         
         if type in ['fresh', 'normal']:
-            self._install(name, type)
+            self._install(type, name)
         elif type == 'gui':
             self._gui(name)
         elif type == 'theme':
-            self._theme(name, type, theme)
+            self._theme(type, name, theme)
