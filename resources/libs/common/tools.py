@@ -666,6 +666,11 @@ def get_info_label(label):
         return xbmc.getInfoLabel(label)
     except:
         return False
+        
+        
+def check_for_updates():
+    xbmc.executebuiltin('UpdateAddonRepos()')
+    xbmc.executebuiltin('UpdateLocalAddons()')
 
 #########################
 #  URL Functions        #
