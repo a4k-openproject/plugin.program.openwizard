@@ -629,7 +629,7 @@ def login_menu():
 def enable_addons():
     from resources.libs.common import tools
 
-    directory.add_file("[I][B][COLOR red]!!Notice: Disabling Some Addons Can Cause Issues!![/COLOR][/B][/I]", '', icon=CONFIG.ICONMAINT)
+    directory.add_file("[I][B][COLOR red]!!Notice: Disabling Some Addons Can Cause Issues!![/COLOR][/B][/I]", icon=CONFIG.ICONMAINT)
     fold = glob.glob(os.path.join(CONFIG.ADDONS, '*/'))
     addonnames = []
     addonids = []
@@ -661,7 +661,7 @@ def enable_addons():
                 pass
             icon = os.path.join(folder, 'icon.png') if os.path.exists(os.path.join(folder, 'icon.png')) else CONFIG.ADDON_ICON
             fanart = os.path.join(folder, 'fanart.jpg') if os.path.exists(os.path.join(folder, 'fanart.jpg')) else CONFIG.ADDON_FANART
-            directory.add_file("{0} {1}".format(state, name), 'toggleaddon', addid, goto, icon=icon, fanart=fanart)
+            directory.add_file("{0} {1}".format(state, name), {'mode': 'toggleaddon', 'name': addid, 'url': goto}, icon=icon, fanart=fanart)
     if len(addonnames) == 0:
         directory.add_file("No Addons Found to Enable or Disable.", '', icon=CONFIG.ICONMAINT)
 
