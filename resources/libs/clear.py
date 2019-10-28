@@ -641,34 +641,40 @@ def remove_addon_data(addon):
                 logging.log('Add-on data for {0} was not removed'.format(addon))
     xbmc.executebuiltin('Container.Refresh()')
 
-
+    
 def remove_addon_menu():
     from resources.libs.common import logging
     from resources.libs.common import tools
     from resources.libs import update
     
+    from xml.etree import ElementTree
+    
     dialog = xbmcgui.Dialog()
 
-    fold = glob.glob(os.path.join(CONFIG.ADDONS, '*/'))
+    addonfolders = glob.iglob(os.path.join(CONFIG.ADDONS, '*/'))
     addonnames = []
     addonids = []
-    for folder in sorted(fold, key=lambda x: x):
+    
+    for folder in addonfolders:
         foldername = os.path.split(folder[:-1])[1]
+        
         if foldername in CONFIG.EXCLUDES:
             continue
         elif foldername in CONFIG.DEFAULTPLUGINS:
             continue
         elif foldername == 'packages':
-            continue
+            continue    
+        
         xml = os.path.join(folder, 'addon.xml')
+        
         if os.path.exists(xml):
-            a = tools.read_from_file(xml).replace('\n', '').replace('\r', '').replace('\t', '')
-            id_match = tools.parse_dom(a, 'addon', ret='id')
-
-            addid = foldername if len(id_match) == 0 else id_match[0]
+            root = ElementTree.parse(xml).getroot()
+            addonid = root.get('id')
+            addonname = root.get('name')
+            
             try:
-                addonnames.append(tools.get_addon_info(addid, 'name'))
-                addonids.append(addid)
+                addonnames.append(addonname)
+                addonids.append(addonid)
             except:
                 pass
     if len(addonnames) == 0:
