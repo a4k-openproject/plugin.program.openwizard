@@ -593,14 +593,16 @@ def remove_addon_data(addon):
                             '[COLOR {0}]Would you like to remove [COLOR {1}]ALL[/COLOR] addon data stored in your userdata folder for uninstalled addons?[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1),
                             yeslabel='[B][COLOR springgreen]Remove Data[/COLOR][/B]',
                             nolabel='[B][COLOR red]Don\'t Remove[/COLOR][/B]'):
+                            
             total = 0
+            
             for folder in glob.glob(os.path.join(CONFIG.ADDON_DATA, '*')):
                 foldername = folder.replace(CONFIG.ADDON_DATA, '').replace('\\', '').replace('/', '')
                 if foldername in CONFIG.EXCLUDES:
                     pass
                 elif os.path.exists(os.path.join(CONFIG.ADDONS, foldername)):
                     pass
-                else:
+                elif os.path.isdir(folder):
                     tools.clean_house(folder)
                     total += 1
                     logging.log(folder)
