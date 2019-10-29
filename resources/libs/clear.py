@@ -463,7 +463,7 @@ def clear_crash():
                             nolabel="[B][COLOR red]Keep Logs[/COLOR][/B]"):
             for f in files:
                 os.remove(f)
-            logging.log_notify('[COLOR 0}]Clear Crash Logs[/COLOR]'.format(CONFIG.COLOR1),
+            logging.log_notify('[COLOR {0}]Clear Crash Logs[/COLOR]'.format(CONFIG.COLOR1),
                                '[COLOR {0}]{1} Crash Logs Removed[/COLOR]'.format(CONFIG.COLOR2, len(files)))
         else:
             logging.log_notify('[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
