@@ -195,18 +195,21 @@ def kodi_17_fix():
 def toggle_addon(id, value, over=None):
     from resources.libs.common import tools
 
+    from xml.etree import ElementTree
+
     logging.log("Toggling {0}".format(id))
     addonid = id
     addonxml = os.path.join(CONFIG.ADDONS, id, 'addon.xml')
     if os.path.exists(addonxml):
-        b = tools.read_from_file(addonxml)
-        tid = tools.parse_dom(b, 'addon', ret='id')
-        tname = tools.parse_dom(b, 'addon', ret='name')
-        tservice = tools.parse_dom(b, 'extension', ret='library', attrs={'point': 'xbmc.service'})
+        root = ElementTree.parse(addonxml).getroot()
+        tid = root.get('id')
+        tname = root.get('name')
+        tservice = root.find('extension').get('point')
+        
         try:
             if len(tid) > 0:
-                addonid = tid[0]
-            if len(tservice) > 0:
+                addonid = tid
+            if tservice == 'xbmc.service':
                 logging.log("We got a live one, stopping script: {0}".format(tid))
                 xbmc.executebuiltin('StopScript({0})'.format(os.path.join(CONFIG.ADDONS, addonid)))
                 xbmc.executebuiltin('StopScript({0})'.format(addonid))
@@ -214,8 +217,10 @@ def toggle_addon(id, value, over=None):
                 xbmc.sleep(500)
         except:
             pass
+            
     query = '{{"jsonrpc":"2.0", "method":"Addons.SetAddonEnabled","params":{{"addonid":"{0}","enabled":{1}}}, "id":1}}'.format(addonid, value)
     response = xbmc.executeJSONRPC(query)
+    
     if 'error' in response and over is None:
         from resources.libs import update
         

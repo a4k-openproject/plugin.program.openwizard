@@ -628,6 +628,8 @@ def login_menu():
 
 def enable_addons():
     from resources.libs.common import tools
+    
+    from xml.etree import ElementTree
 
     directory.add_file("[I][B][COLOR red]!!Notice: Disabling Some Addons Can Cause Issues!![/COLOR][/B][/I]", icon=CONFIG.ICONMAINT)
     fold = glob.glob(os.path.join(CONFIG.ADDONS, '*/'))
@@ -643,27 +645,28 @@ def enable_addons():
             continue
         xml = os.path.join(folder, 'addon.xml')
         if os.path.exists(xml):
-            a = tools.read_from_file(xml).replace('\n', '').replace('\r', '').replace('\t', '')
-            id_match = tools.parse_dom(a, 'addon', ret='id')
-            name_match = tools.parse_dom(a, 'addon', ret='name')
-
-            addid = foldername if len(id_match) == 0 else id_match[0]
-            name = foldername if len(name_match) == 0 else name_match[0]
+            root = ElementTree.parse(xml).getroot()
+            addonid = root.get('id')
+            addonname = root.get('name')
+           
             try:
-                addonnames.append(tools.get_addon_info(addid, 'name'))
-                addonids.append(addid)
-
+                addonnames.append(tools.get_addon_info(addonid, 'name'))
+                addonids.append(addonid)
+            except:                
+                pass
+                
+            if xbmc.getCondVisibility('System.HasAddon({0})'.format(addonid)):
                 state = "[COLOR springgreen][Enabled][/COLOR]"
                 goto = "false"
-            except:
+            else:
                 state = "[COLOR red][Disabled][/COLOR]"
                 goto = "true"
-                pass
+                
             icon = os.path.join(folder, 'icon.png') if os.path.exists(os.path.join(folder, 'icon.png')) else CONFIG.ADDON_ICON
             fanart = os.path.join(folder, 'fanart.jpg') if os.path.exists(os.path.join(folder, 'fanart.jpg')) else CONFIG.ADDON_FANART
-            directory.add_file("{0} {1}".format(state, name), {'mode': 'toggleaddon', 'name': addid, 'url': goto}, icon=icon, fanart=fanart)
+            directory.add_file("{0} {1}".format(state, addonname), {'mode': 'toggleaddon', 'name': addonid, 'url': goto}, icon=icon, fanart=fanart)
     if len(addonnames) == 0:
-        directory.add_file("No Addons Found to Enable or Disable.", '', icon=CONFIG.ICONMAINT)
+        directory.add_file("No Addons Found to Enable or Disable.", icon=CONFIG.ICONMAINT)
 
 
 def advanced_window(url=None):
