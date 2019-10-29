@@ -174,9 +174,6 @@ def dispatch(paramstring):
     elif mode == 'convertpath':  # System Tweaks -> Convert Special Paths
         from resources.libs.common import tools
         tools.convert_special(CONFIG.HOME)
-    elif mode == 'checkaddonupdate':  # System Tweaks -> Fix Addons not Updating
-        from resources.libs.common import tools
-        tools.check_for_updates()
     elif mode == 'forceprofile':  # Misc Maintenance -> Reload Profile
         from resources.libs.common import tools
         tools.reload_profile(tools.get_info_label('System.ProfileName'))
