@@ -36,7 +36,7 @@ from resources.libs.common import tools
 def import_save_data():
     dialog = xbmcgui.Dialog()
 
-    TEMP = os.path.join(CONFIG.ADDON_DATA, 'temp')
+    TEMP = os.path.join(CONFIG.PLUGIN_DATA, 'temp')
     if not os.path.exists(TEMP):
         os.makedirs(TEMP)
     source = dialog.browse(1, '[COLOR {0}]Select the location of the SaveData.zip[/COLOR]'.format(CONFIG.COLOR2),

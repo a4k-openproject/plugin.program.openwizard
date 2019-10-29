@@ -155,9 +155,9 @@ class Config:
         self.SPEEDTEST = os.path.join(self.PLUGIN_DATA, 'SpeedTest')
         self.ARCHIVE_CACHE = os.path.join(self.TEMP, 'archive_cache')
         self.ART = os.path.join(self.PLUGIN, 'resources', 'art')
-        self.DEBRIDFOLD = os.path.join(self.ADDON_DATA, 'debrid')
-        self.TRAKTFOLD = os.path.join(self.ADDON_DATA, 'trakt')
-        self.LOGINFOLD = os.path.join(self.ADDON_DATA, 'login')
+        self.DEBRIDFOLD = os.path.join(self.PLUGIN_DATA, 'debrid')
+        self.TRAKTFOLD = os.path.join(self.PLUGIN_DATA, 'trakt')
+        self.LOGINFOLD = os.path.join(self.PLUGIN_DATA, 'login')
 
         # File paths
         self.ADVANCED = os.path.join(self.USERDATA, 'advancedsettings.xml')
