@@ -22,6 +22,8 @@ import xbmcgui
 
 from datetime import datetime
 from datetime import timedelta
+
+import glob
 import os
 import sys
 
@@ -185,8 +187,8 @@ def installed_build_check():
                 logging.log('[Build Installed Check] Guifix url not working: {0}'.format(gui_xml), level=xbmc.LOGNOTICE)
     else:
         logging.log('[Build Installed Check] Install seems to be completed correctly', level=xbmc.LOGNOTICE)
-
-    update.addon_updates('reset')
+        
+    install_binaries()
 
     if CONFIG.KEEPTRAKT == 'true':
         from resources.libs import traktit
@@ -203,6 +205,24 @@ def installed_build_check():
 
     CONFIG.clear_setting('install')
 
+    
+def install_binaries():
+    binarytxt = os.path.join(CONFIG.USERDATA, 'build_binaries.txt')
+    if os.path.exists(binarytxt):
+        from resources.libs import install
+        
+        binaries = tools.read_from_file(binarytxt)
+        binaryids = binaries.split(',')
+        
+        installed = 0
+        
+        for id in binaryids:
+            if install.install_from_kodi(id):
+                installed += 1
+        
+        if installed == len(binaryids):
+            tools.remove_file(binarytxt)
+    
 
 def build_update_check():
     if not tools.check_url(CONFIG.BUILDFILE):
