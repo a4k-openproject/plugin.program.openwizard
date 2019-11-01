@@ -374,7 +374,7 @@ def _backup_build(name=""):
                             if id in fn:
                                 skipbinary = True
                             
-                    if skipbinary:
+                    if skipbinary or file.endswith('.dll'):
                         logging.log("[Back Up] Type = build: Ignore {0} - Binary Add-on".format(file), level=xbmc.LOGNOTICE)
                         continue
                         

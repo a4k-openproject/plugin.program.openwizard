@@ -77,9 +77,6 @@ def _finish(file, loc, zname):
     progress_dialog = xbmcgui.DialogProgress()
 
     percent, errors, error = extract.all(file, loc)
-    db.fix_metas()
-    CONFIG.clear_setting('build')
-    progress_dialog.close()
 
     if int(errors) >= 1:
         if dialog.yesno(CONFIG.ADDONTITLE,
