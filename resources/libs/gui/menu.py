@@ -751,6 +751,7 @@ def developer():
     directory.add_file('Test Update', {'mode': 'testupdate'}, themeit=CONFIG.THEME1)
     directory.add_file('Test Build Prompt', {'mode': 'testbuildprompt'}, themeit=CONFIG.THEME1)
     directory.add_file('Test Save Data Settings', {'mode': 'testsavedata'}, themeit=CONFIG.THEME1)
+    directory.add_file('Test Binary Detection', {'mode': 'binarycheck'}, themeit=CONFIG.THEME1)
 
 
 ###########################
