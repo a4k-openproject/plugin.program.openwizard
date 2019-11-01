@@ -33,6 +33,10 @@ from resources.libs.gui import directory
 class BuildMenu:
 
     def __init__(self):
+        self.bf = None
+        self.link = None
+        self.match = None
+        
         if tools.check_url(CONFIG.BUILDFILE):
             self.bf = tools.open_url(CONFIG.BUILDFILE)
             self.link = tools.clean_text(self.bf)

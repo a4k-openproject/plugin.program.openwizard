@@ -279,11 +279,23 @@ def _backup_build(name=""):
         skins = []
         fold = glob.glob(os.path.join(CONFIG.ADDONS, '*/'))
         idlist = []
+        
+        binaries = []
+        binidlist = []
+        binpaths = []
 
         for folder in sorted(fold, key=lambda x: x):
             foldername = os.path.split(folder[:-1])[1]
             if foldername == 'packages':
                 continue
+                
+            binaryid, binaryname = db.find_binary_addons(addon=foldername)
+            
+            if binaryid:
+                binaries.append(binaryname)
+                binidlist.append(binaryid)     
+                binpaths.append(os.path.join(CONFIG.ADDONS, binaryid))
+                
             xml = os.path.join(folder, 'addon.xml')
             if os.path.exists(xml):
                 a = tools.read_from_file(xml)
@@ -318,6 +330,8 @@ def _backup_build(name=""):
                 if not (prov[0]).find('image') == -1:
                     picture.append(aname)
         db.fix_metas()
+        
+        binarytxt = _backup_binaries(name, binidlist)
 
         for base, dirs, files in os.walk(CONFIG.HOME):
             dirs[:] = [d for d in dirs if d not in exclude_dirs]
@@ -340,9 +354,6 @@ def _backup_build(name=""):
                     elif os.path.join('addons', 'packages') in fn:
                         logging.log("[Back Up] Type = build: Ignore {0} - Packages Folder".format(file), level=xbmc.LOGNOTICE)
                         continue
-                    elif os.path.join(CONFIG.ADDONS, 'inputstream.adaptive') in fn:
-                        logging.log("[Back Up] Type = build: Ignore {0} - Binary Add-on".format(file), level=xbmc.LOGNOTICE)
-                        continue
                     elif file.endswith('.csv'):
                         logging.log("[Back Up] Type = build: Ignore {0} - CSV File".format(file), level=xbmc.LOGNOTICE)
                         continue
@@ -355,6 +366,18 @@ def _backup_build(name=""):
                             if not file == db.latest_db(temp):
                                 logging.log("[Back Up] Type = build: Ignore {0} - DB File".format(file), level=xbmc.LOGNOTICE)
                                 continue
+                                
+                    skipbinary = False
+                    if len(binidlist) > 0:
+                        for id in binidlist:
+                            id = os.path.join(CONFIG.ADDONS, id)
+                            if id in fn:
+                                skipbinary = True
+                            
+                    if skipbinary:
+                        logging.log("[Back Up] Type = build: Ignore {0} - Binary Add-on".format(file), level=xbmc.LOGNOTICE)
+                        continue
+                        
                     try:
                         zipf.write(fn, fn[len(CONFIG.HOME):], zipfile.ZIP_DEFLATED)
                         extractsize += os.path.getsize(fn)
@@ -369,6 +392,7 @@ def _backup_build(name=""):
                 except Exception as e:
                     logging.log("[Back Up] Type = build: Unable to backup {0}".format(file), level=xbmc.LOGNOTICE)
                     logging.log("Build Backup Error: {0}".format(str(e)), level=xbmc.LOGNOTICE)
+                    
         if 'addon_data' in exclude_dirs:
             match = glob.glob(os.path.join(CONFIG.ADDON_DATA, 'skin.*', ''))
             for fold in match:
@@ -401,15 +425,19 @@ def _backup_build(name=""):
             if success == 0:
                 xbmcvfs.copy(tempzipname, zipname)
                 xbmcvfs.delete(tempzipname)
-
-        _backup_info(name, extractsize, programs, video, music, picture, repos, scripts)
+                
+        if binarytxt is not None:
+            bintxtpath = os.path.join(CONFIG.USERDATA, binarytxt)
+            xbmcvfs.delete(bintxtpath)
+         
+        _backup_info(name, extractsize, programs, video, music, picture, repos, scripts, binaries)
 
         dialog.ok(CONFIG.ADDONTITLE,
                       "[COLOR {0}]{1}[/COLOR] [COLOR {2}]Backup successful:[/COLOR]".format(CONFIG.COLOR1, name, CONFIG.COLOR2),
                       "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, zipname))
 
 
-def _backup_info(name, extractsize, programs, video, music, picture, repos, scripts):
+def _backup_info(name, extractsize, programs, video, music, picture, repos, scripts, binaries):
     backup_path = CONFIG.MYBUILDS
     zipname = name + '.zip'
     txtname = name + '.txt'
@@ -428,7 +456,26 @@ def _backup_info(name, extractsize, programs, video, music, picture, repos, scri
         f.write('picture="{0}"\n'.format(', '.join(picture)) if len(picture) > 0 else 'picture="none"\n')
         f.write('repos="{0}"\n'.format(', '.join(repos)) if len(repos) > 0 else 'repos="none"\n')
         f.write('scripts="{0}"\n'.format(', '.join(scripts)) if len(scripts) > 0 else 'scripts="none"\n')
+        f.write('binaries="{0}"\n'.format(', '.join(binaries)) if len(binaries) > 0 else 'binaries="none"\n')
 
+        
+def _backup_binaries(name, ids):
+    txtname = None
+    
+    if len(ids) > 0:
+        path = CONFIG.USERDATA
+        txtname = 'build_binaries.txt'
+        txt_path = os.path.join(path, txtname)
+        
+        with open(txt_path, 'w') as f:
+            for id in ids:
+                if ids.index(id) == len(ids) - 1:
+                    f.write(id)
+                else:
+                    f.write(id + ',')
+                    
+    return txtname
+                    
 
 def _backup_guifix(name=""):
     dialog = xbmcgui.Dialog()
