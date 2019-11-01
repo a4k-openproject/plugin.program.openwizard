@@ -679,6 +679,7 @@ def remove_addon_menu():
                 addonids.append(addonid)
             except:
                 pass
+                
     if len(addonnames) == 0:
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            "[COLOR {0}]No Addons To Remove[/COLOR]".format(CONFIG.COLOR2))
