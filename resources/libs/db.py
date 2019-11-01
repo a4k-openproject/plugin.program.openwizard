@@ -412,3 +412,67 @@ def grab_addons(path):
         if not info[-2] in addonlist:
             addonlist.append(info[-2])
     return addonlist
+
+    
+def find_binary_addons(addon='all'):
+    from xml.etree import ElementTree
+    
+    # import web_pdb; web_pdb.set_trace()
+    
+    dialog = xbmcgui.Dialog()
+    
+    if addon == 'all':
+        addonfolders = glob.iglob(os.path.join(CONFIG.ADDONS, '*/'))
+        addonids = []
+        addonnames = []
+        
+        for folder in addonfolders:
+            foldername = os.path.split(folder[:-1])[1]
+            
+            if foldername in CONFIG.EXCLUDES:
+                continue
+            elif foldername in CONFIG.DEFAULTPLUGINS:
+                continue
+            elif foldername == 'packages':
+                continue    
+            
+            xml = os.path.join(folder, 'addon.xml')
+            
+            if os.path.exists(xml):
+                root = ElementTree.parse(xml).getroot()
+                addonid = root.get('id')
+                addonname = root.get('name')
+                extension = root.find('extension')
+                ext_attrs = extension.keys()
+                
+                for attr in ext_attrs:
+                    if attr.startswith('library_'):
+                        try:
+                            addonnames.append(addonname)
+                            addonids.append(addonid)
+                        except:
+                            pass
+        
+        dialog.ok(CONFIG.ADDONTITLE, "[COLOR {0}]Found [COLOR {1}]{2}[/COLOR] platform-specific addons installed:[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, len(addonnames)), "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, addonnames))
+        
+        return addonids, addonnames
+    else:
+        if addon in CONFIG.EXCLUDES:
+            return None, None
+        elif addon in CONFIG.DEFAULTPLUGINS:
+            return None, None
+        
+        xml = os.path.join(CONFIG.ADDONS, addon, 'addon.xml')
+        
+        if os.path.exists(xml):
+            root = ElementTree.parse(xml).getroot()
+            addonid = root.get('id')
+            addonname = root.get('name')
+            extension = root.find('extension')
+            ext_attrs = extension.keys()
+            
+            for attr in ext_attrs:
+                if attr.startswith('library_'):
+                    return addonid, addonname
+                        
+        return None, None

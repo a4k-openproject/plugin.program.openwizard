@@ -443,7 +443,9 @@ def dispatch(paramstring):
     elif mode == 'testbuildprompt':  # Developer Menu -> Test Build Prompt
         from resources.libs import test
         test.test_first_run()
-
+    elif mode == 'binarycheck':
+        from resources.libs import db
+        db.find_binary_addons()    
     elif mode == 'contact':  # Contact
         from resources.libs.gui import window
         window.show_contact(CONFIG.CONTACT)
