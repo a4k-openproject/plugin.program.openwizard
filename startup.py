@@ -204,38 +204,47 @@ def installed_build_check():
     CONFIG.clear_setting('install')
 
     
-def install_binaries():
+def binaries_check():
     dialog = xbmcgui.Dialog()
     restore = dialog.yesno(CONFIG.ADDONTITLE, '[COLOR {0}]The restored build contains platform-specific addons. Would you like to restore them now?[/COLOR]'.format(CONFIG.COLOR2),
                                           yeslabel="[B][COLOR springgreen]Yes[/COLOR][/B]",
                                           nolabel="[B][COLOR red]No[/COLOR][/B]")
     
     if restore:
+        import sqlite3 as database
         from resources.libs import clear
-        from resources.libs import install
     
         dialog.ok(CONFIG.ADDONTITLE, '[COLOR {0}]A number of dialogs may pop up during this process. Cancelling them may cause the restored build to function incorrectly.[/COLOR]'.format(CONFIG.COLOR2))
         
         binaryids = tools.read_from_file(binarytxt).split(',')
-        
-        done = []
+        sqldb = database.connect(os.path.join(CONFIG.DATABASE, db.latest_db('Addons')))
+        sqlexe = sqldb.cursor()
             
         for id in binaryids:
-            if xbmc.getCondVisibility('System.HasAddon({0}'.format(id)):
+            if xbmc.getCondVisibility('System.HasAddon({0})'.format(id)):
                 clear.remove_addon(id, tools.get_addon_info(id, 'name'), over=True, data=False)
-            xbmc.sleep(500)
-        
-        for id in binaryids:
-            if not xbmc.getCondVisibility('System.HasAddon({0}'.format(id)):
-                install.install_from_kodi(id)
+                sqlexe.execute("DELETE FROM installed WHERE addonID = '{0}'".format(id))
+                sqlexe.execute("DELETE FROM package WHERE addonID = '{0}'".format(id))
             xbmc.sleep(500)
             
-        for id in binaryids:
-            done.append(True if xbmc.getCondVisibility('System.HasAddon({0}'.format(id)) == 1 else False)
+        sqldb.commit()
+        sqldb.close()
         
-        if False not in done:
-            tools.remove_file(binarytxt)
+        _install_binaries(binaryids)
     
+def _install_binaries(binaryids):
+    from resources.libs import install
+    
+    installed = 0
+    
+    for id in binaryids:
+        if not xbmc.getCondVisibility('System.HasAddon({0})'.format(id)):
+            install.install_from_kodi(id)
+            installed += 1
+        xbmc.sleep(500)
+    
+    if installed == len(binaryids):
+        tools.remove_file(binarytxt)
 
 def build_update_check():
     if not tools.check_url(CONFIG.BUILDFILE):
@@ -379,7 +388,7 @@ else:
 binarytxt = os.path.join(CONFIG.USERDATA, 'build_binaries.txt')
 if os.path.exists(binarytxt):
     logging.log("[Binary Detection] Reinstalling Eligible Binary Addons", level=xbmc.LOGNOTICE)
-    install_binaries()
+    binaries_check()
 else:
     logging.log("[Binary Detection] Eligible Binary Addons to Reinstall", level=xbmc.LOGNOTICE)
 
