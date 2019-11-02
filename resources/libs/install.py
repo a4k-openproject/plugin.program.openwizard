@@ -453,12 +453,10 @@ def install_from_kodi(plugin):
     import threading
     from resources.libs.gui import window
 
-    threading.Thread(target=_dialog_watch, kwargs={'window': 'yesnodialog', 'action': 11, 'count': 200}).start()
-    threading.Thread(target=_dialog_watch, kwargs={'window': 'okdialog', 'action': 11, 'count': 200}).start()
-    threading.Thread(target=_dialog_watch, kwargs={'window': 'progressdialog', 'action': 10, 'count': 200}).start()
-    xbmc.sleep(200)
     xbmc.executebuiltin('RunPlugin(plugin://{0})'.format(plugin))
-        
+    
+    threading.Thread(target=_dialog_watch, kwargs={'window': 'yesnodialog', 'action': 11, 'count': 200}).start()
+    
     if os.path.exists(os.path.join(CONFIG.ADDONS, plugin)):
         return True
     else:
