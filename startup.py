@@ -187,8 +187,6 @@ def installed_build_check():
                 logging.log('[Build Installed Check] Guifix url not working: {0}'.format(gui_xml), level=xbmc.LOGNOTICE)
     else:
         logging.log('[Build Installed Check] Install seems to be completed correctly', level=xbmc.LOGNOTICE)
-        
-    install_binaries()
 
     if CONFIG.KEEPTRAKT == 'true':
         from resources.libs import traktit
@@ -207,20 +205,35 @@ def installed_build_check():
 
     
 def install_binaries():
-    binarytxt = os.path.join(CONFIG.USERDATA, 'build_binaries.txt')
-    if os.path.exists(binarytxt):
+    dialog = xbmcgui.Dialog()
+    restore = dialog.yesno(CONFIG.ADDONTITLE, '[COLOR {0}]The restored build contains platform-specific addons. Would you like to restore them now?[/COLOR]'.format(CONFIG.COLOR2),
+                                          yeslabel="[B][COLOR springgreen]Yes[/COLOR][/B]",
+                                          nolabel="[B][COLOR red]No[/COLOR][/B]")
+    
+    if restore:
+        from resources.libs import clear
         from resources.libs import install
+    
+        dialog.ok(CONFIG.ADDONTITLE, '[COLOR {0}]A number of dialogs may pop up during this process. Cancelling them may cause the restored build to function incorrectly.[/COLOR]'.format(CONFIG.COLOR2))
         
-        binaries = tools.read_from_file(binarytxt)
-        binaryids = binaries.split(',')
+        binaryids = tools.read_from_file(binarytxt).split(',')
         
-        installed = 0
+        done = []
+            
+        for id in binaryids:
+            if xbmc.getCondVisibility('System.HasAddon({0}'.format(id)):
+                clear.remove_addon(id, tools.get_addon_info(id, 'name'), over=True, data=False)
+            xbmc.sleep(500)
         
         for id in binaryids:
-            if install.install_from_kodi(id):
-                installed += 1
+            if not xbmc.getCondVisibility('System.HasAddon({0}'.format(id)):
+                install.install_from_kodi(id)
+            xbmc.sleep(500)
+            
+        for id in binaryids:
+            done.append(True if xbmc.getCondVisibility('System.HasAddon({0}'.format(id)) == 1 else False)
         
-        if installed == len(binaryids):
+        if False not in done:
             tools.remove_file(binarytxt)
     
 
@@ -340,15 +353,15 @@ if CONFIG.FIRSTRUN == 'true':
     CONFIG.set_setting('first_install', 'false')
 else:
     logging.log("[First Run] Skipping Save Data Settings", level=xbmc.LOGNOTICE)
-
+    
 # BUILD INSTALL PROMPT
 if CONFIG.BUILDNAME == '':
     logging.log("[Current Build Check] Build Not Installed", level=xbmc.LOGNOTICE)
     window.show_build_prompt()
 else:
     logging.log("[Current Build Check] Build Installed: {0}".format(CONFIG.BUILDNAME), level=xbmc.LOGNOTICE)
-
-# BUILD UPDATE CHECK
+    
+    # BUILD UPDATE CHECK
 if CONFIG.BUILDNAME != '' and CONFIG.BUILDCHECK <= str(tools.get_date(days=CONFIG.UPDATECHECK, now=True)):
     logging.log("[Build Update Check] Started", level=xbmc.LOGNOTICE)
     build_update_check()
@@ -361,6 +374,14 @@ if CONFIG.AUTOINSTALL == 'Yes':
     auto_install_repo()
 else:
     logging.log("[Auto Install Repo] Not Enabled", level=xbmc.LOGNOTICE)
+    
+# REINSTALL ELIGIBLE BINARIES
+binarytxt = os.path.join(CONFIG.USERDATA, 'build_binaries.txt')
+if os.path.exists(binarytxt):
+    logging.log("[Binary Detection] Reinstalling Eligible Binary Addons", level=xbmc.LOGNOTICE)
+    install_binaries()
+else:
+    logging.log("[Binary Detection] Eligible Binary Addons to Reinstall", level=xbmc.LOGNOTICE)
 
 # AUTO UPDATE WIZARD
 if CONFIG.AUTOUPDATE == 'Yes':
