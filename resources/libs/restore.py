@@ -33,78 +33,6 @@ except ImportError:  # Python 2
 from resources.libs.common.config import CONFIG
 
 
-def _local(file, loc):
-    display = os.path.split(file)
-    filename = display[1]
-    
-    progress_dialog = xbmcgui.DialogProgress()
-
-    try:
-        zipfile.ZipFile(file, 'r')
-    except:
-        progress_dialog.update(0, '[COLOR {0}]Unable to read zipfile from current location.'.format(CONFIG.COLOR2),
-                      'Copying file to packages')
-        pack = os.path.join(CONFIG.PACKAGES, filename)
-        xbmcvfs.copy(file, pack)
-        file = xbmc.translatePath(pack)
-        progress_dialog.update(0, '', 'Copying file to packages: Complete')
-        zipfile.ZipFile(file, 'r')
-
-    _finish(file, loc, filename)
-
-
-def _external(source, loc):
-    from resources.libs import downloader
-    
-    progress_dialog = xbmcgui.DialogProgress()
-
-    display = os.path.split(source)
-    filename = display[1]
-
-    file = os.path.join(CONFIG.PACKAGES, filename)
-    downloader.download(source, file)
-    progress_dialog.update(0, 'Installing External Backup', '', 'Please Wait')
-
-    _finish(file, loc, filename)
-
-
-def _finish(file, loc, zname):
-    from resources.libs import db
-    from resources.libs import extract
-    from resources.libs.common import tools
-
-    dialog = xbmcgui.Dialog()
-    progress_dialog = xbmcgui.DialogProgress()
-
-    percent, errors, error = extract.all(file, loc)
-
-    if int(errors) >= 1:
-        if dialog.yesno(CONFIG.ADDONTITLE,
-                            '[COLOR {0}][COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, zname),
-                            'Completed: [COLOR {0}]{1}{2}[/COLOR] [Errors:[COLOR {3}]{4}[/COLOR]]'.format(CONFIG.COLOR1,
-                                                                                                          percent, '%',
-                                                                                                          CONFIG.COLOR1,
-                                                                                                          errors),
-                            'Would you like to view the errors?[/COLOR]',
-                            nolabel='[B][COLOR red]No Thanks[/COLOR][/B]',
-                            yeslabel='[B][COLOR springgreen]View Errors[/COLOR][/B]'):
-
-            from resources.libs.gui import window
-            window.show_text_box("Viewing Errors", error.replace('\t', ''))
-    CONFIG.set_setting('installed', 'true')
-    CONFIG.set_setting('extract', str(percent))
-    CONFIG.set_setting('errors', str(errors))
-    try:
-        os.remove(file)
-    except:
-        pass
-
-    dialog.ok(CONFIG.ADDONTITLE,
-                  "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(
-                      CONFIG.COLOR2))
-    tools.kill_kodi(True)
-
-
 class Restore:
     def __init__(self):
         from resources.libs.common import tools
@@ -112,6 +40,78 @@ class Restore:
 
         self.external = False
         self.location = 'Local'
+        
+    def _local(self, file, loc):
+        display = os.path.split(file)
+        filename = display[1]
+        
+        progress_dialog = xbmcgui.DialogProgress()
+
+        try:
+            zipfile.ZipFile(file, 'r')
+        except:
+            progress_dialog.update(0, '[COLOR {0}]Unable to read zipfile from current location.'.format(CONFIG.COLOR2),
+                          'Copying file to packages')
+            pack = os.path.join(CONFIG.PACKAGES, filename)
+            xbmcvfs.copy(file, pack)
+            file = xbmc.translatePath(pack)
+            progress_dialog.update(0, '', 'Copying file to packages: Complete')
+            zipfile.ZipFile(file, 'r')
+
+        self._finish(file, loc, filename)
+
+    def _external(self, source, loc):
+        from resources.libs import downloader
+        
+        progress_dialog = xbmcgui.DialogProgress()
+
+        display = os.path.split(source)
+        filename = display[1]
+
+        file = os.path.join(CONFIG.PACKAGES, filename)
+        downloader.download(source, file)
+        progress_dialog.update(0, 'Installing External Backup', '', 'Please Wait')
+
+        self._finish(file, loc, filename)
+
+
+    def _finish(self, file, loc, zname):
+        from resources.libs import db
+        from resources.libs import extract
+        from resources.libs.common import tools
+
+        dialog = xbmcgui.Dialog()
+        progress_dialog = xbmcgui.DialogProgress()
+
+        percent, errors, error = extract.all(file, loc)
+
+        if int(errors) >= 1:
+            if dialog.yesno(CONFIG.ADDONTITLE,
+                                '[COLOR {0}][COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, zname),
+                                'Completed: [COLOR {0}]{1}{2}[/COLOR] [Errors:[COLOR {3}]{4}[/COLOR]]'.format(CONFIG.COLOR1,
+                                                                                                              percent, '%',
+                                                                                                              CONFIG.COLOR1,
+                                                                                                              errors),
+                                'Would you like to view the errors?[/COLOR]',
+                                nolabel='[B][COLOR red]No Thanks[/COLOR][/B]',
+                                yeslabel='[B][COLOR springgreen]View Errors[/COLOR][/B]'):
+
+                from resources.libs.gui import window
+                window.show_text_box("Viewing Errors", error.replace('\t', ''))
+        CONFIG.set_setting('installed', 'true')
+        CONFIG.set_setting('extract', str(percent))
+        CONFIG.set_setting('errors', str(errors))
+        
+        if self.external:
+            try:
+                os.remove(file)
+            except:
+                pass
+
+        dialog.ok(CONFIG.ADDONTITLE,
+                      "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(
+                          CONFIG.COLOR2))
+        tools.kill_kodi(True)
 
     def _choose(self, loc):
         from resources.libs.common import logging
@@ -137,7 +137,7 @@ class Restore:
             progress_dialog.create(CONFIG.ADDONTITLE, '[COLOR {0}]Installing Local Backup'.format(CONFIG.COLOR2), '',
                           'Please Wait[/COLOR]')
 
-            _local(file, loc)
+            self._local(file, loc)
         elif self.external:
             from resources.libs.common import tools
 
@@ -156,7 +156,7 @@ class Restore:
 
             skin.skin_to_default("Restore")
 
-            _external(source, loc)
+            self._external(source, loc)
 
     def _build(self):
         dialog = xbmcgui.Dialog()
