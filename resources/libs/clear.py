@@ -547,8 +547,8 @@ def clear_thumbs(type=None):
     tools.redo_thumbs()
 
 
-def remove_addon(addon, name, over=False):
-    if over is not False:
+def remove_addon(addon, name, over=False, data=True):
+    if over:
         yes = 1
     else:
         dialog = xbmcgui.Dialog()
@@ -570,7 +570,9 @@ def remove_addon(addon, name, over=False):
             shutil.rmtree(folder)
         except Exception as e:
             logging.log("Error removing {0}: {1}".format(addon, str(e)), level=xbmc.LOGNOTICE)
-        remove_addon_data(addon)
+        
+        if data:
+            remove_addon_data(addon)
     if not over:
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            "[COLOR {0}]{1} Removed[/COLOR]".format(CONFIG.COLOR2, name))
