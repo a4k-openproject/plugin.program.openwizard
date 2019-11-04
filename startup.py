@@ -203,49 +203,6 @@ def installed_build_check():
 
     CONFIG.clear_setting('install')
 
-    
-def binaries_check():
-    dialog = xbmcgui.Dialog()
-    restore = dialog.yesno(CONFIG.ADDONTITLE, '[COLOR {0}]The restored build contains platform-specific addons. Would you like to restore them now?[/COLOR]'.format(CONFIG.COLOR2),
-                                          yeslabel="[B][COLOR springgreen]Yes[/COLOR][/B]",
-                                          nolabel="[B][COLOR red]No[/COLOR][/B]")
-    
-    if restore:
-        import sqlite3 as database
-        from resources.libs import clear
-    
-        dialog.ok(CONFIG.ADDONTITLE, '[COLOR {0}]A number of dialogs may pop up during this process. Cancelling them may cause the restored build to function incorrectly.[/COLOR]'.format(CONFIG.COLOR2))
-        
-        binaryids = tools.read_from_file(binarytxt).split(',')
-        sqldb = database.connect(os.path.join(CONFIG.DATABASE, db.latest_db('Addons')))
-        sqlexe = sqldb.cursor()
-            
-        for id in binaryids:
-            if xbmc.getCondVisibility('System.HasAddon({0})'.format(id)):
-                clear.remove_addon(id, tools.get_addon_info(id, 'name'), over=True, data=False)
-                sqlexe.execute("DELETE FROM installed WHERE addonID = '{0}'".format(id))
-                sqlexe.execute("DELETE FROM package WHERE addonID = '{0}'".format(id))
-            xbmc.sleep(500)
-            
-        sqldb.commit()
-        sqldb.close()
-        
-        _install_binaries(binaryids)
-    
-def _install_binaries(binaryids):
-    from resources.libs import install
-    
-    installed = 0
-    
-    for id in binaryids:
-        if not xbmc.getCondVisibility('System.HasAddon({0})'.format(id)):
-            install.install_from_kodi(id)
-            installed += 1
-        xbmc.sleep(500)
-    
-    if installed == len(binaryids):
-        tools.remove_file(binarytxt)
-
 def build_update_check():
     if not tools.check_url(CONFIG.BUILDFILE):
         logging.log("[Build Check] Not a valid URL for Build File: {0}".format(CONFIG.BUILDFILE), level=xbmc.LOGNOTICE)
@@ -387,8 +344,10 @@ else:
 # REINSTALL ELIGIBLE BINARIES
 binarytxt = os.path.join(CONFIG.USERDATA, 'build_binaries.txt')
 if os.path.exists(binarytxt):
+    from resources.libs.restore import Restore
+    
     logging.log("[Binary Detection] Reinstalling Eligible Binary Addons", level=xbmc.LOGNOTICE)
-    binaries_check()
+    Restore().restore_binaries()
 else:
     logging.log("[Binary Detection] Eligible Binary Addons to Reinstall", level=xbmc.LOGNOTICE)
 
