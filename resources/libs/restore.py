@@ -41,54 +41,41 @@ class Restore:
         self.external = False
         self.location = 'Local'
         
-    def _binaries_check(self):
-        import sqlite3 as database
-        from resources.libs import clear
-        from resources.libs import db
-        from resources.libs.common import tools
-        
-        binarytxt = os.path.join(CONFIG.USERDATA, 'build_binaries.txt')
-        binaryids = tools.read_from_file(binarytxt).split(',')
-        sqldb = database.connect(os.path.join(CONFIG.DATABASE, db.latest_db('Addons')))
-        sqlexe = sqldb.cursor()
-         
-        for id in binaryids:
-            if xbmc.getCondVisibility('System.HasAddon({0})'.format(id)):
-                clear.remove_addon(id, tools.get_addon_info(id, 'name'), over=True, data=False)
-                sqlexe.execute("DELETE FROM installed WHERE addonID = '{0}'".format(id))
-                sqlexe.execute("DELETE FROM package WHERE addonID = '{0}'".format(id))
-            xbmc.sleep(500)
-            
-        sqldb.commit()
-        sqldb.close()
-        
-    def restore_binaries(self):
+    def _binaries(self):
         from resources.libs import install
+        from resources.libs.common import logging
         from resources.libs.common import tools
         
         dialog = xbmcgui.Dialog()
+        restore = False
         
-        restore = dialog.yesno(CONFIG.ADDONTITLE, '[COLOR {0}]The restored build contains platform-specific addons. Would you like to restore them now?[/COLOR]'.format(CONFIG.COLOR2),
-                                              yeslabel="[B][COLOR springgreen]Yes[/COLOR][/B]",
-                                              nolabel="[B][COLOR red]No[/COLOR][/B]")
+        binarytxt = os.path.join(CONFIG.USERDATA, 'build_binaries.txt')
+        if os.path.exists(binarytxt):
+            logging.log("[Binary Detection] Reinstalling Eligible Binary Addons", level=xbmc.LOGNOTICE)
+            xbmc.executebuiltin('UpdateAddonRepos')
+            
+            dialog.ok(CONFIG.ADDONTITLE, '[COLOR {0}]The restored build contains platform-specific addons, which will now be automatically installed. A number of dialogs may pop up during this process. Cancelling them may cause the restored build to function incorrectly.[/COLOR]'.format(CONFIG.COLOR2))
+            restore = True
+        else:
+            logging.log("[Binary Detection] No Eligible Binary Addons to Reinstall", level=xbmc.LOGNOTICE)
+            return True
         
         installed = 0
         
-        if restore:
-            dialog.ok(CONFIG.ADDONTITLE, '[COLOR {0}]A number of dialogs may pop up during this process. Cancelling them may cause the restored build to function incorrectly.[/COLOR]'.format(CONFIG.COLOR2))
-            
-            binarytxt = os.path.join(CONFIG.USERDATA, 'build_binaries.txt')
+        if restore:        
             binaryids = tools.read_from_file(binarytxt).split(',')
             
             for id in binaryids:
                 if not xbmc.getCondVisibility('System.HasAddon({0})'.format(id)):
-                    install.install_from_kodi(id)
-                    installed += 1
-                xbmc.sleep(500)
+                    if install.install_from_kodi(id):
+                        installed += 1
+                xbmc.sleep(1000)
             
             if installed == len(binaryids):
                 tools.remove_file(binarytxt)
-
+                return True
+            
+            return False
         
     def _local(self, file, loc):
         display = os.path.split(file)
@@ -156,14 +143,13 @@ class Restore:
                 os.remove(file)
             except:
                 pass
-
-        dialog.ok(CONFIG.ADDONTITLE,
-                      "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(
-                          CONFIG.COLOR2))
                           
-        self._binaries_check()
-                          
-        tools.kill_kodi(True)
+        binaries_done = self._binaries()
+        
+        if not binaries_done:
+            dialog.ok(CONFIG.ADDONTITLE, '[COLOR {0}]There was an error while restoring. The build may not function correctly.[/COLOR]'.format(CONFIG.COLOR2))
+            
+        tools.kill_kodi()
 
     def _choose(self, loc):
         from resources.libs.common import logging
