@@ -23,7 +23,6 @@ import xbmcgui
 from datetime import datetime
 from datetime import timedelta
 
-import glob
 import os
 import sys
 
@@ -327,7 +326,7 @@ if CONFIG.BUILDNAME == '':
 else:
     logging.log("[Current Build Check] Build Installed: {0}".format(CONFIG.BUILDNAME), level=xbmc.LOGNOTICE)
     
-    # BUILD UPDATE CHECK
+# BUILD UPDATE CHECK
 if CONFIG.BUILDNAME != '' and CONFIG.BUILDCHECK <= str(tools.get_date(days=CONFIG.UPDATECHECK, now=True)):
     logging.log("[Build Update Check] Started", level=xbmc.LOGNOTICE)
     build_update_check()
@@ -340,16 +339,6 @@ if CONFIG.AUTOINSTALL == 'Yes':
     auto_install_repo()
 else:
     logging.log("[Auto Install Repo] Not Enabled", level=xbmc.LOGNOTICE)
-    
-# REINSTALL ELIGIBLE BINARIES
-binarytxt = os.path.join(CONFIG.USERDATA, 'build_binaries.txt')
-if os.path.exists(binarytxt):
-    from resources.libs.restore import Restore
-    
-    logging.log("[Binary Detection] Reinstalling Eligible Binary Addons", level=xbmc.LOGNOTICE)
-    Restore().restore_binaries()
-else:
-    logging.log("[Binary Detection] Eligible Binary Addons to Reinstall", level=xbmc.LOGNOTICE)
 
 # AUTO UPDATE WIZARD
 if CONFIG.AUTOUPDATE == 'Yes':

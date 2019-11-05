@@ -282,7 +282,6 @@ def _backup_build(name=""):
         
         binaries = []
         binidlist = []
-        binpaths = []
 
         for folder in sorted(fold, key=lambda x: x):
             foldername = os.path.split(folder[:-1])[1]
@@ -294,7 +293,6 @@ def _backup_build(name=""):
             if binaryid:
                 binaries.append(binaryname)
                 binidlist.append(binaryid)     
-                binpaths.append(os.path.join(CONFIG.ADDONS, binaryid))
                 
             xml = os.path.join(folder, 'addon.xml')
             if os.path.exists(xml):
@@ -366,17 +364,6 @@ def _backup_build(name=""):
                             if not file == db.latest_db(temp):
                                 logging.log("[Back Up] Type = build: Ignore {0} - DB File".format(file), level=xbmc.LOGNOTICE)
                                 continue
-                                
-                    skipbinary = False
-                    if len(binidlist) > 0:
-                        for id in binidlist:
-                            id = os.path.join(CONFIG.ADDONS, id)
-                            if id in fn:
-                                skipbinary = True
-                            
-                    if skipbinary:
-                        logging.log("[Back Up] Type = build: Ignore {0} - Binary Add-on".format(file), level=xbmc.LOGNOTICE)
-                        continue
                         
                     try:
                         zipf.write(fn, fn[len(CONFIG.HOME):], zipfile.ZIP_DEFLATED)
