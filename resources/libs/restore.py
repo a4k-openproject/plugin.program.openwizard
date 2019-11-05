@@ -161,11 +161,11 @@ class Restore:
         skin.look_and_feel_data()
 
         if not self.external:
-            file = dialog.browse(1,
+            file = dialog.browseSingle(1,
                                      '[COLOR {0}]Select the backup file you want to restore[/COLOR]'.format(
                                          CONFIG.COLOR2),
-                                     'files', '.zip', False, False, CONFIG.MYBUILDS)
-            if file == "" or not file.endswith('.zip'):
+                                     'files', mask='.zip', useThumbs=True, defaultt=CONFIG.MYBUILDS)
+            if file == "":
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                    "[COLOR {0}]Local Restore: Cancelled[/COLOR]".format(CONFIG.COLOR2))
                 return
@@ -179,11 +179,11 @@ class Restore:
         elif self.external:
             from resources.libs.common import tools
 
-            source = dialog.browse(1,
+            source = dialog.browseSingle(1,
                                        '[COLOR {0}]Select the backup file you want to restore[/COLOR]'.format(
                                            CONFIG.COLOR2),
-                                       'files', '.zip', False, False)
-            if source == "" or not source.endswith('.zip'):
+                                       '', mask='.zip', useThumbs=True)
+            if source == "":
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                    "[COLOR {0}]External Restore: Cancelled[/COLOR]".format(CONFIG.COLOR2))
                 return
