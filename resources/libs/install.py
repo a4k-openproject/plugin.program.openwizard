@@ -450,14 +450,27 @@ def install_addon(plugin, url):
 
 
 def install_from_kodi(plugin):
+    import sqlite3 as database
     import threading
+    from resources.libs import db
+    from resources.libs.common import logging
     from resources.libs.gui import window
+    from resources.libs.common import tools
 
-    xbmc.executebuiltin('RunPlugin(plugin://{0})'.format(plugin))
+    start_time = str(tools.get_date(now=True))
+    sqldb = database.connect(os.path.join(CONFIG.DATABASE, db.latest_db('Addons')))
+    sqlexe = sqldb.cursor()
+    
+    installdate = sqlexe.execute("SELECT installDate FROM installed WHERE addonID = '{0}'".format(plugin)).fetchone()[0]
+
+    xbmc.executebuiltin('InstallAddon{0})'.format(plugin))
     
     threading.Thread(target=_dialog_watch, kwargs={'window': 'yesnodialog', 'action': 11, 'count': 200}).start()
     
-    if os.path.exists(os.path.join(CONFIG.ADDONS, plugin)):
+    xml = os.path.join(CONFIG.ADDONS, plugin, 'addon.xml')
+    
+    installdate = sqlexe.execute("SELECT installDate FROM installed WHERE addonID = '{0}'".format(plugin)).fetchone()[0]
+    if installdate > start_time:
         return True
     else:
         return False
