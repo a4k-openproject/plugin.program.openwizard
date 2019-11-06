@@ -88,11 +88,9 @@ class Restore:
             
             return False
         
-    def _local(self, file, loc):
+    def _local(self, file, loc, progress_dialog):
         display = os.path.split(file)
         filename = display[1]
-        
-        progress_dialog = xbmcgui.DialogProgress()
 
         try:
             zipfile.ZipFile(file, 'r')
@@ -107,10 +105,8 @@ class Restore:
 
         self._finish(file, loc, filename)
 
-    def _external(self, source, loc):
+    def _external(self, source, loc, progress_dialog):
         from resources.libs import downloader
-        
-        progress_dialog = xbmcgui.DialogProgress()
 
         display = os.path.split(source)
         filename = display[1]
@@ -176,7 +172,7 @@ class Restore:
                                      '[COLOR {0}]Select the backup file you want to restore[/COLOR]'.format(
                                          CONFIG.COLOR2),
                                      'files', mask='.zip', useThumbs=True, defaultt=CONFIG.MYBUILDS)
-            if file == "":
+            if file in ['', CONFIG.MYBUILDS]:
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                    "[COLOR {0}]Local Restore: Cancelled[/COLOR]".format(CONFIG.COLOR2))
                 return
@@ -186,7 +182,7 @@ class Restore:
             progress_dialog.create(CONFIG.ADDONTITLE, '[COLOR {0}]Installing Local Backup'.format(CONFIG.COLOR2), '',
                           'Please Wait[/COLOR]')
 
-            self._local(file, loc)
+            self._local(file, loc, progress_dialog)
         elif self.external:
             from resources.libs.common import tools
 
@@ -194,7 +190,7 @@ class Restore:
                                        '[COLOR {0}]Select the backup file you want to restore[/COLOR]'.format(
                                            CONFIG.COLOR2),
                                        '', mask='.zip', useThumbs=True)
-            if source == "":
+            if not source:
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                    "[COLOR {0}]External Restore: Cancelled[/COLOR]".format(CONFIG.COLOR2))
                 return
@@ -204,8 +200,11 @@ class Restore:
                 return
 
             skin.skin_to_default("Restore")
+            
+            progress_dialog.create(CONFIG.ADDONTITLE, '[COLOR {0}]Installing External Backup'.format(CONFIG.COLOR2), '',
+                          'Please Wait[/COLOR]')
 
-            self._external(source, loc)
+            self._external(source, loc, progress_dialog)
 
     def _build(self):
         dialog = xbmcgui.Dialog()
