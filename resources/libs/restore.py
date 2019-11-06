@@ -42,6 +42,7 @@ class Restore:
         self.location = 'Local'
         
     def _binaries(self):
+        from resources.libs import db
         from resources.libs import install
         from resources.libs.common import logging
         from resources.libs.common import tools
@@ -51,8 +52,20 @@ class Restore:
         
         binarytxt = os.path.join(CONFIG.USERDATA, 'build_binaries.txt')
         if os.path.exists(binarytxt):
+            import sqlite3 as database
+
             logging.log("[Binary Detection] Reinstalling Eligible Binary Addons", level=xbmc.LOGNOTICE)
+            start_time = str(tools.get_date(now=True))
             xbmc.executebuiltin('UpdateAddonRepos')
+            
+            sqldb = database.connect(os.path.join(CONFIG.DATABASE, db.latest_db('Addons')))
+            sqlexe = sqldb.cursor()
+            
+            lastcheck = sqlexe.execute("SELECT lastcheck FROM repo WHERE addonID = 'repository.xbmc.org'").fetchone()[0]
+            
+            while lastcheck < start_time:
+                lastcheck = sqlexe.execute("SELECT lastcheck FROM repo WHERE addonID = 'repository.xbmc.org'").fetchone()[0]
+                xbmc.sleep(100)
             
             dialog.ok(CONFIG.ADDONTITLE, '[COLOR {0}]The restored build contains platform-specific addons, which will now be automatically installed. A number of dialogs may pop up during this process. Cancelling them may cause the restored build to function incorrectly.[/COLOR]'.format(CONFIG.COLOR2))
             restore = True
@@ -66,10 +79,8 @@ class Restore:
             binaryids = tools.read_from_file(binarytxt).split(',')
             
             for id in binaryids:
-                if not xbmc.getCondVisibility('System.HasAddon({0})'.format(id)):
-                    if install.install_from_kodi(id):
-                        installed += 1
-                xbmc.sleep(1000)
+                if install.install_from_kodi(id):
+                    installed += 1
             
             if installed == len(binaryids):
                 tools.remove_file(binarytxt)
