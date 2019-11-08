@@ -404,15 +404,17 @@ def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
 
-def kill_kodi(over=None):
+def kill_kodi(msg=None, over=None):
     if over:
         choice = 1
     else:
         dialog = xbmcgui.Dialog()
         
+        if not msg:
+            msg = '[COLOR {0}]You are about to close Kodi. Would you like to continue?[/COLOR]'.format(CONFIG.COLOR2)
+        
         choice = dialog.yesno('Force Close Kodi',
-                                  '[COLOR {0}]You are about to close Kodi'.format(CONFIG.COLOR2),
-                                  'Would you like to continue?[/COLOR]',
+                                  msg,
                                   nolabel='[B][COLOR red] No Cancel[/COLOR][/B]',
                                   yeslabel='[B][COLOR springgreen]Force Close Kodi[/COLOR][/B]')
     if choice == 1:
