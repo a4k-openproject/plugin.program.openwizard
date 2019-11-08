@@ -48,7 +48,7 @@ KEEPTRAKT      = wiz.getS('keeptrakt')
 TRAKTSAVE      = wiz.getS('traktlastsave')
 COLOR1         = uservar.COLOR1
 COLOR2         = uservar.COLOR2
-ORDER          = ['exodusredux', 'gaia', 'openmeta', 'overeasy', 'placenta', 'premiumizer', 'realizer', 'scrubs', 'seren', 'trakt', 'venom', 'yoda']
+ORDER          = ['exodusredux', 'gaia', 'numbers', 'openmeta', 'overeasy', 'placenta', 'premiumizer', 'realizer', 'scrubs', 'seren', 'trakt', 'venom', 'yoda']
 
 TRAKTID = {
     'placenta': {
@@ -75,6 +75,18 @@ TRAKTID = {
         'default'  : 'accounts.informants.trakt.user',
         'data'     : ['accounts.informants.trakt.user', 'accounts.informants.trakt.refresh', 'accounts.informants.trakt.token'],
         'activate' : 'RunPlugin(plugin://plugin.video.gaia/?action=traktAuthorize)'},
+    'numbers': {
+        'name'     : 'NuMb3r5',
+        'plugin'   : 'plugin.video.numbersbynumbers',
+        'saved'    : 'numbers',
+        'path'     : os.path.join(ADDONS, 'plugin.video.numbersbynumbers'),
+        'icon'     : os.path.join(ADDONS, 'plugin.video.numbersbynumbers', 'icon.png'),
+        'fanart'   : os.path.join(ADDONS, 'plugin.video.numbersbynumbers', 'fanart.jpg'),
+        'file'     : os.path.join(TRAKTFOLD, 'numbers_trakt'),
+        'settings' : os.path.join(ADDOND, 'plugin.video.numbersbynumbers', 'settings.xml'),
+        'default'  : 'trakt.user',
+        'data'     : ['trakt.user', 'trakt.refresh', 'trakt.token'],
+        'activate' : 'RunPlugin(plugin://plugin.video.numbersbynumbers/?action=authTrakt)'},
     'overeasy': {
         'name'     : 'Overeasy',
         'plugin'   : 'plugin.video.overeasy',

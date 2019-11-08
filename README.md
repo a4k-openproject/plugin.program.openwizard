@@ -15,6 +15,7 @@ Currently, this version of the wizard supports:
 | Gaia                               | [x]            | [x]   | [x]         | [x]        |           | [x]  |      |      | [x]  | [x]       |          |                         |
 | IAGL                               |                |       |             |            |           |      |      |      |      |           |          | [x]                     |
 | Netflix                            |                |       |             |            |           |      |      |      |      |           |          | [x]                     |
+| NuMb3r5                            | [x]            | [x]   |             |            |           | [x]  |      |      | [x]  | [x]       |          |                         |
 | OpenInfo                           | [x]            |       |             |            |           | [x]  |      |      |      |           |          |                         |
 | OpenMeta                           | [x]            | [x]   |             |            | [x]       | [x]  | [x]  |      |      |           |          |                         |
 | OpenSubtitles.org                  |                |       |             |            |           |      |      |      |      |           |          | [x]                     |

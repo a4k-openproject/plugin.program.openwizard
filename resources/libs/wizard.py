@@ -107,6 +107,7 @@ INCLUDESEREN   = ADDON.getSetting('includeseren')
 INCLUDEOVEREASY   = ADDON.getSetting('includeovereasy')
 INCLUDEYODA   = ADDON.getSetting('includeyoda')
 INCLUDEVENOM   = ADDON.getSetting('includevenom')
+INCLUDENUMBERS   = ADDON.getSetting('includenumbers')
 INCLUDESCRUBS   = ADDON.getSetting('includescrubs')
 SHOWADULT      = ADDON.getSetting('adult')
 WIZDEBUGGING   = ADDON.getSetting('addon_debug')
@@ -567,6 +568,10 @@ def getCacheSize():
 				files.append(os.path.join(ADDOND, 'plugin.video.venom', 'cache.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.venom', 'meta.5.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.venom', 'providers.13.db'))
+			if INCLUDENUMBERS == 'true':
+				files.append(os.path.join(ADDOND, 'plugin.video.numbersbynumbers', 'cache.db'))
+				files.append(os.path.join(ADDOND, 'plugin.video.numbersbynumbers', 'meta.5.db'))
+				files.append(os.path.join(ADDOND, 'plugin.video.numbersbynumbers', 'providers.13.db'))
 			if INCLUDESCRUBS == 'true':
 				files.append(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'cache.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'meta.5.db'))
@@ -2309,7 +2314,7 @@ def clearArchive():
 def clearFunctionCache():
 	if xbmc.getCondVisibility('System.HasAddon(script.module.resolveurl)'): xbmc.executebuiltin('RunPlugin(plugin://script.module.resolveurl/?mode=reset_cache)')
 	if xbmc.getCondVisibility('System.HasAddon(script.module.urlresolver)'): xbmc.executebuiltin('RunPlugin(plugin://script.module.urlresolver/?mode=reset_cache)')
-        
+		
 def clearCache(over=None):
 	PROFILEADDONDATA = os.path.join(PROFILE,'addon_data')
 	dbfiles   = [
@@ -2411,6 +2416,10 @@ def clearCache(over=None):
 				files.append(os.path.join(ADDOND, 'plugin.video.venom', 'cache.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.venom', 'meta.5.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.venom', 'providers.13.db'))
+			if INCLUDENUMBERS == 'true':
+				files.append(os.path.join(ADDOND, 'plugin.video.numbersbynumbers', 'cache.db'))
+				files.append(os.path.join(ADDOND, 'plugin.video.numbersbynumbers', 'meta.5.db'))
+				files.append(os.path.join(ADDOND, 'plugin.video.numbersbynumbers', 'providers.13.db'))
 			if INCLUDESCRUBS == 'true':
 				files.append(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'cache.db'))
 				files.append(os.path.join(ADDOND, 'plugin.video.scrubsv2', 'meta.5.db'))

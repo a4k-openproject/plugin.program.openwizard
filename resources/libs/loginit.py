@@ -48,7 +48,7 @@ KEEPLOGIN      = wiz.getS('keeplogin')
 LOGINSAVE      = wiz.getS('loginlastsave')
 COLOR1         = uservar.COLOR1
 COLOR2         = uservar.COLOR2
-ORDER          = ['fanart-exodusredux', 'fanart-gaia', 'fanart-overeasy', 'fanart-metadatautils', 'fanart-placenta', 'fanart-premiumizer', 'fanart-realizer', 'fanart-scrubs', 'fanart-venom', 'fanart-yoda', 'imdb-exodusredux', 'imdb-gaia', 'imdb-overeasy', 'imdb-placenta', 'imdb-premiumizer', 'imdb-realizer', 'imdb-scrubs', 'imdb-venom', 'imdb-yoda', 'kitsu-wonderfulsubs', 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-metadatautils', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-overeasy', 'tmdb-placenta', 'tmdb-premiumizer', 'tmdb-realizer', 'tmdb-scrubs', 'tmdb-seren', 'tmdb-venom', 'tmdb-yoda', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-premiumizer', 'tvdb-realizer', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
+ORDER          = ['fanart-exodusredux', 'fanart-gaia', 'fanart-numbers', 'fanart-overeasy', 'fanart-metadatautils', 'fanart-placenta', 'fanart-premiumizer', 'fanart-realizer', 'fanart-scrubs', 'fanart-venom', 'fanart-yoda', 'imdb-exodusredux', 'imdb-gaia', 'imdb-numbers', 'imdb-overeasy', 'imdb-placenta', 'imdb-premiumizer', 'imdb-realizer', 'imdb-scrubs', 'imdb-venom', 'imdb-yoda', 'kitsu-wonderfulsubs', 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-metadatautils', 'tmdb-numbers', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-overeasy', 'tmdb-placenta', 'tmdb-premiumizer', 'tmdb-realizer', 'tmdb-scrubs', 'tmdb-seren', 'tmdb-venom', 'tmdb-yoda', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-premiumizer', 'tvdb-realizer', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
 
 LOGINID = {
 	'login-opensubtitles': {
@@ -63,7 +63,7 @@ LOGINID = {
 		'default'  : 'OSuser',
 		'data'     : ['OSuser', 'OSpass'],
 		'activate' : ''},
-    'login-opensubsbyopensubs': {
+	'login-opensubsbyopensubs': {
 		'name'     : 'OpenSubtitles.org by OpenSubtitles',
 		'plugin'   : 'service.subtitles.opensubtitles_by_opensubtitles',
 		'saved'    : 'login-opensubtitles',
@@ -111,7 +111,7 @@ LOGINID = {
 		'default'  : 'trakt.clientid',
 		'data'     : ['trakt.clientid', 'trakt.secret'],
 		'activate' : ''},
-    'tvdb-seren': {
+	'tvdb-seren': {
 		'name'     : 'TVDB - Seren',
 		'plugin'   : 'plugin.video.seren',
 		'saved'    : 'tvdb-seren',
@@ -123,7 +123,7 @@ LOGINID = {
 		'default'  : 'tvdb.apikey',
 		'data'     : ['tvdb.apikey', 'tvdb.jw', 'tvdb.expiry'],
 		'activate' : ''},
-    'fanart-placenta': {
+	'fanart-placenta': {
 		'name'     : 'Fanart.tv - Placenta',
 		'plugin'   : 'plugin.video.placenta',
 		'saved'    : 'fanart-placenta',
@@ -135,7 +135,7 @@ LOGINID = {
 		'default'  : 'fanart.tv.user',
 		'data'     : ['fanart.tv.user'],
 		'activate' : ''},
-    'tmdb-placenta': {
+	'tmdb-placenta': {
 		'name'     : 'TMDb - Placenta',
 		'plugin'   : 'plugin.video.placenta',
 		'saved'    : 'tmdb-placenta',
@@ -147,7 +147,7 @@ LOGINID = {
 		'default'  : 'tm.user',
 		'data'     : ['tm.user'],
 		'activate' : ''},
-    'imdb-placenta': {
+	'imdb-placenta': {
 		'name'     : 'IMDb - Placenta',
 		'plugin'   : 'plugin.video.placenta',
 		'saved'    : 'imdb-placenta',
@@ -360,6 +360,42 @@ LOGINID = {
 		'fanart'   : os.path.join(ADDONS, 'plugin.video.venom', 'fanart.jpg'),
 		'file'     : os.path.join(LOGINFOLD, 'venom_imdb'),
 		'settings' : os.path.join(ADDOND, 'plugin.video.venom', 'settings.xml'),
+		'default'  : 'imdb.user',
+		'data'     : ['imdb.user'],
+		'activate' : ''},
+	'fanart-numbers': {
+		'name'     : 'Fanart.tv - NuMb3r5',
+		'plugin'   : 'plugin.video.numbersbynumbers',
+		'saved'    : 'fanart-numbers',
+		'path'     : os.path.join(ADDONS, 'plugin.video.numbersbynumbers'),
+		'icon'     : os.path.join(ADDONS, 'plugin.video.numbersbynumbers', 'icon.png'),
+		'fanart'   : os.path.join(ADDONS, 'plugin.video.numbersbynumbers', 'fanart.jpg'),
+		'file'     : os.path.join(LOGINFOLD, 'numbers_fanart'),
+		'settings' : os.path.join(ADDOND, 'plugin.video.numbersbynumbers', 'settings.xml'),
+		'default'  : 'fanart.tv.user',
+		'data'     : ['fanart.tv.user'],
+		'activate' : ''},
+	'tmdb-numbers': {
+		'name'     : 'TMDb - NuMb3r5',
+		'plugin'   : 'plugin.video.numbersbynumbers',
+		'saved'    : 'tmdb-numbers',
+		'path'     : os.path.join(ADDONS, 'plugin.video.numbersbynumbers'),
+		'icon'     : os.path.join(ADDONS, 'plugin.video.numbersbynumbers', 'icon.png'),
+		'fanart'   : os.path.join(ADDONS, 'plugin.video.numbersbynumbers', 'fanart.jpg'),
+		'file'     : os.path.join(LOGINFOLD, 'numbers_tmdb'),
+		'settings' : os.path.join(ADDOND, 'plugin.video.numbersbynumbers', 'settings.xml'),
+		'default'  : 'tm.user',
+		'data'     : ['tm.user'],
+		'activate' : ''},
+	'imdb-numbers': {
+		'name'     : 'IMDb - NuMb3r5',
+		'plugin'   : 'plugin.video.numbersbynumbers',
+		'saved'    : 'imdb-numbers',
+		'path'     : os.path.join(ADDONS, 'plugin.video.numbersbynumbers'),
+		'icon'     : os.path.join(ADDONS, 'plugin.video.numbersbynumbers', 'icon.png'),
+		'fanart'   : os.path.join(ADDONS, 'plugin.video.numbersbynumbers', 'fanart.jpg'),
+		'file'     : os.path.join(LOGINFOLD, 'numbers_imdb'),
+		'settings' : os.path.join(ADDOND, 'plugin.video.numbersbynumbers', 'settings.xml'),
 		'default'  : 'imdb.user',
 		'data'     : ['imdb.user'],
 		'activate' : ''},
