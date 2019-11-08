@@ -58,17 +58,22 @@ class Restore:
             start_time = str(tools.get_date(now=True))
             xbmc.executebuiltin('UpdateAddonRepos')
             
+            # check Kodi repo for updates, "cleans" the database
             sqldb = database.connect(os.path.join(CONFIG.DATABASE, db.latest_db('Addons')))
             sqlexe = sqldb.cursor()
-            
-            lastcheck = sqlexe.execute("SELECT lastcheck FROM repo WHERE addonID = 'repository.xbmc.org'").fetchone()[0]
+            query = "SELECT lastcheck FROM repo WHERE addonID = 'repository.xbmc.org'"
+            lastcheck = sqlexe.execute(query).fetchone()[0]
             
             while lastcheck < start_time:
-                lastcheck = sqlexe.execute("SELECT lastcheck FROM repo WHERE addonID = 'repository.xbmc.org'").fetchone()[0]
+                lastcheck = sqlexe.execute(query).fetchone()[0]
                 xbmc.sleep(100)
+            
+            logging.log('[Binary Detection] Repo Check Completed', level=xbmc.LOGNOTICE)
             
             dialog.ok(CONFIG.ADDONTITLE, '[COLOR {0}]The restored build contains platform-specific addons, which will now be automatically installed. A number of dialogs may pop up during this process. Cancelling them may cause the restored build to function incorrectly.[/COLOR]'.format(CONFIG.COLOR2))
             restore = True
+            
+            xbmc.sleep(1000)
         else:
             logging.log("[Binary Detection] No Eligible Binary Addons to Reinstall", level=xbmc.LOGNOTICE)
             return True
@@ -79,8 +84,12 @@ class Restore:
             binaryids = tools.read_from_file(binarytxt).split(',')
             
             for id in binaryids:
+                xbmc.executebuiltin('StopScript({0})'.format(id))
+                xbmc.sleep(500)
+            
                 if install.install_from_kodi(id):
                     installed += 1
+                xbmc.sleep(1000)
             
             if installed == len(binaryids):
                 tools.remove_file(binarytxt)
@@ -88,9 +97,11 @@ class Restore:
             
             return False
         
-    def _local(self, file, loc, progress_dialog):
+    def _local(self, file, loc):
         display = os.path.split(file)
         filename = display[1]
+        
+        progress_dialog = xbmcgui.DialogProgress()
 
         try:
             zipfile.ZipFile(file, 'r')
@@ -105,8 +116,10 @@ class Restore:
 
         self._finish(file, loc, filename)
 
-    def _external(self, source, loc, progress_dialog):
+    def _external(self, source, loc):
         from resources.libs import downloader
+        
+        progress_dialog = xbmcgui.DialogProgress()
 
         display = os.path.split(source)
         filename = display[1]
@@ -131,7 +144,7 @@ class Restore:
         if int(errors) >= 1:
             if dialog.yesno(CONFIG.ADDONTITLE,
                                 '[COLOR {0}][COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, zname),
-                                'Completed: [COLOR {0}]{1}{2}[/COLOR] [Errors:[COLOR {3}]{4}[/COLOR]]'.format(CONFIG.COLOR1,
+                                'Completed: [COLOR {0}]{1}{2}[/COLOR] [Errors: [COLOR {3}]{4}[/COLOR]]'.format(CONFIG.COLOR1,
                                                                                                               percent, '%',
                                                                                                               CONFIG.COLOR1,
                                                                                                               errors),
@@ -172,7 +185,7 @@ class Restore:
                                      '[COLOR {0}]Select the backup file you want to restore[/COLOR]'.format(
                                          CONFIG.COLOR2),
                                      'files', mask='.zip', useThumbs=True, defaultt=CONFIG.MYBUILDS)
-            if file in ['', CONFIG.MYBUILDS]:
+            if file == "":
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                    "[COLOR {0}]Local Restore: Cancelled[/COLOR]".format(CONFIG.COLOR2))
                 return
@@ -182,7 +195,7 @@ class Restore:
             progress_dialog.create(CONFIG.ADDONTITLE, '[COLOR {0}]Installing Local Backup'.format(CONFIG.COLOR2), '',
                           'Please Wait[/COLOR]')
 
-            self._local(file, loc, progress_dialog)
+            self._local(file, loc)
         elif self.external:
             from resources.libs.common import tools
 
@@ -190,7 +203,7 @@ class Restore:
                                        '[COLOR {0}]Select the backup file you want to restore[/COLOR]'.format(
                                            CONFIG.COLOR2),
                                        '', mask='.zip', useThumbs=True)
-            if not source:
+            if source == "":
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                    "[COLOR {0}]External Restore: Cancelled[/COLOR]".format(CONFIG.COLOR2))
                 return
@@ -200,11 +213,8 @@ class Restore:
                 return
 
             skin.skin_to_default("Restore")
-            
-            progress_dialog.create(CONFIG.ADDONTITLE, '[COLOR {0}]Installing External Backup'.format(CONFIG.COLOR2), '',
-                          'Please Wait[/COLOR]')
 
-            self._external(source, loc, progress_dialog)
+            self._external(source, loc)
 
     def _build(self):
         dialog = xbmcgui.Dialog()
