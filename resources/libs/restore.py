@@ -164,10 +164,10 @@ class Restore:
             except:
                 pass
                           
-        binaries_done = self._binaries()
+        # binaries_done = self._binaries()
         
-        if not binaries_done:
-            dialog.ok(CONFIG.ADDONTITLE, '[COLOR {0}]There was an error while restoring. The build may not function correctly.[/COLOR]'.format(CONFIG.COLOR2))
+        # if not binaries_done:
+        #     dialog.ok(CONFIG.ADDONTITLE, '[COLOR {0}]There was an error while restoring. The build may not function correctly.[/COLOR]'.format(CONFIG.COLOR2))
             
         tools.kill_kodi()
 
