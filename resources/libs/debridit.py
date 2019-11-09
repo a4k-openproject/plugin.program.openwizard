@@ -21,8 +21,9 @@ import xbmc
 import xbmcgui
 
 import os
-import re
 import time
+
+from xml.etree import ElementTree
 
 from resources.libs.common.config import CONFIG
 from resources.libs.common import logging
@@ -179,8 +180,7 @@ def debrid_it(do, who):
                     addonid = tools.get_addon_by_id(DEBRIDID[log]['plugin'])
                     default = DEBRIDID[log]['default']
                     user = addonid.getSetting(default)
-                    if user == '' and do == 'update':
-                        continue
+                    
                     update_debrid(do, log)
                 except:
                     pass
@@ -227,32 +227,43 @@ def update_debrid(do, who):
     if do == 'update':
         if not user == '':
             try:
-                with open(file, 'w') as f:
-                    for debrid in data:
-                        f.write('<debrid>\n\t<id>{0}</id>\n\t<value>{1}</value>\n</debrid>\n'.format(debrid, addonid.getSetting(debrid)))
-                    f.close()
+                root = ElementTree.Element(saved)
+                
+                for setting in data:
+                    debrid = ElementTree.SubElement(root, 'debrid')
+                    id = ElementTree.SubElement(debrid, 'id')
+                    id.text = setting
+                    value = ElementTree.SubElement(debrid, 'value')
+                    value.text = addonid.getSetting(setting)
+                  
+                tree = ElementTree.ElementTree(root)
+                tree.write(file)
+                
                 user = addonid.getSetting(default)
                 CONFIG.set_setting(saved, user)
+                
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name),
                                    '[COLOR {0}]Debrid Info: Saved![/COLOR]'.format(CONFIG.COLOR2),
                                    2000,
                                    icon)
             except Exception as e:
                 logging.log("[Debrid Info] Unable to Update {0} ({1})".format(who, str(e)), level=xbmc.LOGERROR)
-        else: logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name),
+        else:
+            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name),
                                  '[COLOR {0}]Debrid Info: Not Registered![/COLOR]'.format(CONFIG.COLOR2),
                                  2000,
                                  icon)
     elif do == 'restore':
         if os.path.exists(file):
-            f = open(file, mode='r')
-            g = f.read().replace('\n', '').replace('\r', '').replace('\t', '')
-            f.close()
-            match = re.compile('<debrid><id>(.+?)</id><value>(.+?)</value></debrid>').findall(g)
+            tree = ElementTree.parse(file)
+            root = tree.getroot()
+            
             try:
-                if len(match) > 0:
-                    for debrid, value in match:
-                        addonid.setSetting(debrid, value)
+                for setting in root.iter('debrid'):
+                    id = setting.find('id').text
+                    value = setting.find('value').text
+                    addonid.setSetting(id, value)
+                
                 user = addonid.getSetting(default)
                 CONFIG.set_setting(saved, user)
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name),
@@ -262,25 +273,21 @@ def update_debrid(do, who):
             except Exception as e:
                 logging.log("[Debrid Info] Unable to Restore {0} ({1})".format(who, str(e)), level=xbmc.LOGERROR)
         else:
-            logging.log_notify(name, 'Real Debrid Info: [COLOR red]Not Found![/COLOR]', 2000, icon)
+            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name), 'Real Debrid Info: [COLOR red]Not Found![/COLOR]', 2000, icon)
     elif do == 'clearaddon':
         logging.log('{0} SETTINGS: {1}'.format(name, settings))
         if os.path.exists(settings):
             try:
-                f = open(settings, "r")
-                lines = f.readlines()
-                f.close()
-                f = open(settings, "w")
-                for line in lines:
-                    match = tools.parse_dom(line, 'setting', ret='id')
-                    if len(match) == 0:
-                        f.write(line)
-                    else:
-                        if match[0] not in data:
-                            f.write(line)
-                        else:
-                            logging.log('Removing Line: {0}'.format(line), level=xbmc.LOGNOTICE)
-                f.close()
+                tree = ElementTree.parse(settings)
+                root = tree.getroot()
+                
+                for setting in root.iter('setting'):
+                    if setting.attrib['id'] in data:
+                        logging.log('Removing Setting: {0}'.format(setting.attrib), level=xbmc.LOGNOTICE)
+                        root.remove(setting)
+                            
+                tree.write(settings)
+                
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name),
                                    '[COLOR {0}]Addon Data: Cleared![/COLOR]'.format(CONFIG.COLOR2),
                                    2000,
@@ -311,8 +318,8 @@ def auto_update(who):
                                     "[COLOR {0}]Would you like to save the [COLOR {1}]Debrid Info[/COLOR] for [COLOR {2}]{3}[/COLOR]?".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1, n),
                                     "Addon: [COLOR springgreen][B]{0}[/B][/COLOR]".format(u),
                                     "Saved:[/COLOR] [COLOR red][B]{0}[/B][/COLOR]".format(su) if not su == '' else 'Saved:[/COLOR] [COLOR red][B]None[/B][/COLOR]',
-                                    yeslabel="[B][COLOR {0}]Save Debrid[/COLOR][/B]".format(CONFIG.COLOR2),
-                                    nolabel="[B][COLOR {0}]No, Cancel[/COLOR][/B]".format(CONFIG.COLOR1)):
+                                    yeslabel="[B][COLOR springreen]Save Debrid[/COLOR][/B]",
+                                    nolabel="[B][COLOR red]No, Cancel[/COLOR][/B]"):
                     debrid_it('update', who)
             else:
                 debrid_it('update', who)
@@ -325,32 +332,24 @@ def import_list(who):
                 import_list(log)
     elif DEBRIDID[who]:
         if os.path.exists(DEBRIDID[who]['file']):
-            d = DEBRIDID[who]['default']
-            sa = DEBRIDID[who]['saved']
-            su = CONFIG.get_setting(sa)
-            n = DEBRIDID[who]['name']
-            f = open(DEBRIDID[who]['file'], mode='r')
-            g = f.read().replace('\n', '').replace('\r', '').replace('\t', '')
-            f.close()
-            m = re.compile('<debrid><id>{0}</id><value>(.+?)</value></debrid>'.format(d)).findall(g)
-            if len(m) > 0:
-                if not m[0] == su:
-                    dialog = xbmcgui.Dialog()
+            file = DEBRIDID[who]['file']
+            addonid = tools.get_addon_by_id(DEBRIDID[who]['plugin'])
+            saved = DEBRIDID[who]['saved']
+            default = DEBRIDID[who]['default']
+            suser = CONFIG.get_setting(saved)
+            name = DEBRIDID[who]['name']
+            
+            tree = ElementTree.parse(file)
+            root = tree.getroot()
+            
+            for setting in root.iter('debrid'):
+                id = setting.find('id').text
+                value = setting.find('value').text
+            
+                addonid.setSetting(id, value)
 
-                    if dialog.yesno("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
-                                        "[COLOR {0}]Would you like to import the [COLOR {1}]Debrid Info[/COLOR] for [COLOR {2}]{3}[/COLOR]?".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1, n),
-                                        "File: [COLOR springgreen][B]{0}[/B][/COLOR]".format(m[0]),
-                                        "Saved:[/COLOR] [COLOR red][B]{0}[/B][/COLOR]".format(su) if not su == '' else 'Saved:[/COLOR] [COLOR red][B]None[/B][/COLOR]',
-                                        yeslabel="[B][COLOR {0}]Import Debrid[/COLOR][/B]".format(CONFIG.COLOR2),
-                                        nolabel="[B][COLOR {0}]No, Cancel[/COLOR][/B]".format(CONFIG.COLOR1)):
-                        CONFIG.set_setting(sa, m[0])
-                        logging.log('[Import Data] {0}: {1}'.format(who, str(m)), level=xbmc.LOGNOTICE)
-                    else:
-                        logging.log('[Import Data] Declined Import({0}): {1}'.format(who, str(m)), level=xbmc.LOGNOTICE)
-                else:
-                    logging.log('[Import Data] Duplicate Entry({0}): {1}'.format(who, str(m)), level=xbmc.LOGNOTICE)
-            else:
-                logging.log('[Import Data] No Match({0}): {1}'.format(who, str(m)), level=xbmc.LOGNOTICE)
+            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name),
+                       '[COLOR {0}]Debrid Info: Imported![/COLOR]'.format(CONFIG.COLOR2))
 
 
 def activate_debrid(who):
