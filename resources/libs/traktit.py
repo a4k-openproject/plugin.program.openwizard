@@ -18,10 +18,12 @@
 ################################################################################
 
 import xbmc
+import xbmcgui
 
 import os
-import re
 import time
+
+from xml.etree import ElementTree
 
 from resources.libs.common.config import CONFIG
 from resources.libs.common import logging
@@ -189,8 +191,7 @@ def trakt_it(do, who):
                     addonid = tools.get_addon_by_id(TRAKTID[log]['plugin'])
                     default = TRAKTID[log]['default']
                     user = addonid.getSetting(default)
-                    if user == '' and do == 'update':
-                        continue
+                    
                     update_trakt(do, log)
                 except:
                     pass
@@ -237,10 +238,18 @@ def update_trakt(do, who):
     if do == 'update':
         if not user == '':
             try:
-                with open(file, 'w') as f:
-                    for trakt in data:
-                        f.write('<trakt>\n\t<id>{0}</id>\n\t<value>{1}</value>\n</trakt>\n'.format(trakt, addonid.getSetting(trakt)))
-                    f.close()
+                root = ElementTree.Element(saved)
+                
+                for setting in data:
+                    debrid = ElementTree.SubElement(root, 'debrid')
+                    id = ElementTree.SubElement(debrid, 'id')
+                    id.text = setting
+                    value = ElementTree.SubElement(debrid, 'value')
+                    value.text = addonid.getSetting(setting)
+                  
+                tree = ElementTree.ElementTree(root)
+                tree.write(file)
+                
                 user = addonid.getSetting(default)
                 CONFIG.set_setting(saved, user)
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name),
@@ -256,14 +265,15 @@ def update_trakt(do, who):
                                icon)
     elif do == 'restore':
         if os.path.exists(file):
-            f = open(file,mode='r')
-            g = f.read().replace('\n', '').replace('\r', '').replace('\t', '')
-            f.close()
-            match = re.compile('<trakt><id>(.+?)</id><value>(.+?)</value></trakt>').findall(g)
+            tree = ElementTree.parse(file)
+            root = tree.getroot()
+            
             try:
-                if len(match) > 0:
-                    for trakt, value in match:
-                        addonid.setSetting(trakt, value)
+                for setting in root.iter('debrid'):
+                    id = setting.find('id').text
+                    value = setting.find('value').text
+                    addonid.setSetting(id, value)
+                
                 user = addonid.getSetting(default)
                 CONFIG.set_setting(saved, user)
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name),
@@ -278,20 +288,16 @@ def update_trakt(do, who):
         logging.log('{0} SETTINGS: {1}'.format(name, settings))
         if os.path.exists(settings):
             try:
-                f = open(settings, "r")
-                lines = f.readlines()
-                f.close()
-                f = open(settings, "w")
-                for line in lines:
-                    match = tools.parse_dom(line, 'setting', ret='id')
-                    if len(match) == 0:
-                        f.write(line)
-                    else:
-                        if match[0] not in data:
-                            f.write(line)
-                        else:
-                            logging.log('Removing Line: {0}'.format(line), level=xbmc.LOGNOTICE)
-                f.close()
+                tree = ElementTree.parse(settings)
+                root = tree.getroot()
+                
+                for setting in root.iter('setting'):
+                    if setting.attrib['id'] in data:
+                        logging.log('Removing Setting: {0}'.format(setting.attrib), level=xbmc.LOGNOTICE)
+                        root.remove(setting)
+                            
+                tree.write(settings)
+                
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name),
                                    '[COLOR {0}]Addon Data: Cleared![/COLOR]'.format(CONFIG.COLOR2),
                                    2000,
@@ -336,32 +342,24 @@ def import_list(who):
                 import_list(log)
     elif TRAKTID[who]:
         if os.path.exists(TRAKTID[who]['file']):
-            d = TRAKTID[who]['default']
-            sa = TRAKTID[who]['saved']
-            su = CONFIG.get_setting(sa)
-            n = TRAKTID[who]['name']
-            f = open(TRAKTID[who]['file'], mode='r')
-            g = f.read().replace('\n', '').replace('\r', '').replace('\t', '')
-            f.close()
-            m = re.compile('<trakt><id>{0}</id><value>(.+?)</value></trakt>'.format(d)).findall(g)
-            if len(m) > 0:
-                if not m[0] == su:
-                    dialog = xbmcgui.Dialog()
+            file = TRAKTID[who]['file']
+            addonid = tools.get_addon_by_id(TRAKTID[who]['plugin'])
+            saved = TRAKTID[who]['saved']
+            default = TRAKTID[who]['default']
+            suser = CONFIG.get_setting(saved)
+            name = TRAKTID[who]['name']
+            
+            tree = ElementTree.parse(file)
+            root = tree.getroot()
+            
+            for setting in root.iter('trakt'):
+                id = setting.find('id').text
+                value = setting.find('value').text
+            
+                addonid.setSetting(id, value)
 
-                    if dialog.yesno(CONFIG.ADDONTITLE,
-                                        "[COLOR {0}]Would you like to import the [COLOR {1}]Trakt Data[/COLOR] for [COLOR {2}]{3}[/COLOR]?".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1, n),
-                                        "File: [COLOR springgreen][B]{0}[/B][/COLOR]".format(m[0]),
-                                        "Saved:[/COLOR] [COLOR red][B]{0}[/B][/COLOR]".format(su) if not su == '' else 'Saved:[/COLOR] [COLOR red][B]None[/B][/COLOR]',
-                                        yeslabel="[B]Save Data[/B]",
-                                        nolabel="[B]No Cancel[/B]"):
-                        CONFIG.set_setting(sa, m[0])
-                        logging.log('[Import Data] {0}: {1}'.format(who, str(m)), level=xbmc.LOGNOTICE)
-                    else:
-                        logging.log('[Import Data] Declined Import({0}): {1}'.format(who, str(m)), level=xbmc.LOGNOTICE)
-                else:
-                    logging.log('[Import Data] Duplicate Entry({0}): {1}'.format(who, str(m)), level=xbmc.LOGNOTICE)
-            else:
-                logging.log('[Import Data] No Match({0}): {1}'.format(who, str(m)), level=xbmc.LOGNOTICE)
+            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name),
+                       '[COLOR {0}]Trakt Data: Imported![/COLOR]'.format(CONFIG.COLOR2))
 
 
 def activate_trakt(who):
@@ -376,7 +374,7 @@ def activate_trakt(who):
         else:
             dialog = xbmcgui.Dialog()
 
-            dialog.ok(CONFIG.ADDONTITLE, '{0} is not currently installed.'.format(TRAKTID[who]['name']))
+            dialog.ok("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE), '{0} is not currently installed.'.format(TRAKTID[who]['name']))
     else:
         xbmc.executebuiltin('Container.Refresh()')
         return
