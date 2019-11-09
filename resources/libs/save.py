@@ -68,6 +68,7 @@ def import_save_data():
                                  "[COLOR {0}]Would you rather we overwrite all Save Data files or ask you for each file being imported?[/COLOR]".format(CONFIG.COLOR2),
                                  yeslabel="[B][COLOR springgreen]Overwrite All[/COLOR][/B]",
                                  nolabel="[B][COLOR red]No Ask[/COLOR][/B]")
+    
     if os.path.exists(trakt):
         from resources.libs import traktit
 
@@ -116,6 +117,7 @@ def import_save_data():
             shutil.copy(temp, old)
         loginit.import_list('all')
         loginit.login_it('restore', 'all')
+    
     if os.path.exists(debrid):
         from resources.libs import debridit
 
@@ -188,7 +190,7 @@ def export_save_data():
 
     dialog = xbmcgui.Dialog()
 
-    dir = [CONFIG.TRAKTFOLD, CONFIG.DEBRIDFOLD, CONFIG.LOGINFOLD]
+    dir = ['debrid', 'login', 'trakt']
     keepx = [CONFIG.KEEPADVANCED, CONFIG.KEEPSOURCES, CONFIG.KEEPFAVS, CONFIG.KEEPPROFILES, CONFIG.KEEPPLAYERCORE]
     traktit.trakt_it('update', 'all')
     loginit.login_it('update', 'all')
@@ -200,11 +202,12 @@ def export_save_data():
     superfold = os.path.join(CONFIG.ADDON_DATA, 'plugin.program.super.favourites')
     zipf = zipfile.ZipFile(tempzip, mode='w')
     for fold in dir:
-        if os.path.exists(fold):
-            files = os.listdir(fold)
+        path = os.path.join(CONFIG.PLUGIN_DATA, fold)
+        if os.path.exists(path):
+            files = os.listdir(path)
             for file in files:
-                fn = os.path.join(fold, file)
-                zipf.write(fn, fn[len(CONFIG.ADDON_DATA):], zipfile.ZIP_DEFLATED)
+                fn = os.path.join(path, file)
+                zipf.write(fn, os.path.join(fold, file), zipfile.ZIP_DEFLATED)
     if CONFIG.KEEPSUPER == 'true' and os.path.exists(superfold):
         for base, dirs, files in os.walk(superfold):
             for file in files:
