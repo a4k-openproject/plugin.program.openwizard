@@ -364,6 +364,17 @@ def _backup_build(name=""):
                             if not file == db.latest_db(temp):
                                 logging.log("[Back Up] Type = build: Ignore {0} - DB File".format(file), level=xbmc.LOGNOTICE)
                                 continue
+                                
+                    skipbinary = False 
+                    if len(binidlist) > 0: 
+                        for id in binidlist: 
+                            id = os.path.join(CONFIG.ADDONS, id) 
+                            if id in fn: 
+                                skipbinary = True 
+                             
+                    if skipbinary: 
+                        logging.log("[Back Up] Type = build: Ignore {0} - Binary Add-on".format(file), level=xbmc.LOGNOTICE) 
+                        continue
                         
                     try:
                         zipf.write(fn, fn[len(CONFIG.HOME):], zipfile.ZIP_DEFLATED)
