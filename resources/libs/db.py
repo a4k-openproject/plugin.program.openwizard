@@ -417,8 +417,6 @@ def grab_addons(path):
 def find_binary_addons(addon='all'):
     from xml.etree import ElementTree
     
-    # import web_pdb; web_pdb.set_trace()
-    
     dialog = xbmcgui.Dialog()
     
     if addon == 'all':
