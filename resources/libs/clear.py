@@ -548,6 +548,9 @@ def clear_thumbs(type=None):
 
 
 def remove_addon(addon, name, over=False, data=True):
+    import sqlite3
+    from resources.libs import db
+    
     if over:
         yes = 1
     else:
@@ -566,6 +569,16 @@ def remove_addon(addon, name, over=False, data=True):
         from resources.libs.common import tools
         tools.clean_house(folder)
         xbmc.sleep(200)
+        
+        xbmc.executebuiltin('StopScript({0})'.format(addon))
+        
+        sqldb = sqlite3.connect(os.path.join(CONFIG.DATABASE, db.latest_db('Addons')))
+        sqlexe = sqldb.cursor()
+        query = "DELETE FROM {0} WHERE addonID = '{1}'"
+        
+        for table in ['addons', 'installed', 'package']:
+            sqlexe.execute(query.format(table, addon))
+        
         try:
             shutil.rmtree(folder)
         except Exception as e:
@@ -573,6 +586,9 @@ def remove_addon(addon, name, over=False, data=True):
         
         if data:
             remove_addon_data(addon)
+            
+        return True
+            
     if not over:
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            "[COLOR {0}]{1} Removed[/COLOR]".format(CONFIG.COLOR2, name))
