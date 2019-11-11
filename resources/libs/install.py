@@ -450,17 +450,38 @@ def install_addon(plugin, url):
 
 
 def install_from_kodi(plugin):
-    import threading
-    from resources.libs.gui import window
-
+    from resources.libs.common import logging
+    import time
+    
+    installed_cond = 'System.HasAddon({0})'.format(plugin)
+    
+    if xbmc.getCondVisibility(installed_cond):
+        logging.log('Already installed ' + plugin, level=xbmc.LOGDEBUG)
+        return True
+        
+    logging.log('Installing ' + plugin, level=xbmc.LOGDEBUG)
     xbmc.executebuiltin('InstallAddon({0})'.format(plugin))
     
-    threading.Thread(target=_dialog_watch, kwargs={'window': 'yesnodialog', 'action': 11, 'count': 200}).start()
+    clicked = False
+    start = time.time()
+    timeout = 20
+    while not xbmc.getCondVisibility(installed_cond):
+        if time.time() >= start + timeout:
+            logging.log('Timed out installing', level=xbmc.LOGDEBUG)
+            return False
     
-    if os.path.exists(os.path.join(CONFIG.ADDONS, plugin)):
-        return True
-    else:
-        return False
+        xbmc.sleep(500)
+        
+        # Assuming we only want to answer the one known "install" dialog
+        if xbmc.getCondVisibility('Window.IsTopMost(yesnodialog)') and not clicked:
+            logging.log('Dialog to click open', level=xbmc.LOGDEBUG)
+            xbmc.executebuiltin('SendClick(yesnodialog, 11)')
+            clicked = True
+        else:
+            logging.log('...waiting', level=xbmc.LOGDEBUG)
+            
+    logging.log('Installed {0}!'.format(plugin), level=xbmc.LOGDEBUG)
+    return True
 
 
 def install_dependency(name):
@@ -543,16 +564,3 @@ def install_apk(apk, url):
     else:
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            '[COLOR {0}]ERROR: None Android Device[/COLOR]'.format(CONFIG.COLOR2))
-                           
-
-def _dialog_watch(window='yesnodialog', action=11, count=100):
-    x = 0
-    while not xbmc.getCondVisibility("Window.isVisible({0})".format(window)) and x < count:
-        x += 1
-        xbmc.sleep(100)
-
-    if xbmc.getCondVisibility("Window.isVisible({0})".format(window)):
-        xbmc.executebuiltin('SendClick({0}, {1})'.format(window, action))
-        return True
-    else:
-        return False
