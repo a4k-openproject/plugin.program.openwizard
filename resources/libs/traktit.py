@@ -48,7 +48,7 @@ KEEPTRAKT      = wiz.getS('keeptrakt')
 TRAKTSAVE      = wiz.getS('traktlastsave')
 COLOR1         = uservar.COLOR1
 COLOR2         = uservar.COLOR2
-ORDER          = ['exodusredux', 'gaia', 'numbers', 'openmeta', 'overeasy', 'placenta', 'premiumizer', 'realizer', 'scrubs', 'seren', 'trakt', 'venom', 'yoda']
+ORDER          = ['exodusredux', 'gaia', 'numbers', 'openmeta', 'overeasy', 'placenta', 'premiumizer', 'realizer', 'scrubs', 'seren', 'thecrew', 'trakt', 'venom', 'yoda']
 
 TRAKTID = {
     'placenta': {
@@ -63,6 +63,18 @@ TRAKTID = {
         'default'  : 'trakt.user',
         'data'     : ['trakt.user', 'trakt.refresh', 'trakt.token'],
         'activate' : 'RunPlugin(plugin://plugin.video.placenta/?action=authTrakt)'},
+     'thecrew': {
+        'name'     : 'THE CREW',
+        'plugin'   : 'plugin.video.thecrew',
+        'saved'    : 'thecrew',
+        'path'     : os.path.join(ADDONS, 'plugin.video.thecrew'),
+        'icon'     : os.path.join(ADDONS, 'plugin.video.thecrew', 'icon.png'),
+        'fanart'   : os.path.join(ADDONS, 'plugin.video.thecrew', 'fanart.jpg'),
+        'file'     : os.path.join(TRAKTFOLD, 'thecrew_trakt'),
+        'settings' : os.path.join(ADDOND, 'plugin.video.thecrew', 'settings.xml'),
+        'default'  : 'trakt.user',
+        'data'     : ['trakt.user', 'trakt.refresh', 'trakt.token'],
+        'activate' : 'RunPlugin(plugin://plugin.video.thecrew/?action=authTrakt)'},
     'gaia': {
         'name'     : 'Gaia',
         'plugin'   : 'plugin.video.gaia',

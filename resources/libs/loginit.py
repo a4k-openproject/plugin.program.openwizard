@@ -48,7 +48,7 @@ KEEPLOGIN      = wiz.getS('keeplogin')
 LOGINSAVE      = wiz.getS('loginlastsave')
 COLOR1         = uservar.COLOR1
 COLOR2         = uservar.COLOR2
-ORDER          = ['fanart-exodusredux', 'fanart-gaia', 'fanart-numbers', 'fanart-overeasy', 'fanart-metadatautils', 'fanart-placenta', 'fanart-premiumizer', 'fanart-realizer', 'fanart-scrubs', 'fanart-venom', 'fanart-yoda', 'imdb-exodusredux', 'imdb-gaia', 'imdb-numbers', 'imdb-overeasy', 'imdb-placenta', 'imdb-premiumizer', 'imdb-realizer', 'imdb-scrubs', 'imdb-venom', 'imdb-yoda', 'kitsu-wonderfulsubs', 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-metadatautils', 'tmdb-numbers', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-overeasy', 'tmdb-placenta', 'tmdb-premiumizer', 'tmdb-realizer', 'tmdb-scrubs', 'tmdb-seren', 'tmdb-venom', 'tmdb-yoda', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-premiumizer', 'tvdb-realizer', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
+ORDER          = ['fanart-exodusredux', 'fanart-gaia', 'fanart-numbers', 'fanart-overeasy', 'fanart-metadatautils', 'fanart-placenta', 'fanart-premiumizer', 'fanart-realizer', 'fanart-scrubs', 'fanart-thecrew', 'fanart-venom', 'fanart-yoda', 'imdb-exodusredux', 'imdb-gaia', 'imdb-numbers', 'imdb-overeasy', 'imdb-placenta', 'imdb-premiumizer', 'imdb-realizer', 'imdb-scrubs', 'imdb-thecrew', 'imdb-venom', 'imdb-yoda', 'kitsu-wonderfulsubs', 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-metadatautils', 'tmdb-numbers', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-overeasy', 'tmdb-placenta', 'tmdb-premiumizer', 'tmdb-realizer', 'tmdb-scrubs', 'tmdb-seren', 'tmdb-thecrew', 'tmdb-venom', 'tmdb-yoda', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-premiumizer', 'tvdb-realizer', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
 
 LOGINID = {
 	'login-opensubtitles': {
@@ -159,6 +159,42 @@ LOGINID = {
 		'default'  : 'imdb.user',
 		'data'     : ['imdb.user'],
 		'activate' : ''},
+	'fanart-thecrew': {
+		'name'     : 'Fanart.tv - THE CREW',
+		'plugin'   : 'plugin.video.thecrew',
+		'saved'    : 'fanart-thecrew',
+		'path'     : os.path.join(ADDONS, 'plugin.video.thecrew'),
+		'icon'     : os.path.join(ADDONS, 'plugin.video.thecrew', 'icon.png'),
+		'fanart'   : os.path.join(ADDONS, 'plugin.video.thecrew', 'fanart.jpg'),
+		'file'     : os.path.join(LOGINFOLD, 'thecrew_fanart'),
+		'settings' : os.path.join(ADDOND, 'plugin.video.thecrew', 'settings.xml'),
+		'default'  : 'fanart.tv.user',
+		'data'     : ['fanart.tv.user'],
+		'activate' : ''},
+	'tmdb-thecrew': {
+		'name'     : 'TMDb - THE CREW',
+		'plugin'   : 'plugin.video.thecrew',
+		'saved'    : 'tmdb-thecrew',
+		'path'     : os.path.join(ADDONS, 'plugin.video.thecrew'),
+		'icon'     : os.path.join(ADDONS, 'plugin.video.thecrew', 'icon.png'),
+		'fanart'   : os.path.join(ADDONS, 'plugin.video.thecrew', 'fanart.jpg'),
+		'file'     : os.path.join(LOGINFOLD, 'thecrew_tmdb'),
+		'settings' : os.path.join(ADDOND, 'plugin.video.thecrew', 'settings.xml'),
+		'default'  : 'tm.user',
+		'data'     : ['tm.user'],
+		'activate' : ''},
+	'imdb-thecrew': {
+		'name'     : 'IMDb - THE CREW',
+		'plugin'   : 'plugin.video.thecrew',
+		'saved'    : 'imdb-thecrew',
+		'path'     : os.path.join(ADDONS, 'plugin.video.thecrew'),
+		'icon'     : os.path.join(ADDONS, 'plugin.video.thecrew', 'icon.png'),
+		'fanart'   : os.path.join(ADDONS, 'plugin.video.thecrew', 'fanart.jpg'),
+		'file'     : os.path.join(LOGINFOLD, 'thecrew_imdb'),
+		'settings' : os.path.join(ADDOND, 'plugin.video.thecrew', 'settings.xml'),
+		'default'  : 'imdb.user',
+		'data'     : ['imdb.user'],
+		'activate' : ''}
 	'fanart-gaia': {
 		'name'     : 'Fanart.tv - Gaia',
 		'plugin'   : 'plugin.video.gaia',
