@@ -73,6 +73,7 @@ TOMORROW       = TODAY + timedelta(days=1)
 TWODAYS        = TODAY + timedelta(days=2)
 THREEDAYS      = TODAY + timedelta(days=3)
 ONEWEEK        = TODAY + timedelta(days=7)
+ONEMONTH        = TODAY + timedelta(days=30)
 
 KODIV            = float(xbmc.getInfoLabel("System.BuildVersion")[:4])
 if KODIV > 17:

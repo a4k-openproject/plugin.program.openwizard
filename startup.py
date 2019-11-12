@@ -60,7 +60,7 @@ AUTOCLEANUP    = wiz.getS('autoclean')
 AUTOCACHE      = wiz.getS('clearcache')
 AUTOPACKAGES   = wiz.getS('clearpackages')
 AUTOTHUMBS     = wiz.getS('clearthumbs')
-AUTOFEQ        = wiz.getS('autocleanfeq')
+AUTOFREQ        = wiz.getS('autocleanfreq')
 AUTONEXTRUN    = wiz.getS('nextautocleanup')
 TRAKTSAVE      = wiz.getS('traktlastsave')
 REALSAVE       = wiz.getS('debridlastsave')
@@ -77,12 +77,13 @@ NOTEID         = wiz.getS('noteid')
 BACKUPLOCATION = ADDON.getSetting('path') if not ADDON.getSetting('path') == '' else HOME
 MYBUILDS       = os.path.join(BACKUPLOCATION, 'My_Builds', '')
 NOTEID         = 0 if NOTEID == "" else int(NOTEID)
-AUTOFEQ        = int(AUTOFEQ) if AUTOFEQ.isdigit() else 0
+AUTOFREQ        = int(AUTOFREQ) if AUTOFREQ.isdigit() else 0
 TODAY          = date.today()
 TOMORROW       = TODAY + timedelta(days=1)
 TWODAYS        = TODAY + timedelta(days=2)
 THREEDAYS      = TODAY + timedelta(days=3)
 ONEWEEK        = TODAY + timedelta(days=7)
+ONEMONTH        = TODAY + timedelta(days=30)
 SKINCHECK      = ['skin.aftermath.zephyr', 'skin.aftermath.silvo', 'skin.aftermath.simple', 'skin.ccm.aftermath']
 RAM            = int(xbmc.getInfoLabel("System.Memory(total)")[:-2])
 KODIV          = float(xbmc.getInfoLabel("System.BuildVersion")[:4])
@@ -448,11 +449,11 @@ else: wiz.log("[Login Info] Not Enabled", xbmc.LOGNOTICE)
 wiz.log("[Auto Clean Up] Started", xbmc.LOGNOTICE)
 if AUTOCLEANUP == 'true':
 	service = False
-	days = [TODAY, TOMORROW, THREEDAYS, ONEWEEK]
-	feq = int(float(AUTOFEQ))
-	if AUTONEXTRUN <= str(TODAY) or feq == 0:
+	days = [TODAY, TOMORROW, THREEDAYS, ONEWEEK, ONEMONTH]
+	freq = int(float(AUTOFREQ))
+	if AUTONEXTRUN <= str(TODAY) or freq == 0:
 		service = True
-		next_run = days[feq]
+		next_run = days[freq]
 		wiz.setS('nextautocleanup', str(next_run))
 	else: wiz.log("[Auto Clean Up] Next Clean Up %s" % AUTONEXTRUN, xbmc.LOGNOTICE)
 	if service == True:

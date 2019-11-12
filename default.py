@@ -77,7 +77,7 @@ AUTOCLEANUP      = wiz.getS('autoclean')
 AUTOCACHE        = wiz.getS('clearcache')
 AUTOPACKAGES     = wiz.getS('clearpackages')
 AUTOTHUMBS       = wiz.getS('clearthumbs')
-AUTOFEQ          = wiz.getS('autocleanfeq')
+AUTOFREQ          = wiz.getS('autocleanfreq')
 AUTONEXTRUN      = wiz.getS('nextautocleanup')
 INCLUDEVIDEO     = wiz.getS('includevideo')
 INCLUDEALL       = wiz.getS('includeall')
@@ -120,7 +120,7 @@ THIRD3URL        = wiz.getS('wizard3url')
 BACKUPLOCATION   = ADDON.getSetting('path') if not ADDON.getSetting('path') == '' else 'special://home/'
 BACKUPROMS       = wiz.getS('rompath')
 MYBUILDS         = os.path.join(BACKUPLOCATION, 'My_Builds', '')
-AUTOFEQ          = int(float(AUTOFEQ)) if AUTOFEQ.isdigit() else 0
+AUTOFREQ          = int(float(AUTOFREQ)) if AUTOFREQ.isdigit() else 0
 TODAY            = date.today()
 TOMORROW         = TODAY + timedelta(days=1)
 THREEDAYS        = TODAY + timedelta(days=3)
@@ -804,7 +804,7 @@ def maintMenu(view=None):
     archive    = wiz.getSize(ARCHIVE_CACHE)
     sizecache  = (wiz.getCacheSize())-archive
     totalsize  = sizepack+sizethumb+sizecache
-    feq        = ['Always', 'Daily', '3 Days', 'Weekly', 'Monthly']
+    freq        = ['Always', 'Daily', '3 Days', 'Weekly', 'Monthly']
     addDir ('[B]Cleaning Tools[/B]'       ,'maint', 'clean',  icon=ICONMAINT, themeit=THEME1)
     if view == "clean" or SHOWMAINT == 'true':
         addFile('Total Clean Up: [COLOR springgreen][B]%s[/B][/COLOR]' % wiz.convertSize(totalsize),    'fullclean',       icon=ICONMAINT, themeit=THEME3)
@@ -885,7 +885,7 @@ def maintMenu(view=None):
     addFile('Auto Clean', '', fanart=FANART, icon=ICONMAINT, themeit=THEME1)
     addFile('Auto Clean Up On Startup: %s' % autoclean.replace('true',on).replace('false',off) ,'togglesetting', 'autoclean',   icon=ICONMAINT, themeit=THEME3)
     if autoclean == 'true':
-        addFile('--- Auto Clean Fequency: [B][COLOR springgreen]%s[/COLOR][/B]' % feq[AUTOFEQ], 'changefeq', icon=ICONMAINT, themeit=THEME3)
+        addFile('--- Auto Clean Frequency: [B][COLOR springgreen]%s[/COLOR][/B]' % freq[AUTOFREQ], 'changefreq', icon=ICONMAINT, themeit=THEME3)
         addFile('--- Clear Cache on Startup: %s' % cache.replace('true',on).replace('false',off), 'togglesetting', 'clearcache', icon=ICONMAINT, themeit=THEME3)
         addFile('--- Clear Packages on Startup: %s' % packages.replace('true',on).replace('false',off), 'togglesetting', 'clearpackages', icon=ICONMAINT, themeit=THEME3)
         addFile('--- Clear Old Thumbs on Startup: %s' % thumbs.replace('true',on).replace('false',off), 'togglesetting', 'clearthumbs', icon=ICONMAINT, themeit=THEME3)
@@ -1412,12 +1412,12 @@ def enableAddons():
         addFile("No Addons Found to Enable or Disable.", '', icon=ICONMAINT)
     setView('files', 'viewType')
 
-def changeFeq():
-    feq        = ['Every Startup', 'Every Day', 'Every Three Days', 'Weekly', 'Monthly']
-    change     = DIALOG.select("[COLOR %s]How often would you list to Auto Clean on Startup?[/COLOR]" % COLOR2, feq)
+def changeFreq():
+    freq        = ['Every Startup', 'Every Day', 'Every Three Days', 'Weekly', 'Monthly']
+    change     = DIALOG.select("[COLOR %s]How often would you list to Auto Clean on Startup?[/COLOR]" % COLOR2, freq)
     if not change == -1:
-        wiz.setS('autocleanfeq', str(change))
-        wiz.LogNotify('[COLOR %s]Auto Clean Up[/COLOR]' % COLOR1, '[COLOR %s]Frequency Now %s[/COLOR]' % (COLOR2, feq[change]))
+        wiz.setS('autocleanfreq', str(change))
+        wiz.LogNotify('[COLOR %s]Auto Clean Up[/COLOR]' % COLOR1, '[COLOR %s]Frequency Now %s[/COLOR]' % (COLOR2, freq[change]))
 
 def developer():
     # addFile('Convert Text Files to 0.1.7',         'converttext',           themeit=THEME1)
@@ -2558,7 +2558,7 @@ elif mode=='toggleaddon'    : wiz.toggleAddon(name, url); wiz.refresh()
 elif mode=='toggleupdates'  : wiz.toggle_addon_updates()
 elif mode=='togglecache'    : toggleCache(name); wiz.refresh()
 elif mode=='toggleadult'    : wiz.toggleAdult(); wiz.refresh()
-elif mode=='changefeq'      : changeFeq(); wiz.refresh()
+elif mode=='changefreq'      : changeFreq(); wiz.refresh()
 elif mode=='uploadlog'      : uploadLog.Main()
 elif mode=='viewlog'        : LogViewer()
 elif mode=='viewwizlog'     : LogViewer(WIZLOG)
