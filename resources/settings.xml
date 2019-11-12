@@ -83,7 +83,6 @@
         <setting id="urlrd" type="text" default="" visible="false"/>
         <setting id="urlpm" type="text" default="" visible="false"/>
 
-        <setting id="fanart-numbers" type="text" default="" visible="false"/>
         <setting id="fanart-exodusredux" type="text" default="" visible="false"/>
         <setting id="fanart-gaia" type="text" default="" visible="false"/>
         <setting id="fanart-numbers" type="text" default="" visible="false"/>

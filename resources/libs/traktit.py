@@ -29,9 +29,8 @@ from resources.libs.common.config import CONFIG
 from resources.libs.common import logging
 from resources.libs.common import tools
 
-ORDER = ['exodusredux', 'gaia', 'numbers', 'openmeta', 'premiumizer', 'realizer', 'scrubs', 'seren', 'thecrew', 'trakt', 'venom', 'yoda']
+ORDER = ['exodusredux', 'gaia', 'numbers', 'openmeta', 'premiumizer', 'realizer', 'scrubs', 'seren', 'thecrew', 'trakt', 'venom']
 
-ORDER          = ['exodusredux', 'gaia', 'numbers', 'openmeta', 'overeasy', 'placenta', 'premiumizer', 'realizer', 'scrubs', 'seren', 'thecrew', 'trakt', 'venom', 'yoda']
 TRAKTID = {
     'gaia': {
         'name'     : 'Gaia',
