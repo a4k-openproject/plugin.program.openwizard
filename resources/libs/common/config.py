@@ -105,7 +105,7 @@ class Config:
 
     def init_paths(self):
         # Static variables
-        self.CLEANFREQ = ['Every Startup', 'Every Day', 'Every Three Days', 'Every Weekly']
+        self.CLEANFREQ = ['Every Startup', 'Every Day', 'Every Three Days', 'Weekly', 'Monthly']
         self.LOGFILES = ['log', 'xbmc.old.log', 'kodi.log', 'kodi.old.log', 'spmc.log', 'spmc.old.log', 'tvmc.log',
                          'tvmc.old.log', 'dmp']
         self.DEFAULTPLUGINS = ['metadata.album.universal', 'metadata.artists.universal',
