@@ -163,6 +163,7 @@ THEME5           = uservar.THEME5
 ICONBUILDS       = uservar.ICONBUILDS if not uservar.ICONBUILDS == 'http://' else ICON
 ICONMAINT        = uservar.ICONMAINT if not uservar.ICONMAINT == 'http://' else ICON
 ICONAPK          = uservar.ICONAPK if not uservar.ICONAPK == 'http://' else ICON
+ICONSPEED          = uservar.ICONSPEED if not uservar.ICONSPEED == 'http://' else ICON
 ICONADDONS       = uservar.ICONADDONS if not uservar.ICONADDONS == 'http://' else ICON
 ICONYOUTUBE      = uservar.ICONYOUTUBE if not uservar.ICONYOUTUBE == 'http://' else ICON
 ICONSAVE         = uservar.ICONSAVE if not uservar.ICONSAVE == 'http://' else ICON
@@ -903,7 +904,7 @@ def maintMenu(view=None):
 
 #########################################NET TOOLS#############################################
 def net_tools(view=None):
-    addDir ('Speed Tester' ,'speedtestM', icon=ICONAPK, themeit=THEME1)
+    addDir ('Speed Tester' ,'speedtestM', icon=ICONSPEED, themeit=THEME1)
     if HIDESPACERS == 'No': addFile(wiz.sep(), '', themeit=THEME3)
     addDir ('View IP Address & MAC Address',        'viewIP',    icon=ICONMAINT, themeit=THEME1)
     setView('files', 'viewType')
