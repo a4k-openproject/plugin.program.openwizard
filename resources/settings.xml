@@ -54,11 +54,11 @@
         <setting id="includeall" type="bool" label="Include All Addons: " default="true" enable="!eq(-1,false)"/>
         <setting id="includeexodusredux" type="bool" label="Include Exodus Redux DB: " default="true" enable="eq(-1,false)" visible="System.HasAddon(plugin.video.exodusredux)"/>
         <setting id="includegaia" type="bool" label="Include Gaia Cache DB: " default="true" enable="eq(-2,false)" visible="System.HasAddon(plugin.video.gaia)"/>
-        <setting id="includescrubs" type="bool" label="Include Scrubs v2 Cache DB: " default="true" enable="eq(-3,false)" visible="System.HasAddon(plugin.video.scrubsv2)"/>
         <setting id="includenumbers" type="bool" label="Include NuMb3r5 Cache DB: " default="true" enable="eq(-3,false)" visible="System.HasAddon(plugin.video.numbersbynumbers)"/>
-        <setting id="includeseren" type="bool" label="Include Seren Cache DB: " default="true" enable="eq(-4,false)" visible="System.HasAddon(plugin.video.seren)"/>
-        <setting id="includethecrew" type="bool" label="Include THE CREW Cache DB: " default="true" enable="eq(-5,false)" visible="System.HasAddon(plugin.video.thecrew)"/>
-        <setting id="includevenom" type="bool" label="Include Venom Cache DB: " default="true" enable="eq(-6,false)" visible="System.HasAddon(plugin.video.venom)"/>
+        <setting id="includescrubs" type="bool" label="Include Scrubs v2 Cache DB: " default="true" enable="eq(-4,false)" visible="System.HasAddon(plugin.video.scrubsv2)"/>
+        <setting id="includeseren" type="bool" label="Include Seren Cache DB: " default="true" enable="eq(-5,false)" visible="System.HasAddon(plugin.video.seren)"/>
+        <setting id="includethecrew" type="bool" label="Include THE CREW Cache DB: " default="true" enable="eq(-6,false)" visible="System.HasAddon(plugin.video.thecrew)"/>
+        <setting id="includevenom" type="bool" label="Include Venom Cache DB: " default="true" enable="eq(-7,false)" visible="System.HasAddon(plugin.video.venom)"/>
 
         <!-- Default settings for Save Data entries -->
         <setting id="exodusredux" type="text" default="" visible="false"/>
@@ -86,6 +86,7 @@
         <setting id="fanart-numbers" type="text" default="" visible="false"/>
         <setting id="fanart-exodusredux" type="text" default="" visible="false"/>
         <setting id="fanart-gaia" type="text" default="" visible="false"/>
+        <setting id="fanart-numbers" type="text" default="" visible="false"/>
         <setting id="fanart-thecrew" type="text" default="" visible="false"/>
         <setting id="fanart-metadatautils" type="text" default="" visible="false"/>
         <setting id="fanart-premiumizer" type="text" default="" visible="false"/>
@@ -95,6 +96,7 @@
         <setting id="fanart-seren" type="text" default="" visible="false"/>
         <setting id="imdb-exodusredux" type="text" default="" visible="false"/>
         <setting id="imdb-gaia" type="text" default="" visible="false"/>
+        <setting id="imdb-numbers" type="text" default="" visible="false"/>
         <setting id="imdb-thecrew" type="text" default="" visible="false"/>
         <setting id="imdb-premiumizer" type="text" default="" visible="false"/>
         <setting id="imdb-realizer" type="text" default="" visible="false"/>
@@ -112,6 +114,7 @@
         <setting id="tmdb-exodusredux" type="text" default="" visible="false"/>
         <setting id="login-eis" type="text" default="" visible="false"/>
         <setting id="tmdb-gaia" type="text" default="" visible="false"/>
+        <setting id="tmdb-numbers" type="text" default="" visible="false"/>
         <setting id="tmdb-metadatautils" type="text" default="" visible="false"/>
         <setting id="tmdb-eis" type="text" default="" visible="false"/>
         <setting id="tmdb-openmeta" type="text" default="" visible="false"/>

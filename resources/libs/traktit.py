@@ -29,7 +29,7 @@ from resources.libs.common.config import CONFIG
 from resources.libs.common import logging
 from resources.libs.common import tools
 
-ORDER = ['exodusredux', 'gaia', 'openmeta', 'premiumizer', 'realizer', 'scrubs', 'seren', 'thecrew', 'trakt', 'venom', 'yoda']
+ORDER = ['exodusredux', 'gaia', 'numbers', 'openmeta', 'premiumizer', 'realizer', 'scrubs', 'seren', 'thecrew', 'trakt', 'venom', 'yoda']
 
 ORDER          = ['exodusredux', 'gaia', 'numbers', 'openmeta', 'overeasy', 'placenta', 'premiumizer', 'realizer', 'scrubs', 'seren', 'thecrew', 'trakt', 'venom', 'yoda']
 TRAKTID = {
@@ -49,13 +49,13 @@ TRAKTID = {
         'name'     : 'NuMb3r5',
         'plugin'   : 'plugin.video.numbersbynumbers',
         'saved'    : 'numbers',
-        'path'     : os.path.join(ADDONS, 'plugin.video.numbersbynumbers'),
-        'icon'     : os.path.join(ADDONS, 'plugin.video.numbersbynumbers', 'icon.png'),
-        'fanart'   : os.path.join(ADDONS, 'plugin.video.numbersbynumbers', 'fanart.jpg'),
-        'file'     : os.path.join(TRAKTFOLD, 'numbers_trakt'),
-        'settings' : os.path.join(ADDOND, 'plugin.video.numbersbynumbers', 'settings.xml'),
+        'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.numbersbynumbers'),
+        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.numbersbynumbers', 'icon.png'),
+        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.numbersbynumbers', 'fanart.jpg'),
+        'file'     : os.path.join(CONFIG.TRAKTFOLD, 'numbers_trakt'),
+        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.numbersbynumbers', 'settings.xml'),
         'default'  : 'trakt.user',
-        'data'     : ['trakt.user', 'trakt.refresh', 'trakt.token'],
+        'data'     : ['trakt.token', 'trakt.refresh', 'trakt.user'],
         'activate' : 'RunPlugin(plugin://plugin.video.numbersbynumbers/?action=authTrakt)'},
     'seren': {
         'name'     : 'Seren',

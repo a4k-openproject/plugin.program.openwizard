@@ -29,7 +29,7 @@ from resources.libs.common.config import CONFIG
 from resources.libs.common import logging
 from resources.libs.common import tools
 
-ORDER = ['fanart-exodusredux', 'fanart-gaia', 'fanart-metadatautils', 'fanart-premiumizer', 'fanart-realizer', 'fanart-scrubs', 'fanart-seren', 'fanart-thecrew', 'fanart-venom', 'fanart-yoda', 'imdb-exodusredux', 'imdb-gaia', 'imdb-premiumizer', 'imdb-realizer', 'imdb-scrubs', 'imdb-thecrew', 'imdb-venom', 'imdb-yoda', 'kitsu-wonderfulsubs', 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-metadatautils', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-premiumizer', 'tmdb-realizer', 'tmdb-scrubs', 'tmdb-seren', 'tmdb-thecrew', 'tmdb-venom', 'tmdb-yoda', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-premiumizer', 'tvdb-realizer', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
+ORDER = ['fanart-exodusredux', 'fanart-gaia', 'fanart-metadatautils', 'fanart-numbers', 'fanart-premiumizer', 'fanart-realizer', 'fanart-scrubs', 'fanart-seren', 'fanart-thecrew', 'fanart-venom', 'fanart-yoda', 'imdb-exodusredux', 'imdb-gaia', 'imdb-numbers', 'imdb-premiumizer', 'imdb-realizer', 'imdb-scrubs', 'imdb-thecrew', 'imdb-venom', 'imdb-yoda', 'kitsu-wonderfulsubs', 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-metadatautils', 'tmdb-numbers', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-premiumizer', 'tmdb-realizer', 'tmdb-scrubs', 'tmdb-seren', 'tmdb-thecrew', 'tmdb-venom', 'tmdb-yoda', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-premiumizer', 'tvdb-realizer', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
 
 ORDER          = ['fanart-exodusredux', 'fanart-gaia', 'fanart-numbers', 'fanart-overeasy', 'fanart-metadatautils', 'fanart-placenta', 'fanart-premiumizer', 'fanart-realizer', 'fanart-scrubs', 'fanart-thecrew', 'fanart-venom', 'fanart-yoda', 'imdb-exodusredux', 'imdb-gaia', 'imdb-numbers', 'imdb-overeasy', 'imdb-placenta', 'imdb-premiumizer', 'imdb-realizer', 'imdb-scrubs', 'imdb-thecrew', 'imdb-venom', 'imdb-yoda', 'kitsu-wonderfulsubs', 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-metadatautils', 'tmdb-numbers', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-overeasy', 'tmdb-placenta', 'tmdb-premiumizer', 'tmdb-realizer', 'tmdb-scrubs', 'tmdb-seren', 'tmdb-thecrew', 'tmdb-venom', 'tmdb-yoda', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-premiumizer', 'tvdb-realizer', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
 LOGINID = {
@@ -318,6 +318,42 @@ LOGINID = {
         'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.venom', 'fanart.jpg'),
         'file'     : os.path.join(CONFIG.LOGINFOLD, 'venom_imdb'),
         'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.venom', 'settings.xml'),
+        'default'  : 'imdb.user',
+        'data'     : ['imdb.user'],
+        'activate' : ''},
+    'fanart-numbers': {
+        'name'     : 'Fanart.tv - NuMb3r5',
+        'plugin'   : 'plugin.video.numbersbynumbers',
+        'saved'    : 'fanart-numbersbynumbers',
+        'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.numbersbynumbers'),
+        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.numbersbynumbers', 'icon.png'),
+        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.numbersbynumbers', 'fanart.jpg'),
+        'file'     : os.path.join(CONFIG.LOGINFOLD, 'numbersbynumbers_fanart'),
+        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.numbersbynumbers', 'settings.xml'),
+        'default'  : 'fanart.tv.user',
+        'data'     : ['fanart.tv.user'],
+        'activate' : ''},
+    'tmdb-numbers': {
+        'name'     : 'TMDb - NuMb3r5',
+        'plugin'   : 'plugin.video.numbersbynumbers',
+        'saved'    : 'tmdb-numbersbynumbers',
+        'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.numbersbynumbers'),
+        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.numbersbynumbers', 'icon.png'),
+        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.numbersbynumbers', 'fanart.jpg'),
+        'file'     : os.path.join(CONFIG.LOGINFOLD, 'numbersbynumbers_tmdb'),
+        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.numbersbynumbers', 'settings.xml'),
+        'default'  : 'tm.user',
+        'data'     : ['tm.user'],
+        'activate' : ''},
+    'imdb-numbers': {
+        'name'     : 'IMDb - NuMb3r5',
+        'plugin'   : 'plugin.video.numbersbynumbers',
+        'saved'    : 'imdb-numbersbynumbers',
+        'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.numbersbynumbers'),
+        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.numbersbynumbers', 'icon.png'),
+        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.numbersbynumbers', 'fanart.jpg'),
+        'file'     : os.path.join(CONFIG.LOGINFOLD, 'numbersbynumbers_imdb'),
+        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.numbersbynumbers', 'settings.xml'),
         'default'  : 'imdb.user',
         'data'     : ['imdb.user'],
         'activate' : ''},

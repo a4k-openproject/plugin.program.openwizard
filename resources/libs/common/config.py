@@ -211,6 +211,7 @@ class Config:
         self.INCLUDETHECREW = self.get_setting('includethecrew')
         self.INCLUDEYODA = self.get_setting('includeyoda')
         self.INCLUDEVENOM = self.get_setting('includevenom')
+        self.INCLUDENUMBERS = self.get_setting('includenumbers')
         self.INCLUDESCRUBS = self.get_setting('includescrubs')
         
         # Notification variables

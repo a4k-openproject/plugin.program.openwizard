@@ -105,6 +105,7 @@ class MaintenanceMenu:
             includethecrew = 'true'
             includeyoda = 'true'
             includevenom = 'true'
+            includenumbers = 'true'
             includescrubs = 'true'
             includeseren = 'true'
         else:
@@ -113,6 +114,7 @@ class MaintenanceMenu:
             includethecrew = 'true' if CONFIG.INCLUDETHECREW == 'true' else 'false'
             includeyoda = 'true' if CONFIG.INCLUDEYODA == 'true' else 'false'
             includevenom = 'true' if CONFIG.INCLUDEVENOM == 'true' else 'false'
+            includenumbers = 'true' if CONFIG.INCLUDENUMBERS == 'true' else 'false'
             includescrubs = 'true' if CONFIG.INCLUDESCRUBS == 'true' else 'false'
             includeseren = 'true' if CONFIG.INCLUDESEREN == 'true' else 'false'
 
@@ -129,6 +131,10 @@ class MaintenanceMenu:
                 directory.add_file(
                     '--- Include Gaia: {0}'.format(includegaia.replace('true', on).replace('false', off)),
                     {'mode': 'togglecache', 'name': 'includegaia'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+            if xbmc.getCondVisibility('System.HasAddon(plugin.video.numbersbynumbers)'):
+                directory.add_file(
+                    '--- Include NuMb3r5: {0}'.format(includenumbers.replace('true', on).replace('false', off)),
+                    {'mode': 'togglecache', 'name': 'includenumbers'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
             if xbmc.getCondVisibility('System.HasAddon(plugin.video.scrubsv2)'):
                 directory.add_file(
                     '--- Include Scrubs v2: {0}'.format(includescrubs.replace('true', on).replace('false', off)),
