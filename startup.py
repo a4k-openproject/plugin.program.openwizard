@@ -250,13 +250,13 @@ def save_login():
 
 def auto_clean():
     service = False
-    days = [tools.get_date(), tools.get_date(days=1), tools.get_date(days=3), tools.get_date(days=7)]
+    days = [tools.get_date(), tools.get_date(days=1), tools.get_date(days=3), tools.get_date(days=7), tools.get_date(days=30)]
 
-    feq = int(float(CONFIG.AUTOFREQ))
+    freq = int(float(CONFIG.AUTOFREQ))
 
-    if CONFIG.AUTONEXTRUN <= str(tools.get_date()) or feq == 0:
+    if CONFIG.AUTONEXTRUN <= str(tools.get_date()) or freq == 0:
         service = True
-        next_run = days[feq]
+        next_run = days[freq]
         CONFIG.set_setting('nextautocleanup', str(next_run))
     else:
         logging.log("[Auto Clean Up] Next Clean Up {0}".format(CONFIG.AUTONEXTRUN), level=xbmc.LOGNOTICE)

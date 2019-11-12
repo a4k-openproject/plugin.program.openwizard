@@ -83,7 +83,7 @@ class MaintenanceMenu:
             directory.add_file(
                 '--- Auto Clean Frequency: [B][COLOR springgreen]{0}[/COLOR][/B]'.format(
                     CONFIG.CLEANFREQ[CONFIG.AUTOFREQ]),
-                {'mode': 'changefeq'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+                {'mode': 'changefreq'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
             directory.add_file(
                 '--- Clear Cache on Startup: {0}'.format(cache.replace('true', on).replace('false', off)),
                 {'mode': 'togglesetting', 'name': 'clearcache'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)

@@ -109,7 +109,7 @@ def dispatch(paramstring):
         from resources.libs import clear
         clear.toggle_cache(name)
         xbmc.executebuiltin('Container.Refresh()')
-    elif mode == 'changefeq':  # Maintenance - Auto Clean Frequency
+    elif mode == 'changefreq':  # Maintenance - Auto Clean Frequency
         menu.change_freq()
         xbmc.executebuiltin('Container.Refresh()')
     elif mode == 'systeminfo':  # Maintenance -> System Tweaks/Fixes -> System Information

@@ -740,7 +740,7 @@ def change_freq():
 
     change = dialog.select("[COLOR {0}]How often would you list to Auto Clean on Startup?[/COLOR]".format(CONFIG.COLOR2), CONFIG.CLEANFREQ)
     if not change == -1:
-        CONFIG.set_setting('autocleanfeq', str(change))
+        CONFIG.set_setting('autocleanfreq', str(change))
         logging.log_notify('[COLOR {0}]Auto Clean Up[/COLOR]'.format(CONFIG.COLOR1),
                            '[COLOR {0}]Frequency Now {1}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.CLEANFREQ[change]))
 
