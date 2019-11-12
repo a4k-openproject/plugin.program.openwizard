@@ -430,9 +430,10 @@ def _backup_build(name=""):
          
         _backup_info(name, extractsize, programs, video, music, picture, repos, scripts, binaries)
 
-        dialog.ok(CONFIG.ADDONTITLE,
-                      "[COLOR {0}]{1}[/COLOR] [COLOR {2}]Backup successful:[/COLOR]".format(CONFIG.COLOR1, name, CONFIG.COLOR2),
-                      "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, zipname))
+        if len(binaries) > 0:
+            dialog.ok(CONFIG.ADDONTITLE, "[COLOR {0}]The following add-ons were excluded from the backup because they are platform specific:[/COLOR]".format(CONFIG.COLOR2), "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, ', '.join(binaries)))
+        
+        dialog.ok(CONFIG.ADDONTITLE, "[COLOR {0}]{1}[/COLOR] [COLOR {2}]Backup successful:[/COLOR]".format(CONFIG.COLOR1, name, CONFIG.COLOR2), "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, zipname))
 
 
 def _backup_info(name, extractsize, programs, video, music, picture, repos, scripts, binaries):
