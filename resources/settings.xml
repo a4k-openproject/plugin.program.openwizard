@@ -63,8 +63,9 @@
 		<setting id="includeplacenta" type="bool" label="Include Placenta DB: " default="true" enable="eq(-5,false)" visible="System.HasAddon(plugin.video.placenta)"/>
 		<setting id="includescrubs" type="bool" label="Include Scrubs v2 Cache DB: " default="true" enable="eq(-6,false)" visible="System.HasAddon(plugin.video.scrubsv2)"/>
 		<setting id="includeseren" type="bool" label="Include Seren Cache DB: " default="true" enable="eq(-7,false)" visible="System.HasAddon(plugin.video.seren)"/>
-        <setting id="includevenom" type="bool" label="Include Venom Cache DB: " default="true" enable="eq(-8,false)" visible="System.HasAddon(plugin.video.venom)"/>
-		<setting id="includeyoda" type="bool" label="Include Yoda Cache DB: " default="true" enable="eq(-9,false)" visible="System.HasAddon(plugin.video.yoda)"/>
+        <setting id="includethecrew" type="bool" label="Include THE CREW Cache DB: " default="true" enable="eq(-8,false)" visible="System.HasAddon(plugin.video.thecrew)"/>
+        <setting id="includevenom" type="bool" label="Include Venom Cache DB: " default="true" enable="eq(-9,false)" visible="System.HasAddon(plugin.video.venom)"/>
+		<setting id="includeyoda" type="bool" label="Include Yoda Cache DB: " default="true" enable="eq(-10,false)" visible="System.HasAddon(plugin.video.yoda)"/>
 
 		<!-- Default settings for Save Data entries -->
 		<setting id="exodusredux" type="text" default="" visible="false"/>
@@ -77,6 +78,7 @@
 		<setting id="realizer" type="text" default="" visible="false"/>
 		<setting id="scrubs" type="text" default="" visible="false"/>
 		<setting id="seren" type="text" default="" visible="false"/>
+        <setting id="thecrew" type="text" default="" visible="false"/>
 		<setting id="trakt" type="text" default="" visible="false"/>
 		<setting id="venom" type="text" default="" visible="false"/>
 		<setting id="yoda" type="text" default="" visible="false"/>
@@ -99,6 +101,7 @@
 		<setting id="fanart-premiumizer" type="text" default="" visible="false"/>
 		<setting id="fanart-realizer" type="text" default="" visible="false"/>
 		<setting id="fanart-scrubs" type="text" default="" visible="false"/>
+        <setting id="fanart-thecrew" type="text" default="" visible="false"/>
 		<setting id="fanart-venom" type="text" default="" visible="false"/>
 		<setting id="fanart-yoda" type="text" default="" visible="false"/>
 		<setting id="imdb-exodusredux" type="text" default="" visible="false"/>
@@ -109,6 +112,7 @@
 		<setting id="imdb-premiumizer" type="text" default="" visible="false"/>
 		<setting id="imdb-realizer" type="text" default="" visible="false"/>
 		<setting id="imdb-scrubs" type="text" default="" visible="false"/>
+        <setting id="imdb-thecrew" type="text" default="" visible="false"/>
 		<setting id="imdb-venom" type="text" default="" visible="false"/>
 		<setting id="imdb-yoda" type="text" default="" visible="false"/>
 		<setting id="kitsu-wonderfulsubs" type="text" default="" visible="false"/>
@@ -132,7 +136,8 @@
 		<setting id="tmdb-premiumizer" type="text" default="" visible="false"/>
 		<setting id="tmdb-realizer" type="text" default="" visible="false"/>
 		<setting id="tmdb-scrubs" type="text" default="" visible="false"/>
-		<setting id="tmdb-seren" type="text" default="" visible="false"/>
+		<setting id="tmdb-seren" type="text" default="" visible="false"/>\
+        <setting id="tmdb-thecrew" type="text" default="" visible="false"/>
 		<setting id="tmdb-venom" type="text" default="" visible="false"/>
 		<setting id="tmdb-yoda" type="text" default="" visible="false"/>
 		<setting id="trakt-openmeta" type="text" default="" visible="false"/>
