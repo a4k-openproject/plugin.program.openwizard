@@ -801,7 +801,7 @@ def maintMenu(view=None):
     archive    = wiz.getSize(ARCHIVE_CACHE)
     sizecache  = (wiz.getCacheSize())-archive
     totalsize  = sizepack+sizethumb+sizecache
-    feq        = ['Always', 'Daily', '3 Days', 'Weekly']
+    feq        = ['Always', 'Daily', '3 Days', 'Weekly', 'Monthly']
     addDir ('[B]Cleaning Tools[/B]'       ,'maint', 'clean',  icon=ICONMAINT, themeit=THEME1)
     if view == "clean" or SHOWMAINT == 'true':
         addFile('Total Clean Up: [COLOR springgreen][B]%s[/B][/COLOR]' % wiz.convertSize(totalsize),    'fullclean',       icon=ICONMAINT, themeit=THEME3)
@@ -1408,11 +1408,11 @@ def enableAddons():
     setView('files', 'viewType')
 
 def changeFeq():
-    feq        = ['Every Startup', 'Every Day', 'Every Three Days', 'Every Weekly']
+    feq        = ['Every Startup', 'Every Day', 'Every Three Days', 'Weekly', 'Monthly']
     change     = DIALOG.select("[COLOR %s]How often would you list to Auto Clean on Startup?[/COLOR]" % COLOR2, feq)
     if not change == -1:
         wiz.setS('autocleanfeq', str(change))
-        wiz.LogNotify('[COLOR %s]Auto Clean Up[/COLOR]' % COLOR1, '[COLOR %s]Fequency Now %s[/COLOR]' % (COLOR2, feq[change]))
+        wiz.LogNotify('[COLOR %s]Auto Clean Up[/COLOR]' % COLOR1, '[COLOR %s]Frequency Now %s[/COLOR]' % (COLOR2, feq[change]))
 
 def developer():
     # addFile('Convert Text Files to 0.1.7',         'converttext',           themeit=THEME1)
