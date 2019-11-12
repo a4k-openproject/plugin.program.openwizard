@@ -194,7 +194,7 @@ LOGINID = {
 		'settings' : os.path.join(ADDOND, 'plugin.video.thecrew', 'settings.xml'),
 		'default'  : 'imdb.user',
 		'data'     : ['imdb.user'],
-		'activate' : ''}
+		'activate' : ''},
 	'fanart-gaia': {
 		'name'     : 'Fanart.tv - Gaia',
 		'plugin'   : 'plugin.video.gaia',
