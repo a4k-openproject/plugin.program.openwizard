@@ -118,3 +118,19 @@ def addon_updates(do=None):
             value = 0
         query = '{{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{{"setting":{0},"value":{1}}}, "id":1}}'.format(setting, value)
         response = xbmc.executeJSONRPC(query)
+        
+        
+def toggle_addon_updates():
+    from resources.libs.common import logging
+    
+    setting = '"general.addonupdates"'
+    selected = 0
+    options = ['Install updates automatically', 'Notify, but don\'t install updates', 'Never check for updates']
+    set_query = '{{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{{"setting":"general.addonupdates","value":{0}}}, "id":1}}'
+    
+    dialog = xbmcgui.Dialog()
+    
+    selected = dialog.select(CONFIG.ADDONTITLE, options)
+            
+    logging.log_notify(CONFIG.ADDONTITLE, 'Updates changed to "{0}"'.format(options[selected]))
+    xbmc.executeJSONRPC(set_query.format(selected))
