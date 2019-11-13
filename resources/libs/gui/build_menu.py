@@ -233,7 +233,7 @@ class BuildMenu:
 
                 if tools.check_url(info):
                     try:
-                        tname, extracted, zipsize, skin, created, programs, video, music, picture, repos, scripts = check.check_info(info)
+                        tname, extracted, zipsize, skin, created, programs, video, music, picture, repos, scripts, binaries = check.check_info(info)
                         extend = True
                     except:
                         extend = False
@@ -260,7 +260,8 @@ class BuildMenu:
                     msg += "[COLOR {0}]Music:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, music)
                     msg += "[COLOR {0}]Pictures:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, picture)
                     msg += "[COLOR {0}]Repositories:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, repos)
-                    msg += "[COLOR {0}]Scripts:[/COLOR] [COLOR {1}]{2}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, scripts)
+                    msg += "[COLOR {0}]Scripts:[/COLOR] [COLOR {1}]{2}[/COLOR][CR][CR]".format(CONFIG.COLOR2, CONFIG.COLOR1, scripts)
+                    msg += "[COLOR {0}]Binaries:[/COLOR] [COLOR {1}]{2}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, binaries)
 
                 window.show_text_box("Viewing Build Info: {0}".format(name), msg)
             else:

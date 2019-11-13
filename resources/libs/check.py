@@ -102,10 +102,10 @@ def check_info(name):
     if not tools.check_url(name):
         return False
     link = tools.open_url(name).replace('\n', '').replace('\r', '').replace('\t', '')
-    match = re.compile('.+?ame="(.+?)".+?xtracted="(.+?)".+?ipsize="(.+?)".+?kin="(.+?)".+?reated="(.+?)".+?rograms="(.+?)".+?ideo="(.+?)".+?usic="(.+?)".+?icture="(.+?)".+?epos="(.+?)".+?cripts="(.+?)"').findall(link)
+    match = re.compile('.+?ame="(.+?)".+?xtracted="(.+?)".+?ipsize="(.+?)".+?kin="(.+?)".+?reated="(.+?)".+?rograms="(.+?)".+?ideo="(.+?)".+?usic="(.+?)".+?icture="(.+?)".+?epos="(.+?)".+?cripts="(.+?)".+?inaries="(.+?)"').findall(link)
     if len(match) > 0:
-        for name, extracted, zipsize, skin, created, programs, video, music, picture, repos, scripts in match:
-            return name, extracted, zipsize, skin, created, programs, video, music, picture, repos, scripts
+        for name, extracted, zipsize, skin, created, programs, video, music, picture, repos, scripts, binaries in match:
+            return name, extracted, zipsize, skin, created, programs, video, music, picture, repos, scripts, binaries
     else:
         return False
 
