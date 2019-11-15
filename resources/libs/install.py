@@ -382,7 +382,7 @@ def install_addon(plugin, url):
                         do = ['Launch Addon', 'Remove Addon']
                         selected = dialog.select("[COLOR {0}]Addon already installed what would you like to do?[/COLOR]".format(CONFIG.COLOR2), do)
                         if selected == 0:
-                            xbmc.executebuiltin('RunAddon({0})'.format(plugin))
+                            xbmc.executebuiltin('InstallAddon({0})'.format(plugin))
                             xbmc.sleep(500)
                             return True
                         elif selected == 1:
@@ -464,6 +464,7 @@ def install_from_kodi(plugin):
     import time
     
     installed_cond = 'System.HasAddon({0})'.format(plugin)
+    visible_cond = 'Window.IsTopMost(yesnodialog)'
     
     if xbmc.getCondVisibility(installed_cond):
         logging.log('Already installed ' + plugin, level=xbmc.LOGDEBUG)
@@ -483,7 +484,7 @@ def install_from_kodi(plugin):
         xbmc.sleep(500)
         
         # Assuming we only want to answer the one known "install" dialog
-        if xbmc.getCondVisibility('Window.IsTopMost(yesnodialog)') and not clicked:
+        if xbmc.getCondVisibility(visible_cond) and not clicked:
             logging.log('Dialog to click open', level=xbmc.LOGDEBUG)
             xbmc.executebuiltin('SendClick(yesnodialog, 11)')
             clicked = True

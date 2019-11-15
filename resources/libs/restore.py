@@ -54,19 +54,15 @@ class Restore:
         binaryids = []
         
         if os.path.exists(binarytxt):
-            import sqlite3 as database
-            
             binaryids = tools.read_from_file(binarytxt).split(',')
             
-            dialog.ok(CONFIG.ADDONTITLE, '[COLOR {0}]The restored backup may depend on the following platform-specific addons, which were not included:[/COLOR]'.format(CONFIG.COLOR2), '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, ', '.join([tools.get_addon_info(id, 'name') for id in binaryids])), '[COLOR {0}]For best results, consider installing them manually after Kodi restarts.[/COLOR]'.format(CONFIG.COLOR2))
+            # dialog.ok(CONFIG.ADDONTITLE, '[COLOR {0}]The restored backup may depend on the following platform-specific addons, which were not included:[/COLOR]'.format(CONFIG.COLOR2), '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, ', '.join([tools.get_addon_info(id, 'name') for id in binaryids])), '[COLOR {0}]For best results, consider installing them manually after Kodi restarts.[/COLOR]'.format(CONFIG.COLOR2))
             
-            # logging.log("[Binary Detection] Reinstalling Eligible Binary Addons", level=xbmc.LOGNOTICE)            
-            # dialog.ok(CONFIG.ADDONTITLE, '[COLOR {0}]The restored build contains platform-specific addons, which will now be automatically installed. A number of dialogs may pop up during this process. Cancelling them may cause the restored build to function incorrectly.[/COLOR]'.format(CONFIG.COLOR2))
+            logging.log("[Binary Detection] Reinstalling Eligible Binary Addons", level=xbmc.LOGNOTICE)            
+            dialog.ok(CONFIG.ADDONTITLE, '[COLOR {0}]The restored build contains platform-specific addons, which will now be automatically installed. A number of dialogs may pop up during this process. Cancelling them may cause the restored build to function incorrectly.[/COLOR]'.format(CONFIG.COLOR2))
             restore = True
-            
-            return True
         else:
-            # logging.log("[Binary Detection] No Eligible Binary Addons to Reinstall", level=xbmc.LOGNOTICE)
+            logging.log("[Binary Detection] No Eligible Binary Addons to Reinstall", level=xbmc.LOGNOTICE)
             return True
         
         installed = 0
@@ -82,28 +78,12 @@ class Restore:
                 return
             
             # clear out the addons for sure
-            for id in binaryids:
-                if clear.remove_addon(id, tools.get_addon_info(id, 'name'), over=True, data=False):
-                    continue
-            
-            sqldb = database.connect(os.path.join(CONFIG.DATABASE, db.latest_db('Addons')))
-            sqlexe = sqldb.cursor()
-            query = "SELECT lastcheck FROM repo WHERE addonID = 'repository.xbmc.org'"
-            previous_lastcheck = sqlexe.execute(query).fetchone()[0]
+            # for id in binaryids:
+                # if clear.remove_addon(id, tools.get_addon_info(id, 'name'), over=True, data=False):
+                    # continue
             
             # check Kodi repo for updates, "cleans" the database
-            xbmc.executebuiltin('UpdateAddonRepos')
-            
-            # monitor repo check
-            while previous_lastcheck == sqlexe.execute(query).fetchone()[0]:
-                # logging.log('previous {0}: {1}, now {2}: {3}'.format(type(previous_lastcheck), previous_lastcheck, type(sqlexe.execute(query).fetchone()[0]), sqlexe.execute(query).fetchone()[0]), level=xbmc.LOGNOTICE)
-                
-                sqldb.commit()
-                xbmc.sleep(500)
-                
-            sqldb.close()
-            
-            logging.log_notify(CONFIG.ADDONTITLE, '[Binary Detection] Repo Check Completed')
+            db.force_check_updates(over=True)
                 
             # finally, reinstall addons
             for id in binaryids:
@@ -113,6 +93,7 @@ class Restore:
                 else:
                     logging.log('{0} install failed.'.format(id), level=xbmc.LOGNOTICE)
                     fail.append(id)
+                    
             if not fail:
                 dialog.ok(CONFIG.ADDONTITLE, 'The selected addons were all installed successfully.')
                 os.remove(binarytxt)
@@ -188,8 +169,8 @@ class Restore:
                           
         binaries_done = self._binaries()
         
-        # if not binaries_done:
-            # dialog.ok(CONFIG.ADDONTITLE, '[COLOR {0}]There was an error while restoring. The build may not function correctly.[/COLOR]'.format(CONFIG.COLOR2))
+        if not binaries_done:
+            dialog.ok(CONFIG.ADDONTITLE, '[COLOR {0}]There was an error while restoring. The build may not function correctly.[/COLOR]'.format(CONFIG.COLOR2))
             
         tools.kill_kodi(msg='[COLOR {0}]To save changes, Kodi needs to be force closed. Would you like to continue?[/COLOR]'.format(CONFIG.COLOR2))
 
