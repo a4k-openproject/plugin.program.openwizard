@@ -44,8 +44,10 @@ def wizard_update(startup=None):
 
     dialog = xbmcgui.Dialog()
     progress_dialog = xbmcgui.DialogProgress()
-    
-    if tools.check_url(CONFIG.BUILDFILE):
+
+    response = tools.open_url(CONFIG.BUILDFILE, check=True)
+
+    if response:
         try:
             wid, ver, zip = check.check_wizard('all')
         except:

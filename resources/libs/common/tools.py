@@ -46,14 +46,10 @@ else:
         return codecs.open(filename=file, mode=mode, encoding=encoding, errors=errors, buffering=buffering)
 
 try:  # Python 3
-    from urllib.request import urlopen
-    from urllib.request import Request
     from urllib.parse import quote
     from urllib.parse import urlparse
     from html.parser import HTMLParser
 except ImportError:  # Python 2
-    from urllib2 import urlopen
-    from urllib2 import Request
     from urllib import quote
     from urlparse import urlparse
     import HTMLParser
@@ -674,20 +670,36 @@ def get_info_label(label):
 #########################
 
 
-def check_url(url):
+def _is_url(url):
+    try:  # Python 3
+        from urllib.parse import urlparse
+    except ImportError:  # Python 2
+        from urlparse import urlparse
+
+    try:
+        result = urlparse(url)
+        return all([result.scheme, result.netloc])
+    except ValueError:
+        return False
+
+
+def _check_url(url, cred):
     import requests
     from resources.libs.common import logging
 
     if _is_url(url):
         try:
-            response = requests.head(url, headers={'user-agent': CONFIG.USER_AGENT}, allow_redirects=True)
+            response = requests.head(url, headers={'user-agent': CONFIG.USER_AGENT}, allow_redirects=True, auth=cred)
             
             if response.status_code < 300:
-                logging.log("URL check passed for {0}: Status code {1}".format(url, response.status_code), level=xbmc.LOGDEBUG)
+                logging.log("URL check passed for {0}: Status code [{1}]".format(url, response.status_code), level=xbmc.LOGDEBUG)
                 return True
             elif response.status_code < 400:
-                logging.log("URL check redirected from {0} to {1}: Status code {2}".format(url, response.headers['Location'], response.status_code), level=xbmc.LOGDEBUG)
-                return check_url(response.headers['Location'])
+                logging.log("URL check redirected from {0} to {1}: Status code [{2}]".format(url, response.headers['Location'], response.status_code), level=xbmc.LOGDEBUG)
+                return _check_url(response.headers['Location'])
+            elif response.status_code == 401:
+                logging.log("URL requires authentication for {0}: Status code [{1}]".format(url, response.status_code), level=xbmc.LOGDEBUG)
+                return 'auth'
             else:
                 logging.log("URL check failed for {0}: Status code [{1}]".format(url, response.status_code), level=xbmc.LOGERROR)
                 return False
@@ -697,24 +709,38 @@ def check_url(url):
     else:
         logging.log("URL is not of a valid schema: {0}".format(url), level=xbmc.LOGERROR)
         return False
-            
-
-def _is_url(url):
-    try:
-        result = urlparse(url)
-        return all([result.scheme, result.netloc])
-    except ValueError:
-        return False
         
 
-def open_url(url, binary=False):
-    import logging
+def open_url(url, stream=False, check=False, cred=None, count=0):
     import requests
-    
-    try:
-        if binary:
-            return requests.get(url, headers={'user-agent': CONFIG.USER_AGENT}, timeout=1.000).content
-        else:
-            return requests.get(url, headers={'user-agent': CONFIG.USER_AGENT}, timeout=1.000).text
-    except:
-        logging.log('URL invalid or timed out for {0}'.format(url), level=xbmc.LOGERROR)
+
+    dialog = xbmcgui.Dialog()
+    user_agent = {'user-agent': CONFIG.USER_AGENT}
+    count = 0
+
+    valid = _check_url(url, cred)
+
+    if not valid:
+        return False
+    else:
+        if check:
+            return True if valid else False
+            
+        if valid == 'auth' and not cred:
+            cred = (get_keyboard(heading='Username'), get_keyboard(heading='Password'))
+            
+        response = requests.get(url, headers=user_agent, timeout=1.000, stream=stream, auth=cred)
+
+        if response.status_code == 401:
+            retry = dialog.yesno(CONFIG.ADDONTITLE, 'Either the username or password were invalid. Would you like to try again?', yeslabel='Try Again', nolabel='Cancel')
+            
+            if retry and count < 3:
+                count += 1
+                cred = (get_keyboard(heading='Username'), get_keyboard(heading='Password'))
+                
+                response = open_url(url, stream, check, cred, count)
+            else:
+                dialog.ok(CONFIG.ADDONTITLE, 'Authentication Failed.')
+                return False
+        
+        return response

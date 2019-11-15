@@ -440,13 +440,19 @@ def show_update_window(name='Testing Window', current='1.0', new='1.1', icon=CON
 
 def split_notify(notify):
     from resources.libs.common import tools
-    link = tools.open_url(notify).replace('\r', '').replace('\t', '').replace('\n', '[CR]')
-    if link.find('|||') == -1:
+
+    response = tools.open_url(notify)
+
+    if response:
+        link = response.text.replace('\r', '').replace('\t', '').replace('\n', '[CR]')
+        if link.find('|||') == -1:
+            return False, False
+        id, msg = link.split('|||')
+        if msg.startswith('[CR]'):
+            msg = msg[4:]
+        return id.replace('[CR]', ''), msg
+    else:
         return False, False
-    id, msg = link.split('|||')
-    if msg.startswith('[CR]'):
-        msg = msg[4:]
-    return id.replace('[CR]', ''), msg
 
 
 def show_notification(msg='', test=False):

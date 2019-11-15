@@ -231,7 +231,9 @@ class Restore:
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                    "[COLOR {0}]External Restore: Cancelled[/COLOR]".format(CONFIG.COLOR2))
                 return
-            if not tools.check_url(source):
+
+            response = tools.open_url(source, check=True)
+            if not response:
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                    "[COLOR {0}]External Restore: Invalid URL[/COLOR]".format(CONFIG.COLOR2))
                 return

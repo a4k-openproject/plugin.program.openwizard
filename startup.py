@@ -44,15 +44,15 @@ from resources.libs import update
 
 def auto_install_repo():
     if not os.path.exists(os.path.join(CONFIG.ADDONS, CONFIG.REPOID)):
-        workingxml = tools.check_url(CONFIG.REPOADDONXML)
+        response = tools.open_url(CONFIG.REPOADDONXML)
 
-        if workingxml:
-            ver = tools.parse_dom(tools.open_url(CONFIG.REPOADDONXML), 'addon', ret='version', attrs={'id': CONFIG.REPOID})
+        if response:
+            ver = tools.parse_dom(response.text, 'addon', ret='version', attrs={'id': CONFIG.REPOID})
             if len(ver) > 0:
                 installzip = '{0}-{1}.zip'.format(CONFIG.REPOID, ver[0])
-                workingrepo = tools.check_url(CONFIG.REPOZIPURL + installzip)
+                repo_response = tools.open_url(CONFIG.REPOZIPURL + installzip)
 
-                if workingrepo:
+                if repo_response:
                     progress_dialog = xbmcgui.DialogProgress()
                     
                     progress_dialog.create(CONFIG.ADDONTITLE, 'Downloading Repo...', '', 'Please Wait')
@@ -88,7 +88,7 @@ def auto_install_repo():
                     logging.log_notify("[COLOR {0}]Repo Install Error[/COLOR]".format(CONFIG.COLOR1),
                                        "[COLOR {0}]Invalid URL for zip![/COLOR]".format(CONFIG.COLOR2))
                     logging.log("[Auto Install Repo] Was unable to create a working URL for repository. {0}".format(
-                        workingrepo), level=xbmc.LOGERROR)
+                        repo_response.text), level=xbmc.LOGERROR)
             else:
                 logging.log("Invalid URL for Repo zip", level=xbmc.LOGERROR)
         else:
@@ -103,8 +103,8 @@ def auto_install_repo():
 
 def show_notification():
     if not CONFIG.NOTIFY == 'true':
-        url = tools.check_url(CONFIG.NOTIFICATION)
-        if url:
+        response = tools.open_url(CONFIG.NOTIFICATION)
+        if response:
             note_id, msg = window.split_notify(CONFIG.NOTIFICATION)
             if note_id:
                 try:
@@ -125,7 +125,7 @@ def show_notification():
             else:
                 logging.log("[Notifications] Text File not formatted Correctly")
         else:
-            logging.log("[Notifications] URL({0}): {1}".format(CONFIG.NOTIFICATION, url), level=xbmc.LOGNOTICE)
+            logging.log("[Notifications] URL({0}): {1}".format(CONFIG.NOTIFICATION, response), level=xbmc.LOGNOTICE)
     else:
         logging.log("[Notifications] Turned Off", level=xbmc.LOGNOTICE)
 
@@ -161,13 +161,15 @@ def installed_build_check():
                     skin.look_and_feel_data('restore')
         if not CONFIG.SKIN == defaults and not CONFIG.BUILDNAME == "":
             gui_xml = check.check_build(CONFIG.BUILDNAME, 'gui')
-            if gui_xml == 'http://':
+
+            response = tools.open_url(gui_xml, check=True)
+            if not response:
                 logging.log("[Build Installed Check] Guifix was set to http://", level=xbmc.LOGNOTICE)
                 dialog.ok(CONFIG.ADDONTITLE,
                               "[COLOR {0}]It looks like the skin settings was not applied to the build.".format(CONFIG.COLOR2),
                               "Sadly no gui fix was attached to the build",
                               "You will need to reinstall the build and make sure to do a force close[/COLOR]")
-            elif tools.check_url(gui_xml):
+            else:
                 yes = dialog.yesno(CONFIG.ADDONTITLE,
                                        '{0} was not installed correctly!'.format(CONFIG.BUILDNAME),
                                        'It looks like the skin settings was not applied to the build.',
@@ -178,12 +180,6 @@ def installed_build_check():
                     logging.log("[Build Installed Check] Guifix attempting to install")
                 else:
                     logging.log('[Build Installed Check] Guifix url working but cancelled: {0}'.format(gui_xml), level=xbmc.LOGNOTICE)
-            else:
-                dialog.ok(CONFIG.ADDONTITLE,
-                              "[COLOR {0}]It looks like the skin settings was not applied to the build.".format(CONFIG.COLOR2),
-                              "Sadly no gui fix was attatched to the build",
-                              "You will need to reinstall the build and make sure to do a force close[/COLOR]")
-                logging.log('[Build Installed Check] Guifix url not working: {0}'.format(gui_xml), level=xbmc.LOGNOTICE)
     else:
         logging.log('[Build Installed Check] Install seems to be completed correctly', level=xbmc.LOGNOTICE)
 
@@ -202,8 +198,11 @@ def installed_build_check():
 
     CONFIG.clear_setting('install')
 
+
 def build_update_check():
-    if not tools.check_url(CONFIG.BUILDFILE):
+    response = tools.open_url(CONFIG.BUILDFILE, check=True)
+
+    if not response:
         logging.log("[Build Check] Not a valid URL for Build File: {0}".format(CONFIG.BUILDFILE), level=xbmc.LOGNOTICE)
     elif not CONFIG.BUILDNAME == '':
         if CONFIG.SKIN in ['skin.confluence', 'skin.estuary', 'skin.estouchy'] and not CONFIG.DEFAULTIGNORE == 'true':

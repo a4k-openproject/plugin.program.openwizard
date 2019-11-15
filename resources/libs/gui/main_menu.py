@@ -32,8 +32,9 @@ class MainMenu:
         errorsfound = str(errors) + ' Error(s) Found' if errors > 0 else 'None Found'
 
         if CONFIG.AUTOUPDATE == 'Yes':
-            wizfile = tools.open_url(CONFIG.BUILDFILE)
-            if wizfile:
+            response = tools.open_url(CONFIG.BUILDFILE, check=True)
+
+            if response:
                 ver = check.check_wizard('version')
                 if ver:
                     if ver > CONFIG.ADDON_VERSION:
@@ -68,9 +69,9 @@ class MainMenu:
         directory.add_dir('Maintenance', {'mode': 'maint'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
         if (tools.platform() == 'android' or CONFIG.DEVELOPER == 'true') and CONFIG.KODIV < 18:
             directory.add_dir('APK Installer', {'mode': 'apk'}, icon=CONFIG.ICONAPK, themeit=CONFIG.THEME1)
-        if tools.check_url(CONFIG.ADDONFILE):
+        if tools.open_url(CONFIG.ADDONFILE, check=True):
             directory.add_dir('Addon Installer', {'mode': 'addons'}, icon=CONFIG.ICONADDONS, themeit=CONFIG.THEME1)
-        if tools.check_url(CONFIG.YOUTUBEFILE) and not CONFIG.YOUTUBETITLE == '':
+        if tools.open_url(CONFIG.YOUTUBEFILE, check=True) and not CONFIG.YOUTUBETITLE == '':
             directory.add_dir(CONFIG.YOUTUBETITLE, {'mode': 'youtube'}, icon=CONFIG.ICONYOUTUBE, themeit=CONFIG.THEME1)
         directory.add_dir('Save Data', {'mode': 'savedata'}, icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME1)
         if CONFIG.HIDECONTACT == 'No':

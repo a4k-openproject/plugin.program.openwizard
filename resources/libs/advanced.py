@@ -489,7 +489,9 @@ def write_advanced(name, url):
     
     dialog = xbmcgui.Dialog()
 
-    if tools.check_url(url):
+    response = tools.open_url(url)
+    
+    if response:
         if os.path.exists(CONFIG.ADVANCED):
             choice = dialog.yesno(CONFIG.ADDONTITLE,
                                       "[COLOR {0}]Would you like to overwrite your current Advanced Settings with [COLOR {1}]{}[/COLOR]?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, name),
@@ -502,8 +504,7 @@ def write_advanced(name, url):
                                       nolabel="[B][COLOR red]Cancel[/COLOR][/B]")
 
         if choice == 1:
-            file = tools.open_url(url)
-            tools.write_to_file(CONFIG.ADVANCED, file)
+            tools.write_to_file(CONFIG.ADVANCED, response.text)
             dialog.ok(CONFIG.ADDONTITLE,
                           '[COLOR {0}]AdvancedSettings.xml file has been successfully written. Once you click okay it will force close kodi.[/COLOR]'.format(CONFIG.COLOR2))
             tools.kill_kodi(over=True)

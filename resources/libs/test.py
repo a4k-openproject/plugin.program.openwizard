@@ -59,7 +59,9 @@ def test_notify():
     from resources.libs.common import tools
     from resources.libs.gui import window
 
-    if tools.check_url(CONFIG.NOTIFICATION):
+    response = tools.open_url(CONFIG.NOTIFICATION, check=True)
+
+    if response:
         try:
             id, msg = window.split_notify(CONFIG.NOTIFICATION)
             if not id:

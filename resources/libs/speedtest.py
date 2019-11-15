@@ -574,9 +574,13 @@ def get_ip():
     from resources.libs.common import tools
 
     site = 'http://whatismyipaddress.com/'
-    if not tools.check_url(site):
+    response = tools.open_url(site)
+
+    if not response:
         return 'Unknown', 'Unknown', 'Unknown'
-    page = tools.open_url(site).replace('\n', '').replace('\r', '')
+
+    page = response.text.replace('\n', '').replace('\r', '')
+
     if 'Access Denied' not in page:
         ipmatch = re.compile('whatismyipaddress.com/ip/(.+?)"').findall(page)
         ipfinal = ipmatch[0] if (len(ipmatch) > 0) else 'Unknown'

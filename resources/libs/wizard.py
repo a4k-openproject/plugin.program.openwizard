@@ -183,7 +183,9 @@ class Wizard:
         if yes_pressed:
             guizip = check.check_build(name, 'gui')
             zipname = name.replace('\\', '').replace('/', '').replace(':', '').replace('*', '').replace('?', '').replace('"', '').replace('<', '').replace('>', '').replace('|', '')
-            if not tools.check_url(guizip):
+
+            response = tools.open_url(guizip, check=True)
+            if not response:
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                    '[COLOR {0}]GuiFix: Invalid Zip Url![/COLOR]'.format(CONFIG.COLOR2))
                 return
@@ -191,6 +193,7 @@ class Wizard:
             self.dialogProgress.create(CONFIG.ADDONTITLE, '[COLOR {0}][B]Downloading GuiFix:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name), '', 'Please Wait')
 
             lib = os.path.join(CONFIG.PACKAGES, '{0}_guisettings.zip'.format(zipname))
+            
             try:
                 os.remove(lib)
             except:
@@ -219,7 +222,8 @@ class Wizard:
         if not theme:
             themefile = check.check_build(name, 'theme')
 
-            if tools.check_url(themefile):
+            response = tools.open_url(themefile, check=True)
+            if response:
                 from resources.libs.gui.build_menu import BuildMenu
                 themes = BuildMenu().theme_count(name, False)
                 if len(themes) > 0:
@@ -259,7 +263,9 @@ class Wizard:
         if installtheme:
             themezip = check.check_theme(name, theme, 'url')
             zipname = name.replace('\\', '').replace('/', '').replace(':', '').replace('*', '').replace('?', '').replace('"', '').replace('<', '').replace('>', '').replace('|', '')
-            if not tools.check_url(themezip):
+
+            response = tools.open_url(themezip, check=True)
+            if not response:
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                    '[COLOR {0}]Theme Install: Invalid Zip Url![/COLOR]'.format(CONFIG.COLOR2))
                 return False
@@ -267,13 +273,23 @@ class Wizard:
             self.dialogProgress.create(CONFIG.ADDONTITLE, '[COLOR {0}][B]Downloading:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, theme), '', 'Please Wait')
 
             lib = os.path.join(CONFIG.PACKAGES, '{0}.zip'.format(zipname))
+            
             try:
                 os.remove(lib)
             except:
                 pass
 
-            downloader.download(themezip, lib)
+            Downloader().download(themezip, lib)
             xbmc.sleep(500)
+            
+            if os.path.getsize(lib) == 0:
+                try:
+                    os.remove(lib)
+                except:
+                    pass
+                    
+                return
+            
             self.dialogProgress.update(0, "", "Installing {0}".format(name))
 
             test1 = False

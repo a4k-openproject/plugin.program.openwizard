@@ -222,11 +222,14 @@ def install_addon_pack(name, url):
     from resources.libs.common import tools
 
     progress_dialog = xbmcgui.DialogProgress()
-    
-    if not tools.check_url(url):
+
+    response = tools.open_url(url, check=True)
+
+    if not response:
         logging.log_notify("[COLOR {0}]Addon Installer[/COLOR]".format(CONFIG.COLOR1),
                            '[COLOR {0}]{1}:[/COLOR] [COLOR {2}]Invalid Zip Url![/COLOR]'.format(CONFIG.COLOR1, name, CONFIG.COLOR2))
         return
+
     if not os.path.exists(CONFIG.PACKAGES):
         os.makedirs(CONFIG.PACKAGES)
     
@@ -262,17 +265,21 @@ def install_skin(name, url):
     from resources.libs.common import tools
 
     progress_dialog = xbmcgui.DialogProgress()
-    
-    if not tools.check_url(url):
+
+    response = tools.open_url(url, check=False)
+
+    if not response:
         logging.log_notify("[COLOR {0}]Addon Installer[/COLOR]".format(CONFIG.COLOR1),
                            '[COLOR {0}]{1}:[/COLOR] [COLOR {2}]Invalid Zip Url![/COLOR]'.format(CONFIG.COLOR1, name, CONFIG.COLOR2))
         return
+
     if not os.path.exists(CONFIG.PACKAGES):
         os.makedirs(CONFIG.PACKAGES)
     
     progress_dialog.create(CONFIG.ADDONTITLE,
                   '[COLOR {0}][B]Downloading:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name),
                   '', '[COLOR {0}]Please Wait[/COLOR]'.format(CONFIG.COLOR2))
+
     urlsplits = url.split('/')
     lib = xbmc.makeLegalFilename(os.path.join(CONFIG.PACKAGES, urlsplits[-1]))
     try:
@@ -307,8 +314,10 @@ def install_addon_from_url(name, url):
     from resources.libs.common import tools
 
     progress_dialog = xbmcgui.DialogProgress()
-    
-    if not tools.check_url(url):
+
+    response = tools.open_url(url, check=True)
+
+    if not response:
         logging.log_notify("[COLOR {0}]Addon Installer[/COLOR]".format(CONFIG.COLOR1),
                            '[COLOR {0}]{1}:[/COLOR] [COLOR {2}]Invalid Zip Url![/COLOR]'.format(CONFIG.COLOR1, name, CONFIG.COLOR2))
         return
@@ -351,20 +360,21 @@ def install_addon(plugin, url):
     from resources.libs.common import logging
     from resources.libs.common import tools
 
-    if tools.check_url(CONFIG.ADDONFILE):
+    if tools.open_url(CONFIG.ADDONFILE, check=True):
         from resources.libs import clear
-        from resources.libs import downloader
         from resources.libs import db
         from resources.libs import extract
         from resources.libs import skin
 
         dialog = xbmcgui.Dialog()
-        
+
         if url is None:
             url = CONFIG.ADDONFILE
-            
-        if tools.check_url(url):
-            link = tools.open_url(url).replace('\n', '').replace('\r', '').replace('\t', '').replace('repository=""', 'repository="none"').replace('repositoryurl=""', 'repositoryurl="http://"').replace('repositoryxml=""', 'repositoryxml="http://"')
+
+        response = tools.open_url(url)
+
+        if response:
+            link = response.text.replace('\n', '').replace('\r', '').replace('\t', '').replace('repository=""', 'repository="none"').replace('repositoryurl=""', 'repositoryurl="http://"').replace('repositoryxml=""', 'repositoryxml="http://"')
             match = re.compile('name="(.+?)".+?lugin="%s".+?rl="(.+?)".+?epository="(.+?)".+?epositoryxml="(.+?)".+?epositoryurl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"' % plugin).findall(link)
             if len(match) > 0:
                 for name, url, repository, repositoryxml, repositoryurl, icon, fanart, adult, description in match:
@@ -399,7 +409,7 @@ def install_addon(plugin, url):
                                             "[COLOR {0}]{1}[/COLOR]?[/COLOR]".format(CONFIG.COLOR1, repository),
                                             yeslabel="[B][COLOR springgreen]Yes Install[/COLOR][/B]",
                                             nolabel="[B][COLOR red]No Skip[/COLOR][/B]"):
-                            ver = tools.parse_dom(tools.open_url(repositoryxml), 'addon', ret='version', attrs={'id': repository})
+                            ver = tools.parse_dom(tools.open_url(repositoryxml).text, 'addon', ret='version', attrs={'id': repository})
                             if len(ver) > 0:
                                 repozip = '{0}{1}-{2}.zip'.format(repositoryurl, repository, ver[0])
                                 logging.log(repozip)
@@ -544,7 +554,9 @@ def install_apk(apk, url):
         display = apk
         if not os.path.exists(CONFIG.PACKAGES):
             os.makedirs(CONFIG.PACKAGES)
-        if not tools.check_url(url):
+
+        response = tools.open_url(url, check=True)
+        if not response:
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                '[COLOR {0}]APK Installer: Invalid Apk Url![/COLOR]'.format(CONFIG.COLOR2))
             return

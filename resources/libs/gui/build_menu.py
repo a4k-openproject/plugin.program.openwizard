@@ -17,6 +17,8 @@
 #  http://www.gnu.org/copyleft/gpl.html                                        #
 ################################################################################
 
+import xbmc
+
 import re
 
 try:  # Python 3
@@ -25,6 +27,7 @@ except ImportError:  # Python 2
     from urllib import quote_plus
 
 from resources.libs import check
+from resources.libs.common import logging
 from resources.libs.common import tools
 from resources.libs.common.config import CONFIG
 from resources.libs.gui import directory
@@ -35,13 +38,12 @@ class BuildMenu:
     def __init__(self):
         self.bf = None
         self.link = None
-        self.match = None
         
-        if tools.check_url(CONFIG.BUILDFILE):
-            self.bf = tools.open_url(CONFIG.BUILDFILE)
-            self.link = tools.clean_text(self.bf)
+        response = tools.open_url(CONFIG.BUILDFILE)
 
-            self.match = re.compile('name="(.+?)".+?ersion="(.+?)".+?rl="(.+?)".+?ui="(.+?)".+?odi="(.+?)".+?heme="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"').findall(self.link)
+        if response:
+            self.bf = response.text
+            self.link = tools.clean_text(self.bf)
 
     def _list_all(self, match, kodiv=None):
         from resources.libs import test
@@ -62,10 +64,12 @@ class BuildMenu:
 
         themefile = check.check_build(name, 'theme')
 
-        if not tools.check_url(themefile):
+        response = tools.open_url(themefile)
+
+        if not response:
             return False
 
-        themetext = tools.open_url(themefile)
+        themetext = response.text
         link = tools.clean_text(themetext)
         match = re.compile('name="(.+?)"').findall(link)
 
@@ -86,7 +90,7 @@ class BuildMenu:
 
     def get_listing(self):
         from resources.libs import test
-
+        
         # if BUILDFILE is a bad URL
         if not self.bf:
             directory.add_file('Kodi Version: {0}'.format(CONFIG.KODIV), icon=CONFIG.ICONBUILDS,
@@ -99,42 +103,44 @@ class BuildMenu:
 
         total, count17, count18, count19, adultcount, hidden = check.build_count()
 
+        match = re.compile('name="(.+?)".+?ersion="(.+?)".+?rl="(.+?)".+?ui="(.+?)".+?odi="(.+?)".+?heme="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"').findall(self.link)
+        
         if total == 1:
-            for name, version, url, gui, kodi, theme, icon, fanart, adult, description in self.match:
+            for name, version, url, gui, kodi, theme, icon, fanart, adult, description in match:
                 if not CONFIG.SHOWADULT == 'true' and adult.lower() == 'yes':
                     continue
                 if not CONFIG.DEVELOPER == 'true' and test.str_test(name):
                     continue
 
-                self.view_build(self.match[0][0])
+                self.view_build(match[0][0])
                 return
 
         directory.add_file('Kodi Version: {0}'.format(CONFIG.KODIV), icon=CONFIG.ICONBUILDS, themeit=CONFIG.THEME3)
         directory.add_dir('Save Data Menu', {'mode': 'savedata'}, icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME3)
         directory.add_separator()
 
-        if len(self.match) >= 1:
+        if len(match) >= 1:
             if CONFIG.SEPARATE == 'true':
-                self._list_all(self.match)
+                self._list_all(match)
             else:
                 if count19 > 0:
                     state = '+' if CONFIG.SHOW19 == 'false' else '-'
                     directory.add_file('[B]{0} Matrix Builds ({1})[/B]'.format(state, count19), {'mode': 'togglesetting',
                                        'name': 'show19'}, themeit=CONFIG.THEME3)
                     if CONFIG.SHOW19 == 'true':
-                        self._list_all(self.match, kodiv=19)
+                        self._list_all(match, kodiv=19)
                 if count18 > 0:
                     state = '+' if CONFIG.SHOW18 == 'false' else '-'
                     directory.add_file('[B]{0} Leia Builds ({1})[/B]'.format(state, count18), {'mode': 'togglesetting', 'name': 'show18'},
                                        themeit=CONFIG.THEME3)
                     if CONFIG.SHOW18 == 'true':
-                        self._list_all(self.match, kodiv=18)
+                        self._list_all(match, kodiv=18)
                 if count17 > 0:
                     state = '+' if CONFIG.SHOW17 == 'false' else '-'
                     directory.add_file('[B]{0} Krypton Builds ({1})[/B]'.format(state, count17), {'mode': 'togglesetting',
                                        'name': 'show17'}, themeit=CONFIG.THEME3)
                     if CONFIG.SHOW17 == 'true':
-                        self._list_all(self.match, kodiv=17)
+                        self._list_all(match, kodiv=17)
 
         elif hidden > 0:
             if adultcount > 0:
@@ -150,6 +156,7 @@ class BuildMenu:
                                themeit=CONFIG.THEME3)
 
     def view_build(self, name):
+    
         if not self.bf:
             directory.add_file('URL for txt file not valid', themeit=CONFIG.THEME3)
             directory.add_file('{0}'.format(CONFIG.BUILDFILE), themeit=CONFIG.THEME3)
@@ -169,9 +176,9 @@ class BuildMenu:
             
             updatecheck = CONFIG.BUILDNAME == name and version > CONFIG.BUILDVERSION
             versioncheck = True if float(CONFIG.KODIV) == float(kodi) else False
-            previewcheck = tools.check_url(preview)
-            guicheck =  tools.check_url(gui)
-            themecheck = tools.check_url(themefile)
+            previewcheck = tools.open_url(preview, check=True)
+            guicheck = tools.open_url(gui, check=True)
+            themecheck = tools.open_url(themefile, check=True)
             
             if updatecheck:
                 build = '{0} [COLOR red][CURRENT v{1}][/COLOR]'.format(build, CONFIG.BUILDVERSION)
@@ -203,8 +210,9 @@ class BuildMenu:
                                    
             if themecheck:
                 directory.add_separator('THEMES', fanart=fanart, icon=icon)
-                
-                theme = tools.open_url(themefile)
+
+                response = tools.open_url(themefile)
+                theme = response.text
                 link = tools.clean_text(theme)
                 match = re.compile('name="(.+?)".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"').findall(link)
                 for themename, themeurl, themeicon, themefanart, themeadult, description in match:
@@ -214,8 +222,8 @@ class BuildMenu:
                         continue
                         
                     themetitle = themename if not themename == CONFIG.BUILDTHEME else "[B]{0} (Installed)[/B]".format(themename)
-                    themeicon = themeicon if tools.check_url(themeicon) else icon
-                    themefanart = themefanart if tools.check_url(themefanart) else fanart
+                    themeicon = themeicon if tools.open_url(themeicon, check=True) else icon
+                    themefanart = themefanart if tools.open_url(themefanart, check=True) else fanart
                     
                     directory.add_file(themetitle, {'mode': 'install', 'name': name, 'url': themename, 'action': 'theme'}, description=description, fanart=themefanart,
                         icon=themeicon, themeit=CONFIG.THEME3)
@@ -225,15 +233,17 @@ class BuildMenu:
         from resources.libs.common import logging
         from resources.libs.common import tools
         from resources.libs.gui import window
-
-        if tools.check_url(CONFIG.BUILDFILE):
+        
+        if self.bf:
             if check.check_build(name, 'url'):
                 name, version, url, minor, gui_ignore, kodi, theme, icon, fanart, preview, adult, info, description = check.check_build(name, 'all')
                 adult = 'Yes' if adult.lower() == 'yes' else 'No'
 
-                if tools.check_url(info):
+                response = tools.open_url(info)
+
+                if response:
                     try:
-                        tname, extracted, zipsize, skin, created, programs, video, music, picture, repos, scripts, binaries = check.check_info(info)
+                        tname, extracted, zipsize, skin, created, programs, video, music, picture, repos, scripts, binaries = check.check_info(response.text)
                         extend = True
                     except:
                         extend = False
@@ -275,9 +285,9 @@ class BuildMenu:
         from resources.libs.common import logging
         from resources.libs.common import tools
         
-        if tools.check_url(CONFIG.BUILDFILE):
+        if self.bf:
             videofile = check.check_build(name, 'preview')
-            if tools.check_url(videofile):
+            if tools.open_url(videofile, check=True):
                 yt.play_video(videofile)
             else:
                 logging.log("[{0}]Unable to find url for video preview".format(name))

@@ -48,18 +48,20 @@ def apk_scraper():
     from resources.libs.common import tools
 
     kodiurl1 = 'https://mirrors.kodi.tv/releases/android/arm/'
-    kodiurl2 = 'https://mirrors.kodi.tv/releases/android/arm/old/'
+    # kodiurl2 = 'https://mirrors.kodi.tv/releases/android/arm/old/'
     # kodiurl3 = 'https://mirrors.kodi.tv/releases/android/arm64-v8a/'
     # kodiurl4 = 'https://mirrors.kodi.tv/releases/android/arm64-v8a/old/'
 
-    url1 = tools.open_url(kodiurl1).replace('\n', '').replace('\r', '').replace('\t', '')
-    url2 = tools.open_url(kodiurl2).replace('\n', '').replace('\r', '').replace('\t', '')
+    response = tools.open_url(kodiurl1)
+
+    url1 = response.text.replace('\n', '').replace('\r', '').replace('\t', '')
+    # url2 = tools.open_url(kodiurl2).replace('\n', '').replace('\r', '').replace('\t', '')
     # url3 = tools.open_url(kodiurl3).replace('\n', '').replace('\r', '').replace('\t', '')
     # url4 = tools.open_url(kodiurl4).replace('\n', '').replace('\r', '').replace('\t', '')
 
     x = 0
     match1 = re.compile('<tr><td><a href="(.+?)".+?>(.+?)</a></td><td>(.+?)</td><td>(.+?)</td></tr>').findall(url1)
-    match2 = re.compile('<tr><td><a href="(.+?)".+?>(.+?)</a></td><td>(.+?)</td><td>(.+?)</td></tr>').findall(url2)
+    # match2 = re.compile('<tr><td><a href="(.+?)".+?>(.+?)</a></td><td>(.+?)</td><td>(.+?)</td></tr>').findall(url2)
     # match3 = re.compile('<tr><td><a href="(.+?)".+?>(.+?)</a></td><td>(.+?)</td><td>(.+?)</td></tr>').findall(url3)
     # match4 = re.compile('<tr><td><a href="(.+?)".+?>(.+?)</a></td><td>(.+?)</td><td>(.+?)</td></tr>').findall(url4)
 
@@ -87,21 +89,21 @@ def apk_scraper():
         except Exception as e:
             logging.log("Error on APK scraping: {0}".format(str(e)))
 
-    for url, name, size, date in match2:
-        if url in ['../', 'old/']:
-            continue
-        if not url.endswith('.apk'):
-            continue
-        if not url.find('_') == -1:
-            continue
-        try:
-            tempname = name.split('-')
-            title = "[COLOR {0}]{1} v{2} {3}[/COLOR] [COLOR {4}]{5}[/COLOR] [COLOR {6}]{7}[/COLOR]".format(CONFIG.COLOR1, tempname[0].title(), tempname[1], tempname[2], CONFIG.COLOR2, size.replace(' ', ''), CONFIG.COLOR1, date)
-            download = urljoin(kodiurl2, url)
-            directory.add_file(title, {'mode': 'apkinstall', 'name': "{0} v{1} {2}".format(tempname[0].title(), tempname[1], tempname[2]), 'url': download})
-            x += 1
-        except Exception as e:
-            logging.log("Error on APK  scraping: {0}".format(str(e)))
+    # for url, name, size, date in match2:
+    #     if url in ['../', 'old/']:
+    #         continue
+    #     if not url.endswith('.apk'):
+    #         continue
+    #     if not url.find('_') == -1:
+    #         continue
+    #     try:
+    #         tempname = name.split('-')
+    #         title = "[COLOR {0}]{1} v{2} {3}[/COLOR] [COLOR {4}]{5}[/COLOR] [COLOR {6}]{7}[/COLOR]".format(CONFIG.COLOR1, tempname[0].title(), tempname[1], tempname[2], CONFIG.COLOR2, size.replace(' ', ''), CONFIG.COLOR1, date)
+    #         download = urljoin(kodiurl2, url)
+    #         directory.add_file(title, {'mode': 'apkinstall', 'name': "{0} v{1} {2}".format(tempname[0].title(), tempname[1], tempname[2]), 'url': download})
+    #         x += 1
+    #     except Exception as e:
+    #         logging.log("Error on APK  scraping: {0}".format(str(e)))
 
     # for url, name, size, date in match3:
     #     if url in ['../', 'old/']:
@@ -146,15 +148,13 @@ def apk_menu(url=None):
     if not url:
         directory.add_dir('Official Kodi APK\'s', {'mode': 'apkscrape', 'name': 'kodi'}, icon=CONFIG.ICONAPK, themeit=CONFIG.THEME1)
         directory.add_separator()
-        
-    APKWORKING = tools.check_url(CONFIG.APKFILE)
-    
-    if APKWORKING:
-        if not url:
-            TEMPAPKFILE = tools.open_url(CONFIG.APKFILE)
-        else:
-            TEMPAPKFILE = tools.open_url(url)
-            
+
+    response = tools.open_url(CONFIG.APKFILE)
+    url_response = tools.open_url(url)
+
+    if response:
+        TEMPAPKFILE = url_response.text if url else response.text
+
         if TEMPAPKFILE:
             match = re.compile('name="(.+?)".+?ection="(.+?)".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"').findall(TEMPAPKFILE)
             if len(match) > 0:
@@ -185,15 +185,12 @@ def addon_menu(url=None):
     from resources.libs.common import logging
     from resources.libs.common import tools
 
-    if tools.check_url(CONFIG.ADDONFILE):
-        if not url:
-            TEMPADDONFILE = tools.open_url(CONFIG.ADDONFILE)
-            if not TEMPADDONFILE:
-                ADDONWORKING = tools.check_url(CONFIG.ADDONFILE)
-        else:
-            TEMPADDONFILE = tools.open_url(url)
-            if not TEMPADDONFILE:
-                ADDONWORKING = tools.check_url(url)
+    response = tools.open_url(CONFIG.ADDONFILE)
+    url_response = tools.open_url(url)
+
+    if response:
+        TEMPADDONFILE = url_response.text if url else response.text
+
         if TEMPADDONFILE:
             link = TEMPADDONFILE.replace('\n', '').replace('\r', '').replace('\t', '').replace('repository=""', 'repository="none"').replace('repositoryurl=""', 'repositoryurl="http://"').replace('repositoryxml=""', 'repositoryxml="http://"')
             match = re.compile('name="(.+?)".+?lugin="(.+?)".+?rl="(.+?)".+?epository="(.+?)".+?epositoryxml="(.+?)".+?epositoryurl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"').findall(link)
@@ -241,15 +238,12 @@ def youtube_menu(url=None):
     from resources.libs.common import logging
     from resources.libs.common import tools
 
-    if tools.check_url(CONFIG.YOUTUBEFILE):
-        if not url:
-            TEMPYOUTUBEFILE = tools.open_url(CONFIG.YOUTUBEFILE)
-            if not TEMPYOUTUBEFILE:
-                YOUTUBEWORKING = tools.check_url(CONFIG.YOUTUBEFILE)
-        else:
-            TEMPYOUTUBEFILE = tools.open_url(url)
-            if not TEMPYOUTUBEFILE:
-                YOUTUBEWORKING = tools.check_url(url)
+    response = tools.open_url(CONFIG.YOUTUBEFILE)
+    url_response = tools.open_url(url)
+
+    if response:
+        TEMPYOUTUBEFILE = url_response.text if url else response.text
+
         if TEMPYOUTUBEFILE:
             link = TEMPYOUTUBEFILE.replace('\n', '').replace('\r', '').replace('\t', '')
             match = re.compile('name="(.+?)".+?ection="(.+?)".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?escription="(.+?)"').findall(link)
@@ -673,13 +667,11 @@ def advanced_window(url=None):
     from resources.libs.common import logging
     from resources.libs.common import tools
 
-    ADVANCEDWORKING = tools.check_url(CONFIG.ADVANCEDFILE)
+    response = tools.open_url(CONFIG.ADVANCEDFILE)
+    url_response = tools.open_url(url)
     
-    if ADVANCEDWORKING:
-        if url is None:
-            TEMPADVANCEDFILE = tools.open_url(CONFIG.ADVANCEDFILE)
-        else:
-            TEMPADVANCEDFILE = tools.open_url(url)
+    if response:
+        TEMPADVANCEDFILE = url_response.text if url else response.text
             
         directory.add_file('Quick Configure advancedsettings.xml', {'mode': 'autoadvanced'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         if os.path.exists(CONFIG.ADVANCED):

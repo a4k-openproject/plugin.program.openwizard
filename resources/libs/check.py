@@ -59,9 +59,12 @@ def check_paths():
 def check_build(name, ret):
     from resources.libs.common import tools
 
-    if not tools.check_url(CONFIG.BUILDFILE):
+    response = tools.open_url(CONFIG.BUILDFILE)
+
+    if not response:
         return False
-    link = tools.open_url(CONFIG.BUILDFILE).replace('\n', '').replace('\r', '').replace('\t', '')\
+
+    link = response.text.replace('\n', '').replace('\r', '').replace('\t', '')\
         .replace('gui=""', 'gui="http://"').replace('theme=""', 'theme="http://"')
     match = re.compile('name="%s".+?ersion="(.+?)".+?rl="(.+?)".+?inor="(.+?)".+?ui="(.+?)".+?odi="(.+?)".+?heme="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?review="(.+?)".+?dult="(.+?)".+?nfo="(.+?)".+?escription="(.+?)"' % name).findall(link)
     if len(match) > 0:
@@ -99,9 +102,7 @@ def check_build(name, ret):
 def check_info(name):
     from resources.libs.common import tools
 
-    if not tools.check_url(name):
-        return False
-    link = tools.open_url(name).replace('\n', '').replace('\r', '').replace('\t', '')
+    link = name.replace('\n', '').replace('\r', '').replace('\t', '')
     match = re.compile('.+?ame="(.+?)".+?xtracted="(.+?)".+?ipsize="(.+?)".+?kin="(.+?)".+?reated="(.+?)".+?rograms="(.+?)".+?ideo="(.+?)".+?usic="(.+?)".+?icture="(.+?)".+?epos="(.+?)".+?cripts="(.+?)".+?inaries="(.+?)"').findall(link)
     if len(match) > 0:
         for name, extracted, zipsize, skin, created, programs, video, music, picture, repos, scripts, binaries in match:
@@ -114,9 +115,12 @@ def check_theme(name, theme, ret):
     from resources.libs.common import tools
 
     themeurl = check_build(name, 'theme')
-    if not tools.check_url(themeurl):
+    response = tools.open_url(themeurl)
+
+    if not response:
         return False
-    link = tools.open_url(themeurl).replace('\n', '').replace('\r', '').replace('\t', '')
+
+    link = response.text.replace('\n', '').replace('\r', '').replace('\t', '')
     match = re.compile('name="{0}".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult=(.+?).+?escription="(.+?)"'.format(theme)).findall(link)
     if len(match) > 0:
         for url, icon, fanart, adult, description in match:
@@ -137,9 +141,12 @@ def check_theme(name, theme, ret):
 def check_wizard(ret):
     from resources.libs.common import tools
 
-    if not tools.check_url(CONFIG.BUILDFILE):
+    response = tools.open_url(CONFIG.BUILDFILE)
+
+    if not response:
         return False
-    link = tools.open_url(CONFIG.BUILDFILE).replace('\n', '').replace('\r', '').replace('\t', '')
+
+    link = response.text.replace('\n', '').replace('\r', '').replace('\t', '')
     match = re.compile('id="{0}".+?ersion="(.+?)".+?ip="(.+?)"'.format(CONFIG.ADDON_ID)).findall(link)
     if len(match) > 0:
         for version, zip in match:
@@ -158,10 +165,12 @@ def check_build_update():
     from resources.libs.common import tools
     from resources.libs.gui import window
 
-    bf = tools.open_url(CONFIG.BUILDFILE)
-    if not bf:
+    response = tools.open_url(CONFIG.BUILDFILE)
+
+    if not response:
         return
-    link = bf.replace('\n', '').replace('\r', '').replace('\t', '')
+
+    link = response.text.replace('\n', '').replace('\r', '').replace('\t', '')
     match = re.compile('name="%s".+?ersion="(.+?)".+?con="(.+?)".+?anart="(.+?)"' % CONFIG.BUILDNAME).findall(link)
     if len(match) > 0:
         version = match[0][0]
@@ -288,7 +297,8 @@ def check_sources():
                           '',
                           "[COLOR {0}]Checking [COLOR {1}]{2}[/COLOR]:[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, name),
                           "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, path))
-            working = tools.check_url(path)
+                          
+            working = tools.open_url(path, check=True)
             if not working:
                 bad.append([name, path, sharing, working])
 
@@ -388,14 +398,20 @@ def build_count():
     from resources.libs import test
     from resources.libs.common import tools
 
-    link = tools.open_url(CONFIG.BUILDFILE).replace('\n', '').replace('\r', '').replace('\t', '')
-    match = re.compile('name="(.+?)".+?odi="(.+?)".+?dult="(.+?)"').findall(link)
+    response = tools.open_url(CONFIG.BUILDFILE)
+
     total = 0
     count17 = 0
     count18 = 0
     count19 = 0
     hidden = 0
     adultcount = 0
+
+    if not response:
+        return total, count17, count18, count19, adultcount, hidden
+
+    link = response.text.replace('\n', '').replace('\r', '').replace('\t', '')
+    match = re.compile('name="(.+?)".+?odi="(.+?)".+?dult="(.+?)"').findall(link)
 
     if len(match) > 0:
         for name, kodi, adult in match:

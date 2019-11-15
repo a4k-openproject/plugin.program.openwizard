@@ -36,15 +36,14 @@ def generate_code(url, filename):
 
 
 def create_code():
-    from resources.libs.common import logging
     from resources.libs.common import tools
 
     dialog = xbmcgui.Dialog()
 
     url = tools.get_keyboard('', "{0}: Insert the URL for the QR Code.".format(CONFIG.ADDONTITLE))
-    working = tools.check_url(url)
+    response = tools.open_url(url, check=True)
     
-    if not working:
+    if not response:
         if not dialog.yesno(CONFIG.ADDONTITLE,
                                 "[COLOR {0}]It seems the URL you entered either isn't valid or isn\'t working, Would you like to create it anyways?[/COLOR]".format(CONFIG.COLOR2),
                                 "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, url),
