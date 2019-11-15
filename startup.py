@@ -339,6 +339,15 @@ if CONFIG.AUTOINSTALL == 'Yes':
 else:
     logging.log("[Auto Install Repo] Not Enabled", level=xbmc.LOGNOTICE)
 
+# REINSTALL ELIGIBLE BINARIES
+binarytxt = os.path.join(CONFIG.USERDATA, 'build_binaries.txt')
+if os.path.exists(binarytxt):
+    logging.log("[Binary Detection] Reinstalling Eligible Binary Addons", level=xbmc.LOGNOTICE)
+    from resources.libs.restore import Restore
+    Restore().binaries()
+else:
+    logging.log("[Binary Detection] Eligible Binary Addons to Reinstall", level=xbmc.LOGNOTICE)
+    
 # AUTO UPDATE WIZARD
 if CONFIG.AUTOUPDATE == 'Yes':
     logging.log("[Auto Update Wizard] Started", level=xbmc.LOGNOTICE)
