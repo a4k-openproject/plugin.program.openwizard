@@ -183,7 +183,7 @@ class Restore:
                                      '[COLOR {0}]Select the backup file you want to restore[/COLOR]'.format(
                                          CONFIG.COLOR2),
                                      'files', mask='.zip', useThumbs=True, defaultt=CONFIG.MYBUILDS)
-            if file == "":
+            if not file.endswith('.zip'):
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                    "[COLOR {0}]Local Restore: Cancelled[/COLOR]".format(CONFIG.COLOR2))
                 return
@@ -201,7 +201,7 @@ class Restore:
                                        '[COLOR {0}]Select the backup file you want to restore[/COLOR]'.format(
                                            CONFIG.COLOR2),
                                        '', mask='.zip', useThumbs=True)
-            if source == "":
+            if not source.endswith('.zip'):
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                    "[COLOR {0}]External Restore: Cancelled[/COLOR]".format(CONFIG.COLOR2))
                 return
