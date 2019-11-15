@@ -329,7 +329,7 @@ def _backup_build(name=""):
                     picture.append(aname)
         db.fix_metas()
         
-        binarytxt = _backup_binaries(name, binidlist)
+        binarytxt = _backup_binaries(binidlist)
 
         for base, dirs, files in os.walk(CONFIG.HOME):
             dirs[:] = [d for d in dirs if d not in exclude_dirs]
@@ -458,7 +458,7 @@ def _backup_info(name, extractsize, programs, video, music, picture, repos, scri
         f.write('binaries="{0}"\n'.format(', '.join(binaries)) if len(binaries) > 0 else 'binaries="none"\n')
 
         
-def _backup_binaries(name, ids):
+def _backup_binaries(ids):
     txtname = None
     
     if len(ids) > 0:
