@@ -40,15 +40,16 @@ class Wizard:
         self.dialog = xbmcgui.Dialog()
         self.dialogProgress = xbmcgui.DialogProgress()
 
-    def build(self, type, name, over=False):
-        if type == 'fresh':
+    def build(self, action, name, over=False):
+        if action == 'fresh':
             from resources.libs import install
             install.fresh_start(name)
+            return
 
         skin.look_and_feel_data('save')
         skin.skin_to_default('Build Install')
 
-        if type == 'normal':
+        if action == 'normal':
             if CONFIG.KEEPTRAKT == 'true':
                 from resources.libs import traktit
                 traktit.auto_update('all')
