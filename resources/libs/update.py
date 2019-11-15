@@ -69,9 +69,9 @@ def wizard_update(startup=None):
                     os.remove(lib)
                 except:
                     pass
-                from resources.libs import downloader
+                from resources.libs.downloader import Downloader
                 from resources.libs import extract
-                downloader.download(zip, lib)
+                Downloader().download(zip, lib)
                 xbmc.sleep(2000)
                 progress_dialog.update(0, "", "Installing {0} update".format(CONFIG.ADDONTITLE))
                 percent, errors, error = extract.all(lib, CONFIG.ADDONS, True)

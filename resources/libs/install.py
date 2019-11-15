@@ -215,7 +215,7 @@ def fresh_start(install=None, over=False):
 
 
 def install_addon_pack(name, url):
-    from resources.libs import downloader
+    from resources.libs.downloader import Downloader
     from resources.libs import db
     from resources.libs import extract
     from resources.libs.common import logging
@@ -242,7 +242,7 @@ def install_addon_pack(name, url):
         os.remove(lib)
     except:
         pass
-    downloader.download(url, lib)
+    Downloader().download(url, lib)
     title = '[COLOR {0}][B]Installing:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name)
     progress_dialog.update(0, title, '', '[COLOR {0}]Please Wait[/COLOR]'.format(CONFIG.COLOR2))
     percent, errors, error = extract.all(lib, CONFIG.ADDONS, title=title)
@@ -257,7 +257,7 @@ def install_addon_pack(name, url):
 
 
 def install_skin(name, url):
-    from resources.libs import downloader
+    from resources.libs.downloader import Downloader
     from resources.libs import db
     from resources.libs import extract
     from resources.libs.common import logging
@@ -286,7 +286,7 @@ def install_skin(name, url):
         os.remove(lib)
     except:
         pass
-    downloader.download(url, lib)
+    Downloader().download(url, lib)
     title = '[COLOR {0}][B]Installing:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name)
     progress_dialog.update(0, title, '', '[COLOR {0}]Please Wait[/COLOR]'.format(CONFIG.COLOR2))
     percent, errors, error = extract.all(lib, CONFIG.HOME, title=title)
@@ -306,7 +306,7 @@ def install_skin(name, url):
 
 
 def install_addon_from_url(name, url):
-    from resources.libs import downloader
+    from resources.libs.downloader import Downloader
     from resources.libs import db
     from resources.libs import extract
     from resources.libs.common import logging
@@ -333,7 +333,7 @@ def install_addon_from_url(name, url):
         os.remove(lib)
     except:
         pass
-    downloader.download(url, lib)
+    Downloader().download(url, lib)
     title = '[COLOR {0}][B]Installing:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name)
     progress_dialog.update(0, title, '', '[COLOR {0}]Please Wait[/COLOR]'.format(CONFIG.COLOR2))
     percent, errors, error = extract.all(lib, CONFIG.ADDONS, title=title)
@@ -531,7 +531,7 @@ def installed(addon):
 
 
 def install_apk(apk, url):
-    from resources.libs import downloader
+    from resources.libs.downloader import Downloader
     from resources.libs.common import logging
     from resources.libs.common import tools
     from resources.libs.gui import window
@@ -568,7 +568,7 @@ def install_apk(apk, url):
             os.remove(lib)
         except:
             pass
-        downloader.download(url, lib)
+        Downloader().download(url, lib)
         xbmc.sleep(100)
         progress_dialog.close()
         window.show_apk_warning(apk)

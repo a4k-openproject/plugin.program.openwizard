@@ -62,9 +62,9 @@ def auto_install_repo():
                     # Remove the old zip if there is one
                     tools.remove_file(lib)
 
-                    from resources.libs import downloader
+                    from resources.libs.downloader import Downloader
                     from resources.libs import extract
-                    downloader.download(CONFIG.REPOZIPURL + installzip, lib)
+                    Downloader().download(CONFIG.REPOZIPURL + installzip, lib)
                     extract.all(lib, CONFIG.ADDONS)
 
                     try:

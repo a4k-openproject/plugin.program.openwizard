@@ -20,52 +20,64 @@
 import xbmc
 import xbmcgui
 
+import requests
 import sys
 import time
 
-try:  # Python 3
-    from urllib.request import urlretrieve
-except ImportError:  # Python 2
-    from urllib import urlretrieve
-
+from resources.libs.common import logging
+from resources.libs.common import tools
 from resources.libs.common.config import CONFIG
 
 
-def download(url, dest):
-    progress_dialog = xbmcgui.DialogProgress()
-    progress_dialog.create(CONFIG.ADDONTITLE, "Downloading Content", ' ', ' ')
-    progress_dialog.update(0)
-    start_time = time.time()
-    urlretrieve(url, dest, lambda nb, bs, fs: _pbhook(nb, bs, fs, progress_dialog, start_time))
+class Downloader:
+    def __init__(self):
+        self.dialog = xbmcgui.Dialog()
+        self.progress_dialog = xbmcgui.DialogProgress()
 
+    def download(self, url, dest):
+        self.progress_dialog.create(CONFIG.ADDONTITLE, "Downloading Content", ' ', ' ')
+        self.progress_dialog.update(0)
 
-def _pbhook(numblocks, blocksize, filesize, dp, start_time):
-    from resources.libs.common import logging
+        with open(dest, 'wb') as f:
+            response = tools.open_url(url, stream=True)
+            
+            if not response:
+                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                                   '[COLOR {0}]Build Install: Invalid Zip Url![/COLOR]'.format(CONFIG.COLOR2))
+                return
+            else:
+                total = response.headers.get('content-length')
 
-    try:
-        percent = min(numblocks * blocksize * 100 / filesize, 100)
-        currently_downloaded = float(numblocks) * blocksize / (1024 * 1024)
-        kbps_speed = numblocks * blocksize / (time.time() - start_time)
-        if kbps_speed > 0 and not percent >= 100:
-            eta = (filesize - numblocks * blocksize) / kbps_speed
-        else:
-            eta = 0
-        kbps_speed = kbps_speed / 1024
-        type_speed = 'KB'
-        if kbps_speed >= 1024:
-            kbps_speed = kbps_speed / 1024
-            type_speed = 'MB'
-        total = float(filesize) / (1024 * 1024)
-        mbs = '[COLOR %s][B]Size:[/B] [COLOR %s]%.02f[/COLOR] MB of [COLOR %s]%.02f[/COLOR] MB[/COLOR]' % (CONFIG.COLOR2, CONFIG.COLOR1, currently_downloaded, CONFIG.COLOR1, total)
-        speed = '[COLOR %s][B]Speed:[/B] [COLOR %s]%.02f [/COLOR]%s/s ' % (CONFIG.COLOR2, CONFIG.COLOR1, kbps_speed, type_speed)
-        div = divmod(eta, 60)
-        speed += '[B]ETA:[/B] [COLOR %s]%02d:%02d[/COLOR][/COLOR]' % (CONFIG.COLOR1, div[0], div[1])
-        dp.update(int(percent), '', mbs, speed)
-    except Exception as e:
-        logging.log("ERROR Downloading: {0}".format(e), level=xbmc.LOGERROR)
-        return e
-    if dp.iscanceled():
-        dp.close()
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
-                           "[COLOR {0}]Download Cancelled[/COLOR]".format(CONFIG.COLOR2))
-        sys.exit()
+            if total is None:
+                f.write(response.content)
+            else:
+                downloaded = 0
+                total = int(total)
+                start_time = time.time()
+                mb = 1024*1024
+                
+                for chunk in response.iter_content(chunk_size=max(int(total/512), mb)):
+                    downloaded += len(chunk)
+                    f.write(chunk)
+                    
+                    done = int(100 * downloaded / total)
+                    kbps_speed = downloaded / (time.time() - start_time)
+                    
+                    if kbps_speed > 0 and not done >= 100:
+                        eta = (total - downloaded) / kbps_speed
+                    else:
+                        eta = 0
+                    
+                    kbps_speed = kbps_speed / 1024
+                    type_speed = 'KB'
+                    
+                    if kbps_speed >= 1024:
+                        kbps_speed = kbps_speed / 1024
+                        type_speed = 'MB'
+                        
+                    currently_downloaded = '[COLOR %s][B]Size:[/B] [COLOR %s]%.02f[/COLOR] MB of [COLOR %s]%.02f[/COLOR] MB[/COLOR]' % (CONFIG.COLOR2, CONFIG.COLOR1, downloaded / mb, CONFIG.COLOR1, total / mb)
+                    speed = '[COLOR %s][B]Speed:[/B] [COLOR %s]%.02f [/COLOR]%s/s ' % (CONFIG.COLOR2, CONFIG.COLOR1, kbps_speed, type_speed)
+                    div = divmod(eta, 60)
+                    speed += '[B]ETA:[/B] [COLOR %s]%02d:%02d[/COLOR][/COLOR]' % (CONFIG.COLOR1, div[0], div[1])
+                    
+                    self.progress_dialog.update(done, '', currently_downloaded, speed)

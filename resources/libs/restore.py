@@ -141,7 +141,7 @@ class Restore:
         self._finish(file, loc, filename)
 
     def _external(self, source, loc):
-        from resources.libs import downloader
+        from resources.libs.downloader import Downloader
         
         progress_dialog = xbmcgui.DialogProgress()
 
@@ -149,14 +149,12 @@ class Restore:
         filename = display[1]
 
         file = os.path.join(CONFIG.PACKAGES, filename)
-        downloader.download(source, file)
+        Downloader().download(source, file)
         progress_dialog.update(0, 'Installing External Backup', '', 'Please Wait')
 
         self._finish(file, loc, filename)
 
-
     def _finish(self, file, loc, zname):
-        from resources.libs import db
         from resources.libs import extract
         from resources.libs.common import tools
 

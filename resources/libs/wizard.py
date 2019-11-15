@@ -24,7 +24,7 @@ import os
 
 from resources.libs import check
 from resources.libs import db
-from resources.libs import downloader
+from resources.libs.downloader import Downloader
 from resources.libs import extract
 from resources.libs.common import logging
 from resources.libs import skin
@@ -96,21 +96,27 @@ class Wizard:
             CONFIG.clear_setting('build')
             buildzip = check.check_build(name, 'url')
             zipname = name.replace('\\', '').replace('/', '').replace(':', '').replace('*', '').replace('?', '').replace('"', '').replace('<', '').replace('>', '').replace('|', '')
-            if not tools.check_url(buildzip):
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
-                                   '[COLOR {0}]Build Install: Invalid Zip Url![/COLOR]'.format(CONFIG.COLOR2))
-                return
 
             self.dialogProgress.create(CONFIG.ADDONTITLE, '[COLOR {0}][B]Downloading:[/B][/COLOR] [COLOR {1}]{2} v{3}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name, check.check_build(name, 'version')), '', 'Please Wait')
 
             lib = os.path.join(CONFIG.PACKAGES, '{0}.zip'.format(zipname))
+            
             try:
                 os.remove(lib)
             except:
                 pass
 
-            downloader.download(buildzip, lib)
+            Downloader().download(buildzip, lib)
             xbmc.sleep(500)
+            
+            if os.path.getsize(lib) == 0:
+                try:
+                    os.remove(lib)
+                except:
+                    pass
+                    
+                return
+                
             title = '[COLOR {0}][B]Installing:[/B][/COLOR] [COLOR {1}]{2} v{3}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name, check.check_build(name, 'version'))
             self.dialogProgress.update(0, title, '', 'Please Wait')
             percent, errors, error = extract.all(lib, CONFIG.HOME, title=title)
@@ -199,8 +205,17 @@ class Wizard:
             except:
                 pass
 
-            downloader.download(guizip)
+            Downloader().download(guizip, lib)
             xbmc.sleep(500)
+            
+            if os.path.getsize(lib) == 0:
+                try:
+                    os.remove(lib)
+                except:
+                    pass
+                    
+                return
+            
             title = '[COLOR {0}][B]Installing:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name)
             self.dialogProgress.update(0, title, '', 'Please Wait')
             extract.all(lib, CONFIG.USERDATA, title=title)
