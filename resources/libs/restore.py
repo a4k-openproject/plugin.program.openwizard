@@ -41,16 +41,16 @@ class Restore:
         self.external = False
         self.location = 'Local'
         
-    def _binaries(self):
+    def binaries(self):
         from resources.libs import db
         from resources.libs import install
         from resources.libs.common import logging
         from resources.libs.common import tools
         
         dialog = xbmcgui.Dialog()
-        restore = False
-        
         binarytxt = os.path.join(CONFIG.USERDATA, 'build_binaries.txt')
+        
+        restore = False
         binaryids = []
         
         if os.path.exists(binarytxt):
@@ -65,11 +65,7 @@ class Restore:
             logging.log("[Binary Detection] No Eligible Binary Addons to Reinstall", level=xbmc.LOGNOTICE)
             return True
         
-        installed = 0
-        
         if restore:       
-            from resources.libs import clear
-            
             success = []
             fail = []
             
@@ -81,9 +77,6 @@ class Restore:
             # for id in binaryids:
                 # if clear.remove_addon(id, tools.get_addon_info(id, 'name'), over=True, data=False):
                     # continue
-            
-            # check Kodi repo for updates, "cleans" the database
-            db.force_check_updates(over=True)
                 
             # finally, reinstall addons
             for id in binaryids:
@@ -137,6 +130,7 @@ class Restore:
 
     def _finish(self, file, loc, zname):
         from resources.libs import extract
+        from resources.libs import db
         from resources.libs.common import tools
 
         dialog = xbmcgui.Dialog()
@@ -167,10 +161,11 @@ class Restore:
             except:
                 pass
                           
-        binaries_done = self._binaries()
+        # binaries_done = self._binaries()
+        db.force_check_updates(over=True)
         
-        if not binaries_done:
-            dialog.ok(CONFIG.ADDONTITLE, '[COLOR {0}]There was an error while restoring. The build may not function correctly.[/COLOR]'.format(CONFIG.COLOR2))
+        # if not binaries_done:
+            # dialog.ok(CONFIG.ADDONTITLE, '[COLOR {0}]There was an error while restoring. The build may not function correctly.[/COLOR]'.format(CONFIG.COLOR2))
             
         tools.kill_kodi(msg='[COLOR {0}]To save changes, Kodi needs to be force closed. Would you like to continue?[/COLOR]'.format(CONFIG.COLOR2))
 

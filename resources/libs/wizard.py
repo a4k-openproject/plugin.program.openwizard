@@ -160,6 +160,7 @@ class Wizard:
                     self.theme(name, 'theme')
 
                 db.addon_database(CONFIG.ADDON_ID, 1)
+                db.force_check_updates(over=True)
 
                 self.dialog.ok(CONFIG.ADDONTITLE, "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(CONFIG.COLOR2))
                 tools.kill_kodi(over=True)

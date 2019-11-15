@@ -105,9 +105,9 @@ def force_check_updates(over=False):
     
     installed_repos = sqlexe.execute("SELECT * FROM repo")
     for repo in installed_repos:
+        logging.log('{0}'.format(repo), level=xbmc.LOGDEBUG)
         sqlexe.execute("UPDATE repo SET version = ? WHERE addonID = ?", ('0.0.1', repo[1],))
         sqldb.commit()
-        logging.log('{0}'.format(repo), level=xbmc.LOGNOTICE)
         
     sqlexe.close()
     
