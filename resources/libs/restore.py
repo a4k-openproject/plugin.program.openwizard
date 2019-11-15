@@ -41,6 +41,20 @@ class Restore:
         self.external = False
         self.location = 'Local'
         
+    def _prompt_for_wipe(self):
+        dialog = xbmcgui.Dialog()
+
+        # Should we wipe first?
+        wipe = dialog.yesno(CONFIG.ADDONTITLE,
+                                           "[COLOR {0}]Do you wish to restore your".format(CONFIG.COLOR2),
+                                           "Kodi configuration to default settings",
+                                           "Before installing the {0} backup?[/COLOR]".format(self.location),
+                                           nolabel='[B][COLOR red]No[/COLOR][/B]',
+                                           yeslabel='[B][COLOR springgreen]Yes[/COLOR][/B]')
+        if wipe:
+            from resources.libs import install
+            install.wipe()
+        
     def binaries(self):
         from resources.libs import db
         from resources.libs import install
@@ -136,6 +150,8 @@ class Restore:
         dialog = xbmcgui.Dialog()
         progress_dialog = xbmcgui.DialogProgress()
 
+        self._prompt_for_wipe()
+        
         percent, errors, error = extract.all(file, loc)
 
         if int(errors) >= 1:
@@ -217,19 +233,6 @@ class Restore:
             self._external(source, loc)
 
     def _build(self):
-        dialog = xbmcgui.Dialog()
-
-        # Should we wipe first?
-        wipe = dialog.yesno(CONFIG.ADDONTITLE,
-                                           "[COLOR {0}]Do you wish to restore your".format(CONFIG.COLOR2),
-                                           "Kodi configuration to default settings",
-                                           "Before installing the {0} backup?[/COLOR]".format(self.location),
-                                           nolabel='[B][COLOR red]No[/COLOR][/B]',
-                                           yeslabel='[B][COLOR springgreen]Yes[/COLOR][/B]')
-        if wipe:
-            from resources.libs import install
-            install.wipe()
-
         self._choose(CONFIG.HOME)
 
     def _guifix(self):

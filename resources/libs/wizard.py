@@ -41,14 +41,6 @@ class Wizard:
         self.dialogProgress = xbmcgui.DialogProgress()
 
     def build(self, action, name, over=False):
-        if action == 'fresh':
-            from resources.libs import install
-            install.fresh_start(name)
-            return
-
-        skin.look_and_feel_data('save')
-        skin.skin_to_default('Build Install')
-
         if action == 'normal':
             if CONFIG.KEEPTRAKT == 'true':
                 from resources.libs import traktit
@@ -118,6 +110,14 @@ class Wizard:
                     
                 return
                 
+            if action == 'fresh':
+                from resources.libs import install
+                install.fresh_start(name)
+                return
+                
+            skin.look_and_feel_data('save')
+            skin.skin_to_default('Build Install')
+            
             title = '[COLOR {0}][B]Installing:[/B][/COLOR] [COLOR {1}]{2} v{3}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name, check.check_build(name, 'version'))
             self.dialogProgress.update(0, title, '', 'Please Wait')
             percent, errors, error = extract.all(lib, CONFIG.HOME, title=title)
