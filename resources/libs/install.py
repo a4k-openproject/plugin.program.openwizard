@@ -206,7 +206,7 @@ def fresh_start(install=None, over=False):
             dialog.ok(CONFIG.ADDONTITLE, "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(CONFIG.COLOR2))
             from resources.libs import update
             update.addon_updates('reset')
-            tools.kill_kodi(True)
+            tools.kill_kodi(over=True)
     else:
         if not install == 'restore':
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),

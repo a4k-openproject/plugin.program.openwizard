@@ -715,4 +715,4 @@ def remove_addon_menu():
         dialog.ok(CONFIG.ADDONTITLE, "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(CONFIG.COLOR2))
         
         update.addon_updates('reset')
-        tools.kill_kodi(True)
+        tools.kill_kodi(over=True)

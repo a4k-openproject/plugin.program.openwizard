@@ -155,7 +155,7 @@ class Wizard:
                 db.addon_database(CONFIG.ADDON_ID, 1)
 
                 self.dialog.ok(CONFIG.ADDONTITLE, "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(CONFIG.COLOR2))
-                tools.kill_kodi(True)
+                tools.kill_kodi(over=True)
             else:
                 from resources.libs.gui import window
                 window.show_text_box("Viewing Build Install Errors", error)
@@ -208,7 +208,7 @@ class Wizard:
             db.addon_database(installed, 1, True)
 
             self.dialog.ok(CONFIG.ADDONTITLE, "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(CONFIG.COLOR2))
-            tools.kill_kodi('true')
+            tools.kill_kodi(over=True)
         else:
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                '[COLOR {0}]GuiFix: Cancelled![/COLOR]'.format(CONFIG.COLOR2))

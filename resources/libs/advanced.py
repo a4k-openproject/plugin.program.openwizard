@@ -506,7 +506,7 @@ def write_advanced(name, url):
             tools.write_to_file(CONFIG.ADVANCED, file)
             dialog.ok(CONFIG.ADDONTITLE,
                           '[COLOR {0}]AdvancedSettings.xml file has been successfully written. Once you click okay it will force close kodi.[/COLOR]'.format(CONFIG.COLOR2))
-            tools.kill_kodi(True)
+            tools.kill_kodi(over=True)
         else:
             logging.log("[Advanced Settings] install canceled")
             logging.log_notify('[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
