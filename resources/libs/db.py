@@ -29,10 +29,7 @@ try:  # Python 3
 except ImportError:  # Python 2
     from resources.libs import zipfile
 
-try:
-    from sqlite3 import dbapi2 as database
-except ImportError:
-    from pysqlite2 import dbapi2 as database
+from sqlite3 import dbapi2 as database
 
 from datetime import datetime
 
@@ -94,6 +91,27 @@ def latest_db(db):
         return '{0}{1}.db'.format(db, highest)
     else:
         return False
+        
+        
+def force_check_updates(over=False):
+    dbfile = latest_db('Addons')
+    dbfile = os.path.join(CONFIG.DATABASE, dbfile)
+    sqldb = database.connect(dbfile)
+    sqlexe = sqldb.cursor()
+    
+    if not over:
+        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                           '[COLOR {0}]Forcing Check for Updates[/COLOR]'.format(CONFIG.COLOR2))
+    
+    installed_repos = sqlexe.execute("SELECT * FROM repo")
+    for repo in installed_repos:
+        sqlexe.execute("UPDATE repo SET version = ? WHERE addonID = ?", ('0.0.1', repo[1],))
+        sqldb.commit()
+        logging.log('{0}'.format(repo), level=xbmc.LOGNOTICE)
+        
+    sqlexe.close()
+    
+    xbmc.executebuiltin('UpdateAddonRepos')
 
 
 def purge_db_file(name):
