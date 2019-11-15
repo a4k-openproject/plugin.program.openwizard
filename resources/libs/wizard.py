@@ -157,7 +157,7 @@ class Wizard:
                 themecount = BuildMenu().theme_count(name)
 
                 if themecount > 0:
-                    self.install(name, 'theme')
+                    self.theme(name, 'theme')
 
                 db.addon_database(CONFIG.ADDON_ID, 1)
 
@@ -171,7 +171,7 @@ class Wizard:
                                '[COLOR {0}]Build Install: Cancelled![/COLOR]'.format(CONFIG.COLOR2))
 
     def gui(self, name, over=False):
-        if name == CONFIG.BUILDNAME:
+        if name == CONFIG.get_setting('buildname'):
             if over:
                 yes_pressed = 1
             else:

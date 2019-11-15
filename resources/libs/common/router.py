@@ -71,7 +71,7 @@ def dispatch(paramstring):
         if action in ['fresh', 'normal']:
             Wizard().build(action, name)
         elif action == 'gui':
-            Wizard().build(name)
+            Wizard().gui(name)
         elif action == 'theme':  # Builds -> "Your Build" -> "Your Theme"
             Wizard().theme(name, url)
     elif mode == 'addonpack':  # Install Addon Pack
