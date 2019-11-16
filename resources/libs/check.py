@@ -40,7 +40,7 @@ def check_paths():
 
     dialog = xbmcgui.Dialog()
     
-    logging.log("[Path Check] Started", level=xbmc.LOGNOTICE)
+    logging.log("[Path Check] Started")
 
     path = os.path.split(CONFIG.ADDON_PATH)
     if not CONFIG.ADDON_ID == path[1]:
@@ -53,7 +53,7 @@ def check_paths():
                                                                                         path))
         logging.log("[Path Check] ADDON_ID and plugin folder doesnt match. {0} / {1} ".format(CONFIG.ADDON_ID, path))
     else:
-        logging.log("[Path Check] Good!", level=xbmc.LOGNOTICE)
+        logging.log("[Path Check] Good!")
 
 
 def check_build(name, ret):
@@ -179,12 +179,12 @@ def check_build_update():
         CONFIG.set_setting('latestversion', version)
         if version > CONFIG.BUILDVERSION:
             if CONFIG.DISABLEUPDATE == 'false':
-                logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}] Opening Update Window".format(CONFIG.BUILDVERSION, version), level=xbmc.LOGNOTICE)
+                logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}] Opening Update Window".format(CONFIG.BUILDVERSION, version))
                 window.show_update_window(CONFIG.BUILDNAME, CONFIG.BUILDVERSION, version, icon, fanart)
             else:
-                logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}] Update Window Disabled".format(CONFIG.BUILDVERSION, version), level=xbmc.LOGNOTICE)
+                logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}] Update Window Disabled".format(CONFIG.BUILDVERSION, version))
         else:
-            logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}]".format(CONFIG.BUILDVERSION, version), level=xbmc.LOGNOTICE)
+            logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}]".format(CONFIG.BUILDVERSION, version))
     else:
         logging.log("[Check Updates] ERROR: Unable to find build version in build text file", level=xbmc.LOGERROR)
 
@@ -207,7 +207,7 @@ def check_skin():
                 gotoskin = CONFIG.DEFAULTSKIN
                 gotoname = CONFIG.DEFAULTNAME
             else:
-                logging.log("Skin was not reset", level=xbmc.LOGNOTICE)
+                logging.log("Skin was not reset")
                 CONFIG.set_setting('defaultskinignore', 'true')
                 gotoskin = False
         else:
@@ -224,14 +224,14 @@ def check_skin():
                 g = tools.read_from_file(xml).replace('\n', '').replace('\r', '').replace('\t', '')
                 match = tools.parse_dom(g, 'addon', ret='id')
                 match2 = tools.parse_dom(g, 'addon', ret='name')
-                logging.log("{0}: {1}".format(folder, str(match[0])), level=xbmc.LOGNOTICE)
+                logging.log("{0}: {1}".format(folder, str(match[0])))
                 if len(match) > 0:
                     skinlist.append(str(match[0]))
                     skinname.append(str(match2[0]))
                 else:
-                    logging.log("ID not found for {0}".format(folder), level=xbmc.LOGNOTICE)
+                    logging.log("ID not found for {0}".format(folder))
             else:
-                logging.log("ID not found for {0}".format(folder), level=xbmc.LOGNOTICE)
+                logging.log("ID not found for {0}".format(folder))
         if len(skinlist) > 0:
             if len(skinlist) > 1:
                 if dialog.yesno(CONFIG.ADDONTITLE,
@@ -239,13 +239,13 @@ def check_skin():
                                     "Would you like to view a list of avaliable skins?[/COLOR]"):
                     choice = dialog.select("Select skin to switch to!", skinname)
                     if choice == -1:
-                        logging.log("Skin was not reset", level=xbmc.LOGNOTICE)
+                        logging.log("Skin was not reset")
                         CONFIG.set_setting('defaultskinignore', 'true')
                     else:
                         gotoskin = skinlist[choice]
                         gotoname = skinname[choice]
                 else:
-                    logging.log("Skin was not reset", level=xbmc.LOGNOTICE)
+                    logging.log("Skin was not reset")
                     CONFIG.set_setting('defaultskinignore', 'true')
             else:
                 if dialog.yesno(CONFIG.ADDONTITLE,
@@ -255,10 +255,10 @@ def check_skin():
                     gotoskin = skinlist[0]
                     gotoname = skinname[0]
                 else:
-                    logging.log("Skin was not reset", level=xbmc.LOGNOTICE)
+                    logging.log("Skin was not reset")
                     CONFIG.set_setting('defaultskinignore', 'true')
         else:
-            logging.log("No skins found in addons folder.", level=xbmc.LOGNOTICE)
+            logging.log("No skins found in addons folder.")
             CONFIG.set_setting('defaultskinignore', 'true')
             gotoskin = False
     if gotoskin:
@@ -266,7 +266,7 @@ def check_skin():
 
         if skin.switch_to_skin(gotoskin):
             skin.look_and_feel_data('restore')
-    logging.log("[Build Check] Invalid Skin Check End", level=xbmc.LOGNOTICE)
+    logging.log("[Build Check] Invalid Skin Check End")
 
 
 def check_sources():
@@ -302,7 +302,7 @@ def check_sources():
             if not working:
                 bad.append([name, path, sharing, working])
 
-        logging.log("Bad Sources: {0}".format(len(bad)), level=xbmc.LOGNOTICE)
+        logging.log("Bad Sources: {0}".format(len(bad)))
         if len(bad) > 0:
             choice = dialog.yesno(CONFIG.ADDONTITLE,
                                       "[COLOR {0}]{1}[/COLOR][COLOR {2}] Source(s) have been found Broken".format(CONFIG.COLOR1, len(bad), CONFIG.COLOR2),
@@ -313,7 +313,7 @@ def check_sources():
                 remove = bad
             else:
                 for name, path, sharing, working in bad:
-                    logging.log("{0} sources: {1}, {2}".format(name, path, working), level=xbmc.LOGNOTICE)
+                    logging.log("{0} sources: {1}, {2}".format(name, path, working))
                     if dialog.yesno(CONFIG.ADDONTITLE,
                                         "[COLOR {0}]{1}[/COLOR][COLOR {2}] was reported as non working".format(CONFIG.COLOR1, name, CONFIG.COLOR2),
                                         "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, path),
@@ -321,13 +321,13 @@ def check_sources():
                                         yeslabel="[B][COLOR springgreen]Remove Source[/COLOR][/B]",
                                         nolabel="[B][COLOR red]Keep Source[/COLOR][/B]"):
                         remove.append([name, path, sharing, working])
-                        logging.log("Removing Source {0}".format(name), level=xbmc.LOGNOTICE)
+                        logging.log("Removing Source {0}".format(name))
                     else:
-                        logging.log("Source {0} was not removed".format(name), level=xbmc.LOGNOTICE)
+                        logging.log("Source {0} was not removed".format(name))
             if len(remove) > 0:
                 for name, path, sharing, working in remove:
                     a = a.replace('\n<source>\n<name>{0}</name>\n<path pathversion="1">{1}</path>\n<allowsharing>{2}</allowsharing>\n</source>'.format(name, path, sharing), '')
-                    logging.log("Removing Source {0}".format(name), level=xbmc.LOGNOTICE)
+                    logging.log("Removing Source {0}".format(name))
 
                 tools.write_to_file(CONFIG.SOURCES, str(a))
                 alive = len(match) - len(bad)
@@ -337,12 +337,12 @@ def check_sources():
                               "[COLOR {0}]Checking sources for broken paths has been completed".format(CONFIG.COLOR2),
                               "Working: [COLOR {0}]{1}[/COLOR] | Kept: [COLOR {2}]{3}[/COLOR] | Removed: [COLOR {4}]{5}[/COLOR][/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, alive, CONFIG.COLOR1, kept, CONFIG.COLOR1, removed))
             else:
-                logging.log("No Bad Sources to be removed.", level=xbmc.LOGNOTICE)
+                logging.log("No Bad Sources to be removed.")
         else:
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                "[COLOR {0}]All Sources Are Working[/COLOR]".format(CONFIG.COLOR2))
     else:
-        logging.log("No Sources Found", level=xbmc.LOGNOTICE)
+        logging.log("No Sources Found")
 
 
 def check_repos():
@@ -380,7 +380,7 @@ def check_repos():
     logfile = logging.grab_log()
     fails = re.compile('CRepositoryUpdateJob(.+?)failed').findall(logfile)
     for item in fails:
-        logging.log("Bad Repository: {0} ".format(item), level=xbmc.LOGNOTICE)
+        logging.log("Bad Repository: {0} ".format(item))
         brokenrepo = item.replace('[', '').replace(']', '').replace(' ', '').replace('/', '').replace('\\', '')
         if brokenrepo not in badrepos:
             badrepos.append(brokenrepo)

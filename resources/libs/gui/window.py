@@ -396,8 +396,8 @@ def show_update_window(name='Testing Window', current='1.0', new='1.1', icon=CON
             from resources.libs.common import logging
             from resources.libs.common import tools
 
-            logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}] [User Selected: Fresh Install build]".format(CONFIG.BUILDVERSION, CONFIG.BUILDLATEST), level=xbmc.LOGNOTICE)
-            logging.log("[Check Updates] [Next Check: {0}]".format(str(tools.get_date(days=CONFIG.UPDATECHECK))), level=xbmc.LOGNOTICE)
+            logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}] [User Selected: Fresh Install build]".format(CONFIG.BUILDVERSION, CONFIG.BUILDLATEST))
+            logging.log("[Check Updates] [Next Check: {0}]".format(str(tools.get_date(days=CONFIG.UPDATECHECK))))
             url = 'plugin://{0}/?mode=install&name={1}&url=fresh'.format(CONFIG.ADDON_ID, quote_plus(CONFIG.BUILDNAME))
             xbmc.executebuiltin('RunPlugin({0})'.format(url))
             self.close()
@@ -406,8 +406,8 @@ def show_update_window(name='Testing Window', current='1.0', new='1.1', icon=CON
             from resources.libs.common import logging
             from resources.libs.common import tools
 
-            logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}] [User Selected: Normal Install build]".format(CONFIG.BUILDVERSION, CONFIG.BUILDLATEST), level=xbmc.LOGNOTICE)
-            logging.log("[Check Updates] [Next Check: {0}]".format(str(tools.get_date(days=CONFIG.UPDATECHECK))), level=xbmc.LOGNOTICE)
+            logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}] [User Selected: Normal Install build]".format(CONFIG.BUILDVERSION, CONFIG.BUILDLATEST))
+            logging.log("[Check Updates] [Next Check: {0}]".format(str(tools.get_date(days=CONFIG.UPDATECHECK))))
             url = 'plugin://{0}/?mode=install&name={1}&url=normal'.format(CONFIG.ADDON_ID, quote_plus(CONFIG.BUILDNAME))
             xbmc.executebuiltin('RunPlugin({0})'.format(url))
             self.close()
@@ -416,8 +416,8 @@ def show_update_window(name='Testing Window', current='1.0', new='1.1', icon=CON
             from resources.libs.common import logging
             from resources.libs.common import tools
 
-            logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}] [User Selected: Ignore {2} Days]".format(CONFIG.BUILDVERSION, CONFIG.BUILDLATEST, CONFIG.UPDATECHECK), level=xbmc.LOGNOTICE)
-            logging.log("[Check Updates] [Next Check: {0}]".format(str(tools.get_date(days=CONFIG.UPDATECHECK))), level=xbmc.LOGNOTICE)
+            logging.log("[Check Updates] [Installed Version: {0}] [Current Version: {1}] [User Selected: Ignore {2} Days]".format(CONFIG.BUILDVERSION, CONFIG.BUILDLATEST, CONFIG.UPDATECHECK))
+            logging.log("[Check Updates] [Next Check: {0}]".format(str(tools.get_date(days=CONFIG.UPDATECHECK))))
             self.close()
 
         def onAction(self, action):

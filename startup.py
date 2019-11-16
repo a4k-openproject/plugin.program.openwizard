@@ -131,12 +131,6 @@ def show_notification():
 
 
 def installed_build_check():
-    # This may not be necessary anymore
-    #
-    # db.kodi_17_fix()
-    # if CONFIG.SKIN in ['skin.confluence', 'skin.estuary', 'skin.estouchy']:
-    #     check.check_skin()
-
     dialog = xbmcgui.Dialog()
 
     if not CONFIG.EXTRACT == '100' and not CONFIG.BUILDNAME == "":
@@ -323,7 +317,7 @@ if CONFIG.BUILDNAME == '':
     logging.log("[Current Build Check] Build Not Installed", level=xbmc.LOGNOTICE)
     window.show_build_prompt()
 else:
-    logging.log("[Current Build Check] Build Installed: {0}".format(CONFIG.BUILDNAME), level=xbmc.LOGNOTICE)
+    logging.log("[Current Build Check] Build Installed", level=xbmc.LOGNOTICE)
     
 # BUILD UPDATE CHECK
 if CONFIG.BUILDNAME != '' and CONFIG.BUILDCHECK <= str(tools.get_date(days=CONFIG.UPDATECHECK, now=True)):
@@ -395,5 +389,5 @@ if CONFIG.AUTOCLEANUP == 'true':
     logging.log("[Auto Clean Up] Started", level=xbmc.LOGNOTICE)
     auto_clean()
 else:
-    logging.log('[Auto Clean Up] Not Enabled', level=xbmc.LOGNOTICE)
+    logging.log("[Auto Clean Up] Not Enabled", level=xbmc.LOGNOTICE)
 

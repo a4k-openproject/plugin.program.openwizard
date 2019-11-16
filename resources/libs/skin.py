@@ -107,13 +107,13 @@ def look_and_feel_data(do='save'):
             if 'error' not in response:
                 match = re.compile('{"value":(.+?)}').findall(str(response))
                 CONFIG.set_setting(item.replace('lookandfeel', 'default'), match[0])
-                logging.log("%s saved to %s" % (item, match[0]), level=xbmc.LOGNOTICE)
+                logging.log("%s saved to %s" % (item, match[0]))
     else:
         for item in scan:
             value = CONFIG.get_setting(item.replace('lookandfeel', 'default'))
             query = '{{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{{"setting":"{0}","value":{1}}}, "id":1}}'.format(item, value)
             response = xbmc.executeJSONRPC(query)
-            logging.log("{0} restored to {1}".format(item, value), level=xbmc.LOGNOTICE)
+            logging.log("{0} restored to {1}".format(item, value))
 
 
 def swap_us():

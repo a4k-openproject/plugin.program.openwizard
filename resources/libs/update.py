@@ -61,7 +61,7 @@ def wizard_update(startup=None):
             if yes:
                 from resources.libs.common import tools
 
-                logging.log("[Auto Update Wizard] Installing wizard v{0}".format(ver), level=xbmc.LOGNOTICE)
+                logging.log("[Auto Update Wizard] Installing wizard v{0}".format(ver))
                 progress_dialog.create(CONFIG.ADDONTITLE, '[COLOR {0}]Downloading Update...'.format(CONFIG.COLOR2), '',
                               'Please Wait[/COLOR]')
                 lib = os.path.join(CONFIG.PACKAGES, '{0}-{1}.zip'.format(CONFIG.ADDON_ID, ver))
@@ -81,21 +81,21 @@ def wizard_update(startup=None):
                 xbmc.sleep(1000)
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                    '[COLOR {0}]Add-on updated[/COLOR]'.format(CONFIG.COLOR2))
-                logging.log("[Auto Update Wizard] Wizard updated to v{0}".format(ver), level=xbmc.LOGNOTICE)
+                logging.log("[Auto Update Wizard] Wizard updated to v{0}".format(ver))
                 tools.remove_file(os.path.join(CONFIG.ADDONDATA, 'settings.xml'))
                 window.show_save_data_settings()
                 if startup:
                     xbmc.executebuiltin('RunScript({0}/startup.py)'.format(CONFIG.PLUGIN))
                 return
             else:
-                logging.log("[Auto Update Wizard] Install New Wizard Ignored: {0}".format(ver), level=xbmc.LOGNOTICE)
+                logging.log("[Auto Update Wizard] Install New Wizard Ignored: {0}".format(ver))
         else:
             if not startup:
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                    "[COLOR {0}]No New Version of Wizard[/COLOR]".format(CONFIG.COLOR2))
-            logging.log("[Auto Update Wizard] No New Version v{0}".format(ver), level=xbmc.LOGNOTICE)
+            logging.log("[Auto Update Wizard] No New Version v{0}".format(ver))
     else:
-        logging.log("[Auto Update Wizard] Url for wizard file not valid: {0}".format(CONFIG.BUILDFILE), level=xbmc.LOGNOTICE)
+        logging.log("[Auto Update Wizard] Url for wizard file not valid: {0}".format(CONFIG.BUILDFILE))
 
 
 def addon_updates(do=None):

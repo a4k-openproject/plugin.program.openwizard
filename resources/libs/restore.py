@@ -72,11 +72,11 @@ class Restore:
             
             # dialog.ok(CONFIG.ADDONTITLE, '[COLOR {0}]The restored backup may depend on the following platform-specific addons, which were not included:[/COLOR]'.format(CONFIG.COLOR2), '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, ', '.join([tools.get_addon_info(id, 'name') for id in binaryids])), '[COLOR {0}]For best results, consider installing them manually after Kodi restarts.[/COLOR]'.format(CONFIG.COLOR2))
             
-            logging.log("[Binary Detection] Reinstalling Eligible Binary Addons", level=xbmc.LOGNOTICE)            
+            logging.log("[Binary Detection] Reinstalling Eligible Binary Addons")            
             dialog.ok(CONFIG.ADDONTITLE, '[COLOR {0}]The restored build contains platform-specific addons, which will now be automatically installed. A number of dialogs may pop up during this process. Cancelling them may cause the restored build to function incorrectly.[/COLOR]'.format(CONFIG.COLOR2))
             restore = True
         else:
-            logging.log("[Binary Detection] No Eligible Binary Addons to Reinstall", level=xbmc.LOGNOTICE)
+            logging.log("[Binary Detection] No Eligible Binary Addons to Reinstall")
             return True
         
         if restore:       
@@ -84,7 +84,7 @@ class Restore:
             fail = []
             
             if len(binaryids) == 0:
-                logging.log('No addons selected for installation.', level=xbmc.LOGNOTICE)
+                logging.log('No addons selected for installation.')
                 return
             
             # clear out the addons for sure
@@ -95,10 +95,10 @@ class Restore:
             # finally, reinstall addons
             for id in binaryids:
                 if install.install_from_kodi(id):
-                    logging.log('{0} install succeeded.'.format(id), level=xbmc.LOGNOTICE)
+                    logging.log('{0} install succeeded.'.format(id))
                     success.append(id)
                 else:
-                    logging.log('{0} install failed.'.format(id), level=xbmc.LOGNOTICE)
+                    logging.log('{0} install failed.'.format(id))
                     fail.append(id)
                     
             if not fail:

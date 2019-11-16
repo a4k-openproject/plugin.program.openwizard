@@ -115,7 +115,7 @@ def force_check_updates(over=False):
 
 
 def purge_db_file(name):
-    logging.log('Purging DB {0}.'.format(name), level=xbmc.LOGNOTICE)
+    logging.log('Purging DB {0}.'.format(name))
     if os.path.exists(name):
         try:
             textdb = database.connect(name)
@@ -138,7 +138,7 @@ def purge_db_file(name):
             except Exception as e:
                 logging.log("DB Remove Table `{0}` Error: {1}".format(table[0], str(e)), level=xbmc.LOGERROR)
     textexe.close()
-    logging.log('{0} DB Purging Complete.'.format(name), level=xbmc.LOGNOTICE)
+    logging.log('{0} DB Purging Complete.'.format(name))
     show = name.replace('\\', '/').split('/')
     logging.log_notify("[COLOR {0}]Purge Database[/COLOR]".format(CONFIG.COLOR1),
                        "[COLOR {0}]{1} Complete[/COLOR]".format(CONFIG.COLOR2, show[len(show)-1]))
@@ -288,7 +288,7 @@ def toggle_dependency(name, dp=None):
 #         if os.path.exists(fold):
 #             found.append(item)
 #             toggle_addon(item, state, True)
-#             logging.log("[Toggle Adult] {0} {1}".format(goto, item), level=xbmc.LOGNOTICE)
+#             logging.log("[Toggle Adult] {0} {1}".format(goto, item))
 #     if len(found) > 0:
 #         if gui.DIALOG.yesno(CONFIG.ADDONTITLE,
 #                             "[COLOR {0}]Would you like to view a list of the add-ons that where {1}?[/COLOR]".format(CONFIG.COLOR2, goto.replace('ing', 'ed')),
@@ -362,9 +362,9 @@ def hide_password():
                 tools.write_to_file(sett, f)
         logging.log_notify("[COLOR {0}]Hide Passwords[/COLOR]".format(CONFIG.COLOR1),
                            "[COLOR {0}]{1} items changed[/COLOR]".format(CONFIG.COLOR2, count))
-        logging.log("[Hide Passwords] {0} items changed".format(count), level=xbmc.LOGNOTICE)
+        logging.log("[Hide Passwords] {0} items changed".format(count))
     else:
-        logging.log("[Hide Passwords] Cancelled", level=xbmc.LOGNOTICE)
+        logging.log("[Hide Passwords] Cancelled")
 
 
 def unhide_password():
@@ -396,9 +396,9 @@ def unhide_password():
                 tools.write_to_file(sett, f)
         logging.log_notify("[COLOR {0}]Unhide Passwords[/COLOR]".format(CONFIG.COLOR1),
                            "[COLOR {0}]{1} items changed[/COLOR]".format(CONFIG.COLOR2, count))
-        logging.log("[Unhide Passwords] {0} items changed".format(count), level=xbmc.LOGNOTICE)
+        logging.log("[Unhide Passwords] {0} items changed".format(count))
     else:
-        logging.log("[Unhide Passwords] Cancelled", level=xbmc.LOGNOTICE)
+        logging.log("[Unhide Passwords] Cancelled")
 
 
 def fix_update():

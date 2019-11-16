@@ -43,7 +43,7 @@ from resources.libs.common import tools
 
 def cleanup_backup():
     folder = glob.glob(os.path.join(CONFIG.MYBUILDS, "*"))
-    logging.log(folder, level=xbmc.LOGNOTICE)
+    logging.log(folder)
     list = []
     filelist = []
 
@@ -99,7 +99,7 @@ def cleanup_backup():
                     shutil.rmtree(path)
                     passed = True
                 except Exception as e:
-                    logging.log("Error removing {0}: {1}".format(path, e), level=xbmc.LOGNOTICE)
+                    logging.log("Error removing {0}: {1}".format(path, e))
             if passed:
                 logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                    "[COLOR {0}]{1} Removed![/COLOR]".format(CONFIG.COLOR2, list[selected]))
@@ -344,16 +344,16 @@ def _backup_build(name=""):
                                   '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, file), '')
                     fn = os.path.join(base, file)
                     if file in CONFIG.LOGFILES:
-                        logging.log("[Back Up] Type = build: Ignore {0} - Log File".format(file), level=xbmc.LOGNOTICE)
+                        logging.log("[Back Up] Type = build: Ignore {0} - Log File".format(file))
                         continue
                     elif os.path.join(base, file) in CONFIG.EXCLUDE_FILES:
-                        logging.log("[Back Up] Type = build: Ignore {0} - Excluded File".format(file), level=xbmc.LOGNOTICE)
+                        logging.log("[Back Up] Type = build: Ignore {0} - Excluded File".format(file))
                         continue
                     elif os.path.join('addons', 'packages') in fn:
-                        logging.log("[Back Up] Type = build: Ignore {0} - Packages Folder".format(file), level=xbmc.LOGNOTICE)
+                        logging.log("[Back Up] Type = build: Ignore {0} - Packages Folder".format(file))
                         continue
                     elif file.endswith('.csv'):
-                        logging.log("[Back Up] Type = build: Ignore {0} - CSV File".format(file), level=xbmc.LOGNOTICE)
+                        logging.log("[Back Up] Type = build: Ignore {0} - CSV File".format(file))
                         continue
                     elif file.endswith('.pyo'):
                         continue
@@ -362,7 +362,7 @@ def _backup_build(name=""):
                         temp = ''.join([i for i in temp if not i.isdigit()])
                         if temp in CONFIG.DB_FILES:
                             if not file == db.latest_db(temp):
-                                logging.log("[Back Up] Type = build: Ignore {0} - DB File".format(file), level=xbmc.LOGNOTICE)
+                                logging.log("[Back Up] Type = build: Ignore {0} - DB File".format(file))
                                 continue
                                 
                     skipbinary = False 
@@ -373,14 +373,14 @@ def _backup_build(name=""):
                                 skipbinary = True 
                              
                     if skipbinary: 
-                        logging.log("[Back Up] Type = build: Ignore {0} - Binary Add-on".format(file), level=xbmc.LOGNOTICE) 
+                        logging.log("[Back Up] Type = build: Ignore {0} - Binary Add-on".format(file)) 
                         continue
                         
                     try:
                         zipf.write(fn, fn[len(CONFIG.HOME):], zipfile.ZIP_DEFLATED)
                         extractsize += os.path.getsize(fn)
                     except Exception as e:
-                        logging.log("[Back Up] Type = build: Unable to backup {0}".format(file), level=xbmc.LOGNOTICE)
+                        logging.log("[Back Up] Type = build: Unable to backup {0}".format(file))
                         logging.log("{0} / {1}".format(Exception, e))
                     if progress_dialog.iscanceled():
                         progress_dialog.close()
@@ -388,8 +388,8 @@ def _backup_build(name=""):
                                   "[COLOR {0}]Backup Cancelled[/COLOR]".format(CONFIG.COLOR2))
                         sys.exit()
                 except Exception as e:
-                    logging.log("[Back Up] Type = build: Unable to backup {0}".format(file), level=xbmc.LOGNOTICE)
-                    logging.log("Build Backup Error: {0}".format(str(e)), level=xbmc.LOGNOTICE)
+                    logging.log("[Back Up] Type = build: Unable to backup {0}".format(file))
+                    logging.log("Build Backup Error: {0}".format(str(e)))
                     
         if 'addon_data' in exclude_dirs:
             match = glob.glob(os.path.join(CONFIG.ADDON_DATA, 'skin.*', ''))
@@ -534,9 +534,9 @@ def _backup_guifix(name=""):
                                         fn = os.path.join(base, file)
                                         zipf.write(fn, fn[len(CONFIG.USERDATA):], zipfile.ZIP_DEFLATED)
                     else:
-                        logging.log("[Back Up] Type = guifix: {0} ignored".format(fold), level=xbmc.LOGNOTICE)
+                        logging.log("[Back Up] Type = guifix: {0} ignored".format(fold))
         except Exception as e:
-            logging.log("[Back Up] Type = guifix: {0}".format(e), level=xbmc.LOGNOTICE)
+            logging.log("[Back Up] Type = guifix: {0}".format(e))
             pass
         zipf.close()
         if not tempguizipname == '':
@@ -545,7 +545,7 @@ def _backup_guifix(name=""):
                 xbmcvfs.copy(tempguizipname, guizipname)
                 xbmcvfs.delete(tempguizipname)
     else:
-        logging.log("[Back Up] Type = guifix: guisettings.xml not found", level=xbmc.LOGNOTICE)
+        logging.log("[Back Up] Type = guifix: guisettings.xml not found")
     if name == "":
         dialog.ok(CONFIG.ADDONTITLE, "[COLOR {0}]GUI Fix backup successful:[/COLOR]".format(CONFIG.COLOR2),
                   "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, guizipname))
@@ -656,8 +656,8 @@ def _backup_theme(name=""):
                             fn2 = os.path.join(base, file)
                             zipf.write(fn2, fn2[len(CONFIG.HOME):], zipfile.ZIP_DEFLATED)
                         except Exception as e:
-                            logging.log("[Back Up] Type = theme: Unable to backup {0}".format(file), level=xbmc.LOGNOTICE)
-                            logging.log("Backup Error: {0}".format(str(e)), level=xbmc.LOGNOTICE)
+                            logging.log("[Back Up] Type = theme: Unable to backup {0}".format(file))
+                            logging.log("Backup Error: {0}".format(str(e)))
             text = db.latest_db('Textures')
             if dialog.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
                             "[COLOR {0}]Would you like to include the [COLOR {1}]{2}[/COLOR]?[/COLOR]".format(
@@ -727,7 +727,7 @@ def _backup_theme(name=""):
             zipf.write(CONFIG.GUISETTINGS, '/userdata/guisettings.xml', zipfile.ZIP_DEFLATED)
     except Exception as e:
         zipf.close()
-        logging.log("[Back Up] Type = theme: {0}".format(str(e)), level=xbmc.LOGNOTICE)
+        logging.log("[Back Up] Type = theme: {0}".format(str(e)))
         dialog.ok(CONFIG.ADDONTITLE, "[COLOR {0}]{1}[/COLOR][COLOR {2}] theme zip failed:[/COLOR]".format(CONFIG.COLOR1, themename, CONFIG.COLOR2),
                   "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, str(e)))
         if not tempzipname == '':
@@ -828,32 +828,32 @@ def _backup_addon_data(name=""):
                               '')
                     fn = os.path.join(base, file)
                     if file in CONFIG.LOGFILES:
-                        logging.log("[Back Up] Type = addon_data: Ignore {0} - Log Files".format(file), level=xbmc.LOGNOTICE)
+                        logging.log("[Back Up] Type = addon_data: Ignore {0} - Log Files".format(file))
                         continue
                     elif os.path.join(base, file) in bad_files:
-                        logging.log("[Back Up] Type = addon_data: Ignore {0} - Cache Files".format(file), level=xbmc.LOGNOTICE)
+                        logging.log("[Back Up] Type = addon_data: Ignore {0} - Cache Files".format(file))
                         continue
                     elif os.path.join('addons', 'packages') in fn:
-                        logging.log("[Back Up] Type = addon_data: Ignore {0} - Packages Folder".format(file), level=xbmc.LOGNOTICE)
+                        logging.log("[Back Up] Type = addon_data: Ignore {0} - Packages Folder".format(file))
                         continue
                     elif file.endswith('.csv'):
-                        logging.log("[Back Up] Type = addon_data: Ignore {0} - CSV File".format(file), level=xbmc.LOGNOTICE)
+                        logging.log("[Back Up] Type = addon_data: Ignore {0} - CSV File".format(file))
                         continue
                     elif file.endswith('.db') and 'Database' in base:
                         temp = file.replace('.db', '')
                         temp = ''.join([i for i in temp if not i.isdigit()])
                         if temp in CONFIG.DB_FILES:
                             if not file == db.latest_db(temp):
-                                logging.log("[Back Up] Type = addon_data: Ignore {0} - Database Files".format(file), level=xbmc.LOGNOTICE)
+                                logging.log("[Back Up] Type = addon_data: Ignore {0} - Database Files".format(file))
                                 continue
                     try:
                         zipf.write(fn, fn[len(CONFIG.ADDON_DATA):], zipfile.ZIP_DEFLATED)
                     except Exception as e:
-                        logging.log("[Back Up] Type = addon_data: Unable to backup {0}".format(file), level=xbmc.LOGNOTICE)
-                        logging.log("Backup Error: {0}".format(str(e)), level=xbmc.LOGNOTICE)
+                        logging.log("[Back Up] Type = addon_data: Unable to backup {0}".format(file))
+                        logging.log("Backup Error: {0}".format(str(e)))
                 except Exception as e:
-                    logging.log("[Back Up] Type = addon_data: Unable to backup {0}".format(file), level=xbmc.LOGNOTICE)
-                    logging.log("Backup Error: {0}".format(str(e)), level=xbmc.LOGNOTICE)
+                    logging.log("[Back Up] Type = addon_data: Unable to backup {0}".format(file))
+                    logging.log("Backup Error: {0}".format(str(e)))
         zipf.close()
         if not tempzipname == '':
             success = xbmcvfs.rename(tempzipname, zipname)

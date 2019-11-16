@@ -86,7 +86,7 @@ class Config:
         # Auto Update For Those With No Repo
         self.AUTOUPDATE = uservar.AUTOUPDATE
 
-        # Auto  Install Repo If Not Installed
+        # Auto Install Repo If Not Installed
         self.AUTOINSTALL = uservar.AUTOINSTALL
         self.REPOID = uservar.REPOID
         self.REPOADDONXML = uservar.REPOADDONXML

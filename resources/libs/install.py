@@ -95,27 +95,27 @@ def wipe():
             fold = root.replace('/', '\\').split('\\')
             x = len(fold)-1
             if name == 'sources.xml' and fold[-1] == 'userdata' and CONFIG.KEEPSOURCES == 'true':
-                logging.log("Keep sources.xml: {0}".format(os.path.join(root, name)), level=xbmc.LOGNOTICE)
+                logging.log("Keep sources.xml: {0}".format(os.path.join(root, name)))
             elif name == 'favourites.xml' and fold[-1] == 'userdata' and CONFIG.KEEPFAVS == 'true':
-                logging.log("Keep favourites.xml: {0}".format(os.path.join(root, name)), level=xbmc.LOGNOTICE)
+                logging.log("Keep favourites.xml: {0}".format(os.path.join(root, name)))
             elif name == 'profiles.xml' and fold[-1] == 'userdata' and CONFIG.KEEPPROFILES == 'true':
-                logging.log("Keep profiles.xml: {0}".format(os.path.join(root, name)), level=xbmc.LOGNOTICE)
+                logging.log("Keep profiles.xml: {0}".format(os.path.join(root, name)))
             elif name == 'playercorefactory.xml' and fold[-1] == 'userdata' and CONFIG.KEEPPLAYERCORE == 'true':
-                logging.log("Keep playercorefactory.xml: {0}".format(os.path.join(root, name)), level=xbmc.LOGNOTICE)
+                logging.log("Keep playercorefactory.xml: {0}".format(os.path.join(root, name)))
             elif name == 'advancedsettings.xml' and fold[-1] == 'userdata' and CONFIG.KEEPADVANCED == 'true':
-                logging.log("Keep advancedsettings.xml: {0}".format(os.path.join(root, name)), level=xbmc.LOGNOTICE)
+                logging.log("Keep advancedsettings.xml: {0}".format(os.path.join(root, name)))
             elif name in CONFIG.LOGFILES:
-                logging.log("Keep Log File: {0}".format(name), level=xbmc.LOGNOTICE)
+                logging.log("Keep Log File: {0}".format(name))
             elif name.endswith('.db'):
                 try:
                     if name == latestAddonDB:
-                        logging.log("Ignoring {0} on Kodi {1}".format(name, tools.kodi_version()), level=xbmc.LOGNOTICE)
+                        logging.log("Ignoring {0} on Kodi {1}".format(name, tools.kodi_version()))
                     else:
                         os.remove(os.path.join(root, name))
                 except Exception as e:
                     if not name.startswith('Textures13'):
-                        logging.log('Failed to delete, Purging DB', level=xbmc.LOGNOTICE)
-                        logging.log("-> {0}".format(str(e)), level=xbmc.LOGNOTICE)
+                        logging.log('Failed to delete, Purging DB')
+                        logging.log("-> {0}".format(str(e)))
                         db.purge_db_file(os.path.join(root, name))
             else:
                 progress_dialog.update(int(tools.percentage(del_file, total_files)), '',
@@ -123,8 +123,8 @@ def wipe():
                 try:
                     os.remove(os.path.join(root, name))
                 except Exception as e:
-                    logging.log("Error removing {0}".format(os.path.join(root, name)), level=xbmc.LOGNOTICE)
-                    logging.log("-> / {0}".format(str(e)), level=xbmc.LOGNOTICE)
+                    logging.log("Error removing {0}".format(os.path.join(root, name)))
+                    logging.log("-> / {0}".format(str(e)))
         if progress_dialog.iscanceled():
             progress_dialog.close()
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),

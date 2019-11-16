@@ -305,7 +305,7 @@ def update_trakt(do, who):
                 
                 for setting in root.iter('setting'):
                     if setting.attrib['id'] in data:
-                        logging.log('Removing Setting: {0}'.format(setting.attrib), level=xbmc.LOGNOTICE)
+                        logging.log('Removing Setting: {0}'.format(setting.attrib))
                         root.remove(setting)
                             
                 tree.write(settings)
