@@ -336,6 +336,7 @@ def show_build_prompt():
             logging.log("[Current Build Check] [User Selected: Open Build Menu] [Next Check: {0}]".format(str(CONFIG.BUILDCHECK)),
                         level=xbmc.LOGNOTICE)
             CONFIG.set_setting('lastbuildcheck', str(CONFIG.BUILDCHECK))
+            CONFIG.set_setting('installed', 'ignored')
             
             url = 'plugin://{0}/?mode=builds'.format(CONFIG.ADDON_ID)
             
@@ -348,6 +349,8 @@ def show_build_prompt():
             logging.log("[Current Build Check] [User Selected: Ignore Build Menu] [Next Check: {0}]".format(str(CONFIG.BUILDCHECK)),
                         level=xbmc.LOGNOTICE)
             CONFIG.set_setting('lastbuildcheck', str(CONFIG.BUILDCHECK))
+            CONFIG.set_setting('installed', 'ignored')
+            
             self.close()
 
         def onAction(self, action):

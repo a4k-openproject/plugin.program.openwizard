@@ -313,14 +313,14 @@ else:
     logging.log("[First Run] Skipping Save Data Settings", level=xbmc.LOGNOTICE)
     
 # BUILD INSTALL PROMPT
-if CONFIG.BUILDNAME == '':
+if CONFIG.get_setting('installed') in ['true', 'ignored'] or CONFIG.get_setting('buildname') == '':
     logging.log("[Current Build Check] Build Not Installed", level=xbmc.LOGNOTICE)
     window.show_build_prompt()
 else:
     logging.log("[Current Build Check] Build Installed", level=xbmc.LOGNOTICE)
     
 # BUILD UPDATE CHECK
-if CONFIG.BUILDNAME != '' and CONFIG.BUILDCHECK <= str(tools.get_date(days=CONFIG.UPDATECHECK, now=True)):
+if not CONFIG.BUILDNAME == '' and CONFIG.BUILDCHECK <= str(tools.get_date(days=CONFIG.UPDATECHECK, now=True)):
     logging.log("[Build Update Check] Started", level=xbmc.LOGNOTICE)
     build_update_check()
 else:
