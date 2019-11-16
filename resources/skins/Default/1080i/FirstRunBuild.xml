@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window>
+    <defaultcontrol>201</defaultcontrol>
     <coordinates>
         <left>510</left>
         <top>355</top>
     </coordinates>
+    
     <controls>
         <control type="group">
             <control type="image">

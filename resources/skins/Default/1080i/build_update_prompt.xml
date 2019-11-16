@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window>
+    <defaultcontrol>201</defaultcontrol>
     <coordinates>
         <left>465</left>
         <top>265</top>
@@ -18,6 +19,8 @@
                 <top>10</top>
                 <width>970</width>
                 <height>530</height>
+                <texture>$INFO[Window().Property(dialog.imagefanart)]</texture>
+                <colordiffuse>$INFO[Window().Property(dialog.imagediffuse)]</colordiffuse>
             </control>
             <control type="label" id="102">
                 <description>header label</description>
@@ -26,7 +29,7 @@
                 <width>970</width>
                 <height>40</height>
                 <font>font13</font>
-                <label></label>
+                <label>$INFO[Window().Property(dialog.header)]</label>
                 <align>center</align>
                 <aligny>center</aligny>
             </control>
@@ -38,12 +41,14 @@
                 <font>font12</font>
                 <align>left</align>
                 <aligny>top</aligny>
+                <label>$INFO[Window().Property(dialog.textbox)]</label>
             </control>
             <control type="image" id="104">
                 <left>670</left>
                 <top>70</top>
                 <width>300</width>
                 <height>300</height>
+                <texture>$INFO[Window().Property(dialog.imageicon)]</texture>
             </control>
         </control>
         <control type="group">

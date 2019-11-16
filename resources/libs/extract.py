@@ -1,5 +1,5 @@
 ################################################################################
-#      Copyright (C) 2015 Surfacingx                                           #
+#      Copyright (C) 2019 drinfernoo                                           #
 #                                                                              #
 #  This Program is free software; you can redistribute it and/or modify        #
 #  it under the terms of the GNU General Public License as published by        #
@@ -17,114 +17,142 @@
 #  http://www.gnu.org/copyleft/gpl.html                                        #
 ################################################################################
 
-import xbmcaddon, xbmc, uservar, sys, os, time
-import wizard as wiz
+import xbmc
+import xbmcgui
 
-ADDON_ID       = uservar.ADDON_ID
-ADDONTITLE     = uservar.ADDONTITLE
-COLOR1         = uservar.COLOR1
-COLOR2         = uservar.COLOR2
-ADDON          = wiz.addonId(ADDON_ID)
-HOME           = xbmc.translatePath('special://home/')
-USERDATA       = os.path.join(HOME,      'userdata')
-GUISETTINGS    = os.path.join(USERDATA,  'guisettings.xml')
-KEEPFAVS       = wiz.getS('keepfavourites')
-KEEPSOURCES    = wiz.getS('keepsources')
-KEEPPROFILES   = wiz.getS('keepprofiles')
-KEEPPLAYERCORE   = wiz.getS('keepplayercore')
-KEEPADVANCED   = wiz.getS('keepadvanced')
-KEEPSUPER      = wiz.getS('keepsuper')
-KEEPREPOS      = wiz.getS('keeprepos')
-KEEPWHITELIST  = wiz.getS('keepwhitelist')
+import sys
+try:  # Python 3
+    import zipfile
+except ImportError:  # Python 2
+    from resources.libs import zipfile
 
-KODIV            = float(xbmc.getInfoLabel("System.BuildVersion")[:4])
-if KODIV > 17:
-	from resources.libs import zfile as zipfile
-else:
-	import zipfile
+from resources.libs.common.config import CONFIG
+from resources.libs.common import logging
+from resources.libs.common import tools
 
-LOGFILES       = ['xbmc.log', 'xbmc.old.log', 'kodi.log', 'kodi.old.log', 'spmc.log', 'spmc.old.log', 'tvmc.log', 'tvmc.old.log', 'Thumbs.db', '.gitignore', '.DS_Store']
-bad_files      = ['onechannelcache.db', 'saltscache.db', 'saltscache.db-shm', 'saltscache.db-wal', 'saltshd.lite.db', 'saltshd.lite.db-shm', 'saltshd.lite.db-wal', 'queue.db', 'commoncache.db', 'access.log', 'trakt.db', 'video_cache.db']
 
-def all(_in, _out, dp=None, ignore=None, title=None):
-	if dp: return allWithProgress(_in, _out, dp, ignore, title)
-	else: return allNoProgress(_in, _out, ignore)
+def all(_in, _out, ignore=None, title=None):
+    progress_dialog = xbmcgui.DialogProgress()
+    progress_dialog.create(CONFIG.ADDONTITLE, "Extracting Content", '', '')
+    
+    return all_with_progress(_in, _out, progress_dialog, ignore, title)
 
-def allNoProgress(_in, _out, ignore):
-	try:
-		zin = zipfile.ZipFile(_in, 'r')
-		zin.extractall(_out)
-	except Exception, e:
-		wiz.log(str(e))
-		return False
-	return True
 
-def allWithProgress(_in, _out, dp, ignore, title):
-	count = 0; errors = 0; error = ''; update = 0; size = 0; excludes = []
-	try:
-		zin = zipfile.ZipFile(_in,  'r')
-	except Exception, e:
-		errors += 1; error += '%s\n' % e
-		wiz.log('Error Checking Zip: %s' % str(e), xbmc.LOGERROR)
-		return update, errors, error
+def all_with_progress(_in, _out, dp, ignore, title):
+    from resources.libs import whitelist
 
-	whitelist = wiz.whiteList('read')
-	for item in whitelist:
-		try: name, id, fold = item
-		except: pass
-		excludes.append(fold)
-		if fold.startswith('pvr'):
-			wiz.setS('pvrclient', id)
+    count = 0
+    errors = 0
+    error = ''
+    update = 0
+    size = 0
+    excludes = []
 
-	nFiles = float(len(zin.namelist()))
-	zipsize = wiz.convertSize(sum([item.file_size for item in zin.infolist()]))
+    try:
+        zin = zipfile.ZipFile(_in,  'r')
+    except Exception as e:
+        errors += 1
+        error += '%s\n' % e
+        logging.log('Error Checking Zip: {0}'.format(str(e)), level=xbmc.LOGERROR)
+        return update, errors, error
 
-	zipit = str(_in).replace('\\', '/').split('/')
-	title = title if not title == None else zipit[-1].replace('.zip', '')
+    white_list = whitelist.whitelist('read')
+    for item in white_list:
+        try:
+            name, id, fold = item
+        except:
+            pass
+        excludes.append(fold)
 
-	for item in zin.infolist():
-		try:
-			str(item.filename).encode('ascii')
-		except UnicodeDecodeError:
-			wiz.log("[ASCII Check] Illegal character found in file: {0}".format(item.filename))
-			continue
-		except UnicodeEncodeError:
-			wiz.log("[ASCII Check] Illegal character found in file: {0}".format(item.filename))
-			continue
-		count += 1; prog = int(count / nFiles * 100); size += item.file_size
-		file = str(item.filename).split('/')
-		skip = False
-		line1  = '%s [COLOR %s][B][Errors:%s][/B][/COLOR]' % (title, COLOR2, errors)
-		line2  = '[COLOR %s][B]File:[/B][/COLOR] [COLOR %s]%s/%s[/COLOR] ' % (COLOR2, COLOR1, count, int(nFiles))
-		line2 += '[COLOR %s][B]Size:[/B][/COLOR] [COLOR %s]%s/%s[/COLOR]' % (COLOR2, COLOR1, wiz.convertSize(size), zipsize)
-		line3  = '[COLOR %s]%s[/COLOR]' % (COLOR1, item.filename)
-		if item.filename == 'userdata/sources.xml' and KEEPSOURCES == 'true': skip = True
-		elif item.filename == 'userdata/favourites.xml' and KEEPFAVS == 'true': skip = True
-		elif item.filename == 'userdata/profiles.xml' and KEEPPROFILES == 'true': skip = True
-		elif item.filename == 'userdata/playercorefactory.xml' and KEEPPLAYERCORE == 'true': skip = True
-		elif item.filename == 'userdata/advancedsettings.xml' and KEEPADVANCED == 'true': skip = True
-		elif file[0] == 'addons' and file[1] in excludes: skip = True
-		elif file[0] == 'userdata' and file[1] == 'addon_data' and file[2] in excludes: skip = True
-		elif file[-1] in LOGFILES: skip = True
-		elif file[-1] in bad_files: skip = True
-		elif file[-1].endswith('.csv'): skip = True
-		elif not str(item.filename).find('plugin.program.super.favourites') == -1 and KEEPSUPER == 'true': skip = True
-		elif not str(item.filename).find(ADDON_ID) == -1 and ignore == None: skip = True
-		if skip == True: wiz.log("Skipping: %s" % item.filename, xbmc.LOGNOTICE)
-		else:
-			try:
-				zin.extract(item, _out)
-			except Exception, e:
-				errormsg  = "[COLOR %s]File:[/COLOR] [COLOR %s]%s[/COLOR]\n" % (COLOR2, COLOR1, file[-1])
-				errormsg += "[COLOR %s]Folder:[/COLOR] [COLOR %s]%s[/COLOR]\n" % (COLOR2, COLOR1, (item.filename).replace(file[-1],''))
-				errormsg += "[COLOR %s]Error:[/COLOR] [COLOR %s]%s[/COLOR]\n\n" % (COLOR2, COLOR1, str(e).replace('\\\\','\\').replace("'%s'" % item.filename, ''))
-				errors += 1; error += errormsg
-				wiz.log('Error Extracting: %s(%s)' % (item.filename, str(e)), xbmc.LOGERROR)
-				pass
-		dp.update(prog, line1, line2, line3)
-		if dp.iscanceled(): break
-	if dp.iscanceled():
-		dp.close()
-		wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, ADDONTITLE), "[COLOR %s]Extract Cancelled[/COLOR]" % COLOR2)
-		sys.exit()
-	return prog, errors, error
+    nFiles = float(len(zin.namelist()))
+    zipsize = tools.convert_size(sum([item.file_size for item in zin.infolist()]))
+
+    zipit = str(_in).replace('\\', '/').split('/')
+    title = title if title else zipit[-1].replace('.zip', '')
+
+    for item in zin.infolist():
+        
+        try:
+            str(item.filename).encode('ascii')
+        except UnicodeDecodeError:
+            logging.log("[ASCII Check] Illegal character found in file: {0}".format(item.filename))
+            continue
+        except UnicodeEncodeError:
+            logging.log("[ASCII Check] Illegal character found in file: {0}".format(item.filename))
+            continue
+            
+        count += 1
+        prog = int(count / nFiles * 100)
+        size += item.file_size
+        file = str(item.filename).split('/')
+        skip = False
+        
+        line1 = '{0} [COLOR {1}][B][Errors:{2}][/B][/COLOR]'.format(title,
+                                                                    CONFIG.COLOR2,
+                                                                    errors)
+        line2 = '[COLOR {0}][B]File:[/B][/COLOR] [COLOR {1}]{2}/{3}[/COLOR] '.format(CONFIG.COLOR2,
+                                                                                     CONFIG.COLOR1,
+                                                                                     count,
+                                                                                     int(nFiles))
+        line2 += '[COLOR {0}][B]Size:[/B][/COLOR] [COLOR {1}]{2}/{3}[/COLOR]'.format(CONFIG.COLOR2,
+                                                                                     CONFIG.COLOR1,
+                                                                                     tools.convert_size(size),
+                                                                                     zipsize)
+        line3 = '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, item.filename)
+        
+        if item.filename == 'userdata/sources.xml' and CONFIG.KEEPSOURCES == 'true':
+            skip = True
+        elif item.filename == 'userdata/favourites.xml' and CONFIG.KEEPFAVS == 'true':
+            skip = True
+        elif item.filename == 'userdata/profiles.xml' and CONFIG.KEEPPROFILES == 'true':
+            skip = True
+        elif item.filename == 'userdata/playercorefactory.xml' and CONFIG.KEEPPLAYERCORE == 'true':
+            skip = True
+        elif item.filename == 'userdata/advancedsettings.xml' and CONFIG.KEEPADVANCED == 'true':
+            skip = True
+        elif file[0] == 'addons' and file[1] in excludes:
+            skip = True
+        elif file[0] == 'userdata' and file[1] == 'addon_data' and file[2] in excludes:
+            skip = True
+        elif file[-1] in CONFIG.LOGFILES:
+            skip = True
+        elif file[-1] in CONFIG.EXCLUDE_FILES:
+            skip = True
+        elif file[-1].endswith('.csv'):
+            skip = True
+        elif not str(item.filename).find('plugin.program.super.favourites') == -1 and CONFIG.KEEPSUPER == 'true':
+            skip = True
+        elif not str(item.filename).find(CONFIG.ADDON_ID) == -1 and ignore is None:
+            skip = True
+        if skip:
+            logging.log("Skipping: {0}".format(item.filename), level=xbmc.LOGNOTICE)
+        else:
+            try:
+                zin.extract(item, _out)
+            except Exception as e:
+                errormsg = "[COLOR {0}]File:[/COLOR] [COLOR {1}]{2}[/COLOR]\n".format(CONFIG.COLOR2,
+                                                                                      CONFIG.COLOR1,
+                                                                                      file[-1])
+                errormsg += "[COLOR {0}]Folder:[/COLOR] [COLOR {1}]{2}[/COLOR]\n".format(CONFIG.COLOR2,
+                                                                                         CONFIG.COLOR1,
+                                                                                         item.filename.replace(file[-1], ''))
+                errormsg += "[COLOR {0}]Error:[/COLOR] [COLOR {1}]{2}[/COLOR]\n\n".format(CONFIG.COLOR2,
+                                                                                          CONFIG.COLOR1,
+                                                                                          str(e).replace('\\\\', '\\')
+                                                                                          .replace("'{0}'"
+                                                                                          .format(item.filename), ''))
+                errors += 1
+                error += errormsg
+                logging.log('Error Extracting: {0}({1})'.format(item.filename, str(e)), level=xbmc.LOGERROR)
+                pass
+        dp.update(prog, line1, line2, line3)
+        if dp.iscanceled():
+            break
+            
+    if dp.iscanceled():
+        dp.close()
+        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                           "[COLOR {0}]Extract Cancelled[/COLOR]".format(CONFIG.COLOR2))
+        sys.exit()
+        
+    return prog, errors, error

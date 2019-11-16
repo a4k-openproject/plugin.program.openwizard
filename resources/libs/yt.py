@@ -43,17 +43,21 @@
 #        120: "hd720",
 #        121: "hd1080"
 
+import xbmc
+import xbmcgui
 
 import re
 import urllib2
 import urllib
 import cgi
 import HTMLParser
-import xbmcgui
 
-try: import simplejson as json
+try:
+    import simplejson as json
+except ImportError:
+    import json
 
-except ImportError: import json
+from resources.libs.common.config import CONFIG
 
 dp            =  xbmcgui.DialogProgress()
 MAX_REC_DEPTH = 5
@@ -447,9 +451,8 @@ def DecryptSignatureNew(s, playerUrl):
         playerData = urllib2.urlopen(request).read()
         playerData = playerData.decode('utf-8', 'ignore')
     
-    except Exception, e:
-        #print str(e)
-        print 'Failed to decode playerData'
+    except Exception as e:
+        print('Failed to decode playerData: {0}'.format(str(e)))
         return ''
         
     # get main function name 
@@ -487,8 +490,8 @@ def DecryptSignatureNew(s, playerUrl):
     try:
         algoCodeObj = compile(fullAlgoCode, '', 'exec')
     
-    except:
-        print 'Failed to obtain decryptSignature code'
+    except Exception as e:
+        print('Failed to obtain decryptSignature code: {0}'.format(str(e)))
         return ''
 
     # for security allow only flew python global function in algo code
@@ -501,8 +504,8 @@ def DecryptSignatureNew(s, playerUrl):
     try:
         exec(algoCodeObj, vGlobals, vLocals)
     
-    except:
-        print 'decryptSignature code failed to exceute correctly'
+    except Exception as e:
+        print('decryptSignature code failed to exceute correctly: {0}'.format(str(e)))
         return ''
 
     #print 'Decrypted signature = [%s]' % vLocals['outSignature']
@@ -516,8 +519,8 @@ def _getfullAlgoCode(mainFunName, recDepth=0):
     global allLocalVarNamesTab
     
     if MAX_REC_DEPTH <= recDepth:
-        print '_getfullAlgoCode: Maximum recursion depth exceeded'
-        return 
+        print('_getfullAlgoCode: Maximum recursion depth exceeded')
+        return
 
     funBody = _getLocalFunBody(mainFunName)
     if funBody != '':
@@ -549,3 +552,31 @@ def _getfullAlgoCode(mainFunName, recDepth=0):
         return '\n' + funBody + '\n'
     
     return funBody
+
+
+def play_video(url):
+    if 'watch?v=' in url:
+        a, b = url.split('?')
+        find = b.split('&')
+        for item in find:
+            if item.startswith('v='):
+                url = item[2:]
+                break
+            else:
+                continue
+    elif 'embed' in url or 'youtu.be' in url:
+        a = url.split('/')
+        if len(a[-1]) > 5:
+            url = a[-1]
+        elif len(a[-2]) > 5:
+            url = a[-2]
+
+    from resources.libs.common import logging
+    logging.log("YouTube URL: {0}".format(url))
+
+    if xbmc.getCondVisibility('System.HasAddon(plugin.video.youtube)') == 1:
+        url = 'plugin://plugin.video.youtube/play/?video_id={0}'.format(url)
+        xbmc.Player().play(url)
+    xbmc.sleep(2000)
+    if xbmc.Player().isPlayingVideo() == 0:
+        PlayVideo(url)

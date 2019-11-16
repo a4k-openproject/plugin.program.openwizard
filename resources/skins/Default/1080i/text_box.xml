@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window type="dialog">
+    <defaultcontrol>104</defaultcontrol>
+    <coordinates>
+        <left>0</left>
+        <top>0</top>
+    </coordinates>
+    
+    <controls>
+        <!-- Background -->
+        <control type="image">
+            <texture>Background/white.png</texture>
+            <colordiffuse>FF181818</colordiffuse>
+        </control>
+    
+        <control type="group">
+            
+            <!-- Header -->
+            <control type="group">
+                <width>1920</width>
+                <height>80</height>
+                
+                <control type="image">
+                    <texture>Background/white.png</texture>
+                    <colordiffuse>$INFO[Window().Property(texture.color1)]</colordiffuse>
+                </control>
+                
+                <!-- Label -->
+                <control type="label" id="101">
+                    <align>center</align>
+                    <aligny>center</aligny>
+                    <label>[COLOR $INFO[Window().Property(texture.color2)]]$INFO[Window().Property(message.title)][/COLOR]</label>
+                </control>
+            </control>
+            
+            <!-- Side Buttons -->
+            <control type="grouplist" id="104">
+                <onright>103</onright>
+                <top>96</top>
+                <left>16</left>
+                <width>240</width>
+                <height>952</height>
+                <itemgap>16</itemgap>
+                <defaultcontrol>201</defaultcontrol>
+                
+                <control type="button" id="201">
+                    <align>center</align>
+                    <height>80</height>
+                    <textcolor>FFFFFFFF</textcolor>
+                    <focusedcolor>$INFO[Window().Property(texture.color2)]</focusedcolor>
+                    <texturefocus colordiffuse="$INFO[Window().Property(texture.color1)]">Background/white.png</texturefocus>
+                    <texturenofocus colordiffuse="FF282828">Background/white.png</texturenofocus>
+                    <label>Close</label>
+                </control>
+            </control>
+            
+            <!-- Text Box -->
+            <control type="textbox" id="102">
+                <left>272</left>
+                <top>96</top>
+                <width>1600</width>
+                <height>952</height>
+                <pagecontrol>103</pagecontrol>
+                <autoscroll delay="3000" time="1000" repeat="10000">!Control.HasFocus(103)</autoscroll>
+                <label>[COLOR white]$INFO[Window().Property(message.msg)][/COLOR]</label>
+            </control>
+            
+            <!-- Scrollbar -->
+            <control type="scrollbar" id="103">
+                <left>1872</left>
+                <top>96</top>
+                <width>32</width>
+                <height>952</height>
+                <onleft>104</onleft>
+                <onup>102</onup>
+                <ondown>102</ondown>
+                <texturesliderbackground colordiffuse="$INFO[Window().Property(texture.color2)]">Button/scrollbar-V-background.png</texturesliderbackground>
+                <texturesliderbar colordiffuse="$INFO[Window().Property(texture.color2)]">Button/scrollbar-V.png</texturesliderbar>
+                <texturesliderbarfocus colordiffuse="$INFO[Window().Property(texture.color1)]">Button/scrollbar-V-focus.png</texturesliderbarfocus>
+                <subtype>text</subtype>
+            </control>
+        </control>
+    </controls>
+</window>
