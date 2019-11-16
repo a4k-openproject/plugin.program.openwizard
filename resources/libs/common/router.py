@@ -41,7 +41,7 @@ def dispatch(paramstring):
         MainMenu().get_listing()
 
     # SETTINGS
-    elif mode == 'settings':  # Open Aftermath settings
+    elif mode == 'settings':  # OpenWizard settings
         CONFIG.open_settings(name)
         xbmc.executebuiltin('Container.Refresh()')
     elif mode == 'opensettings':  # Open other addons' settings
