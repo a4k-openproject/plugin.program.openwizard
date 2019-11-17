@@ -131,6 +131,12 @@ def show_notification():
 
 
 def installed_build_check():
+    # This may not be necessary anymore
+    #
+    # db.kodi_17_fix()
+    # if CONFIG.SKIN in ['skin.confluence', 'skin.estuary', 'skin.estouchy']:
+    #     check.check_skin()
+
     dialog = xbmcgui.Dialog()
 
     if not CONFIG.EXTRACT == '100' and not CONFIG.BUILDNAME == "":
@@ -274,18 +280,21 @@ def auto_clean():
 def stop_if_duplicate():
     NOW = datetime.now()
     temp = CONFIG.get_setting('time_started')
+    
     if not temp == '':
         if temp > str(NOW - timedelta(minutes=2)):
-            logging.log("Killing Start Up Script")
+            logging.log("Killing Start Up Script", xbmc.LOGDEBUG)
             sys.exit()
+            
     logging.log("{0}".format(NOW))
     CONFIG.set_setting('time_started', str(NOW))
     xbmc.sleep(1000)
+    
     if not CONFIG.get_setting('time_started') == str(NOW):
-        logging.log("Killing Start Up Script")
+        logging.log("Killing Start Up Script", xbmc.LOGDEBUG)
         sys.exit()
     else:
-        logging.log("Continuing Start Up Script")
+        logging.log("Continuing Start Up Script", xbmc.LOGDEBUG)
 
 
 def check_for_video():
@@ -296,7 +305,7 @@ def check_for_video():
 # Don't run the script while video is playing :)
 check_for_video()
 # Stop this script if it's been run more than once
-# stop_if_duplicate()
+stop_if_duplicate()
 # Ensure that the wizard's name matches its folder
 check.check_paths()
 # Ensure that any needed folders are created
@@ -389,5 +398,5 @@ if CONFIG.AUTOCLEANUP == 'true':
     logging.log("[Auto Clean Up] Started", level=xbmc.LOGNOTICE)
     auto_clean()
 else:
-    logging.log("[Auto Clean Up] Not Enabled", level=xbmc.LOGNOTICE)
+    logging.log('[Auto Clean Up] Not Enabled', level=xbmc.LOGNOTICE)
 
