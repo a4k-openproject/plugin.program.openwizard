@@ -729,7 +729,7 @@ def open_url(url, stream=False, check=False, cred=None, count=0):
         if valid == 'auth' and not cred:
             cred = (get_keyboard(heading='Username'), get_keyboard(heading='Password'))
             
-        response = requests.get(url, headers=user_agent, timeout=1.000, stream=stream, auth=cred)
+        response = requests.get(url, headers=user_agent, timeout=10.000, stream=stream, auth=cred)
 
         if response.status_code == 401:
             retry = dialog.yesno(CONFIG.ADDONTITLE, 'Either the username or password were invalid. Would you like to try again?', yeslabel='Try Again', nolabel='Cancel')
