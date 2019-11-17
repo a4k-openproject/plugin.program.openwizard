@@ -78,7 +78,7 @@ def write_to_file(file, content, mode='w'):
 def remove_folder(path):
     from resources.libs.common import logging
 
-    logging.log("Deleting Folder: {0}".format(path), level=xbmc.LOGNOTICE)
+    logging.log("Deleting Folder: {0}".format(path))
     try:
         shutil.rmtree(path, ignore_errors=True, onerror=None)
     except:
@@ -88,7 +88,7 @@ def remove_folder(path):
 def remove_file(path):
     from resources.libs.common import logging
 
-    logging.log("Deleting File: {0}".format(path), level=xbmc.LOGNOTICE)
+    logging.log("Deleting File: {0}".format(path))
     try:
         os.remove(path)
     except:
@@ -106,7 +106,7 @@ def empty_folder(folder):
             total += 1
 
             from resources.libs.common import logging
-            logging.log("Empty Folder: {0}".format(root), level=xbmc.LOGNOTICE)
+            logging.log("Empty Folder: {0}".format(root))
     return total
 
 
@@ -415,7 +415,7 @@ def kill_kodi(msg=None, over=None):
                                   yeslabel='[B][COLOR springgreen]Force Close Kodi[/COLOR][/B]')
     if choice == 1:
         from resources.libs.common import logging
-        logging.log("Force Closing Kodi: Platform[{0}]".format(str(platform())), level=xbmc.LOGNOTICE)
+        logging.log("Force Closing Kodi: Platform[{0}]".format(str(platform())))
         os._exit(1)
 
 
@@ -463,7 +463,7 @@ def convert_special(url, over=False):
                                        "[COLOR {0}]Convert Path Cancelled[/COLOR]".format(CONFIG.COLOR2))
                     sys.exit()
     progress_dialog.close()
-    logging.log("[Convert Paths to Special] Complete", level=xbmc.LOGNOTICE)
+    logging.log("[Convert Paths to Special] Complete")
     if not over:
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                            "[COLOR {0}]Convert Paths to Special: Complete![/COLOR]".format(CONFIG.COLOR2))
@@ -562,7 +562,7 @@ def ascii_check(use=None, over=False):
     items = file_count(source)
     msg = ''
     prog = []
-    logging.log("Source file: ({0})".format(str(source)), level=xbmc.LOGNOTICE)
+    logging.log("Source file: ({0})".format(str(source)))
 
     progress_dialog.create(CONFIG.ADDONTITLE, 'Please wait...')
     for base, dirs, files in os.walk(source):
@@ -729,7 +729,7 @@ def open_url(url, stream=False, check=False, cred=None, count=0):
         if valid == 'auth' and not cred:
             cred = (get_keyboard(heading='Username'), get_keyboard(heading='Password'))
             
-        response = requests.get(url, headers=user_agent, timeout=1.000, stream=stream, auth=cred)
+        response = requests.get(url, headers=user_agent, timeout=10.000, stream=stream, auth=cred)
 
         if response.status_code == 401:
             retry = dialog.yesno(CONFIG.ADDONTITLE, 'Either the username or password were invalid. Would you like to try again?', yeslabel='Try Again', nolabel='Cancel')

@@ -454,8 +454,9 @@ def dispatch(paramstring):
         window.show_contact(CONFIG.CONTACT)
 
     _handle = int(sys.argv[1])
-    xbmcplugin.setContent(_handle, 'programs')
-    xbmcplugin.endOfDirectory(_handle)
-
+    
     from resources.libs.gui import directory
     directory.set_view()
+    
+    xbmcplugin.setContent(_handle, 'files')
+    xbmcplugin.endOfDirectory(_handle)

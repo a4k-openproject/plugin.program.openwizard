@@ -125,7 +125,7 @@ def all_with_progress(_in, _out, dp, ignore, title):
         elif not str(item.filename).find(CONFIG.ADDON_ID) == -1 and ignore is None:
             skip = True
         if skip:
-            logging.log("Skipping: {0}".format(item.filename), level=xbmc.LOGNOTICE)
+            logging.log("Skipping: {0}".format(item.filename))
         else:
             try:
                 zin.extract(item, _out)

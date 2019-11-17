@@ -40,7 +40,7 @@ REPLACES = (('//.+?:.+?@', '//USER:PASSWORD@'), ('<user>.+?</user>', '<user>USER
                                                                                             '<pass>PASSWORD</pass>'),)
 
 
-def log(msg, level=xbmc.LOGDEBUG):
+def log(msg, level=xbmc.LOGNOTICE):
     from resources.libs.common import tools
 
     if not os.path.exists(CONFIG.PLUGIN_DATA):
@@ -222,9 +222,9 @@ def get_files():
             crashlog_path = os.path.expanduser('~')
             filematch = 'kodi_crashlog'
         elif tools.platform() == 'windows':
-            log("Windows crashlogs are not supported, please disable this option in the addon settings", level=xbmc.LOGNOTICE)
+            log("Windows crashlogs are not supported, please disable this option in the addon settings")
         elif tools.platform() == 'android':
-            log("Android crashlogs are not supported, please disable this option in the addon settings", level=xbmc.LOGNOTICE)
+            log("Android crashlogs are not supported, please disable this option in the addon settings")
         if crashlog_path and os.path.isdir(crashlog_path):
             dirs, files = xbmcvfs.listdir(crashlog_path)
             for item in files:
@@ -234,7 +234,7 @@ def get_files():
                     lastcrash = items[-1]
                     logfiles.append(['crashlog', lastcrash])
         if len(items) == 0:
-            log("No crashlog file found", level=xbmc.LOGNOTICE)
+            log("No crashlog file found")
     return logfiles
 
 
@@ -245,10 +245,10 @@ def read_log(path):
         if content:
             return True, content
         else:
-            log('file is empty', level=xbmc.LOGNOTICE)
+            log('file is empty')
             return False, "File is Empty"
     except Exception as e:
-        log('unable to read file: {0}'.format(e), level=xbmc.LOGNOTICE)
+        log('unable to read file: {0}'.format(e))
         return False, "Unable to Read File"
 
 
@@ -272,7 +272,7 @@ def post_log(data, name):
     try:
         page_url = page.url.strip()
         # copy_to_clipboard(page_url)
-        log("URL for {0}: {1}".format(name, page_url), level=xbmc.LOGNOTICE)
+        log("URL for {0}: {1}".format(name, page_url))
         return True, page_url
     except Exception as e:
         a = 'unable to retrieve the paste url'
@@ -306,31 +306,31 @@ def copy_to_clipboard(txt):
 
 
 # CURRENTLY NOT IN USE
-def email_log(email, results, file):
-    URL = 'http://aftermathwizard.net/mail_logs.php'
-    data = {'email': email, 'results': results, 'file': file, 'wizard': CONFIG.ADDONTITLE}
-    params = urlencode(data)
+# def email_log(email, results, file):
+    # URL = 'http://aftermathwizard.net/mail_logs.php'
+    # data = {'email': email, 'results': results, 'file': file, 'wizard': CONFIG.ADDONTITLE}
+    # params = urlencode(data)
 
-    try:
-        result = LogURLopener().open(URL, params)
-        returninfo = result.read()
-        log(str(returninfo), level=xbmc.LOGNOTICE)
-    except Exception as e:
-        a = 'failed to connect to the server'
-        log("{0}: {1}".format(a, str(e)), level=xbmc.LOGERROR)
-        return False, a
+    # try:
+        # result = LogURLopener().open(URL, params)
+        # returninfo = result.read()
+        # log(str(returninfo))
+    # except Exception as e:
+        # a = 'failed to connect to the server'
+        # log("{0}: {1}".format(a, str(e)), level=xbmc.LOGERROR)
+        # return False, a
 
-    try:
-        return True, "Emailing logs is currently disabled."
-        # js_data = json.loads(returninfo)
+    # try:
+        # return True, "Emailing logs is currently disabled."
+        # # js_data = json.loads(returninfo)
 
-        # if 'type' in js_data:
-            # return js_data['type'], str(js_data['text'])
-        # else:
-            # return str(js_data)
-    except Exception as e:
-        log("ERROR: {0}".format(str(e)), level=xbmc.LOGERROR)
-        return False, "Error Sending Email."
+        # # if 'type' in js_data:
+            # # return js_data['type'], str(js_data['text'])
+        # # else:
+            # # return str(js_data)
+    # except Exception as e:
+        # log("ERROR: {0}".format(str(e)), level=xbmc.LOGERROR)
+        # return False, "Error Sending Email."
 
 
 class LogURLopener(FancyURLopener):

@@ -280,18 +280,21 @@ def auto_clean():
 def stop_if_duplicate():
     NOW = datetime.now()
     temp = CONFIG.get_setting('time_started')
+    
     if not temp == '':
         if temp > str(NOW - timedelta(minutes=2)):
-            logging.log("Killing Start Up Script")
+            logging.log("Killing Start Up Script", xbmc.LOGDEBUG)
             sys.exit()
+            
     logging.log("{0}".format(NOW))
     CONFIG.set_setting('time_started', str(NOW))
     xbmc.sleep(1000)
+    
     if not CONFIG.get_setting('time_started') == str(NOW):
-        logging.log("Killing Start Up Script")
+        logging.log("Killing Start Up Script", xbmc.LOGDEBUG)
         sys.exit()
     else:
-        logging.log("Continuing Start Up Script")
+        logging.log("Continuing Start Up Script", xbmc.LOGDEBUG)
 
 
 def check_for_video():
@@ -302,7 +305,7 @@ def check_for_video():
 # Don't run the script while video is playing :)
 check_for_video()
 # Stop this script if it's been run more than once
-# stop_if_duplicate()
+stop_if_duplicate()
 # Ensure that the wizard's name matches its folder
 check.check_paths()
 # Ensure that any needed folders are created
@@ -319,7 +322,7 @@ else:
     logging.log("[First Run] Skipping Save Data Settings", level=xbmc.LOGNOTICE)
     
 # BUILD INSTALL PROMPT
-if CONFIG.BUILDNAME == '':
+if tools.open_url(CONFIG.BUILDFILE, check=True) and CONFIG.get_setting('installed') == '':
     logging.log("[Current Build Check] Build Not Installed", level=xbmc.LOGNOTICE)
     window.show_build_prompt()
 else:

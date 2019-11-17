@@ -135,7 +135,7 @@ def get_cache_size():
                     continue
                 totalsize += os.path.getsize(item)
         else:
-            logging.log("Clear Cache: Clear Video Cache Not Enabled", level=xbmc.LOGNOTICE)
+            logging.log("Clear Cache: Clear Video Cache Not Enabled")
 
     return totalsize
 
@@ -309,12 +309,12 @@ def clear_cache(over=None):
                         if f not in CONFIG.LOGFILES:
                             try:
                                 os.unlink(os.path.join(root, f))
-                                logging.log("[Wiped] {0}".format(os.path.join(root, f)), level=xbmc.LOGNOTICE)
+                                logging.log("[Wiped] {0}".format(os.path.join(root, f)))
                                 delfiles += 1
                             except:
                                 pass
                         else:
-                            logging.log('Ignore Log File: {0}'.format(f), level=xbmc.LOGNOTICE)
+                            logging.log('Ignore Log File: {0}'.format(f))
                     for d in dirs:
                         try:
                             shutil.rmtree(os.path.join(root, d))
@@ -332,9 +332,9 @@ def clear_cache(over=None):
                         try:
                             shutil.rmtree(os.path.join(root, d))
                             delfiles += 1
-                            logging.log("[Success] wiped {0} ".format(os.path.join(root, d)), level=xbmc.LOGNOTICE)
+                            logging.log("[Success] wiped {0} ".format(os.path.join(root, d)))
                         except:
-                            logging.log("[Failed] to wipe cache in: {0}".format(os.path.join(item, d)), level=xbmc.LOGNOTICE)
+                            logging.log("[Failed] to wipe cache in: {0}".format(os.path.join(item, d)))
 
     if CONFIG.INCLUDEVIDEO == 'true' and over is None:
         files = []
@@ -383,9 +383,9 @@ def clear_cache(over=None):
                             textexe.execute("VACUUM")
                             textdb.commit()
                             textexe.close()
-                            logging.log("[Success] wiped {0}".format(item), level=xbmc.LOGNOTICE)
+                            logging.log("[Success] wiped {0}".format(item))
                         except Exception as e:
-                            logging.log("[Failed] wiped {0}: {1}".format(item, str(e)), level=xbmc.LOGNOTICE)
+                            logging.log("[Failed] wiped {0}: {1}".format(item, str(e)))
                     else:
                         textexe.execute("SELECT name FROM sqlite_master WHERE type = 'table'")
                         for table in textexe.fetchall():
@@ -393,15 +393,15 @@ def clear_cache(over=None):
                                 textexe.execute("DELETE FROM {0}".format(table[0]))
                                 textexe.execute("VACUUM")
                                 textdb.commit()
-                                logging.log("[Success] wiped {0} in {1}".format(table[0], item), level=xbmc.LOGNOTICE)
+                                logging.log("[Success] wiped {0} in {1}".format(table[0], item))
                             except Exception as e:
                                 try:
-                                    logging.log("[Failed] wiped {0} in {1}: {2}".format(table[0], item, str(e)), level=xbmc.LOGNOTICE)
+                                    logging.log("[Failed] wiped {0} in {1}: {2}".format(table[0], item, str(e)))
                                 except:
                                     pass
                         textexe.close()
         else:
-            logging.log("Clear Cache: Clear Video Cache Not Enabled", level=xbmc.LOGNOTICE)
+            logging.log("Clear Cache: Clear Video Cache Not Enabled")
     logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                        '[COLOR {0}]Clear Cache: Removed {1} Files[/COLOR]'.format(CONFIG.COLOR2, delfiles))
 
@@ -435,7 +435,7 @@ def old_thumbs():
         found2 = textexe.fetchall()
         for rows2 in found2:
             images.append(rows2[0])
-    logging.log("{0} total thumbs cleaned up.".format(str(len(images))), level=xbmc.LOGNOTICE)
+    logging.log("{0} total thumbs cleaned up.".format(str(len(images))))
     for id in ids:
         textexe.execute("DELETE FROM sizes WHERE idtexture = ?", (id, ))
         textexe.execute("DELETE FROM texture WHERE id = ?", (id, ))
@@ -592,7 +592,7 @@ def remove_addon(addon, name, over=False, data=True):
         try:
             shutil.rmtree(folder)
         except Exception as e:
-            logging.log("Error removing {0}: {1}".format(addon, str(e)), level=xbmc.LOGNOTICE)
+            logging.log("Error removing {0}: {1}".format(addon, str(e)))
         
         if data:
             remove_addon_data(addon)

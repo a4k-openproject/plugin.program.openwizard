@@ -86,7 +86,7 @@ class Config:
         # Auto Update For Those With No Repo
         self.AUTOUPDATE = uservar.AUTOUPDATE
 
-        # Auto  Install Repo If Not Installed
+        # Auto Install Repo If Not Installed
         self.AUTOINSTALL = uservar.AUTOINSTALL
         self.REPOID = uservar.REPOID
         self.REPOADDONXML = uservar.REPOADDONXML
@@ -279,7 +279,7 @@ class Config:
     def clear_setting(self, type):
         build = {'buildname': '', 'buildversion': '', 'buildtheme': '', 'latestversion': '',
                  'lastbuildcheck': '2016-01-01'}
-        install = {'installed': 'false', 'extract': '', 'errors': ''}
+        install = {'installed': '', 'extract': '', 'errors': ''}
         default = {'defaultskinignore': 'false', 'defaultskin': '', 'defaultskinname': ''}
         lookfeel = ['default.enablerssfeeds', 'default.font', 'default.rssedit', 'default.skincolors',
                     'default.skintheme',
