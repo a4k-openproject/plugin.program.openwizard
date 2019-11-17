@@ -513,7 +513,7 @@ def trakt_menu():
                 else:
                     directory.add_file('[COLOR red]Saved Data: Not Saved[/COLOR]', {'mode': 'savetrakt', 'name': trakt}, icon=icon, fanart=fanart, menu=menu2)
             else:
-                directory.add_file('[COLOR springgreen]Saved Data: {0}[/COLOR]'.format(user), '', icon=icon, fanart=fanart, menu=menu2)
+                directory.add_file('[COLOR springgreen]Saved Data: {0}[/COLOR]'.format(user), icon=icon, fanart=fanart, menu=menu2)
 
     directory.add_separator()
     directory.add_file('Save All Trakt Data', {'mode': 'savetrakt', 'name': 'all'}, icon=CONFIG.ICONTRAKT, themeit=CONFIG.THEME3)
