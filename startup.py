@@ -47,10 +47,15 @@ def auto_install_repo():
         response = tools.open_url(CONFIG.REPOADDONXML)
 
         if response:
-            ver = tools.parse_dom(response.text, 'addon', ret='version', attrs={'id': CONFIG.REPOID})
-            if len(ver) > 0:
-                installzip = '{0}-{1}.zip'.format(CONFIG.REPOID, ver[0])
-                repo_response = tools.open_url(CONFIG.REPOZIPURL + installzip)
+            from xml.etree import ElementTree
+            
+            root = ElementTree.fromstring(response.text)
+            repoaddon = root.findall('addon')
+            repoversion = [tag.get('version') for tag in repoaddon if tag.get('id') == CONFIG.REPOID]
+            
+            if repoversion:
+                installzip = '{0}-{1}.zip'.format(CONFIG.REPOID, repoversion[0])
+                repo_response = tools.open_url(CONFIG.REPOZIPURL + installzip, check=True)
 
                 if repo_response:
                     progress_dialog = xbmcgui.DialogProgress()
@@ -69,11 +74,13 @@ def auto_install_repo():
 
                     try:
                         repoxml = os.path.join(CONFIG.ADDONS, CONFIG.REPOID, 'addon.xml')
-                        name = tools.parse_dom(tools.read_from_file(repoxml), 'addon', ret='name',
-                                               attrs={'id': CONFIG.REPOID})
-                        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name[0]),
+                        root = ElementTree.parse(repoxml).getroot()
+                        reponame = root.get('name')
+                        
+                        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, reponame),
                                            "[COLOR {0}]Add-on updated[/COLOR]".format(CONFIG.COLOR2),
                                            icon=os.path.join(CONFIG.ADDONS, CONFIG.REPOID, 'icon.png'))
+                                           
                     except Exception as e:
                         logging.log(str(e), level=xbmc.LOGERROR)
 
@@ -305,7 +312,8 @@ def check_for_video():
 # Don't run the script while video is playing :)
 check_for_video()
 # Stop this script if it's been run more than once
-stop_if_duplicate()
+if CONFIG.KODIV < 18:
+    stop_if_duplicate()
 # Ensure that the wizard's name matches its folder
 check.check_paths()
 # Ensure that any needed folders are created
