@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.program.openwizard" name="[COLOR limegreen][B]Open[/B][/COLOR]Wizard" version="1.0.1" provider-name="drinfernoo">
+<addon id="plugin.program.openwizard" name="[COLOR limegreen][B]Open[/B][/COLOR]Wizard" version="1.0.2" provider-name="drinfernoo">
     <requires>
         <import addon="xbmc.python" version="2.1.0" />
         <import addon="script.module.requests" />
@@ -26,6 +26,9 @@
          - Fix main menu not opening on Krypton
          - Fix notification timeout
          - Fix crash in Trakt menu
+        1.0.2
+         - Fix crash in login menu
+         - Fix auto install repo
         </news>
     </extension>
 </addon>
