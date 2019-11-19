@@ -170,6 +170,7 @@ class BuildMenu:
             
             updatecheck = CONFIG.BUILDNAME == name and version > CONFIG.BUILDVERSION
             versioncheck = True if float(CONFIG.KODIV) == float(kodi) else False
+            infocheck = tools.open_url(info, check=True)
             previewcheck = tools.open_url(preview, check=True)
             guicheck = tools.open_url(gui, check=True)
             themecheck = tools.open_url(themefile, check=True)
@@ -201,7 +202,21 @@ class BuildMenu:
             if guicheck:
                 directory.add_file('Apply guiFix', {'mode': 'install', 'action': 'gui', 'name': name}, description=description, fanart=fanart,
                                    icon=icon, themeit=CONFIG.THEME1)
-                                   
+            
+            if infocheck:
+            
+                info_link = tools.open_url(info)
+                try:
+                    tname, extracted, zipsize, skin, created, programs, video, music, picture, repos, scripts, binaries = check.check_info(info_link.text)
+                    
+                    logging.log('{0}'.format(binaries))
+                    
+                    if binaries is not 'none':
+                        directory.add_file('Restore Platform-Specific Addons', {'mode': 'restorebinaries'}, description=description, fanart=fanart,
+                                   icon=icon, themeit=CONFIG.THEME1)
+                except:
+                    pass
+            
             if themecheck:
                 directory.add_separator('THEMES', fanart=fanart, icon=icon)
 
