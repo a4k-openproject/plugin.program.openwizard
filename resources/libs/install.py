@@ -39,6 +39,22 @@ def wipe():
     from resources.libs.common import tools
     from resources.libs import update
 
+    if CONFIG.KEEPTRAKT == 'true':
+        from resources.libs import traktit
+
+        traktit.auto_update('all')
+        CONFIG.set_setting('traktlastsave', str(tools.get_date(days=3)))
+    if CONFIG.KEEPDEBRID == 'true':
+        from resources.libs import debridit
+
+        debridit.auto_update('all')
+        CONFIG.set_setting('debridlastsave', str(tools.get_date(days=3)))
+    if CONFIG.KEEPLOGIN == 'true':
+        from resources.libs import loginit
+
+        loginit.auto_update('all')
+        CONFIG.set_setting('loginlastsave', str(tools.get_date(days=3)))
+
     exclude_dirs = CONFIG.EXCLUDES
     exclude_dirs.append('My_Builds')
     

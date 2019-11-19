@@ -40,6 +40,20 @@ class Wizard:
         self.dialog = xbmcgui.Dialog()
         self.dialogProgress = xbmcgui.DialogProgress()
 
+    def _prompt_for_wipe(self):
+        dialog = xbmcgui.Dialog()
+
+        # Should we wipe first?
+        yes = dialog.yesno(CONFIG.ADDONTITLE,
+                           "[COLOR {0}]Do you wish to restore your".format(CONFIG.COLOR2),
+                           "Kodi configuration to default settings",
+                           "Before installing the build backup?[/COLOR]",
+                           nolabel='[B][COLOR red]No[/COLOR][/B]',
+                           yeslabel='[B][COLOR springgreen]Yes[/COLOR][/B]')
+        if yes:
+            from resources.libs import install
+            install.wipe()
+
     def build(self, action, name, over=False):
         if action == 'normal':
             if CONFIG.KEEPTRAKT == 'true':
@@ -92,7 +106,7 @@ class Wizard:
 
             self.dialogProgress.create(CONFIG.ADDONTITLE, '[COLOR {0}][B]Downloading:[/B][/COLOR] [COLOR {1}]{2} v{3}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name, check.check_build(name, 'version')), '', 'Please Wait')
 
-            lib = os.path.join(CONFIG.PACKAGES, '{0}.zip'.format(zipname))
+            lib = os.path.join(CONFIG.MYBUILDS, '{0}.zip'.format(zipname))
             
             try:
                 os.remove(lib)
@@ -111,9 +125,7 @@ class Wizard:
                 return
                 
             if action == 'fresh':
-                from resources.libs import install
-                install.fresh_start(name)
-                return
+                self._prompt_for_wipe()
                 
             skin.look_and_feel_data('save')
             skin.skin_to_default('Build Install')
