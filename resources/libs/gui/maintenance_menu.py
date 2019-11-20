@@ -21,8 +21,8 @@ import xbmc
 
 import os
 
+from resources.libs.common import directory
 from resources.libs.common.config import CONFIG
-from resources.libs.gui import directory
 
 
 class MaintenanceMenu:

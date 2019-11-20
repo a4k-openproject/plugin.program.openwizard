@@ -22,12 +22,8 @@ import xbmcgui
 
 import os
 
-try:  # Python 3
-    from urllib.parse import quote_plus
-except ImportError:  # Python 2
-    from urllib import quote_plus
-
 from resources.libs.common.config import CONFIG
+from resources.libs.common import directory
 from resources.libs.common import logging
 from resources.libs.common import tools
 from resources.libs.gui import window

@@ -34,8 +34,9 @@ except ImportError:  # Python 2
     from urllib import urlretrieve
     from urlparse import urljoin
 
+from resources.libs.common import directory
 from resources.libs.common.config import CONFIG
-from resources.libs.gui import directory
+
 
 ###########################
 #      Menu Items         #
