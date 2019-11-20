@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window type="dialog">
+    <defaultcontrol>104</defaultcontrol>
+    <coordinates>
+        <left>0</left>
+        <top>0</top>
+    </coordinates>
+    
+    <controls>
+
+        <!-- Background -->
+        <control type="image">
+            <texture>Background/white.png</texture>
+            <colordiffuse>FF181818</colordiffuse>
+        </control>
+    
+        <control type="group">
+            
+            <!-- Header -->
+            <control type="group">
+                <width>1920</width>
+                <height>80</height>
+                
+                <control type="image">
+                    <texture>Background/white.png</texture>
+                    <colordiffuse>$INFO[Window().Property(texture.color1)]</colordiffuse>
+                </control>
+                
+                <!-- Label -->
+                <control type="label" id="101">
+                    <align>center</align>
+                    <aligny>center</aligny>
+                    <label>[COLOR $INFO[Window().Property(texture.color2)]]$INFO[Window().Property(message.title)][/COLOR]</label>
+                </control>
+            </control>
+            
+            <!-- Side Buttons -->
+            <control type="grouplist" id="104">
+                <onright>105</onright>
+                <top>96</top>
+                <left>16</left>
+                <width>240</width>
+                <height>952</height>
+                <itemgap>16</itemgap>
+                <defaultcontrol>201</defaultcontrol>
+                
+                <control type="button" id="201">
+                    <align>center</align>
+                    <height>80</height>
+                    <textcolor>FFFFFFFF</textcolor>
+                    <focusedcolor>$INFO[Window().Property(texture.color2)]</focusedcolor>
+                    <texturefocus colordiffuse="$INFO[Window().Property(texture.color1)]">Background/white.png</texturefocus>
+                    <texturenofocus colordiffuse="FF282828">Background/white.png</texturenofocus>
+                    <label>Close</label>
+                </control>
+            </control>
+            
+            <!-- Center Panel -->
+            <control type="group">
+                <left>256</left>
+                <top>96</top>
+
+                <!-- Buffer Mode -->
+                <control type="group">
+                    <width>240</width>
+                    <height>80</height>
+                    <onleft>104</onleft>
+
+                    <control type="label">
+                            <label>Buffer Mode</label>
+                    </control>
+
+                    <control type="radiobutton" id="105">
+                        <left>8</left>
+                        <top>16</top>
+                        <label>Buffer all</label>
+                    </control>
+
+                    <control type="radiobutton" id="105">
+                        <left>48</left>
+                        <top>56</top>
+                        <label>Buffer some</label>
+                    </control>
+
+                    <control type="radiobutton" id="105">
+                        <left>88</left>
+                        <top>96</top>
+                        <label>Buffer the rest</label>
+                    </control>
+
+                    <control type="radiobutton" id="105">
+                        <left>128</left>
+                        <top>136</top>
+                        <label>Buffer everything</label>
+                    </control>
+                </control>
+            </control>
+        </control>
+    </controls>
+</window>

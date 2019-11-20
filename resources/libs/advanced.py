@@ -87,7 +87,115 @@ class Advanced:
             f.write('</advancedsettings>\n')
         f.close()
 
-    def quick_configure(self, msg='', TxtColor='0xFFFFFFFF', Font='font12', BorderWidth=10):
+    def quick_configure(self, window_title='Advanced Settings Configurator'):
+        class AdvancedConfigurator(xbmcgui.WindowXMLDialog):
+            def __init__(self, xmlFilename, scriptPath, *args, **kwargs):
+                self.buffermode = 0
+                self.memorysize = 0
+                self.bufferfactor = 4
+                self.curlclienttimeout = 10
+                self.curllowspeedtime = 20
+
+            def onInit(self):
+                self.setProperty('texture.color1', CONFIG.COLOR1)
+                self.setProperty('texture.color2', CONFIG.COLOR2)
+                self.setProperty('message.title', window_title)
+
+            # def updateCurrent(self, control):
+            #     if control == self.videoCacheSize:
+            #         self.currentVideo = (self.videomax) * self.videoCacheSize.getPercent() / 100
+            #         current = '[COLOR {0}]Current:[/COLOR] [COLOR {1}]{2} MB[/COLOR]'.format(CONFIG.COLOR1,
+            #                                                                                  CONFIG.COLOR2,
+            #                                                                                  int(self.currentVideo))
+            #         self.currentVideo1.setText(current)
+            #
+            #     elif control == self.CURLTimeout:
+            #         self.currentCurl = (self.curlmax) * self.CURLTimeout.getPercent() / 100
+            #         current = '[COLOR {0}]Current:[/COLOR] [COLOR {1}]{2}s[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2,
+            #                                                                                int(self.currentCurl))
+            #         self.currentCurl2.setText(current)
+            #
+            #     elif control == self.readBufferFactor:
+            #         self.currentRead = (self.readmax) * self.readBufferFactor.getPercent() / 100
+            #         current = '[COLOR {0}]Current:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2,
+            #                                                                               int(self.currentRead))
+            #         self.currentRead3.setText(current)
+            #
+            #     elif control in [self.Button0, self.Button1, self.Button2, self.Button3]:
+            #         self.Button0.setSelected(False)
+            #         self.Button1.setSelected(False)
+            #         self.Button2.setSelected(False)
+            #         self.Button3.setSelected(False)
+            #         control.setSelected(True)
+            #
+            # def doWrite(self):
+            #     if self.Button0.isSelected():
+            #         buffermode = 0
+            #     elif self.Button1.isSelected():
+            #         buffermode = 1
+            #     elif self.Button2.isSelected():
+            #         buffermode = 2
+            #     elif self.Button3.isSelected():
+            #         buffermode = 3
+            #     if os.path.exists(CONFIG.ADVANCED):
+            #         choice = self.dialog.yesno(CONFIG.ADDONTITLE,
+            #                                    "[COLOR {0}]There is currently an active [COLOR {1}]advancedsettings.xml[/COLOR], would you like to remove it and continue?[/COLOR]".format(
+            #                                        CONFIG.COLOR2, CONFIG.COLOR1),
+            #                                    yeslabel="[B][COLOR springgreen]Remove Settings[/COLOR][/B]",
+            #                                    nolabel="[B][COLOR red]Cancel Write[/COLOR][/B]")
+            #         if choice == 0:
+            #             return
+            #         try:
+            #             os.remove(CONFIG.ADVANCED)
+            #         except:
+            #             f = open(CONFIG.ADVANCED, 'w');
+            #             f.close()
+            #
+            #     with open(CONFIG.ADVANCED, 'w+') as f:
+            #         f.write('<advancedsettings>\n')
+            #         f.write('	<cache>\n')
+            #         f.write('		<buffermode>%s</buffermode>\n' % buffermode)
+            #         f.write('		<memorysize>%s</memorysize>\n' % int(self.currentVideo * 1024 * 1024))
+            #         f.write('		<readfactor>%s</readfactor>\n' % self.currentRead)
+            #         f.write('	</cache>\n')
+            #         f.write('	<network>\n')
+            #         f.write('		<curlclienttimeout>%s</curlclienttimeout>\n' % self.currentCurl)
+            #         f.write('		<curllowspeedtime>%s</curllowspeedtime>\n' % self.currentCurl)
+            #         f.write('	</network>\n')
+            #         f.write('</advancedsettings>\n')
+            #
+            #     self.close()
+            #
+            # def onControl(self, control):
+            #     if control == self.buttonWrite:
+            #         self.doWrite()
+            #     elif control == self.buttonCancel:
+            #         self.close()
+            #
+            # def onAction(self, action):
+            #     try:
+            #         F = self.getFocus()
+            #     except:
+            #         F = False
+            #     if F == self.videoCacheSize:
+            #         self.updateCurrent(self.videoCacheSize)
+            #     elif F == self.CURLTimeout:
+            #         self.updateCurrent(self.CURLTimeout)
+            #     elif F == self.readBufferFactor:
+            #         self.updateCurrent(self.readBufferFactor)
+            #     elif F in [self.Button0, self.Button1, self.Button2, self.Button3] and action in [
+            #         window.ACTION_MOUSE_LEFT_CLICK, window.ACTION_SELECT_ITEM]:
+            #         self.updateCurrent(F)
+            #     elif action == window.ACTION_PREVIOUS_MENU:
+            #         self.close()
+            #     elif action == window.ACTION_NAV_BACK:
+            #         self.close()
+
+        dialog = AdvancedConfigurator("advanced_configurator.xml", CONFIG.ADDON_PATH, 'Default')
+        dialog.doModal()
+        del dialog
+
+    def AutoConfig(self, msg='', TxtColor='0xFFFFFFFF', Font='font12', BorderWidth=10):
         class MyWindow(xbmcgui.WindowDialog):
             scr = {}
 
@@ -311,32 +419,20 @@ class Advanced:
                     except:
                         f = open(CONFIG.ADVANCED, 'w');
                         f.close()
-                if CONFIG.KODIV < 17:
-                    with open(CONFIG.ADVANCED, 'w+') as f:
-                        f.write('<advancedsettings>\n')
-                        f.write('	<network>\n')
-                        f.write('		<buffermode>%s</buffermode>\n' % buffermode)
-                        f.write('		<cachemembuffersize>%s</cachemembuffersize>\n' % int(self.currentVideo*1024*1024))
-                        f.write('		<readbufferfactor>%s</readbufferfactor>\n' % self.currentRead)
-                        f.write('		<curlclienttimeout>%s</curlclienttimeout>\n' % self.currentCurl)
-                        f.write('		<curllowspeedtime>%s</curllowspeedtime>\n' % self.currentCurl)
-                        f.write('	</network>\n')
-                        f.write('</advancedsettings>\n')
-                    f.close()
-                else:
-                    with open(CONFIG.ADVANCED, 'w+') as f:
-                        f.write('<advancedsettings>\n')
-                        f.write('	<cache>\n')
-                        f.write('		<buffermode>%s</buffermode>\n' % buffermode)
-                        f.write('		<memorysize>%s</memorysize>\n' % int(self.currentVideo*1024*1024))
-                        f.write('		<readfactor>%s</readfactor>\n' % self.currentRead)
-                        f.write('	</cache>\n')
-                        f.write('	<network>\n')
-                        f.write('		<curlclienttimeout>%s</curlclienttimeout>\n' % self.currentCurl)
-                        f.write('		<curllowspeedtime>%s</curllowspeedtime>\n' % self.currentCurl)
-                        f.write('	</network>\n')
-                        f.write('</advancedsettings>\n')
-                    f.close()
+
+                with open(CONFIG.ADVANCED, 'w+') as f:
+                    f.write('<advancedsettings>\n')
+                    f.write('	<cache>\n')
+                    f.write('		<buffermode>%s</buffermode>\n' % buffermode)
+                    f.write('		<memorysize>%s</memorysize>\n' % int(self.currentVideo*1024*1024))
+                    f.write('		<readfactor>%s</readfactor>\n' % self.currentRead)
+                    f.write('	</cache>\n')
+                    f.write('	<network>\n')
+                    f.write('		<curlclienttimeout>%s</curlclienttimeout>\n' % self.currentCurl)
+                    f.write('		<curllowspeedtime>%s</curllowspeedtime>\n' % self.currentCurl)
+                    f.write('	</network>\n')
+                    f.write('</advancedsettings>\n')
+
                 self.close()
 
 
