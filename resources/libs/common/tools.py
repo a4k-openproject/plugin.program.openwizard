@@ -716,7 +716,7 @@ def open_url(url, stream=False, check=False, cred=None, count=0):
 
     if not url:
         return False
-    
+
     dialog = xbmcgui.Dialog()
     user_agent = {'user-agent': CONFIG.USER_AGENT}
     count = 0
