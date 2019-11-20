@@ -223,13 +223,18 @@ class MaintenanceMenu:
     def tweaks_menu(self):
         from resources.libs.common import tools
 
-        if tools.open_url(CONFIG.ADVANCEDFILE, check=True):
-            directory.add_dir('Advanced Settings', {'mode': 'advancedsetting'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        response = tools.open_url(CONFIG.ADVANCEDFILE, check=True)
+
+        if response:
+            directory.add_dir('Advanced Settings', {'mode': 'advanced_settings'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         else:
+            directory.add_file('Quick Configure AdvancedSettings.xml',
+                               {'mode': 'advanced_settings', 'action': 'quick_configure'},
+                               icon=CONFIG.ICONMAINT,
+                               themeit=CONFIG.THEME3)
             if os.path.exists(CONFIG.ADVANCED):
-                directory.add_file('View Current AdvancedSettings.xml', {'mode': 'currentsettings'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-                directory.add_file('Remove Current AdvancedSettings.xml', {'mode': 'removeadvanced'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-            directory.add_file('Quick Configure AdvancedSettings.xml', {'mode': 'autoadvanced'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+                directory.add_file('View Current AdvancedSettings.xml', {'mode': 'advanced_settings', 'action': 'view_current'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+                directory.add_file('Remove Current AdvancedSettings.xml', {'mode': 'advanced_settings', 'action': 'remove_current'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
 
         directory.add_file('Scan Sources for broken links', {'mode': 'checksources'}, icon=CONFIG.ICONMAINT,
                            themeit=CONFIG.THEME3)

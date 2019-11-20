@@ -12,6 +12,7 @@ from resources.libs.common.config import CONFIG
 from resources.libs.common import logging
 from resources.libs.gui import menu
 
+advanced_settings_mode = 'advanced_settings'
 
 
 class Router:
@@ -333,21 +334,29 @@ class Router:
             from resources.libs import update
             update.force_update()
 
-    # ADVANCED SETTINGS
-    elif mode == 'autoadvanced':  # Advanced Settings AutoConfig
-        from resources.libs import advanced
-        advanced.autoConfig()
-        xbmc.executebuiltin('Container.Refresh()')
-    elif mode == 'removeadvanced':  # Remove Current Advanced Settings
-        from resources.libs import advanced
-        advanced.remove_advanced()
-        xbmc.executebuiltin('Container.Refresh()')
-    elif mode == 'currentsettings':  # View Current Advanced Settings
-        from resources.libs import advanced
-        advanced.view_advanced()
-    elif mode == 'writeadvanced':  # Write New Advanced Settings
-        from resources.libs import advanced
-        advanced.write_advanced(name, url)
+        # ADVANCED SETTINGS
+        elif mode == advanced_settings_mode:
+            from resources.libs import advanced
+
+            self.route = advanced.Advanced()
+            advanced_settings_actions = ['quick_configure', 'view_current', 'remove_current', 'write_advanced']
+
+            if not action and not name:
+                self.route.show_menu()
+            elif not action and name:
+                self.route.show_menu(url=name)
+            elif action == advanced_settings_actions[0]:  # Advanced Settings AutoConfig
+                self.route.quick_configure()
+                xbmc.executebuiltin('Container.Refresh()')
+            elif action == advanced_settings_actions[1]:  # View Current Advanced Settings
+                self.route.view_current()
+            elif action == advanced_settings_actions[2]:  # Remove Current Advanced Settings
+                self.route.remove_current()
+                xbmc.executebuiltin('Container.Refresh()')
+            elif action == advanced_settings_actions[3] and url:  # Write New Advanced Settings
+                self.route.write_advanced(name, url)
+
+            return
 
         # SAVE DATA
         elif mode == 'managedata':
