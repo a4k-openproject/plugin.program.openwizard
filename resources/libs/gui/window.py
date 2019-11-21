@@ -295,7 +295,7 @@ def show_save_data_settings():
                 if self.getControl(self.whitelist).isSelected() and not self.whitelistcurrent == 'true':
                     from resources.libs import whitelist
                     whitelist.whitelist('edit')
-
+                
                 self.close()
 
         def onAction(self, action):
@@ -304,6 +304,7 @@ def show_save_data_settings():
 
     fr = FirstRun("FirstRunSaveData.xml", CONFIG.ADDON_PATH, 'Default', current=CONFIG.KEEPWHITELIST)
     fr.doModal()
+    CONFIG.set_setting('first_install', 'false')
     del fr
 
 

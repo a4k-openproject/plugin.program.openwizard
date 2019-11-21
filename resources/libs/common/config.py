@@ -279,7 +279,7 @@ class Config:
     def clear_setting(self, type):
         build = {'buildname': '', 'buildversion': '', 'buildtheme': '', 'latestversion': '',
                  'lastbuildcheck': '2016-01-01'}
-        install = {'installed': '', 'extract': '', 'errors': ''}
+        install = {'extract': '', 'errors': ''}
         default = {'defaultskinignore': 'false', 'defaultskin': '', 'defaultskinname': ''}
         lookfeel = ['default.enablerssfeeds', 'default.font', 'default.rssedit', 'default.skincolors',
                     'default.skintheme',
