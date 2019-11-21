@@ -124,7 +124,7 @@ class Wizard:
                     
                 return
                 
-            if action == 'fresh':
+            if action == 'normal':
                 self._prompt_for_wipe()
                 
             skin.look_and_feel_data('save')
