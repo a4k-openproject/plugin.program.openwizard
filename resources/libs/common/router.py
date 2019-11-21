@@ -186,12 +186,9 @@ def dispatch(paramstring):
     elif mode == 'forceskin':  # Misc Maintenance -> Reload Skin
         xbmc.executebuiltin("ReloadSkin()")
         xbmc.executebuiltin('Container.Refresh()')
-    # elif mode == 'hidepassword':  # Addon Tools -> Hide Passwords on Keyboard Entry
+    # elif mode == 'togglepasswords':  # Addon Tools -> Hide Passwords on Keyboard Entry
     #     from resources.libs import db
-    #     db.hide_password()
-    # elif mode == 'unhidepassword':  # Addon Tools -> Unhide Passwords on Keyboard Entry
-    #     from resources.libs import db
-    #     db.unhide_password()
+    #     db.toggle_password()
     elif mode == 'checksources':  # System Tweaks -> Scan source for broken links
         from resources.libs import check
         check.check_sources()
