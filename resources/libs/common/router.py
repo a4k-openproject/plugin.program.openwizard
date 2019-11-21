@@ -203,6 +203,9 @@ def dispatch(paramstring):
     elif mode == 'whitelist':  # Whitelist Functions
         from resources.libs import whitelist
         whitelist.whitelist(name)
+    elif mode == 'forceupdate':  # Addon Tools -> Force Update Addons
+        from resources.libs import db
+        db.force_check_updates(auto=action == 'auto', over=True)
 
     #  CLEANING
     elif mode == 'oldThumbs':  # Cleaning Tools -> Clear Old Thumbnails
@@ -288,9 +291,6 @@ def dispatch(paramstring):
     elif mode == 'wizardupdate':  # Wizard Update
         from resources.libs import update
         update.wizard_update()
-    elif mode == 'forceupdate':  # Addon Tools -> Force Update Addons
-        from resources.libs import update
-        update.force_update()
 
     # ADVANCED SETTINGS
     elif mode == 'autoadvanced':  # Advanced Settings AutoConfig

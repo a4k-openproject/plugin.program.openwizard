@@ -93,7 +93,7 @@ def latest_db(db):
         return False
         
         
-def force_check_updates(over=False):
+def force_check_updates(auto=False, over=False):
     dbfile = latest_db('Addons')
     dbfile = os.path.join(CONFIG.DATABASE, dbfile)
     sqldb = database.connect(dbfile)
@@ -101,17 +101,20 @@ def force_check_updates(over=False):
     
     if not over:
         logging.log_notify(CONFIG.ADDONTITLE,
-                           '[COLOR {0}]Forcing Check for Updates[/COLOR]'.format(CONFIG.COLOR2))
+                           '[COLOR {0}]Force Checking for Updates[/COLOR]'.format(CONFIG.COLOR2))
     
     installed_repos = sqlexe.execute("SELECT * FROM repo")
     for repo in installed_repos:
-        logging.log('{0}'.format(repo), level=xbmc.LOGDEBUG)
+        logging.log('Force Checking for Updates: {0}'.format(repo), level=xbmc.LOGDEBUG)
         sqlexe.execute("UPDATE repo SET version = ? WHERE addonID = ?", ('0.0.1', repo[1],))
         sqldb.commit()
         
     sqlexe.close()
     
     xbmc.executebuiltin('UpdateAddonRepos')
+
+    if auto:
+        xbmc.executebuiltin('UpdateLocalAddons')
 
 
 def purge_db_file(name):
