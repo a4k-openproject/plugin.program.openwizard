@@ -32,7 +32,7 @@ def force_update(silent=False):
     if not silent:
         from resources.libs.common import logging
 
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            '[COLOR {0}]Forcing Addon Updates[/COLOR]'.format(CONFIG.COLOR2))
 
 
@@ -54,7 +54,7 @@ def wizard_update(startup=None):
             return
         if ver > CONFIG.ADDON_VERSION:
             yes = dialog.yesno(CONFIG.ADDONTITLE,
-                                   '[COLOR {0}]There is a new version of the [COLOR {1}]{2}[/COLOR]!'.format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                                   '[COLOR {0}]There is a new version of the {1}!'.format(CONFIG.COLOR2, CONFIG.ADDONTITLE),
                                    'Would you like to download [COLOR {0}]v{1}[/COLOR]?[/COLOR]'.format(CONFIG.COLOR1, ver),
                                    nolabel='[B][COLOR red]Remind Me Later[/COLOR][/B]',
                                    yeslabel="[B][COLOR springgreen]Update Wizard[/COLOR][/B]")
@@ -79,7 +79,7 @@ def wizard_update(startup=None):
                 xbmc.sleep(1000)
                 force_update()
                 xbmc.sleep(1000)
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                logging.log_notify(CONFIG.ADDONTITLE,
                                    '[COLOR {0}]Add-on updated[/COLOR]'.format(CONFIG.COLOR2))
                 logging.log("[Auto Update Wizard] Wizard updated to v{0}".format(ver))
                 tools.remove_file(os.path.join(CONFIG.ADDONDATA, 'settings.xml'))
@@ -91,7 +91,7 @@ def wizard_update(startup=None):
                 logging.log("[Auto Update Wizard] Install New Wizard Ignored: {0}".format(ver))
         else:
             if not startup:
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                logging.log_notify(CONFIG.ADDONTITLE,
                                    "[COLOR {0}]No New Version of Wizard[/COLOR]".format(CONFIG.COLOR2))
             logging.log("[Auto Update Wizard] No New Version v{0}".format(ver))
     else:

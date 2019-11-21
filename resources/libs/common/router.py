@@ -255,7 +255,7 @@ def dispatch(paramstring):
         from resources.libs.common import tools
 
         tools.clean_house(CONFIG.ADDON_DATA, ignore=True)
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            "[COLOR {0}]Addon_Data reset[/COLOR]".format(CONFIG.COLOR2))
 
     # LOGGING
@@ -274,7 +274,7 @@ def dispatch(paramstring):
     elif mode == 'clearwizlog':  # Clear wizard.log
         from resources.libs.common import tools
         tools.remove_file(CONFIG.WIZLOG)
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            "[COLOR {0}]Wizard Log Cleared![/COLOR]".format(CONFIG.COLOR2))
 
     # BACKUP / RESTORE

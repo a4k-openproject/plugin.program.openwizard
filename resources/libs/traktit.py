@@ -386,7 +386,7 @@ def activate_trakt(who):
         else:
             dialog = xbmcgui.Dialog()
 
-            dialog.ok("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE), '{0} is not currently installed.'.format(TRAKTID[who]['name']))
+            dialog.ok(CONFIG.ADDONTITLE, '{0} is not currently installed.'.format(TRAKTID[who]['name']))
     else:
         xbmc.executebuiltin('Container.Refresh()')
         return

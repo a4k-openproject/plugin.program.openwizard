@@ -42,7 +42,7 @@ class Downloader:
             response = tools.open_url(url, stream=True)
             
             if not response:
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                logging.log_notify(CONFIG.ADDONTITLE,
                                    '[COLOR {0}]Build Install: Invalid Zip Url![/COLOR]'.format(CONFIG.COLOR2))
                 return
             else:

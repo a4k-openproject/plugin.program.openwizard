@@ -100,7 +100,7 @@ def force_check_updates(over=False):
     sqlexe = sqldb.cursor()
     
     if not over:
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            '[COLOR {0}]Forcing Check for Updates[/COLOR]'.format(CONFIG.COLOR2))
     
     installed_repos = sqlexe.execute("SELECT * FROM repo")
@@ -204,7 +204,7 @@ def kodi_17_fix():
                     logging.log("Unable to enable: {0}".format(folder), level=xbmc.LOGERROR)
     if len(disabledAddons) > 0:
         addon_database(disabledAddons, 1, True)
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            "[COLOR {0}]Enabling Addons Complete![/COLOR]".format(CONFIG.COLOR2))
     update.force_update()
     xbmc.executebuiltin("ReloadSkin()")

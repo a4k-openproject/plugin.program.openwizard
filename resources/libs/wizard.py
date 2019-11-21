@@ -180,7 +180,7 @@ class Wizard:
                 from resources.libs.gui import window
                 window.show_text_box("Viewing Build Install Errors", error)
         else:
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+            logging.log_notify(CONFIG.ADDONTITLE,
                                '[COLOR {0}]Build Install: Cancelled![/COLOR]'.format(CONFIG.COLOR2))
 
     def gui(self, name, over=False):
@@ -206,7 +206,7 @@ class Wizard:
 
             response = tools.open_url(guizip, check=True)
             if not response:
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                logging.log_notify(CONFIG.ADDONTITLE,
                                    '[COLOR {0}]GuiFix: Invalid Zip Url![/COLOR]'.format(CONFIG.COLOR2))
                 return
 
@@ -242,7 +242,7 @@ class Wizard:
             self.dialog.ok(CONFIG.ADDONTITLE, "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(CONFIG.COLOR2))
             tools.kill_kodi(over=True)
         else:
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+            logging.log_notify(CONFIG.ADDONTITLE,
                                '[COLOR {0}]GuiFix: Cancelled![/COLOR]'.format(CONFIG.COLOR2))
 
     def theme(self, name, theme, over=False):
@@ -269,15 +269,15 @@ class Wizard:
                             theme = themes[ret]
                             installtheme = True
                         else:
-                            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                            logging.log_notify(CONFIG.ADDONTITLE,
                                                '[COLOR {0}]Theme Install: Cancelled![/COLOR]'.format(CONFIG.COLOR2))
                             return
                     else:
-                        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                        logging.log_notify(CONFIG.ADDONTITLE,
                                            '[COLOR {0}]Theme Install: Cancelled![/COLOR]'.format(CONFIG.COLOR2))
                         return
             else:
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                logging.log_notify(CONFIG.ADDONTITLE,
                                    '[COLOR {0}]Theme Install: None Found![/COLOR]'.format(CONFIG.COLOR2))
         else:
             installtheme = self.dialog.yesno(CONFIG.ADDONTITLE,
@@ -295,7 +295,7 @@ class Wizard:
 
             response = tools.open_url(themezip, check=True)
             if not response:
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                logging.log_notify(CONFIG.ADDONTITLE,
                                    '[COLOR {0}]Theme Install: Invalid Zip Url![/COLOR]'.format(CONFIG.COLOR2))
                 return False
 
@@ -370,5 +370,5 @@ class Wizard:
                 xbmc.sleep(1000)
                 xbmc.executebuiltin("Container.Refresh()")
         else:
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+            logging.log_notify(CONFIG.ADDONTITLE,
                                '[COLOR {0}]Theme Install: Cancelled![/COLOR]'.format(CONFIG.COLOR2))

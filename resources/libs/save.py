@@ -42,7 +42,7 @@ def import_save_data():
     source = dialog.browse(1, '[COLOR {0}]Select the location of the SaveData.zip[/COLOR]'.format(CONFIG.COLOR2),
                                'files', '.zip', False, False, CONFIG.HOME)
     if not source.endswith('.zip'):
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            "[COLOR {0}]Import Data Error![/COLOR]".format(CONFIG.COLOR2))
         return
     source = xbmc.translatePath(source)
@@ -53,7 +53,7 @@ def import_save_data():
     from resources.libs import extract
     if not extract.all(xbmc.translatePath(tempfile), TEMP):
         logging.log("Error trying to extract the zip file!")
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            "[COLOR {0}]Import Data Error![/COLOR]".format(CONFIG.COLOR2))
         return
 
@@ -176,10 +176,10 @@ def import_save_data():
     if not tempfile == source:
         xbmcvfs.delete(tempfile)
     if x == 0:
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            "[COLOR {0}]Save Data Import Failed[/COLOR]".format(CONFIG.COLOR2))
     else:
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            "[COLOR {0}]Save Data Import Complete[/COLOR]".format(CONFIG.COLOR2))
 
 

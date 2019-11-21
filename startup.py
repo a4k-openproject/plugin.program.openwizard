@@ -78,7 +78,7 @@ def auto_install_repo():
                         root = ElementTree.parse(repoxml).getroot()
                         reponame = root.get('name')
                         
-                        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, reponame),
+                        logging.log_notify("{1}".format(CONFIG.COLOR1, reponame),
                                            "[COLOR {0}]Add-on updated[/COLOR]".format(CONFIG.COLOR2),
                                            icon=os.path.join(CONFIG.ADDONS, CONFIG.REPOID, 'icon.png'))
                                            

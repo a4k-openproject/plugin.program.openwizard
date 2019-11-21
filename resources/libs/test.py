@@ -65,14 +65,14 @@ def test_notify():
         try:
             id, msg = window.split_notify(CONFIG.NOTIFICATION)
             if not id:
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                logging.log_notify(CONFIG.ADDONTITLE,
                                    "[COLOR {0}]Notification: Not Formatted Correctly[/COLOR]".format(CONFIG.COLOR2))
                 return
             window.show_notification(msg, True)
         except Exception as e:
             logging.log("Error on Notifications Window: {0}".format(str(e)), level=xbmc.LOGERROR)
     else:
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            "[COLOR {0}]Invalid URL for Notification[/COLOR]".format(CONFIG.COLOR2))
 
 

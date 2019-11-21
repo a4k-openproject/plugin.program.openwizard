@@ -200,7 +200,7 @@ class Restore:
                                          CONFIG.COLOR2),
                                      'files', mask='.zip', useThumbs=True, defaultt=CONFIG.MYBUILDS)
             if not file.endswith('.zip'):
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                logging.log_notify(CONFIG.ADDONTITLE,
                                    "[COLOR {0}]Local Restore: Cancelled[/COLOR]".format(CONFIG.COLOR2))
                 return
 
@@ -218,13 +218,13 @@ class Restore:
                                            CONFIG.COLOR2),
                                        '', mask='.zip', useThumbs=True)
             if not source.endswith('.zip'):
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                logging.log_notify(CONFIG.ADDONTITLE,
                                    "[COLOR {0}]External Restore: Cancelled[/COLOR]".format(CONFIG.COLOR2))
                 return
 
             response = tools.open_url(source, check=True)
             if not response:
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                logging.log_notify(CONFIG.ADDONTITLE,
                                    "[COLOR {0}]External Restore: Invalid URL[/COLOR]".format(CONFIG.COLOR2))
                 return
 
