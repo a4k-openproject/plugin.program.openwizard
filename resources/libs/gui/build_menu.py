@@ -35,16 +35,6 @@ from resources.libs.gui import directory
 
 class BuildMenu:
 
-    def __init__(self):
-        self.bf = None
-        self.link = None
-        
-        response = tools.open_url(CONFIG.BUILDFILE)
-
-        if response:
-            self.bf = response.text
-            self.link = tools.clean_text(self.bf)
-
     def _list_all(self, match, kodiv=None):
         from resources.libs import test
 
@@ -91,8 +81,11 @@ class BuildMenu:
     def get_listing(self):
         from resources.libs import test
         
-        # if BUILDFILE is a bad URL
-        if not self.bf:
+        response = tools.open_url(CONFIG.BUILDFILE)
+        
+        if response:
+            link = tools.clean_text(response.text)
+        else:
             directory.add_file('Kodi Version: {0}'.format(CONFIG.KODIV), icon=CONFIG.ICONBUILDS,
                                themeit=CONFIG.THEME3)
             directory.add_dir('Save Data Menu', {'mode': 'savedata'}, icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME3)
@@ -103,7 +96,7 @@ class BuildMenu:
 
         total, count17, count18, count19, adultcount, hidden = check.build_count()
 
-        match = re.compile('name="(.+?)".+?ersion="(.+?)".+?rl="(.+?)".+?ui="(.+?)".+?odi="(.+?)".+?heme="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"').findall(self.link)
+        match = re.compile('name="(.+?)".+?ersion="(.+?)".+?rl="(.+?)".+?ui="(.+?)".+?odi="(.+?)".+?heme="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"').findall(link)
         
         if total == 1:
             for name, version, url, gui, kodi, theme, icon, fanart, adult, description in match:
@@ -157,7 +150,11 @@ class BuildMenu:
 
     def view_build(self, name):
     
-        if not self.bf:
+        response = tools.open_url(CONFIG.BUILDFILE)
+        
+        if response:
+            link = tools.clean_text(response.text)
+        else:
             directory.add_file('URL for txt file not valid', themeit=CONFIG.THEME3)
             directory.add_file('{0}'.format(CONFIG.BUILDFILE), themeit=CONFIG.THEME3)
             return
@@ -169,7 +166,7 @@ class BuildMenu:
 
         match = re.compile(
             'name="%s".+?ersion="(.+?)".+?rl="(.+?)".+?ui="(.+?)".+?odi="(.+?)".+?heme="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?review="(.+?)".+?dult="(.+?)".+?nfo="(.+?)".+?escription="(.+?)"' % name).findall(
-            self.link)
+            link)
             
         for version, url, gui, kodi, themefile, icon, fanart, preview, adult, info, description in match:
             build = '{0} (v{1})'.format(name, version)
@@ -213,8 +210,8 @@ class BuildMenu:
 
                 response = tools.open_url(themefile)
                 theme = response.text
-                link = tools.clean_text(theme)
-                match = re.compile('name="(.+?)".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"').findall(link)
+                themelink = tools.clean_text(theme)
+                match = re.compile('name="(.+?)".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"').findall(themelink)
                 for themename, themeurl, themeicon, themefanart, themeadult, description in match:
                     adultcheck = CONFIG.SHOWADULT != 'true' and themeadult.lower() == 'yes'
                     
@@ -234,16 +231,18 @@ class BuildMenu:
         from resources.libs.common import tools
         from resources.libs.gui import window
         
-        if self.bf:
+        response = tools.open_url(CONFIG.BUILDFILE, check=True)
+        
+        if response:
             if check.check_build(name, 'url'):
                 name, version, url, minor, gui_ignore, kodi, theme, icon, fanart, preview, adult, info, description = check.check_build(name, 'all')
                 adult = 'Yes' if adult.lower() == 'yes' else 'No'
 
-                response = tools.open_url(info)
+                info_response = tools.open_url(info)
 
-                if response:
+                if info_response:
                     try:
-                        tname, extracted, zipsize, skin, created, programs, video, music, picture, repos, scripts, binaries = check.check_info(response.text)
+                        tname, extracted, zipsize, skin, created, programs, video, music, picture, repos, scripts, binaries = check.check_info(info_response.text)
                         extend = True
                     except:
                         extend = False
@@ -285,7 +284,9 @@ class BuildMenu:
         from resources.libs.common import logging
         from resources.libs.common import tools
         
-        if self.bf:
+        response = tools.open_url(CONFIG.BUILDFILE, check=True)
+        
+        if response:
             videofile = check.check_build(name, 'preview')
             if tools.open_url(videofile, check=True):
                 yt.play_video(videofile)
