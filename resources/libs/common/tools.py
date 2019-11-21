@@ -714,10 +714,13 @@ def _check_url(url, cred):
 def open_url(url, stream=False, check=False, cred=None, count=0):
     import requests
 
+    if not url:
+        return False
+    
     dialog = xbmcgui.Dialog()
     user_agent = {'user-agent': CONFIG.USER_AGENT}
     count = 0
-
+    
     valid = _check_url(url, cred)
 
     if not valid:
