@@ -450,7 +450,7 @@ def QautoConfig(msg='', TxtColor='0xFFFFFFFF', Font='font10', BorderWidth=10):
                     f.write('	</network>\n')
                     f.write('</advancedsettings>\n')
                 f.close()
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                logging.log_notify(CONFIG.ADDONTITLE,
                                    '[COLOR {0}]advancedsettings.xml has been written[/COLOR]'.format(CONFIG.COLOR2))
             self.close()
 
@@ -510,12 +510,12 @@ def write_advanced(name, url):
             tools.kill_kodi(over=True)
         else:
             logging.log("[Advanced Settings] install canceled")
-            logging.log_notify('[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+            logging.log_notify(CONFIG.ADDONTITLE,
                                "[COLOR {0}]Write Cancelled![/COLOR]".format(CONFIG.COLOR2))
             return
     else:
         logging.log("[Advanced Settings] URL not working: {0}".format(url))
-        logging.log_notify('[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            "[COLOR {0}]URL Not Working[/COLOR]".format(CONFIG.COLOR2))
 
 
@@ -533,6 +533,6 @@ def remove_advanced():
     if os.path.exists(CONFIG.ADVANCED):
         tools.remove_file(CONFIG.ADVANCED)
     else:
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            "[COLOR {0}]AdvancedSettings.xml not found[/COLOR]".format(CONFIG.COLOR2))
 

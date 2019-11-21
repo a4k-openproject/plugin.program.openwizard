@@ -151,7 +151,7 @@ def all_with_progress(_in, _out, dp, ignore, title):
             
     if dp.iscanceled():
         dp.close()
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            "[COLOR {0}]Extract Cancelled[/COLOR]".format(CONFIG.COLOR2))
         sys.exit()
         

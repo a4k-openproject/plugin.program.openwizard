@@ -166,17 +166,17 @@ def clear_packages(over=None):
                             os.unlink(os.path.join(root, f))
                         for d in dirs:
                             shutil.rmtree(os.path.join(root, d))
-                        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                        logging.log_notify(CONFIG.ADDONTITLE,
                                   '[COLOR {0}]Clear Packages: Success![/COLOR]'.format(CONFIG.COLOR2))
                 else:
-                    logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                    logging.log_notify(CONFIG.ADDONTITLE,
                               '[COLOR {0}]Clear Packages: None Found![/COLOR]'.format(CONFIG.COLOR2))
         except Exception as e:
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+            logging.log_notify(CONFIG.ADDONTITLE,
                       '[COLOR {0}]Clear Packages: Error![/COLOR]'.format(CONFIG.COLOR2))
             logging.log("Clear Packages Error: {0}".format(str(e)), level=xbmc.LOGERROR)
     else:
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                   '[COLOR {0}]Clear Packages: None Found![/COLOR]'.format(CONFIG.COLOR2))
 
 
@@ -207,17 +207,17 @@ def clear_packages_startup():
                         except Exception as e:
                             logging.log("Failed to remove {0}: {1}".format(file, str(e), xbmc.LOGERROR))
             if file_count > 0:
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                logging.log_notify(CONFIG.ADDONTITLE,
                           '[COLOR {0}]Clear Packages: Success: {1}[/COLOR]'.format(CONFIG.COLOR2, tools.convert_size(cleanupsize)))
             else:
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                logging.log_notify(CONFIG.ADDONTITLE,
                           '[COLOR {0}]Clear Packages: None Found![/COLOR]'.format(CONFIG.COLOR2))
         except Exception as e:
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+            logging.log_notify(CONFIG.ADDONTITLE,
                       '[COLOR {0}]Clear Packages: Error![/COLOR]'.format(CONFIG.COLOR2))
             logging.log("Clear Packages Error: {0}".format(str(e)), level=xbmc.LOGERROR)
     else:
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                   '[COLOR {0}]Clear Packages: None Found![/COLOR]'.format(CONFIG.COLOR2))
 
 
@@ -402,7 +402,7 @@ def clear_cache(over=None):
                         textexe.close()
         else:
             logging.log("Clear Cache: Clear Video Cache Not Enabled")
-    logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+    logging.log_notify(CONFIG.ADDONTITLE,
                        '[COLOR {0}]Clear Cache: Removed {1} Files[/COLOR]'.format(CONFIG.COLOR2, delfiles))
 
 
@@ -452,10 +452,10 @@ def old_thumbs():
             pass
     removed = tools.convert_size(size)
     if len(images) > 0:
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            '[COLOR {0}]Clear Thumbs: {1} Files / {2} MB[/COLOR]!'.format(CONFIG.COLOR2, str(len(images)), removed))
     else:
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            '[COLOR {0}]Clear Thumbs: None Found![/COLOR]'.format(CONFIG.COLOR2))
 
 
@@ -476,7 +476,7 @@ def clear_crash():
             logging.log_notify('[COLOR {0}]Clear Crash Logs[/COLOR]'.format(CONFIG.COLOR1),
                                '[COLOR {0}]{1} Crash Logs Removed[/COLOR]'.format(CONFIG.COLOR2, len(files)))
         else:
-            logging.log_notify('[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+            logging.log_notify(CONFIG.ADDONTITLE,
                                '[COLOR {0}]Clear Crash Logs Cancelled[/COLOR]'.format(CONFIG.COLOR2))
     else:
         logging.log_notify('[COLOR {0}]Clear Crash Logs[/COLOR]'.format(CONFIG.COLOR1),
@@ -485,7 +485,7 @@ def clear_crash():
 
 def force_text():
     tools.clean_house(CONFIG.TEXTCACHE)
-    logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+    logging.log_notify(CONFIG.ADDONTITLE,
                        '[COLOR {0}]Text Files Flushed![/COLOR]'.format(CONFIG.COLOR2))
 
 
@@ -600,7 +600,7 @@ def remove_addon(addon, name, over=False, data=True):
         return True
             
     if not over:
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            "[COLOR {0}]{1} Removed[/COLOR]".format(CONFIG.COLOR2, name))
 
 
@@ -709,7 +709,7 @@ def remove_addon_menu():
                 pass
                 
     if len(addonnames) == 0:
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            "[COLOR {0}]No Addons To Remove[/COLOR]".format(CONFIG.COLOR2))
         return
     selected = dialog.multiselect("{0}: Select the addons you wish to remove.".format(CONFIG.ADDONTITLE), addonnames)

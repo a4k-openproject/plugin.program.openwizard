@@ -314,7 +314,7 @@ def auto_update(who):
             elif not u == su:
                 dialog = xbmcgui.Dialog()
 
-                if dialog.yesno("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                if dialog.yesno(CONFIG.ADDONTITLE,
                                     "[COLOR {0}]Would you like to save the [COLOR {1}]Debrid Info[/COLOR] for [COLOR {2}]{3}[/COLOR]?".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1, n),
                                     "Addon: [COLOR springgreen][B]{0}[/B][/COLOR]".format(u),
                                     "Saved:[/COLOR] [COLOR red][B]{0}[/B][/COLOR]".format(su) if not su == '' else 'Saved:[/COLOR] [COLOR red][B]None[/B][/COLOR]',
@@ -364,7 +364,7 @@ def activate_debrid(who):
         else:
             dialog = xbmcgui.Dialog()
 
-            dialog.ok("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+            dialog.ok(CONFIG.ADDONTITLE,
                           '{0} is not currently installed.'.format(DEBRIDID[who]['name']))
     else:
         xbmc.executebuiltin('Container.Refresh()')

@@ -30,5 +30,9 @@
          - Fix crash in login menu
          - Fix auto install repo
         </news>
+        <assets>
+            <icon>icon.png</icon>
+            <fanart>fanart.png</fanart>
+        </assets>
     </extension>
 </addon>

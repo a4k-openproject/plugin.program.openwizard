@@ -277,7 +277,7 @@ def check_sources():
     progress_dialog = xbmcgui.DialogProgress()
     
     if not os.path.exists(CONFIG.SOURCES):
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            "[COLOR {0}]No sources.xml File Found![/COLOR]".format(CONFIG.COLOR2))
         return False
     x = 0
@@ -339,7 +339,7 @@ def check_sources():
             else:
                 logging.log("No Bad Sources to be removed.")
         else:
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+            logging.log_notify(CONFIG.ADDONTITLE,
                                "[COLOR {0}]All Sources Are Working[/COLOR]".format(CONFIG.COLOR2))
     else:
         logging.log("No Sources Found")
@@ -357,7 +357,7 @@ def check_repos():
     repolist = glob.glob(os.path.join(CONFIG.ADDONS, 'repo*'))
     if len(repolist) == 0:
         progress_dialog.close()
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            "[COLOR {0}]No Repositories Found![/COLOR]".format(CONFIG.COLOR2))
         return
     sleeptime = len(repolist)
@@ -373,7 +373,7 @@ def check_repos():
         xbmc.sleep(1000)
     if progress_dialog.iscanceled():
         progress_dialog.close()
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            "[COLOR {0}]Enabling Addons Cancelled[/COLOR]".format(CONFIG.COLOR2))
         sys.exit()
     progress_dialog.close()
@@ -390,7 +390,7 @@ def check_repos():
         msg += '[/COLOR]'
         window.show_text_box("Viewing Broken Repositories", msg)
     else:
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            "[COLOR {0}]All Repositories Working![/COLOR]".format(CONFIG.COLOR2))
 
 

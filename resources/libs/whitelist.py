@@ -128,7 +128,7 @@ def whitelist(do):
                 os.remove(CONFIG.WHITELIST)
             except:
                 pass
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            "[COLOR {0}]{1} Add-ons in whitelist[/COLOR]".format(CONFIG.COLOR2, len(selected)))
     elif do == 'read':
         white_list = []
@@ -153,14 +153,14 @@ def whitelist(do):
                 msg += "[COLOR {0}]{1}[/COLOR] [COLOR {2}]\"{3}\"[/COLOR][CR]".format(CONFIG.COLOR1, name, CONFIG.COLOR2, id)
             window.show_text_box("Viewing Whitelisted Items", msg)
         else:
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+            logging.log_notify(CONFIG.ADDONTITLE,
                                "[COLOR {0}]No items in whitelist[/COLOR]".format(CONFIG.COLOR2))
     elif do == 'import':
         source = dialog.browse(1, '[COLOR {0}]Select the whitelist file to import[/COLOR]'.format(CONFIG.COLOR2),
                                    'files', '.txt', False, False, CONFIG.HOME)
         logging.log(str(source))
         if not source.endswith('.txt'):
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+            logging.log_notify(CONFIG.ADDONTITLE,
                                "[COLOR {0}]Import Cancelled![/COLOR]".format(CONFIG.COLOR2))
             return
         current = whitelist(do='read')
@@ -184,7 +184,7 @@ def whitelist(do):
                     if len(idList) + count > 1:
                         writing = "\n%s" % writing
                     f.write(writing)
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+            logging.log_notify(CONFIG.ADDONTITLE,
                                "[COLOR {0}]{1} Item(s) Added[/COLOR]".format(CONFIG.COLOR2, count))
     elif do == 'export':
         source = dialog.browse(3,
@@ -196,7 +196,7 @@ def whitelist(do):
             dialog.ok(CONFIG.ADDONTITLE,
                           "[COLOR {0}]Whitelist has been exported to:[/COLOR]".format(CONFIG.COLOR2),
                           "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, os.path.join(source, 'whitelist.txt')))
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+            logging.log_notify(CONFIG.ADDONTITLE,
                                "[COLOR {0}]Whitelist Exported[/COLOR]".format(CONFIG.COLOR2))
         except Exception as e:
             logging.log("Export Error: {0}".format(str(e)), level=xbmc.LOGERROR)
@@ -204,7 +204,7 @@ def whitelist(do):
                                     "[COLOR {0}]The location you selected isn\'t writable would you like to select another one?[/COLOR]".format(CONFIG.COLOR2),
                                     yeslabel="[B][COLOR springgreen]Change Location[/COLOR][/B]",
                                     nolabel="[B][COLOR red]No Cancel[/COLOR][/B]"):
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                logging.log_notify(CONFIG.ADDONTITLE,
                                    "[COLOR {0}]Whitelist Export Cancelled[/COLOR]".format(CONFIG.COLOR2, e))
             else:
                 whitelist(do='export')
@@ -214,13 +214,13 @@ def whitelist(do):
                                 "This process can't be undone.[/COLOR]",
                                 yeslabel="[B][COLOR springgreen]Yes Remove[/COLOR][/B]",
                                 nolabel="[B][COLOR red]No Cancel[/COLOR][/B]"):
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+            logging.log_notify(CONFIG.ADDONTITLE,
                                "[COLOR {0}]Clear Whitelist Cancelled[/COLOR]".format(CONFIG.COLOR2))
             return
         try:
             os.remove(CONFIG.WHITELIST)
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+            logging.log_notify(CONFIG.ADDONTITLE,
                                "[COLOR {0}]Whitelist Cleared[/COLOR]".format(CONFIG.COLOR2))
         except:
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+            logging.log_notify(CONFIG.ADDONTITLE,
                                "[COLOR {0}]Error Clearing Whitelist![/COLOR]".format(CONFIG.COLOR2))

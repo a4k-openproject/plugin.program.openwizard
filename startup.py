@@ -55,7 +55,8 @@ def auto_install_repo():
             
             if repoversion:
                 installzip = '{0}-{1}.zip'.format(CONFIG.REPOID, repoversion[0])
-                repo_response = tools.open_url(CONFIG.REPOZIPURL + installzip, check=True)
+                url = CONFIG.REPOZIPURL + installzip
+                repo_response = tools.open_url(url, check=True)
 
                 if repo_response:
                     progress_dialog = xbmcgui.DialogProgress()
@@ -69,7 +70,7 @@ def auto_install_repo():
 
                     from resources.libs.downloader import Downloader
                     from resources.libs import extract
-                    Downloader().download(CONFIG.REPOZIPURL + installzip, lib)
+                    Downloader().download(url, lib)
                     extract.all(lib, CONFIG.ADDONS)
 
                     try:
@@ -77,7 +78,7 @@ def auto_install_repo():
                         root = ElementTree.parse(repoxml).getroot()
                         reponame = root.get('name')
                         
-                        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, reponame),
+                        logging.log_notify("{1}".format(CONFIG.COLOR1, reponame),
                                            "[COLOR {0}]Add-on updated[/COLOR]".format(CONFIG.COLOR2),
                                            icon=os.path.join(CONFIG.ADDONS, CONFIG.REPOID, 'icon.png'))
                                            
@@ -95,7 +96,7 @@ def auto_install_repo():
                     logging.log_notify("[COLOR {0}]Repo Install Error[/COLOR]".format(CONFIG.COLOR1),
                                        "[COLOR {0}]Invalid URL for zip![/COLOR]".format(CONFIG.COLOR2))
                     logging.log("[Auto Install Repo] Was unable to create a working URL for repository. {0}".format(
-                        repo_response.text), level=xbmc.LOGERROR)
+                        url), level=xbmc.LOGERROR)
             else:
                 logging.log("Invalid URL for Repo zip", level=xbmc.LOGERROR)
         else:
@@ -190,15 +191,15 @@ def installed_build_check():
     else:
         logging.log('[Build Installed Check] Install seems to be completed correctly', level=xbmc.LOGNOTICE)
 
-    if CONFIG.KEEPTRAKT == 'true':
+    if CONFIG.get_setting('keeptrakt') == 'true':
         from resources.libs import traktit
         traktit.trakt_it('restore', 'all')
         logging.log('[Build Installed Check] Restoring Trakt Data', level=xbmc.LOGNOTICE)
-    if CONFIG.KEEPDEBRID == 'true':
+    if CONFIG.get_setting('keepdebrid') == 'true':
         from resources.libs import debridit
         debridit.debrid_it('restore', 'all')
         logging.log('[Build Installed Check] Restoring Real Debrid Data', level=xbmc.LOGNOTICE)
-    if CONFIG.KEEPLOGIN == 'true':
+    if CONFIG.get_setting('keeplogin') == 'true':
         from resources.libs import loginit
         loginit.login_it('restore', 'all')
         logging.log('[Build Installed Check] Restoring Login Data', level=xbmc.LOGNOTICE)
@@ -228,7 +229,7 @@ def save_trakt():
         traktit.auto_update('all')
         CONFIG.set_setting('traktlastsave', str(tools.get_date(days=3)))
     else:
-        logging.log("[Trakt Data] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.TRAKTSAVE, str(
+        logging.log("[Trakt Data] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.get_setting('traktlastsave'), str(
             tools.get_date())), level=xbmc.LOGNOTICE)
 
 
@@ -239,7 +240,7 @@ def save_debrid():
         debridit.auto_update('all')
         CONFIG.set_setting('debridlastsave', str(tools.get_date(days=3)))
     else:
-        logging.log("[Debrid Data] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.DEBRIDSAVE, str(
+        logging.log("[Debrid Data] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.get_setting('debridlastsave'), str(
             tools.get_date())), level=xbmc.LOGNOTICE)
 
 
@@ -250,7 +251,7 @@ def save_login():
         loginit.auto_update('all')
         CONFIG.set_setting('loginlastsave', str(tools.get_date(days=3)))
     else:
-        logging.log("[Login Info] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.LOGINSAVE, str(
+        logging.log("[Login Info] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.get_setting('loginlastsave'), str(
             tools.get_date())), level=xbmc.LOGNOTICE)
 
 
@@ -260,12 +261,12 @@ def auto_clean():
 
     freq = int(float(CONFIG.AUTOFREQ))
 
-    if CONFIG.AUTONEXTRUN <= str(tools.get_date()) or freq == 0:
+    if CONFIG.get_setting('nextautocleanup') <= str(tools.get_date()) or freq == 0:
         service = True
         next_run = days[freq]
         CONFIG.set_setting('nextautocleanup', str(next_run))
     else:
-        logging.log("[Auto Clean Up] Next Clean Up {0}".format(CONFIG.AUTONEXTRUN), level=xbmc.LOGNOTICE)
+        logging.log("[Auto Clean Up] Next Clean Up {0}".format(CONFIG.get_setting('nextautocleanup')), level=xbmc.LOGNOTICE)
     if service:
         if CONFIG.AUTOCACHE == 'true':
             logging.log('[Auto Clean Up] Cache: On', level=xbmc.LOGNOTICE)
@@ -321,14 +322,12 @@ tools.ensure_folders()
 
 
 # FIRST RUN SETTINGS
-if CONFIG.FIRSTRUN == 'true':
+if CONFIG.get_setting('first_install') == 'true':
     logging.log("[First Run] Showing Save Data Settings", level=xbmc.LOGNOTICE)
     window.show_save_data_settings()
-
-    CONFIG.set_setting('first_install', 'false')
 else:
     logging.log("[First Run] Skipping Save Data Settings", level=xbmc.LOGNOTICE)
-    
+
 # BUILD INSTALL PROMPT
 if tools.open_url(CONFIG.BUILDFILE, check=True) and CONFIG.get_setting('installed') == '':
     logging.log("[Current Build Check] Build Not Installed", level=xbmc.LOGNOTICE)
@@ -337,11 +336,12 @@ else:
     logging.log("[Current Build Check] Build Installed: {0}".format(CONFIG.BUILDNAME), level=xbmc.LOGNOTICE)
     
 # BUILD UPDATE CHECK
-if CONFIG.BUILDNAME != '' and CONFIG.BUILDCHECK <= str(tools.get_date(days=CONFIG.UPDATECHECK, now=True)):
+buildcheck = CONFIG.get_setting('lastbuildcheck')
+if CONFIG.get_setting('buildname') != '' and buildcheck <= str(tools.get_date(days=CONFIG.UPDATECHECK, now=True)):
     logging.log("[Build Update Check] Started", level=xbmc.LOGNOTICE)
     build_update_check()
 else:
-    logging.log("[Build Update Check] Next Check: {0}".format(CONFIG.BUILDCHECK), level=xbmc.LOGNOTICE)
+    logging.log("[Build Update Check] Next Check: {0}".format(buildcheck), level=xbmc.LOGNOTICE)
 
 # AUTO INSTALL REPO
 if CONFIG.AUTOINSTALL == 'Yes':
@@ -374,35 +374,35 @@ else:
     logging.log("[Notifications] Not Enabled", level=xbmc.LOGNOTICE)
 
 # INSTALLED BUILD CHECK
-if CONFIG.INSTALLED == 'true':
+if CONFIG.get_setting('installed') == 'true':
     logging.log("[Build Installed Check] Started", level=xbmc.LOGNOTICE)
     installed_build_check()
 else:
     logging.log("[Build Installed Check] Not Enabled", level=xbmc.LOGNOTICE)
 
 # SAVE TRAKT
-if CONFIG.KEEPTRAKT == 'true':
+if CONFIG.get_setting('keeptrakt') == 'true':
     logging.log("[Trakt Data] Started", level=xbmc.LOGNOTICE)
     save_trakt()
 else:
     logging.log("[Trakt Data] Not Enabled", level=xbmc.LOGNOTICE)
 
 # SAVE DEBRID
-if CONFIG.KEEPDEBRID == 'true':
+if CONFIG.get_setting('keepdebrid') == 'true':
     logging.log("[Debrid Data] Started", level=xbmc.LOGNOTICE)
     save_debrid()
 else:
     logging.log("[Debrid Data] Not Enabled", level=xbmc.LOGNOTICE)
 
 # SAVE LOGIN
-if CONFIG.KEEPLOGIN == 'true':
+if CONFIG.get_setting('keeplogin') == 'true':
     logging.log("[Login Info] Started", level=xbmc.LOGNOTICE)
     save_login()
 else:
     logging.log("[Login Info] Not Enabled", level=xbmc.LOGNOTICE)
 
 # AUTO CLEAN
-if CONFIG.AUTOCLEANUP == 'true':
+if CONFIG.get_setting('autoclean') == 'true':
     logging.log("[Auto Clean Up] Started", level=xbmc.LOGNOTICE)
     auto_clean()
 else:

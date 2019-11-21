@@ -73,10 +73,10 @@ def switch_to_skin(goto, title="Error"):
     result = _swap_skins(goto)
 
     if result:
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            '[COLOR {0}]{1}: Skin Swap Success![/COLOR]'.format(CONFIG.COLOR2, title))
     else:
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            '[COLOR {0}]{1}: Skin Swap Failed![/COLOR]'.format(CONFIG.COLOR2, title))
                            
     return result
@@ -88,7 +88,7 @@ def skin_to_default(title):
         return switch_to_skin(skin, title)
     else:
         from resources.libs.common import logging
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            '[COLOR {0}]{1}: Skipping Skin Swap[/COLOR]'.format(CONFIG.COLOR2, title))
         return False
 
@@ -129,7 +129,7 @@ def swap_us():
         xbmc.sleep(200)
         query = '{{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{{"setting":{0},"value":{1}}}, "id":1}}'.format(new, value)
         response = xbmc.executeJSONRPC(query)
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            '[COLOR {0}]Unknown Sources:[/COLOR] [COLOR {1}]Enabled[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2))
         logging.log("Unknown Sources Set Settings: {0}".format(str(response)))
     elif 'true' in response:
@@ -138,7 +138,7 @@ def swap_us():
         xbmc.sleep(200)
         query = '{{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{{"setting":{0},"value":{1}}}, "id":1}}'.format(new, value)
         response = xbmc.executeJSONRPC(query)
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            '[COLOR {0}]Unknown Sources:[/COLOR] [COLOR {1}]Disabled[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2))
         logging.log("Unknown Sources Set Settings: {0}".format(str(response)))
 

@@ -424,7 +424,7 @@ def swap_debug():
         query = '{{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{{"setting":{0},"value":{1}}}, "id":1}}'.format(
             new, value)
         response = xbmc.executeJSONRPC(query)
-        log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        log_notify(CONFIG.ADDONTITLE,
                            '[COLOR {0}]Debug Logging:[/COLOR] [COLOR {1}]Enabled[/COLOR]'.format(CONFIG.COLOR1,
                                                                                                    CONFIG.COLOR2))
         log("Debug Logging Set Settings: {0}".format(str(response)))
@@ -435,7 +435,7 @@ def swap_debug():
         query = '{{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{{"setting":{0},"value":{1}}}, "id":1}}'.format(
             new, value)
         response = xbmc.executeJSONRPC(query)
-        log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        log_notify(CONFIG.ADDONTITLE,
                    '[COLOR {0}]Debug Logging:[/COLOR] [COLOR {1}]Disabled[/COLOR]'.format(CONFIG.COLOR1,
                                                                                          CONFIG.COLOR2))
         log("Debug Logging Set Settings: {0}".format(str(response)))

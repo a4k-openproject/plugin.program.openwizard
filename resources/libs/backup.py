@@ -50,7 +50,7 @@ def cleanup_backup():
     dialog = xbmcgui.Dialog()
 
     if len(folder) == 0:
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            "[COLOR {0}]Backup Location: Empty[/COLOR]".format(CONFIG.COLOR2))
         return
     for item in sorted(folder, key=os.path.getmtime):
@@ -64,7 +64,7 @@ def cleanup_backup():
     selected = dialog.select("{0}: Select the items to remove from the 'My_Builds' folder.".format(CONFIG.ADDONTITLE), list)
 
     if selected == -1:
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            "[COLOR {0}]Clean Up Cancelled![/COLOR]".format(CONFIG.COLOR2))
     elif selected == 0:
         if dialog.yesno(CONFIG.ADDONTITLE,
@@ -73,10 +73,10 @@ def cleanup_backup():
                             yeslabel="[B][COLOR springgreen]Clean Up[/COLOR][/B]",
                             nolabel="[B][COLOR red]No Cancel[/COLOR][/B]"):
             clearedfiles, clearedfolders = tools.clean_house(CONFIG.MYBUILDS)
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+            logging.log_notify(CONFIG.ADDONTITLE,
                                "[COLOR {0}]Removed Files: [COLOR {1}]{2}[/COLOR] / Folders:[/COLOR] [COLOR {3}]{4}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, clearedfiles, CONFIG.COLOR1, clearedfolders))
         else:
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+            logging.log_notify(CONFIG.ADDONTITLE,
                                "[COLOR {0}]Clean Up Cancelled![/COLOR]".format(CONFIG.COLOR2))
     else:
         path = filelist[selected-1]
@@ -101,13 +101,13 @@ def cleanup_backup():
                 except Exception as e:
                     logging.log("Error removing {0}: {1}".format(path, e))
             if passed:
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                logging.log_notify(CONFIG.ADDONTITLE,
                                    "[COLOR {0}]{1} Removed![/COLOR]".format(CONFIG.COLOR2, list[selected]))
             else:
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                logging.log_notify(CONFIG.ADDONTITLE,
                                    "[COLOR {0}]Error Removing {1}![/COLOR]".format(CONFIG.COLOR2, list[selected]))
         else:
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+            logging.log_notify(CONFIG.ADDONTITLE,
                                "[COLOR {0}]Clean Up Cancelled![/COLOR]".format(CONFIG.COLOR2))
 
 
@@ -260,7 +260,7 @@ def _backup_build(name=""):
                     return
                 else:
                     return
-        progress_dialog.create("[COLOR {0}]{1}[/COLOR][COLOR {2}]: Creating Zip[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+        progress_dialog.create(CONFIG.ADDONTITLE + "[COLOR {0}]: Creating Zip[/COLOR]".format(CONFIG.COLOR2),
                   "[COLOR {0}]Creating backup zip".format(CONFIG.COLOR2), "", "Please Wait...[/COLOR]")
 
         for base, dirs, files in os.walk(CONFIG.HOME):
@@ -384,7 +384,7 @@ def _backup_build(name=""):
                         logging.log("{0} / {1}".format(Exception, e))
                     if progress_dialog.iscanceled():
                         progress_dialog.close()
-                        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                        logging.log_notify(CONFIG.ADDONTITLE,
                                   "[COLOR {0}]Backup Cancelled[/COLOR]".format(CONFIG.COLOR2))
                         sys.exit()
                 except Exception as e:
@@ -554,7 +554,7 @@ def _backup_guifix(name=""):
 def _backup_theme(name=""):
     dialog = xbmcgui.Dialog()
 
-    if not dialog.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+    if not dialog.yesno(CONFIG.ADDONTITLE + '[COLOR {0}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR2),
                         "[COLOR {0}]Would you like to create a theme backup?[/COLOR]".format(CONFIG.COLOR2),
                         yeslabel="[B][COLOR springgreen]Continue[/COLOR][/B]",
                         nolabel="[B][COLOR red]No Cancel[/COLOR][/B]"):
@@ -592,14 +592,14 @@ def _backup_theme(name=""):
             skinfold = os.path.join(CONFIG.SKIN, 'media')
             match2 = glob.glob(os.path.join(skinfold, '*.xbt'))
             if len(match2) > 1:
-                if dialog.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+                if dialog.yesno(CONFIG.ADDONTITLE + '[COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR2),
                                 "[COLOR {0}]Would you like to go through the Texture Files for?[/COLOR]".format(CONFIG.COLOR2),
                                 "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.SKIN),
                                 yeslabel="[B][COLOR springgreen]Add Textures[/COLOR][/B]",
                                 nolabel="[B][COLOR red]Skip Textures[/COLOR][/B]"):
                     for xbt in match2:
                         if dialog.yesno(
-                                '[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+                                CONFIG.ADDONTITLE + '[COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR2),
                                 "[COLOR {0}]Would you like to add the Texture File [COLOR {1}]{2}[/COLOR]?".format(
                                 CONFIG.COLOR1, CONFIG.COLOR2, xbt.replace(skinfold, "")[1:]),
                                 "from [COLOR {0}]{1}[/COLOR][/COLOR]".format(CONFIG.COLOR1, CONFIG.SKIN),
@@ -611,7 +611,7 @@ def _backup_theme(name=""):
             else:
                 for xbt in match2:
                     if dialog.yesno(
-                            '[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+                            CONFIG.ADDONTITLE + '[COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR2),
                             "[COLOR {0}]Would you like to add the Texture File [COLOR {1}]{2}[/COLOR]?".format(
                             CONFIG.COLOR2, CONFIG.COLOR1, xbt.replace(skinfold, "")[1:]),
                             "from [COLOR {0}]{1}[/COLOR][/COLOR]".format(CONFIG.COLOR1, CONFIG.SKIN),
@@ -622,7 +622,7 @@ def _backup_theme(name=""):
                         zipf.write(fn, fn2, zipfile.ZIP_DEFLATED)
             ad_skin = os.path.join(CONFIG.ADDON_DATA, CONFIG.SKIN, 'settings.xml')
             if os.path.exists(ad_skin):
-                if dialog.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+                if dialog.yesno(CONFIG.ADDONTITLE + '[COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR2),
                                 "[COLOR {0}]Would you like to go add the [COLOR {1}]settings.xml[/COLOR] in [COLOR {2}]/addon_data/[/COLOR] for?".format(
                                 CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1), "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.SKIN),
                                 yeslabel="[B][COLOR springgreen]Add Settings[/COLOR][/B]",
@@ -631,7 +631,7 @@ def _backup_theme(name=""):
                     zipf.write(ad_skin, ad_skin2, zipfile.ZIP_DEFLATED)
             match = tools.parse_dom(tools.read_from_file(os.path.join(CONFIG.SKIN, 'addon.xml')), 'import', ret='addon')
             if 'script.skinshortcuts' in match:
-                if dialog.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+                if dialog.yesno(CONFIG.ADDONTITLE + '[COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR2),
                                 "[COLOR {0}]Would you like to go add the [COLOR {1}]settings.xml[/COLOR] for [COLOR {2}]script.skinshortcuts[/COLOR]?".format(
                                 CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1),
                                     yeslabel="[B][COLOR springgreen]Add Settings[/COLOR][/B]",
@@ -641,7 +641,7 @@ def _backup_theme(name=""):
                         for file in files:
                             fn = os.path.join(base, file)
                             zipf.write(fn, fn[len(CONFIG.HOME):], zipfile.ZIP_DEFLATED)
-        if dialog.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+        if dialog.yesno(CONFIG.ADDONTITLE + '[COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR2),
                         "[COLOR {0}]Would you like to include a [COLOR {1}]Backgrounds[/COLOR] folder?[/COLOR]".format(
                         CONFIG.COLOR2, CONFIG.COLOR1),
                             yeslabel="[B][COLOR springgreen]Yes Include[/COLOR][/B]",
@@ -659,13 +659,13 @@ def _backup_theme(name=""):
                             logging.log("[Back Up] Type = theme: Unable to backup {0}".format(file))
                             logging.log("Backup Error: {0}".format(str(e)))
             text = db.latest_db('Textures')
-            if dialog.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+            if dialog.yesno(CONFIG.ADDONTITLE + '[COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR2),
                             "[COLOR {0}]Would you like to include the [COLOR {1}]{2}[/COLOR]?[/COLOR]".format(
                             CONFIG.COLOR2, CONFIG.COLOR1, text),
                                 yeslabel="[B][COLOR springgreen]Yes Include[/COLOR][/B]",
                             nolabel="[B][COLOR red]No Continue[/COLOR][/B]"):
                 zipf.write(os.path.join(CONFIG.DATABASE, text), '/userdata/Database/{0}'.format(text), zipfile.ZIP_DEFLATED)
-        if dialog.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+        if dialog.yesno(CONFIG.ADDONTITLE + '[COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR2),
                         "[COLOR {0}]Would you like to include any addons?[/COLOR]".format(CONFIG.COLOR2),
                         yeslabel="[B][COLOR springgreen]Yes Include[/COLOR][/B]",
                         nolabel="[B][COLOR red]No Continue[/COLOR][/B]"):
@@ -719,7 +719,7 @@ def _backup_theme(name=""):
                                     fn = os.path.join(base, file)
                                     zipf.write(fn, fn[len(CONFIG.HOME):], zipfile.ZIP_DEFLATED)
                                     added.append(depends)
-        if dialog.yesno('[COLOR {0}]{1}[/COLOR][COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+        if dialog.yesno(CONFIG.ADDONTITLE + '[COLOR {2}]: Theme Backup[/COLOR]'.format(CONFIG.COLOR2),
                         "[COLOR {0}]Would you like to include the [COLOR {1}]guisettings.xml[/COLOR]?[/COLOR]".format(
                         CONFIG.COLOR2, CONFIG.COLOR1),
                             yeslabel="[B][COLOR springgreen]Yes Include[/COLOR][/B]",
@@ -786,7 +786,7 @@ def _backup_addon_data(name=""):
         ITEM = []
         tools.convert_special(CONFIG.ADDON_DATA, True)
         tools.ascii_check(CONFIG.ADDON_DATA, True)
-        progress_dialog.create("[COLOR {0}]{1}[/COLOR][COLOR {2}]: Creating Zip[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE, CONFIG.COLOR2),
+        progress_dialog.create(CONFIG.ADDONTITLE + "[COLOR {2}]: Creating Zip[/COLOR]".format(CONFIG.COLOR2),
                   "[COLOR {0}]Creating back up zip".format(CONFIG.COLOR2), "", "Please Wait...[/COLOR]")
         for base, dirs, files in os.walk(CONFIG.ADDON_DATA):
             dirs[:] = [d for d in dirs if d not in CONFIG.EXCLUDE_DIRS]

@@ -39,6 +39,22 @@ def wipe():
     from resources.libs.common import tools
     from resources.libs import update
 
+    if CONFIG.KEEPTRAKT == 'true':
+        from resources.libs import traktit
+
+        traktit.auto_update('all')
+        CONFIG.set_setting('traktlastsave', str(tools.get_date(days=3)))
+    if CONFIG.KEEPDEBRID == 'true':
+        from resources.libs import debridit
+
+        debridit.auto_update('all')
+        CONFIG.set_setting('debridlastsave', str(tools.get_date(days=3)))
+    if CONFIG.KEEPLOGIN == 'true':
+        from resources.libs import loginit
+
+        loginit.auto_update('all')
+        CONFIG.set_setting('loginlastsave', str(tools.get_date(days=3)))
+
     exclude_dirs = CONFIG.EXCLUDES
     exclude_dirs.append('My_Builds')
     
@@ -127,7 +143,7 @@ def wipe():
                     logging.log("-> / {0}".format(str(e)))
         if progress_dialog.iscanceled():
             progress_dialog.close()
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+            logging.log_notify(CONFIG.ADDONTITLE,
                                "[COLOR {0}]Fresh Start Cancelled[/COLOR]".format(CONFIG.COLOR2))
             return False
     for root, dirs, files in os.walk(xbmcPath, topdown=True):
@@ -139,7 +155,7 @@ def wipe():
                 shutil.rmtree(os.path.join(root, name), ignore_errors=True, onerror=None)
         if progress_dialog.iscanceled():
             progress_dialog.close()
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+            logging.log_notify(CONFIG.ADDONTITLE,
                                "[COLOR {0}]Fresh Start Cancelled[/COLOR]".format(CONFIG.COLOR2))
             return False
             
@@ -209,7 +225,7 @@ def fresh_start(install=None, over=False):
             tools.kill_kodi(over=True)
     else:
         if not install == 'restore':
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+            logging.log_notify(CONFIG.ADDONTITLE,
                                '[COLOR {0}]Fresh Install: Cancelled![/COLOR]'.format(CONFIG.COLOR2))
             xbmc.executebuiltin('Container.Refresh()')
 
@@ -549,7 +565,7 @@ def install_apk(apk, url):
                                yeslabel="[B][COLOR springgreen]Download[/COLOR][/B]",
                                nolabel="[B][COLOR red]Cancel[/COLOR][/B]")
         if not yes:
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+            logging.log_notify(CONFIG.ADDONTITLE,
                                '[COLOR {0}]ERROR: Install Cancelled[/COLOR]'.format(CONFIG.COLOR2))
             return
         display = apk
@@ -558,7 +574,7 @@ def install_apk(apk, url):
 
         response = tools.open_url(url, check=True)
         if not response:
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+            logging.log_notify(CONFIG.ADDONTITLE,
                                '[COLOR {0}]APK Installer: Invalid Apk Url![/COLOR]'.format(CONFIG.COLOR2))
             return
         progress_dialog.create(CONFIG.ADDONTITLE,
@@ -575,5 +591,5 @@ def install_apk(apk, url):
         window.show_apk_warning(apk)
         xbmc.executebuiltin('StartAndroidActivity("","android.intent.action.VIEW","application/vnd.android.package-archive","file:{0}")'.format(lib))
     else:
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            '[COLOR {0}]ERROR: None Android Device[/COLOR]'.format(CONFIG.COLOR2))

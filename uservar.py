@@ -42,7 +42,7 @@ ADVANCEDFILE = 'http://'
 #           ICONSETTINGS  = 'https://www.yourhost.com/repo/wizard/settings.png'
 # Leave as http:// for default icon
 ICONBUILDS = os.path.join(ART, 'builds.png')
-ICONMAINT = os.path.join(ART, 'Maintenance.png')
+ICONMAINT = os.path.join(ART, 'maintenance.png')
 ICONSPEED = os.path.join(ART, 'speed.png')
 ICONAPK = os.path.join(ART, 'apkinstaller.png')
 ICONADDONS = os.path.join(ART, 'addoninstaller.png')
@@ -116,7 +116,7 @@ NOTIFICATION = 'http://'
 HEADERTYPE = 'Text'
 # Font size of header
 FONTHEADER = 'Font14'
-HEADERMESSAGE = '[COLOR limegreen]Open[/COLOR]Wizard'
+HEADERMESSAGE = '[COLOR limegreen][B]Open[/B][/COLOR]Wizard'
 # url to image if using Image 424x180
 HEADERIMAGE = 'http://'
 # Font for Notification Window

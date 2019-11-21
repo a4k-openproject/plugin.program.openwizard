@@ -459,13 +459,13 @@ def convert_special(url, over=False):
 
                 if progress_dialog.iscanceled():
                     progress_dialog.close()
-                    logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                    logging.log_notify(CONFIG.ADDONTITLE,
                                        "[COLOR {0}]Convert Path Cancelled[/COLOR]".format(CONFIG.COLOR2))
                     sys.exit()
     progress_dialog.close()
     logging.log("[Convert Paths to Special] Complete")
     if not over:
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            "[COLOR {0}]Convert Paths to Special: Complete![/COLOR]".format(CONFIG.COLOR2))
 
 
@@ -549,7 +549,7 @@ def ascii_check(use=None, over=False):
         yes = 1
 
     if source == "":
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            "[COLOR {0}]ASCII Check: Cancelled[/COLOR]".format(CONFIG.COLOR2))
         return
 
@@ -603,7 +603,7 @@ def ascii_check(use=None, over=False):
                 pass
         if progress_dialog.iscanceled():
             progress_dialog.close()
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+            logging.log_notify(CONFIG.ADDONTITLE,
                                "[COLOR {0}]ASCII Check Cancelled[/COLOR]".format(CONFIG.COLOR2))
             sys.exit()
     progress_dialog.close()
@@ -617,7 +617,7 @@ def ascii_check(use=None, over=False):
             msg2 = read_from_file(files_fails)
         if yes:
             if use:
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                logging.log_notify(CONFIG.ADDONTITLE,
                                  "[COLOR {0}]ASCII Check: {1} Removed / {2} Failed.[/COLOR]".format(CONFIG.COLOR2, f1, f2))
             else:
                 window.show_text_box("Viewing Removed ASCII Files",
@@ -625,7 +625,7 @@ def ascii_check(use=None, over=False):
         else:
             window.show_text_box("Viewing Found ASCII Files", "[COLOR yellow][B]{0} Files Found:[/B][/COLOR]\n {1}".format(f1, msg))
     else:
-        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+        logging.log_notify(CONFIG.ADDONTITLE,
                            "[COLOR {0}]ASCII Check: None Found.[/COLOR]".format(CONFIG.COLOR2))
 
 
@@ -714,10 +714,13 @@ def _check_url(url, cred):
 def open_url(url, stream=False, check=False, cred=None, count=0):
     import requests
 
+    if not url:
+        return False
+    
     dialog = xbmcgui.Dialog()
     user_agent = {'user-agent': CONFIG.USER_AGENT}
     count = 0
-
+    
     valid = _check_url(url, cred)
 
     if not valid:
