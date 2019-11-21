@@ -66,14 +66,8 @@ def dispatch(paramstring):
         from resources.libs.gui.build_menu import BuildMenu
         BuildMenu().build_video(name)
     elif mode == 'install':  # Builds -> Fresh Install/Standard Install/Apply guifix
-        from resources.libs.wizard import Wizard
-        
-        if action in ['fresh', 'normal']:
-            Wizard().build(action, name)
-        elif action == 'gui':
-            Wizard().gui(name)
-        elif action == 'theme':  # Builds -> "Your Build" -> "Your Theme"
-            Wizard().theme(name, url)
+        from resources.libs import wizard
+        wizard.wizard(action, name, url)
     elif mode == 'addonpack':  # Install Addon Pack
         from resources.libs import install
         install.install_addon_pack(name, url)

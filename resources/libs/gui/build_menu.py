@@ -196,13 +196,13 @@ class BuildMenu:
                     fanart=fanart, icon=icon, themeit=CONFIG.THEME3)
                     
             directory.add_separator('INSTALL')
-            directory.add_file('Fresh Install', {'mode': 'install', 'name': name, 'action': 'fresh'}, description=description, fanart=fanart,
+            directory.add_file('Fresh Install', {'mode': 'install', 'action': 'fresh', 'name': name}, description=description, fanart=fanart,
                                icon=icon, themeit=CONFIG.THEME1)
-            directory.add_file('Standard Install', {'mode': 'install', 'name': name, 'action': 'normal'}, description=description, fanart=fanart,
+            directory.add_file('Standard Install', {'mode': 'install', 'action': 'normal', 'name': name}, description=description, fanart=fanart,
                                icon=icon, themeit=CONFIG.THEME1)
                                
             if guicheck:
-                directory.add_file('Apply guiFix', {'mode': 'install', 'name': name, 'action': 'gui'}, description=description, fanart=fanart,
+                directory.add_file('Apply guiFix', {'mode': 'install', 'action': 'gui', 'name': name}, description=description, fanart=fanart,
                                    icon=icon, themeit=CONFIG.THEME1)
                                    
             if themecheck:
@@ -222,7 +222,7 @@ class BuildMenu:
                     themeicon = themeicon if tools.open_url(themeicon, check=True) else icon
                     themefanart = themefanart if tools.open_url(themefanart, check=True) else fanart
                     
-                    directory.add_file(themetitle, {'mode': 'install', 'name': name, 'url': themename, 'action': 'theme'}, description=description, fanart=themefanart,
+                    directory.add_file(themetitle, {'mode': 'install', 'action': 'theme', 'name': name, 'url': themename}, description=description, fanart=themefanart,
                         icon=themeicon, themeit=CONFIG.THEME3)
 
     def build_info(self, name):
