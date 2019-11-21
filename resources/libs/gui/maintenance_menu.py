@@ -205,20 +205,16 @@ class MaintenanceMenu:
         directory.add_file('[Back Up]: GuiFix', {'mode': 'backupgui'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         directory.add_file('[Back Up]: Theme', {'mode': 'backuptheme'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         directory.add_file('[Back Up]: Addon Pack', {'mode': 'backupaddonpack'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        directory.add_file('[Back Up]: Addon_data', {'mode': 'backupaddon'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        directory.add_file('[Restore]: Local Build', {'mode': 'restorebuild'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        directory.add_file('[Restore]: Local GuiFix', {'mode': 'restoregui'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        directory.add_file('[Restore]: Local Theme', {'mode': 'restoretheme'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        directory.add_file('[Restore]: Local Addon Pack', {'mode': 'restoreaddonpack'}, icon=CONFIG.ICONMAINT,
-                           themeit=CONFIG.THEME3)
-        directory.add_file('[Restore]: Local Addon_data', {'mode': 'restoreaddon'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        directory.add_file('[Restore]: External Build', {'mode': 'restoreextbuild'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        directory.add_file('[Restore]: External GuiFix', {'mode': 'restoreextgui'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        directory.add_file('[Restore]: External Theme', {'mode': 'restoreexttheme'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        directory.add_file('[Restore]: External Addon Pack', {'mode': 'restoreextaddonpack'}, icon=CONFIG.ICONMAINT,
-                           themeit=CONFIG.THEME3)
-        directory.add_file('[Restore]: External Addon_data', {'mode': 'restoreextaddondata'}, icon=CONFIG.ICONMAINT,
-                           themeit=CONFIG.THEME3)
+        directory.add_file('[Restore]: Local Build', {'mode': 'restore', 'action': 'build'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        directory.add_file('[Restore]: Local GuiFix', {'mode': 'restore', 'action': 'gui'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        directory.add_file('[Restore]: Local Theme', {'mode': 'restore', 'action': 'theme'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        directory.add_file('[Restore]: Local Addon Pack', {'mode': 'restore', 'action': 'addonpack'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        directory.add_file('[Restore]: Local Addon_data', {'mode': 'restore', 'action': 'addondata'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        directory.add_file('[Restore]: External Build', {'mode': 'restore', 'action': 'build', 'name': 'external'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        directory.add_file('[Restore]: External GuiFix', {'mode': 'restore', 'action': 'gui', 'name': 'external'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        directory.add_file('[Restore]: External Theme', {'mode': 'restore', 'action': 'theme', 'name': 'external'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        directory.add_file('[Restore]: External Addon Pack', {'mode': 'restore', 'action': 'addonpack', 'name': 'external'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        directory.add_file('[Restore]: External Addon_data', {'mode': 'restore', 'action': 'addondata', 'name': 'external'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
 
     def tweaks_menu(self):
         # LEAVING OUT ADVANCED SETTINGS FOR NOW
