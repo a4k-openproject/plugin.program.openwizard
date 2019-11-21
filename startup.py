@@ -55,7 +55,8 @@ def auto_install_repo():
             
             if repoversion:
                 installzip = '{0}-{1}.zip'.format(CONFIG.REPOID, repoversion[0])
-                repo_response = tools.open_url(CONFIG.REPOZIPURL + installzip, check=True)
+                url = CONFIG.REPOZIPURL + installzip
+                repo_response = tools.open_url(url, check=True)
 
                 if repo_response:
                     progress_dialog = xbmcgui.DialogProgress()
@@ -69,7 +70,7 @@ def auto_install_repo():
 
                     from resources.libs.downloader import Downloader
                     from resources.libs import extract
-                    Downloader().download(CONFIG.REPOZIPURL + installzip, lib)
+                    Downloader().download(url, lib)
                     extract.all(lib, CONFIG.ADDONS)
 
                     try:
@@ -95,7 +96,7 @@ def auto_install_repo():
                     logging.log_notify("[COLOR {0}]Repo Install Error[/COLOR]".format(CONFIG.COLOR1),
                                        "[COLOR {0}]Invalid URL for zip![/COLOR]".format(CONFIG.COLOR2))
                     logging.log("[Auto Install Repo] Was unable to create a working URL for repository. {0}".format(
-                        repo_response.text), level=xbmc.LOGERROR)
+                        url), level=xbmc.LOGERROR)
             else:
                 logging.log("Invalid URL for Repo zip", level=xbmc.LOGERROR)
         else:
