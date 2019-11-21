@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.program.openwizard" name="[COLOR limegreen][B]Open[/B][/COLOR]Wizard" version="1.0.2" provider-name="drinfernoo">
+<addon id="plugin.program.openwizard" name="[COLOR limegreen][B]Open[/B][/COLOR]Wizard" version="1.0.3" provider-name="drinfernoo">
     <requires>
         <import addon="xbmc.python" version="2.1.0" />
         <import addon="script.module.requests" />
+        <import addon="script.module.six" />
     </requires>
     
     <extension point="xbmc.python.pluginsource" library="default.py">
@@ -18,17 +19,25 @@
         <reuselanguageinvoker>false</reuselanguageinvoker>
         <source>https://www.github.com/drinfernoo/plugin.program.openwizard/</source>
         <news>
-        1.0.0
-         - Initial Commit
+        1.0.3
+         - Update artwork
+         - Fix rare issues with URLs not working
+         - Fix repetitive build prompt (again)
+         - Fix builds downloading twice
+         - Fix title coloring on notifications
+         - Fix auto repo install
+         - Fix first run settings not being respected
+        1.0.2
+         - Fix crash in login menu
+         - Fix auto install repo
         1.0.1
          - Fix double startup
          - Fix repetitive build prompt
          - Fix main menu not opening on Krypton
          - Fix notification timeout
          - Fix crash in Trakt menu
-        1.0.2
-         - Fix crash in login menu
-         - Fix auto install repo
+        1.0.0
+         - Initial Commit
         </news>
         <assets>
             <icon>icon.png</icon>

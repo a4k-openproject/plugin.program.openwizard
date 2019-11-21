@@ -347,9 +347,7 @@ class Wizard:
             logging.log('INSTALLED {0}: [ERRORS:{1}]'.format(percent, errors))
             self.dialogProgress.close()
 
-            from resources.libs import update
-
-            update.force_update()
+            db.force_check_updates(over=True)
             installed = db.grab_addons(lib)
             db.addon_database(installed, 1, True)
 
