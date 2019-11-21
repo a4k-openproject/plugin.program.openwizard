@@ -168,7 +168,7 @@ def dispatch(paramstring):
         skin.swap_us()
     elif mode == 'enabledebug':  # Misc Maintenance -> Enable Debug Logging
         logging.swap_debug()
-    elif mode == 'enabledebug':  # Misc Maintenance -> Toggle Addon Updates
+    elif mode == 'toggleupdates':  # Misc Maintenance -> Toggle Addon Updates
         from resources.libs import update
         update.toggle_addon_updates()
     elif mode == 'asciicheck':  # System Tweaks -> Scan for Non-Ascii Files
@@ -186,12 +186,9 @@ def dispatch(paramstring):
     elif mode == 'forceskin':  # Misc Maintenance -> Reload Skin
         xbmc.executebuiltin("ReloadSkin()")
         xbmc.executebuiltin('Container.Refresh()')
-    # elif mode == 'hidepassword':  # Addon Tools -> Hide Passwords on Keyboard Entry
+    # elif mode == 'togglepasswords':  # Addon Tools -> Hide Passwords on Keyboard Entry
     #     from resources.libs import db
-    #     db.hide_password()
-    # elif mode == 'unhidepassword':  # Addon Tools -> Unhide Passwords on Keyboard Entry
-    #     from resources.libs import db
-    #     db.unhide_password()
+    #     db.toggle_password()
     elif mode == 'checksources':  # System Tweaks -> Scan source for broken links
         from resources.libs import check
         check.check_sources()
@@ -203,6 +200,9 @@ def dispatch(paramstring):
     elif mode == 'whitelist':  # Whitelist Functions
         from resources.libs import whitelist
         whitelist.whitelist(name)
+    elif mode == 'forceupdate':  # Addon Tools -> Force Update Addons
+        from resources.libs import db
+        db.force_check_updates(auto=action == 'auto', over=True)
 
     #  CLEANING
     elif mode == 'oldThumbs':  # Cleaning Tools -> Clear Old Thumbnails
@@ -278,57 +278,16 @@ def dispatch(paramstring):
                            "[COLOR {0}]Wizard Log Cleared![/COLOR]".format(CONFIG.COLOR2))
 
     # BACKUP / RESTORE
-    elif mode == 'backupbuild':  # Backup Build
+    elif mode == 'backup' and action:
         from resources.libs import backup
-        backup.backup('build')
-    elif mode == 'backupgui':  # Backup guisettings
-        from resources.libs import backup
-        backup.backup('guifix')
-    elif mode == 'backuptheme':  # Backup Theme
-        from resources.libs import backup
-        backup.backup('theme')
-    elif mode == 'backupaddonpack':  # Backup Addon Pack
-        from resources.libs import backup
-        backup.backup('addonpack')
-    elif mode == 'backupaddon':  # Backup Addon Data
-        from resources.libs import backup
-        backup.backup('addondata')
-    elif mode == 'restorebuild':  # Restore Local Build
+        backup.backup(action)
+    elif mode == 'restore' and action:
         from resources.libs import restore
-        restore.Restore().restore('build')
-    elif mode == 'restoregui':  # Restore Local Guifix
-        from resources.libs import restore
-        restore.Restore().restore('guifix')
-    elif mode == 'restoretheme':  # Restore Local Theme
-        from resources.libs import restore
-        restore.Restore().restore('theme')
-    elif mode == 'restoreaddonpack':  # Restore Local Addon Pack
-        from resources.libs import restore
-        restore.Restore().restore('addonpack')
-    elif mode == 'restoreaddondata':  # Restore Local Addon Data
-        from resources.libs import restore
-        restore.Restore().restore('addondata')
-    elif mode == 'restoreextbuild':  # Restore External Build
-        from resources.libs import restore
-        restore.Restore().restore('build', external=True)
-    elif mode == 'restoreextgui':  # Restore External Guifix
-        from resources.libs import restore
-        restore.Restore().restore('guifix', external=True)
-    elif mode == 'restoreexttheme':  # Restore External Theme
-        from resources.libs import restore
-        restore.Restore().restore('theme', external=True)
-    elif mode == 'restoreextaddonpack':  # Restore External Addon Pack
-        from resources.libs import restore
-        restore.Restore().restore('addonpack', external=True)
-    elif mode == 'restoreextaddondata':  # Restore External Addon Data
-        from resources.libs import restore
-        restore.Restore().restore('addondata', external=True)
+        restore.restore(action, external=name == 'external')
+
     elif mode == 'wizardupdate':  # Wizard Update
         from resources.libs import update
         update.wizard_update()
-    elif mode == 'forceupdate':  # Addon Tools -> Force Update Addons
-        from resources.libs import update
-        update.force_update()
 
     # ADVANCED SETTINGS
     elif mode == 'autoadvanced':  # Advanced Settings AutoConfig
