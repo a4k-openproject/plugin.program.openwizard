@@ -278,21 +278,10 @@ def dispatch(paramstring):
                            "[COLOR {0}]Wizard Log Cleared![/COLOR]".format(CONFIG.COLOR2))
 
     # BACKUP / RESTORE
-    elif mode == 'backupbuild':  # Backup Build
+    elif mode == 'backup' and action:
         from resources.libs import backup
-        backup.backup('build')
+        backup.backup(action)
     elif mode == 'restore' and action:
-        from resources.libs import backup
-        backup.backup('guifix')
-    elif mode == 'backuptheme':  # Backup Theme
-        from resources.libs import backup
-        backup.backup('theme')
-    elif mode == 'backupaddonpack':  # Backup Addon Pack
-        from resources.libs import backup
-        backup.backup('addonpack')
-    elif mode == 'backupaddon':  # Backup Addon Data
-        from resources.libs import backup
-        backup.backup('addondata')
         from resources.libs import restore
         restore.restore(action, external=name == 'external')
 
