@@ -168,7 +168,7 @@ def dispatch(paramstring):
         skin.swap_us()
     elif mode == 'enabledebug':  # Misc Maintenance -> Enable Debug Logging
         logging.swap_debug()
-    elif mode == 'enabledebug':  # Misc Maintenance -> Toggle Addon Updates
+    elif mode == 'toggleupdates':  # Misc Maintenance -> Toggle Addon Updates
         from resources.libs import update
         update.toggle_addon_updates()
     elif mode == 'asciicheck':  # System Tweaks -> Scan for Non-Ascii Files
