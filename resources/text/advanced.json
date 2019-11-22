@@ -1,0 +1,17 @@
+{
+    "presets": [
+        {
+            "name": "Example advancedsettings.xml",
+            "url": "url.to.advancedsettings",
+            "description": "An example advancedsettings.xml."
+        },
+        {
+            "name": "Example section",
+            "section": "true",
+            "url": "url.to.textfile",
+            "icon": "http://",
+            "fanart": "http://",
+            "description": "An example section."
+        }
+    ]
+}
