@@ -34,12 +34,20 @@ def view_current():
 
 
 def remove_current():
-    if os.path.exists(CONFIG.ADVANCED):
-        tools.remove_file(CONFIG.ADVANCED)
+    dialog = xbmcgui.Dialog()
+    ok = dialog.yesno(CONFIG.ADDONTITLE, "[COLOR {0}]Are you sure you want to remove the current advancedsettings.xml?[/COLOR]".format(CONFIG.COLOR2),
+                                           yeslabel="[B][COLOR springgreen]Yes[/COLOR][/B]",
+                                           nolabel="[B][COLOR red]No[/COLOR][/B]")
+
+    if ok:
+        if os.path.exists(CONFIG.ADVANCED):
+            tools.remove_file(CONFIG.ADVANCED)
+        else:
+            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                               "[COLOR {0}]advancedsettings.xml not found[/COLOR]".format(CONFIG.COLOR2))
     else:
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
-                           "[COLOR {0}]AdvancedSettings.xml not found[/COLOR]".format(CONFIG.COLOR2))
-
+                               "[COLOR {0}]advancedsettings.xml not removed[/COLOR]".format(CONFIG.COLOR2))
 
 def _write_setting(category, tag, value):
     from xml.etree import ElementTree
