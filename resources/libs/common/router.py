@@ -339,24 +339,25 @@ class Router:
             from resources.libs import advanced
 
             self.route = advanced.Advanced()
-            advanced_settings_actions = ['quick_configure', 'view_current', 'remove_current', 'write_advanced']
+            advanced_settings_actions = ['quick_configure', 'view_current', 'remove_current', 'write_advanced', 'set_setting']
 
+            category = self.params['category'] if 'category' in self.params else None
+            tag = self.params['tag'] if 'tag' in self.params else None
+            value = self.params['value'] if 'value' in self.params else None
             if not action and not name:
                 self.route.show_menu()
             elif not action and name:
                 self.route.show_menu(url=name)
-            elif action == advanced_settings_actions[0]:  # Advanced Settings AutoConfig
+            elif action == advanced_settings_actions[0]:  # Advanced Settings Quick Configure
                 self.route.quick_configure()
-                xbmc.executebuiltin('Container.Refresh()')
             elif action == advanced_settings_actions[1]:  # View Current Advanced Settings
-                self.route.view_current()
+                advanced.view_current()
             elif action == advanced_settings_actions[2]:  # Remove Current Advanced Settings
-                self.route.remove_current()
-                xbmc.executebuiltin('Container.Refresh()')
+                advanced.remove_current()
             elif action == advanced_settings_actions[3] and url:  # Write New Advanced Settings
                 self.route.write_advanced(name, url)
-
-            return
+            elif action == advanced_settings_actions[4]:
+                self.route.set_setting(category, tag, value)
 
         # SAVE DATA
         elif mode == 'managedata':

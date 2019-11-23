@@ -29,6 +29,16 @@ from resources.libs.common import tools
 from resources.libs.gui import window
 
 
+def view_current():
+    window.show_text_box(CONFIG.ADDONTITLE, tools.read_from_file(CONFIG.ADVANCED).replace('\t', '    '))
+
+def remove_current():
+    if os.path.exists(CONFIG.ADVANCED):
+        tools.remove_file(CONFIG.ADVANCED)
+    else:
+        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                           "[COLOR {0}]AdvancedSettings.xml not found[/COLOR]".format(CONFIG.COLOR2))
+
 class Advanced:
     def __init__(self):
         self.dialog = xbmcgui.Dialog()
@@ -44,7 +54,7 @@ class Advanced:
             TEMPADVANCEDFILE = tools.read_from_file(os.path.join(CONFIG.ADDON_PATH, 'resources', 'text',
                                                                  'advanced.json'))  # url_response.text if url else response.text
 
-            directory.add_file('Quick Configure advancedsettings.xml',
+            directory.add_dir('Quick Configure advancedsettings.xml',
                                {'mode': 'advanced_settings', 'action': 'quick_configure'}, icon=CONFIG.ICONMAINT,
                                themeit=CONFIG.THEME3)
 
@@ -122,9 +132,97 @@ class Advanced:
                 self.tags[name] = values
 
         for category in self.tags:
-            directory.add_separator(middle=category.upper())
+            directory.add_separator(category.upper())
+            
+            for tag in self.tags[category]:
+                tag
+                value = self.tags[category][tag]
+                
+                directory.add_file('{0}: {1}'.format(tag, value), {'mode': 'advanced_settings', 'action': 'set_setting', 'category': category, 'tag': tag, 'value': value})
 
-    def write_advanced(self, name, url):
+    def set_setting(self, category, tag, current):
+        value = None
+        
+        if category == 'cache':
+            value = self._cache(tag, current)
+        elif category == 'network':
+            value = self._network(tag, current)
+            
+        if value:
+            self._write_setting(category, tag, value)
+            
+    def _cache(self, tag, current):
+        value = None
+        
+        if tag == 'buffermode':
+            values = ['Buffer all internet filesystems',
+                      'Buffer all filesystems',
+                      'Only buffer true internet filesystems',
+                      'No buffer',
+                      'All network filesystems']
+                      
+            items = []
+            for i in range(len(values)):
+                items.append(xbmcgui.ListItem(label=str(i), label2=values[i]))
+                      
+            value = self.dialog.select('Choose a Value', items, preselect=int(current), useDetails=True)
+        elif tag == 'memorysize':
+            free_memory = tools.get_info_label('System.Memory(free)')
+            free_converted = tools.convert_size(int(float(free_memory[:-2])) * 1024 * 1024)
+            
+            recommended = int(float(free_memory[:-2]) / 3) * 1024 * 1024
+            recommended_converted = tools.convert_size(int(float(free_memory[:-2]) / 3) * 1024 * 1024)
+        
+            value = tools.get_keyboard(default='{0}'.format(recommended), heading='Memory Size in Bytes\n(Recommended: {0} = {1})'.format(recommended_converted, recommended))
+        elif tag == 'readfactor':
+            value = tools.get_keyboard(default='{0}'.format(current), heading='Fill Rate of Cache\n(High numbers will cause heavy bandwidth use!)')
+            
+        return value
+            
+    def _network(self, tag, current):
+        value = None
+        
+        msgs = {'curlclienttimeout': 'Timeout in seconds for libcurl (http/ftp) connections',
+                'curllowspeedtime': 'Time in seconds for libcurl to consider a connection lowspeed',
+                'curlretries': 'Amount of retries for certain failed libcurl operations (e.g. timeout)',
+                'httpproxyusername': 'Username for Basic Proxy Authentication',
+                'httpproxypassword': 'Password for Basic Proxy Authentication'}
+        
+        value = tools.get_keyboard(default='{0}'.format(current), heading=msgs[tag])
+            
+        return value
+            
+    def _write_setting(self, category, tag, value):
+        from xml.etree import ElementTree
+
+        exists = os.path.exists(CONFIG.ADVANCED)
+        
+        root = None
+        
+        if exists:
+            root = ElementTree.parse(CONFIG.ADVANCED).getroot()
+        else:
+            root = ElementTree.Element('advancedsettings')
+        
+        tree_category = root.find('./{0}'.format(category))            
+        if tree_category is None:
+            tree_category = ElementTree.SubElement(root, category)
+            
+        category_tag = tree_category.find(tag)
+        if category_tag is None:
+            category_tag = ElementTree.SubElement(tree_category, tag)
+        
+        category_tag.text = '{0}'.format(value)
+        
+        tree = ElementTree.ElementTree(root)
+        
+        logging.log('Writing {0} - {1}: {2} to advancedsettings'.format(category, tag, value), level=xbmc.LOGDEBUG)
+        tree.write(CONFIG.ADVANCED)
+        
+        xbmc.executebuiltin('Container.Refresh()')
+            
+                
+    def write_advanced(self, category, tag, url):
         response = tools.open_url(url)
 
         if response:
@@ -156,14 +254,3 @@ class Advanced:
             logging.log("[Advanced Settings] URL not working: {0}".format(url))
             logging.log_notify('[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                "[COLOR {0}]URL Not Working[/COLOR]".format(CONFIG.COLOR2))
-
-    def view_current(self):
-        window.show_text_box(CONFIG.ADDONTITLE, tools.read_from_file(CONFIG.ADVANCED).replace('\t', '    '))
-
-    def remove_current(self):
-        if os.path.exists(CONFIG.ADVANCED):
-            tools.remove_file(CONFIG.ADVANCED)
-        else:
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
-                               "[COLOR {0}]AdvancedSettings.xml not found[/COLOR]".format(CONFIG.COLOR2))
-

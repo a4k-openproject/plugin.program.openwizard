@@ -228,7 +228,7 @@ class MaintenanceMenu:
         if response:
             directory.add_dir('Advanced Settings', {'mode': 'advanced_settings'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         else:
-            directory.add_file('Quick Configure AdvancedSettings.xml',
+            directory.add_dir('Quick Configure AdvancedSettings.xml',
                                {'mode': 'advanced_settings', 'action': 'quick_configure'},
                                icon=CONFIG.ICONMAINT,
                                themeit=CONFIG.THEME3)
