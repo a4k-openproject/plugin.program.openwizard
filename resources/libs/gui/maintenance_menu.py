@@ -21,8 +21,8 @@ import xbmc
 
 import os
 
+from resources.libs.common import directory
 from resources.libs.common.config import CONFIG
-from resources.libs.gui import directory
 
 
 class MaintenanceMenu:
@@ -214,18 +214,8 @@ class MaintenanceMenu:
         directory.add_file('[Restore]: External Addon_data', {'mode': 'restore', 'action': 'addondata', 'name': 'external'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
 
     def tweaks_menu(self):
-        # LEAVING OUT ADVANCED SETTINGS FOR NOW
-        #
-        # if not CONFIG.ADVANCEDFILE == 'http://' and not CONFIG.ADVANCEDFILE == '':
-        #     directory.add_dir('Advanced Settings', 'advancedsetting', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        # else:
-        #     if os.path.exists(CONFIG.ADVANCED):
-        #         directory.add_file('View Current AdvancedSettings.xml', 'currentsettings', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        #         directory.add_file('Remove Current AdvancedSettings.xml', 'removeadvanced', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        #     directory.add_file('Quick Configure AdvancedSettings.xml', 'autoadvanced', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-
-        directory.add_file('Scan Sources for broken links', {'mode': 'checksources'}, icon=CONFIG.ICONMAINT,
-                           themeit=CONFIG.THEME3)
+        directory.add_dir('Advanced Settings', {'mode': 'advanced_settings'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        directory.add_file('Scan Sources for broken links', {'mode': 'checksources'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         directory.add_file('Scan For Broken Repositories', {'mode': 'checkrepos'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         directory.add_file('Remove Non-Ascii filenames', {'mode': 'asciicheck'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         # directory.add_file('Toggle Passwords On Keyboard Entry', {'mode': 'togglepasswords'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)

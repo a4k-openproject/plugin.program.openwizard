@@ -34,8 +34,9 @@ except ImportError:  # Python 2
     from urllib import urlretrieve
     from urlparse import urljoin
 
+from resources.libs.common import directory
 from resources.libs.common.config import CONFIG
-from resources.libs.gui import directory
+
 
 ###########################
 #      Menu Items         #
@@ -661,38 +662,6 @@ def enable_addons():
             directory.add_file("{0} {1}".format(state, addonname), {'mode': 'toggleaddon', 'name': addonid, 'url': goto}, icon=icon, fanart=fanart)
     if len(addonnames) == 0:
         directory.add_file("No Addons Found to Enable or Disable.", icon=CONFIG.ICONMAINT)
-
-
-def advanced_window(url=None):
-    from resources.libs.common import logging
-    from resources.libs.common import tools
-
-    response = tools.open_url(CONFIG.ADVANCEDFILE)
-    url_response = tools.open_url(url)
-    
-    if response:
-        TEMPADVANCEDFILE = url_response.text if url else response.text
-            
-        directory.add_file('Quick Configure advancedsettings.xml', {'mode': 'autoadvanced'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        if os.path.exists(CONFIG.ADVANCED):
-            directory.add_file('View Current advancedsettings.xml', {'mode': 'currentsettings'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-            directory.add_file('Remove Current advancedsettings.xml', {'mode': 'removeadvanced'},  icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        if TEMPADVANCEDFILE:
-            directory.add_separator(icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-            link = TEMPADVANCEDFILE.replace('\n', '').replace('\r', '').replace('\t', '')
-            match = re.compile('name="(.+?)".+?ection="(.+?)".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?escription="(.+?)"').findall(link)
-            if len(match) > 0:
-                for name, section, url, icon, fanart, description in match:
-                    if section.lower() == "yes":
-                        directory.add_dir("[B]{0}[/B]".format(name), {'mode': 'advancedsetting', 'name': url}, description=description, icon=icon, fanart=fanart, themeit=CONFIG.THEME3)
-                    else:
-                        directory.add_file(name, {'mode': 'writeadvanced', 'name': name, 'url': url}, description=description, icon=icon, fanart=fanart, themeit=CONFIG.THEME2)
-            else:
-                logging.log("[Advanced Settings] ERROR: Invalid Format.")
-        else:
-            logging.log("[Advanced Settings] URL not working: {0}".format(CONFIG.ADVANCEDFILE))
-    else:
-        logging.log("[Advanced Settings] not Enabled")
 
 
 def remove_addon_data_menu():

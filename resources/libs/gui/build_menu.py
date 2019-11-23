@@ -17,8 +17,6 @@
 #  http://www.gnu.org/copyleft/gpl.html                                        #
 ################################################################################
 
-import xbmc
-
 import re
 
 try:  # Python 3
@@ -27,10 +25,9 @@ except ImportError:  # Python 2
     from urllib import quote_plus
 
 from resources.libs import check
-from resources.libs.common import logging
+from resources.libs.common import directory
 from resources.libs.common import tools
 from resources.libs.common.config import CONFIG
-from resources.libs.gui import directory
 
 
 class BuildMenu:
