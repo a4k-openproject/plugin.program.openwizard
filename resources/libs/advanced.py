@@ -73,7 +73,7 @@ def _write_setting(category, tag, value):
 
     tree = ElementTree.ElementTree(root)
 
-    logging.log('Writing {0} - {1}: {2} to advancedsettings'.format(category, tag, value), level=xbmc.LOGDEBUG)
+    logging.log('Writing {0} - {1}: {2} to advancedsettings.xml'.format(category, tag, value), level=xbmc.LOGDEBUG)
     tree.write(CONFIG.ADVANCED)
 
     xbmc.executebuiltin('Container.Refresh()')
@@ -86,9 +86,6 @@ class Advanced:
         self.tags = {}
 
     def show_menu(self, url=None):
-        response = tools.open_url(CONFIG.ADVANCEDFILE)
-        url_response = tools.open_url(url)
-
         directory.add_dir('Quick Configure advancedsettings.xml',
                                {'mode': 'advanced_settings', 'action': 'quick_configure'}, icon=CONFIG.ICONMAINT,
                                themeit=CONFIG.THEME3)
@@ -101,17 +98,31 @@ class Advanced:
                                {'mode': 'advanced_settings', 'action': 'remove_current'}, icon=CONFIG.ICONMAINT,
                                themeit=CONFIG.THEME3)
         
-        if response:
-            TEMPADVANCEDFILE = url_response.text if url else response.text
-            if not TEMPADVANCEDFILE:
-                TEMPADVANCEFILE = tools.read_from_file(os.path.join(CONFIG.ADDON_PATH, 'resources', 'text', 'advanced.json'))
+        response = tools.open_url(CONFIG.ADVANCEDFILE)
+        url_response = tools.open_url(url)
+        local_file = os.path.join(CONFIG.ADDON_PATH, 'resources', 'text', 'advanced.json')
+        
+        if url_response:
+            TEMPADVANCEDFILE = url_response.text
+        elif response:
+            TEMPADVANCEDFILE = response.text
+        elif os.path.exists(local_file):
+            TEMPADVANCEDFILE = tools.read_from_file(local_file)
+        else:
+            logging.log("[Advanced Settings] No Presets Available")
+        
+        if TEMPADVANCEDFILE:
+            import json
 
-            if TEMPADVANCEDFILE:
-                import json
-
-                directory.add_separator(icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+            directory.add_separator(icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+            
+            try:
                 advanced_json = json.loads(TEMPADVANCEDFILE)
-
+            except:
+                advanced_json = None
+                logging.log("[Advanced Settings] ERROR: Invalid Format for {0}.".format(CONFIG.ADVANCEDFILE))
+                
+            if advanced_json:
                 presets = advanced_json['presets']
                 if presets and len(presets) > 0:
                     for preset in presets:
@@ -130,12 +141,9 @@ class Advanced:
                                                {'mode': 'advanced_settings', 'action': 'write_advanced', 'name': name,
                                                 'url': preseturl},
                                                description=description, icon=icon, fanart=fanart, themeit=CONFIG.THEME2)
-                else:
-                    logging.log("[Advanced Settings] ERROR: Invalid Format for {0}.".format(CONFIG.ADVANCEDFILE))
-            else:
-                logging.log("[Advanced Settings] URL not working: {0}".format(CONFIG.ADVANCEDFILE))
         else:
-            logging.log("[Advanced Settings] No Presets Available")
+            logging.log("[Advanced Settings] URL not working: {0}".format(CONFIG.ADVANCEDFILE))
+            
 
     def quick_configure(self):
         directory.add_file('Changes will not be reflected until Kodi is restarted.', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
@@ -150,8 +158,6 @@ class Advanced:
     def show_section(self, tags):
         from xml.etree import ElementTree
 
-        # import web_pdb; web_pdb.set_trace()
-        
         split_tags = tags.split('|')
         logging.log(split_tags)
 
@@ -185,23 +191,6 @@ class Advanced:
                 directory.add_file('{0}: {1}'.format(tag, value),
                                    {'mode': 'advanced_settings', 'action': 'set_setting', 'category': category,
                                     'tag': tag, 'value': value}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-
-    def default_advanced(self):
-        if CONFIG.RAM > 1536:
-            buffer = '209715200'
-        else:
-            buffer = '104857600'
-        with open(CONFIG.ADVANCED, 'w+') as f:
-            f.write('<advancedsettings>\n')
-            f.write('	<network>\n')
-            f.write('		<buffermode>2</buffermode>\n')
-            f.write('		<cachemembuffersize>%s</cachemembuffersize>\n' % buffer)
-            f.write('		<readbufferfactor>5</readbufferfactor>\n')
-            f.write('		<curlclienttimeout>10</curlclienttimeout>\n')
-            f.write('		<curllowspeedtime>10</curllowspeedtime>\n')
-            f.write('	</network>\n')
-            f.write('</advancedsettings>\n')
-        f.close()
 
     def set_setting(self, category, tag, current):
         value = None
@@ -274,7 +263,7 @@ class Advanced:
 
             if choice == 1:
                 tools.write_to_file(CONFIG.ADVANCED, response.text)
-                tools.kill_kodi(msg='[COLOR {0}]The new AdvancedSettings.xml preset has been successfully written, but changes won\'t take effect until you close Kodi.[/COLOR]'.format(
+                tools.kill_kodi(msg='[COLOR {0}]The new advancedsettings.xml preset has been successfully written, but changes won\'t take effect until you close Kodi.[/COLOR]'.format(
                                    CONFIG.COLOR2))
             else:
                 logging.log("[Advanced Settings] install canceled")
