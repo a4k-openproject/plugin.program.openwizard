@@ -133,6 +133,13 @@ class Advanced:
                         fanart = preset.get('fanart', '')
                         description = preset.get('description', '')
 
+                        if not name:
+                            logging.log('[Advanced Settings] Missing tag \'name\'', level=xbmc.LOGDEBUG)
+                            continue
+                        if not preseturl:
+                            logging.log('[Advanced Settings] Missing tag \'url\'', level=xbmc.LOGDEBUG)
+                            continue
+                        
                         if section:
                             directory.add_dir(name, {'mode': 'advanced_settings', 'url': preseturl},
                                               description=description, icon=icon, fanart=fanart, themeit=CONFIG.THEME3)
