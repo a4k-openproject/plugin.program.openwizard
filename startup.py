@@ -354,8 +354,8 @@ else:
 binarytxt = os.path.join(CONFIG.USERDATA, 'build_binaries.txt')
 if os.path.exists(binarytxt):
     logging.log("[Binary Detection] Reinstalling Eligible Binary Addons", level=xbmc.LOGNOTICE)
-    from resources.libs.restore import Restore
-    Restore().binaries()
+    from resources.libs import restore
+    restore.restore('binaries')
 else:
     logging.log("[Binary Detection] Eligible Binary Addons to Reinstall", level=xbmc.LOGNOTICE)
     

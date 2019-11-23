@@ -93,7 +93,7 @@ def latest_db(db):
         return False
         
         
-def force_check_updates(over=False):
+def force_check_updates(auto=False, over=False):
     dbfile = latest_db('Addons')
     dbfile = os.path.join(CONFIG.DATABASE, dbfile)
     sqldb = database.connect(dbfile)
@@ -101,17 +101,20 @@ def force_check_updates(over=False):
     
     if not over:
         logging.log_notify(CONFIG.ADDONTITLE,
-                           '[COLOR {0}]Forcing Check for Updates[/COLOR]'.format(CONFIG.COLOR2))
+                           '[COLOR {0}]Force Checking for Updates[/COLOR]'.format(CONFIG.COLOR2))
     
     installed_repos = sqlexe.execute("SELECT * FROM repo")
     for repo in installed_repos:
-        logging.log('{0}'.format(repo), level=xbmc.LOGDEBUG)
+        logging.log('Force Checking for Updates: {0}'.format(repo), level=xbmc.LOGDEBUG)
         sqlexe.execute("UPDATE repo SET version = ? WHERE addonID = ?", ('0.0.1', repo[1],))
         sqldb.commit()
         
     sqlexe.close()
     
     xbmc.executebuiltin('UpdateAddonRepos')
+
+    if auto:
+        xbmc.executebuiltin('UpdateLocalAddons')
 
 
 def purge_db_file(name):
@@ -333,72 +336,72 @@ def fix_metas():
                 tools.remove_folder(storage)
 
 
-def hide_password():
-    from resources.libs.common import tools
-    from resources.libs.common import logging
-    
-    dialog = xbmcgui.Dialog()
-
-    if dialog.yesno(CONFIG.ADDONTITLE,
-                        "[COLOR {0}]Would you like to [COLOR {1}]hide[/COLOR] all passwords when typing in the add-on settings menus?[/COLOR]".format(CONFIG.COLOR2),
-                        yeslabel="[B][COLOR springgreen]Hide Passwords[/COLOR][/B]",
-                        nolabel="[B][COLOR red]No Cancel[/COLOR][/B]"):
-        count = 0
-        for folder in glob.glob(os.path.join(CONFIG.ADDONS, '*/')):
-            sett = os.path.join(folder, 'resources', 'settings.xml')
-            if os.path.exists(sett):
-                f = tools.read_from_file(sett)
-                match = tools.parse_dom(f, 'addon', ret='id')
-                for line in match:
-                    if 'pass' in line:
-                        if 'option="hidden"' not in line:
-                            try:
-                                change = line.replace('/', 'option="hidden" /')
-                                f.replace(line, change)
-                                count += 1
-                                logging.log("[Hide Passwords] found in {0} on {1}".format(sett.replace(CONFIG.HOME, ''), line))
-                            except:
-                                pass
-                tools.write_to_file(sett, f)
-        logging.log_notify("[COLOR {0}]Hide Passwords[/COLOR]".format(CONFIG.COLOR1),
-                           "[COLOR {0}]{1} items changed[/COLOR]".format(CONFIG.COLOR2, count))
-        logging.log("[Hide Passwords] {0} items changed".format(count))
-    else:
-        logging.log("[Hide Passwords] Cancelled")
-
-
-def unhide_password():
-    from resources.libs.common import tools
-    from resources.libs.common import logging
-    
-    dialog = xbmcgui.Dialog()
-
-    if dialog.yesno(CONFIG.ADDONTITLE,
-                        "[COLOR {0}]Would you like to [COLOR {1}]unhide[/COLOR] all passwords when typing in the add-on settings menus?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1),
-                        yeslabel="[B][COLOR springgreen]Unhide Passwords[/COLOR][/B]",
-                        nolabel="[B][COLOR red]No Cancel[/COLOR][/B]"):
-        count = 0
-        for folder in glob.glob(os.path.join(CONFIG.ADDONS, '*/')):
-            sett = os.path.join(folder, 'resources', 'settings.xml')
-            if os.path.exists(sett):
-                f = tools.read_from_file(sett)
-                match = tools.parse_dom(f, 'addon', ret='id')
-                for line in match:
-                    if 'pass' in line:
-                        if 'option="hidden"' in line:
-                            try:
-                                change = line.replace('option="hidden"', '')
-                                f.replace(line, change)
-                                count += 1
-                                logging.log("[Unhide Passwords] found in {0} on {1}".format(sett.replace(CONFIG.HOME, ''), line))
-                            except:
-                                pass
-                tools.write_to_file(sett, f)
-        logging.log_notify("[COLOR {0}]Unhide Passwords[/COLOR]".format(CONFIG.COLOR1),
-                           "[COLOR {0}]{1} items changed[/COLOR]".format(CONFIG.COLOR2, count))
-        logging.log("[Unhide Passwords] {0} items changed".format(count))
-    else:
-        logging.log("[Unhide Passwords] Cancelled")
+# def hide_password():
+#     from resources.libs.common import tools
+#     from resources.libs.common import logging
+#
+#     dialog = xbmcgui.Dialog()
+#
+#     if dialog.yesno(CONFIG.ADDONTITLE,
+#                         "[COLOR {0}]Would you like to [COLOR {1}]hide[/COLOR] all passwords when typing in the add-on settings menus?[/COLOR]".format(CONFIG.COLOR2),
+#                         yeslabel="[B][COLOR springgreen]Hide Passwords[/COLOR][/B]",
+#                         nolabel="[B][COLOR red]No Cancel[/COLOR][/B]"):
+#         count = 0
+#         for folder in glob.glob(os.path.join(CONFIG.ADDONS, '*/')):
+#             sett = os.path.join(folder, 'resources', 'settings.xml')
+#             if os.path.exists(sett):
+#                 f = tools.read_from_file(sett)
+#                 match = tools.parse_dom(f, 'addon', ret='id')
+#                 for line in match:
+#                     if 'pass' in line:
+#                         if 'option="hidden"' not in line:
+#                             try:
+#                                 change = line.replace('/', 'option="hidden" /')
+#                                 f.replace(line, change)
+#                                 count += 1
+#                                 logging.log("[Hide Passwords] found in {0} on {1}".format(sett.replace(CONFIG.HOME, ''), line))
+#                             except:
+#                                 pass
+#                 tools.write_to_file(sett, f)
+#         logging.log_notify("[COLOR {0}]Hide Passwords[/COLOR]".format(CONFIG.COLOR1),
+#                            "[COLOR {0}]{1} items changed[/COLOR]".format(CONFIG.COLOR2, count))
+#         logging.log("[Hide Passwords] {0} items changed".format(count))
+#     else:
+#         logging.log("[Hide Passwords] Cancelled")
+#
+#
+# def unhide_password():
+#     from resources.libs.common import tools
+#     from resources.libs.common import logging
+#
+#     dialog = xbmcgui.Dialog()
+#
+#     if dialog.yesno(CONFIG.ADDONTITLE,
+#                         "[COLOR {0}]Would you like to [COLOR {1}]unhide[/COLOR] all passwords when typing in the add-on settings menus?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1),
+#                         yeslabel="[B][COLOR springgreen]Unhide Passwords[/COLOR][/B]",
+#                         nolabel="[B][COLOR red]No Cancel[/COLOR][/B]"):
+#         count = 0
+#         for folder in glob.glob(os.path.join(CONFIG.ADDONS, '*/')):
+#             sett = os.path.join(folder, 'resources', 'settings.xml')
+#             if os.path.exists(sett):
+#                 f = tools.read_from_file(sett)
+#                 match = tools.parse_dom(f, 'addon', ret='id')
+#                 for line in match:
+#                     if 'pass' in line:
+#                         if 'option="hidden"' in line:
+#                             try:
+#                                 change = line.replace('option="hidden"', '')
+#                                 f.replace(line, change)
+#                                 count += 1
+#                                 logging.log("[Unhide Passwords] found in {0} on {1}".format(sett.replace(CONFIG.HOME, ''), line))
+#                             except:
+#                                 pass
+#                 tools.write_to_file(sett, f)
+#         logging.log_notify("[COLOR {0}]Unhide Passwords[/COLOR]".format(CONFIG.COLOR1),
+#                            "[COLOR {0}]{1} items changed[/COLOR]".format(CONFIG.COLOR2, count))
+#         logging.log("[Unhide Passwords] {0} items changed".format(count))
+#     else:
+#         logging.log("[Unhide Passwords] Cancelled")
 
 
 def fix_update():

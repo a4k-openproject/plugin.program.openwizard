@@ -1,0 +1,251 @@
+{
+  "categories": [
+    {
+      "loglevel": {
+        "attrib": {
+          "hidden": true
+        },
+        "text": 0
+      }
+    },
+    {
+      "jsonrpc": {
+        "compactoutput": {
+          "text": true
+        },
+        "tcpport": {
+          "text": 9999
+        }
+      }
+    },
+    {
+      "skiploopfilter": {
+        "text": 0
+      }
+    },
+    {
+      "video": [
+        {
+          "subsdelayrange": {
+            "text": 10
+          }
+        },
+        {
+          "maxtempo": {
+            "text": 2.1
+          }
+        },
+        {
+          "audiodelayrange": {
+            "text": 10
+          }
+        },
+        {
+          "usetimeseeking": {
+            "text": true
+          }
+        },
+        {
+          "timeseekforwardbig": {
+            "text": 600
+          }
+        },
+        {
+          "timeseekbackwardbig": {
+            "text": -600
+          }
+        },
+        {
+          "percentseekforward": {
+            "text": 2
+          }
+        },
+        {
+          "percentseekbackward": {
+            "text": -1
+          }
+        },
+        {
+          "percentseekforwardbig": {
+            "text": 10
+          }
+        },
+        {
+          "percentseekbackwardbig": {
+            "text": -10
+          }
+        },
+        {
+          "fullscreenonmoviestart": {
+            "text": true
+          }
+        },
+        {
+          "defaultplayer": {
+            "text": "VideoPlayer"
+          }
+        },
+        {
+          "excludefromscan": {
+            "multiple": true,
+            "regexp": {
+              "text": ""
+            }
+          }
+        },
+        {
+          "excludefromlisting": {
+            "multiple": true,
+            "regexp": {
+              "text": ""
+            }
+          }
+        },
+        {
+          "playcountminimumpercent": {
+            "text": 90
+          }
+        },
+        {
+          "ignoresecondsatstart": {
+            "text": 180
+          }
+        },
+        {
+          "ignorepercentatend": {
+            "text": 8
+          }
+        },
+        {
+          "vdpauscaling": {
+            "text": true
+          }
+        },
+        {
+          "enablehighqualityhwscalers": {
+            "text": true
+          }
+        },
+        {
+          "dvxaallowhqscaling": {
+            "text": false
+          }
+        },
+        {
+          "ppffmpegdeinterlacing": {
+            "text": "linblenddeint"
+          }
+        },
+        {
+          "ppffmpegpostprocessing": {
+            "text": "ha:128:7,va,dr"
+          }
+        },
+        {
+          "autoscalemaxfps": {
+            "text": 30
+          }
+        },
+        {
+          "adjustrefreshrate": {
+            "override": [
+              "fps",
+              "refresh",
+              "fpsmin",
+              "fpsmax",
+              "refresmin",
+              "refreshmax"
+            ],
+            "fallback": [
+              "refresh",
+              "refreshmin",
+              "refreshmax"
+            ]
+          }
+        },
+        "checkdxvacompatibility",
+        "useocclusionquery",
+        "fpsdetect",
+        {
+          "latency": [
+            "delay",
+            {
+              "refresh": [
+                "min",
+                "max",
+                "delay"
+              ]
+            }
+          ]
+        },
+        "stereoscopicregex3d",
+        "stereoscopicregexsbs",
+        "stereoscopicregextab",
+        "assfixedworks",
+        "cleandatetime",
+        {
+          "cleanstrings": "regexp"
+        },
+        {
+          "excludestvshowsfromscan": "regexp"
+        }
+      ]
+    },
+    {
+      "audio": [
+        "headroom",
+        "defaultplayer",
+        {
+          "excludefromscan": "regexp"
+        },
+        {
+          "excludefromlisting": "regexp"
+        },
+        "ac3downmixgain",
+        "usetimeseeking",
+        "timeseekforwardbig",
+        "timeseekbackwardbig",
+        "playcountminimumpercent",
+        "applydrc",
+        "limiterhold",
+        "limiterrelease"
+      ]
+    },
+    {
+      "edl": [
+        "mergeshortcommbreaks",
+        "maxcommbreaklength",
+        "mincommbreaklength",
+        "maxcommbreakgap",
+        "commbreakautowait",
+        "commbreakautowind"
+      ]
+    },
+    {
+      "pvr": [
+        "timecorrection",
+        "infotoggleinterval",
+        "channeliconsautoscan",
+        "autoscaniconsuserset",
+        "numericchannelswitchtimeout"
+      ]
+    },
+    {
+      "epg": [
+        "updatecheckinterval",
+        "updateemptytagsinterval",
+        "cleanupinterval",
+        "activetagcheckinterval",
+        "retryinterruptedupdateinterval",
+        "displayupdatepopup",
+        "displayincrementalupdatepopup"
+      ]
+    },
+    "forcedswaptime",
+    "videoextensions",
+    "discstubextensions",
+    "languagecodes",
+    "moviestacking",
+    "folderstacking"
+  ]
+}

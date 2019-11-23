@@ -22,517 +22,262 @@ import xbmcgui
 
 import os
 
-try:  # Python 3
-    from urllib.parse import quote_plus
-except ImportError:  # Python 2
-    from urllib import quote_plus
-
 from resources.libs.common.config import CONFIG
+from resources.libs.common import directory
 from resources.libs.common import logging
 from resources.libs.common import tools
 from resources.libs.gui import window
 
 
-def writeAdvanced():
-    if CONFIG.RAM > 1536:
-        buffer = '209715200'
-    else:
-        buffer = '104857600'
-    with open(CONFIG.ADVANCED, 'w+') as f:
-        f.write('<advancedsettings>\n')
-        f.write('	<network>\n')
-        f.write('		<buffermode>2</buffermode>\n')
-        f.write('		<cachemembuffersize>%s</cachemembuffersize>\n' % buffer)
-        f.write('		<readbufferfactor>5</readbufferfactor>\n')
-        f.write('		<curlclienttimeout>10</curlclienttimeout>\n')
-        f.write('		<curllowspeedtime>10</curllowspeedtime>\n')
-        f.write('	</network>\n')
-        f.write('</advancedsettings>\n')
-    f.close()
-
-
-def autoConfig(msg='', TxtColor='0xFFFFFFFF', Font='font12', BorderWidth=10):
-    class MyWindow(xbmcgui.WindowDialog):
-        scr = {}
-
-        def __init__(self, msg='', L=0, T=0, W=1280, H=720, TxtColor='0xFFFFFFFF', Font='font12', BorderWidth=10):
-            buttonfocus, buttonnofocus = window.get_artwork('button')
-            radiobgfocus, radiobgnofocus, radiofocus, radionofocus = window.get_artwork('radio')
-            slidernibfocus, slidernibnofocus, sliderfocus, slidernofocus = window.get_artwork('slider')
-            image_path = os.path.join(CONFIG.ART, 'ContentPanel.png')
-            boxbg = os.path.join(CONFIG.ART, 'bgg2.png')
-            self.border = xbmcgui.ControlImage(L, T, W, H, image_path)
-            self.addControl(self.border)
-            self.BG = xbmcgui.ControlImage(L + BorderWidth, T + BorderWidth, W - (BorderWidth*2), H - (BorderWidth*2), CONFIG.ADDON_FANART, aspectRatio=0, colorDiffuse='0x5FFFFFFF')
-            self.addControl(self.BG)
-            top = T + BorderWidth
-            leftside = L + BorderWidth
-            rightside = L + (W/2)-(BorderWidth*2)
-            firstrow = top + 30
-            secondrow = firstrow + 275 + (BorderWidth/2)
-            currentwidth = ((W/2) - (BorderWidth*4))/2
-
-            header = '[COLOR {0}]Advanced Settings Configurator[/COLOR]'.format(CONFIG.COLOR2)
-            self.Header = xbmcgui.ControlLabel(L, top, W, 30, header, font='font13', textColor=TxtColor, alignment=0x00000002)
-            self.addControl(self.Header)
-            top += 30+BorderWidth
-            self.bgarea = xbmcgui.ControlImage(leftside, firstrow, rightside-L, 275, boxbg, aspectRatio=0, colorDiffuse='0x5FFFFFFF')
-            self.addControl(self.bgarea)
-            self.bgarea2 = xbmcgui.ControlImage(rightside+BorderWidth+BorderWidth, firstrow, rightside-L, 275, boxbg, aspectRatio=0, colorDiffuse='0x5FFFFFFF')
-            self.addControl(self.bgarea2)
-            self.bgarea3 = xbmcgui.ControlImage(leftside, secondrow, rightside-L, 275, boxbg, aspectRatio=0, colorDiffuse='0x5FFFFFFF')
-            self.addControl(self.bgarea3)
-            self.bgarea4 = xbmcgui.ControlImage(rightside+BorderWidth+BorderWidth, secondrow, rightside-L, 275, boxbg, aspectRatio=0, colorDiffuse='0x5FFFFFFF')
-            self.addControl(self.bgarea4)
-
-            header = '[COLOR {0}]Video Cache Size[/COLOR]'.format(CONFIG.COLOR2)
-            self.Header2 = xbmcgui.ControlLabel(leftside+BorderWidth, firstrow+5, (W/2)-(BorderWidth*2), 20, header, font='font13', textColor=TxtColor, alignment=0x00000002)
-            self.addControl(self.Header2)
-            freeMemory = int(float(xbmc.getInfoLabel('System.Memory(free)')[:-2])*.33)
-            recMemory = int(float(xbmc.getInfoLabel('System.Memory(free)')[:-2])*.23)
-            msg3 = "[COLOR {0}]Number of bytes used for buffering streams in memory.  When set to [COLOR {1}]0[/COLOR] the cache will be written to disk instead of RAM.  Note: For the memory size set here, Kodi will require 3x the amount of RAM to be free. Setting this too high might cause Kodi to crash if it can't get enough RAM(1/3 of Free Memory: [COLOR {2}]{3}[/COLOR])[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1, freeMemory)
-            self.Support3 = xbmcgui.ControlTextBox(leftside + int(BorderWidth*1.5), firstrow + 30 + BorderWidth, (W/2) - (BorderWidth*4), 150, font='font12', textColor=TxtColor)
-            self.addControl(self.Support3)
-            self.Support3.setText(msg3)
-            try:
-                self.videoCacheSize = xbmcgui.ControlSlider(leftside + int(BorderWidth*1.5), firstrow+210, (W/2) - (BorderWidth*5), 20, textureback=sliderfocus, texture=slidernibnofocus, texturefocus=slidernibfocus, orientation=xbmcgui.HORIZONTAL)
-            except:
-                self.videoCacheSize = xbmcgui.ControlSlider(leftside + int(BorderWidth*1.5), firstrow+210, (W/2) - (BorderWidth*5), 20, textureback=sliderfocus, texture=slidernibnofocus, texturefocus=slidernibfocus)
-            self.addControl(self.videoCacheSize)
-            self.videomin = 0
-            self.videomax = freeMemory if freeMemory < 2000 else 2000
-            self.recommendedVideo = recMemory if recMemory < 500 else 500
-            self.currentVideo = self.recommendedVideo
-            videopos = tools.percentage(self.currentVideo, self.videomax)
-            self.videoCacheSize.setPercent(videopos)
-            current1 = '[COLOR {0}]Current:[/COLOR] [COLOR {1}]{2} MB[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, self.currentVideo)
-            recommended1 = '[COLOR {0}]Recommended:[/COLOR] [COLOR {1}]{2} MB[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, self.recommendedVideo)
-            self.currentVideo1 = xbmcgui.ControlTextBox(leftside + BorderWidth, firstrow + 235, currentwidth, 20, font=Font, textColor=TxtColor)
-            self.addControl(self.currentVideo1)
-            self.currentVideo1.setText(current1)
-            self.recommendedVideo1 = xbmcgui.ControlTextBox(leftside + BorderWidth + currentwidth, firstrow + 235, currentwidth, 20, font=Font, textColor=TxtColor)
-            self.addControl(self.recommendedVideo1)
-            self.recommendedVideo1.setText(recommended1)
-
-            header = '[COLOR {0}]CURL Timeout/CURL Low Speed[/COLOR]'.format(CONFIG.COLOR2)
-            self.Header3=xbmcgui.ControlLabel(rightside+BorderWidth, firstrow+5, (W/2)-(BorderWidth*2), 20, header, font='font13', textColor=TxtColor, alignment=0x00000002)
-            self.addControl(self.Header3)
-            msg3 = "[COLOR {0}][B]curlclienttimeout[/B] is the time in seconds for how long it takes for libcurl connection will timeout and [B]curllowspeedtime[/B] is the time in seconds for libcurl to consider a connection lowspeed.  For slower connections set it to 20.[/COLOR]".format(CONFIG.COLOR2)
-            self.Support3 = xbmcgui.ControlTextBox(rightside + int(BorderWidth*3.5), firstrow + 30 + BorderWidth, (W/2) - (BorderWidth*4), 150, font='font12', textColor=TxtColor)
-            self.addControl(self.Support3)
-            self.Support3.setText(msg3)
-            try:
-                self.CURLTimeout = xbmcgui.ControlSlider(rightside + int(BorderWidth*3.5), firstrow + 210, (W/2) - (BorderWidth*5), 20, textureback=sliderfocus, texture=slidernibnofocus, texturefocus=slidernibfocus, orientation=xbmcgui.HORIZONTAL)
-            except:
-                self.CURLTimeout = xbmcgui.ControlSlider(rightside + int(BorderWidth*3.5), firstrow + 210, (W/2) - (BorderWidth*5), 20, textureback=sliderfocus, texture=slidernibnofocus, texturefocus=slidernibfocus)
-            self.addControl(self.CURLTimeout)
-            self.curlmin = 0
-            self.curlmax = 20
-            self.recommendedCurl = 10
-            self.currentCurl = self.recommendedCurl
-            curlpos = tools.percentage(self.currentCurl, self.curlmax)
-            self.CURLTimeout.setPercent(curlpos)
-            current2 = '[COLOR {0}]Current:[/COLOR] [COLOR {1}]{2}s[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, self.currentCurl)
-            recommended2 = '[COLOR {0}]Recommended:[/COLOR] [COLOR {1}]{2}s[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, self.recommendedCurl)
-            self.currentCurl2 = xbmcgui.ControlTextBox(rightside + (BorderWidth*3), firstrow + 235, currentwidth, 20,font=Font,textColor=TxtColor)
-            self.addControl(self.currentCurl2)
-            self.currentCurl2.setText(current2)
-            self.recommendedCurl2 = xbmcgui.ControlTextBox(rightside + (BorderWidth*3) + currentwidth, firstrow + 235, currentwidth, 20,font=Font,textColor=TxtColor)
-            self.addControl(self.recommendedCurl2)
-            self.recommendedCurl2.setText(recommended2)
-
-            header = '[COLOR {0}]Read Buffer Factor[/COLOR]'.format(CONFIG.COLOR2)
-            self.Header4=xbmcgui.ControlLabel(leftside, secondrow+5, (W/2)-(BorderWidth*2), 20, header, font='font13', textColor=TxtColor, alignment=0x00000002)
-            self.addControl(self.Header4)
-            msg3 = "[COLOR {0}]The value of this setting is a multiplier of the default limit. If Kodi is loading a typical bluray raw file at 36 Mbit/s, then a value of 2 will need at least 72 Mbit/s of network bandwidth. However, unlike with the RAM setting, you can safely increase this value however high you want, and Kodi won't crash.[/COLOR]".format(CONFIG.COLOR2)
-            self.Support3 = xbmcgui.ControlTextBox(leftside + int(BorderWidth*1.5), secondrow + 30 + BorderWidth, (W/2) - (BorderWidth*4), 150, font='font12', textColor=TxtColor)
-            self.addControl(self.Support3)
-            self.Support3.setText(msg3)
-            try:
-                self.readBufferFactor = xbmcgui.ControlSlider(leftside + int(BorderWidth*1.5), secondrow + 210, (W/2) - (BorderWidth*5), 20, textureback=sliderfocus, texture=slidernibnofocus, texturefocus=slidernibfocus, orientation=xbmcgui.HORIZONTAL)
-            except:
-                self.readBufferFactor = xbmcgui.ControlSlider(leftside + int(BorderWidth*1.5), secondrow + 210, (W/2) - (BorderWidth*5), 20, textureback=sliderfocus, texture=slidernibnofocus, texturefocus=slidernibfocus)
-            self.addControl(self.readBufferFactor)
-            self.readmin = 0
-            self.readmax = 10
-            self.recommendedRead = 5
-            self.currentRead = self.recommendedRead
-            readpos = tools.percentage(self.currentRead, self.readmax)
-            self.readBufferFactor.setPercent(readpos)
-            current3 = '[COLOR {0}]Current:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, self.currentRead)
-            recommended3 = '[COLOR {0}]Recommended:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, self.recommendedRead)
-            self.currentRead3 = xbmcgui.ControlTextBox(leftside + BorderWidth, secondrow + 235, currentwidth, 20, font=Font, textColor=TxtColor)
-            self.addControl(self.currentRead3)
-            self.currentRead3.setText(current3)
-            self.recommendedRead3 = xbmcgui.ControlTextBox(leftside + BorderWidth + currentwidth, secondrow + 235, currentwidth, 20, font=Font, textColor=TxtColor)
-            self.addControl(self.recommendedRead3)
-            self.recommendedRead3.setText(recommended3)
-
-            header = '[COLOR {0}]Buffer Mode[/COLOR]'.format(CONFIG.COLOR2)
-            self.Header4 = xbmcgui.ControlLabel(rightside + BorderWidth, secondrow + 5, (W/2) - (BorderWidth*2), 20, header, font='font13', textColor=TxtColor, alignment=0x00000002)
-            self.addControl(self.Header4)
-            msg4 = "[COLOR {0}]This setting will force Kodi to use a cache for all video files, including local network, internet, and even the local hard drive. Default value is 0 and will only cache videos that use internet file paths/sources.[/COLOR]".format(CONFIG.COLOR2)
-            self.Support4 = xbmcgui.ControlTextBox(rightside + int(BorderWidth*3.5), secondrow + 30 + BorderWidth, (W/2) - (BorderWidth*4), 110, font='font12', textColor=TxtColor)
-            self.addControl(self.Support4)
-            self.Support4.setText(msg4)
-            B1 = secondrow + 130 + BorderWidth
-            B2 = B1 + 30
-            B3 = B2 + 30
-            B4 = B3 + 30
-            self.Button0 = xbmcgui.ControlRadioButton(rightside + (BorderWidth*3), B1, (W/2) - (BorderWidth*4), 30, '0: Buffer all internet filesystems', font='font12', focusTexture=radiobgfocus, noFocusTexture=radiobgnofocus, focusOnTexture=radiofocus, noFocusOnTexture=radiofocus, focusOffTexture=radionofocus, noFocusOffTexture=radionofocus)
-            self.Button1 = xbmcgui.ControlRadioButton(rightside + (BorderWidth*3), B2, (W/2) - (BorderWidth*4), 30, '1: Buffer all filesystems', font='font12', focusTexture=radiobgfocus, noFocusTexture=radiobgnofocus, focusOnTexture=radiofocus, noFocusOnTexture=radiofocus, focusOffTexture=radionofocus, noFocusOffTexture=radionofocus)
-            self.Button2 = xbmcgui.ControlRadioButton(rightside + (BorderWidth*3), B3, (W/2) - (BorderWidth*4), 30, '2: Only buffer true internet filesystems', font='font12', focusTexture=radiobgfocus, noFocusTexture=radiobgnofocus, focusOnTexture=radiofocus, noFocusOnTexture=radiofocus, focusOffTexture=radionofocus, noFocusOffTexture=radionofocus)
-            self.Button3 = xbmcgui.ControlRadioButton(rightside + (BorderWidth*3), B4, (W/2) - (BorderWidth*4), 30, '3: No Buffer', font='font12', focusTexture=radiobgfocus, noFocusTexture=radiobgnofocus, focusOnTexture=radiofocus, noFocusOnTexture=radiofocus, focusOffTexture=radionofocus, noFocusOffTexture=radionofocus)
-            self.addControl(self.Button0)
-            self.addControl(self.Button1)
-            self.addControl(self.Button2)
-            self.addControl(self.Button3)
-            self.Button0.setSelected(False)
-            self.Button1.setSelected(False)
-            self.Button2.setSelected(True)
-            self.Button3.setSelected(False)
-
-            self.buttonWrite = xbmcgui.ControlButton(leftside, T + H - 40 - BorderWidth, (W/2) - (BorderWidth*2), 35, "Write File", textColor="0xFF000000", focusedColor="0xFF000000", alignment=2, focusTexture=buttonfocus, noFocusTexture=buttonnofocus)
-            self.buttonCancel=xbmcgui.ControlButton(rightside + BorderWidth*2, T + H - 40 - BorderWidth, (W/2) - (BorderWidth*2), 35, "Cancel", textColor="0xFF000000", focusedColor="0xFF000000", alignment=2, focusTexture=buttonfocus, noFocusTexture=buttonnofocus)
-            self.addControl(self.buttonWrite)
-            self.addControl(self.buttonCancel)
-
-            self.buttonWrite.controlLeft(self.buttonCancel)
-            self.buttonWrite.controlRight(self.buttonCancel)
-            self.buttonWrite.controlUp(self.Button3)
-            self.buttonWrite.controlDown(self.videoCacheSize)
-            self.buttonCancel.controlLeft(self.buttonWrite)
-            self.buttonCancel.controlRight(self.buttonWrite)
-            self.buttonCancel.controlUp(self.Button3)
-            self.buttonCancel.controlDown(self.videoCacheSize)
-            self.videoCacheSize.controlUp(self.buttonWrite)
-            self.videoCacheSize.controlDown(self.CURLTimeout)
-            self.CURLTimeout.controlUp(self.videoCacheSize)
-            self.CURLTimeout.controlDown(self.readBufferFactor)
-            self.readBufferFactor.controlUp(self.CURLTimeout)
-            self.readBufferFactor.controlDown(self.Button0)
-            self.Button0.controlUp(self.CURLTimeout)
-            self.Button0.controlDown(self.Button1)
-            self.Button0.controlLeft(self.readBufferFactor)
-            self.Button0.controlRight(self.readBufferFactor)
-            self.Button1.controlUp(self.Button0)
-            self.Button1.controlDown(self.Button2)
-            self.Button1.controlLeft(self.readBufferFactor)
-            self.Button1.controlRight(self.readBufferFactor)
-            self.Button2.controlUp(self.Button1)
-            self.Button2.controlDown(self.Button3)
-            self.Button2.controlLeft(self.readBufferFactor)
-            self.Button2.controlRight(self.readBufferFactor)
-            self.Button3.controlUp(self.Button2)
-            self.Button3.controlDown(self.buttonWrite)
-            self.Button3.controlLeft(self.readBufferFactor)
-            self.Button3.controlRight(self.readBufferFactor)
-            self.setFocus(self.videoCacheSize)
-
-
-        def updateCurrent(self, control):
-            if control == self.videoCacheSize:
-                self.currentVideo = (self.videomax)*self.videoCacheSize.getPercent()/100
-                current = '[COLOR {0}]Current:[/COLOR] [COLOR {1}]{2} MB[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, int(self.currentVideo))
-                self.currentVideo1.setText(current)
-
-            elif control == self.CURLTimeout:
-                self.currentCurl = (self.curlmax)*self.CURLTimeout.getPercent()/100
-                current = '[COLOR {0}]Current:[/COLOR] [COLOR {1}]{2}s[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, int(self.currentCurl))
-                self.currentCurl2.setText(current)
-
-            elif control == self.readBufferFactor:
-                self.currentRead = (self.readmax)*self.readBufferFactor.getPercent()/100
-                current = '[COLOR {0}]Current:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, int(self.currentRead))
-                self.currentRead3.setText(current)
-
-            elif control in [self.Button0, self.Button1, self.Button2, self.Button3]:
-                self.Button0.setSelected(False)
-                self.Button1.setSelected(False)
-                self.Button2.setSelected(False)
-                self.Button3.setSelected(False)
-                control.setSelected(True)
-
-
-        def doWrite(self):
-            dialog = xbmcgui.Dialog()
-            
-            if self.Button0.isSelected():
-                buffermode = 0
-            elif self.Button1.isSelected():
-                buffermode = 1
-            elif self.Button2.isSelected():
-                buffermode = 2
-            elif self.Button3.isSelected():
-                buffermode = 3
-            if os.path.exists(CONFIG.ADVANCED):
-                choice = dialog.yesno(CONFIG.ADDONTITLE,
-                                          "[COLOR {0}]There is currently an active [COLOR {1}]advancedsettings.xml[/COLOR], would you like to remove it and continue?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1),
-                                          yeslabel="[B][COLOR springgreen]Remove Settings[/COLOR][/B]",
-                                          nolabel="[B][COLOR red]Cancel Write[/COLOR][/B]")
-                if choice == 0:
-                    return
-                try:
-                    os.remove(CONFIG.ADVANCED)
-                except:
-                    f = open(CONFIG.ADVANCED, 'w');
-                    f.close()
-            if CONFIG.KODIV < 17:
-                with open(CONFIG.ADVANCED, 'w+') as f:
-                    f.write('<advancedsettings>\n')
-                    f.write('	<network>\n')
-                    f.write('		<buffermode>%s</buffermode>\n' % buffermode)
-                    f.write('		<cachemembuffersize>%s</cachemembuffersize>\n' % int(self.currentVideo*1024*1024))
-                    f.write('		<readbufferfactor>%s</readbufferfactor>\n' % self.currentRead)
-                    f.write('		<curlclienttimeout>%s</curlclienttimeout>\n' % self.currentCurl)
-                    f.write('		<curllowspeedtime>%s</curllowspeedtime>\n' % self.currentCurl)
-                    f.write('	</network>\n')
-                    f.write('</advancedsettings>\n')
-                f.close()
-            else:
-                with open(CONFIG.ADVANCED, 'w+') as f:
-                    f.write('<advancedsettings>\n')
-                    f.write('	<cache>\n')
-                    f.write('		<buffermode>%s</buffermode>\n' % buffermode)
-                    f.write('		<memorysize>%s</memorysize>\n' % int(self.currentVideo*1024*1024))
-                    f.write('		<readfactor>%s</readfactor>\n' % self.currentRead)
-                    f.write('	</cache>\n')
-                    f.write('	<network>\n')
-                    f.write('		<curlclienttimeout>%s</curlclienttimeout>\n' % self.currentCurl)
-                    f.write('		<curllowspeedtime>%s</curllowspeedtime>\n' % self.currentCurl)
-                    f.write('	</network>\n')
-                    f.write('</advancedsettings>\n')
-                f.close()
-            self.close()
-
-
-        def onControl(self, control):
-            if control == self.buttonWrite:
-                self.doWrite()
-            elif control == self.buttonCancel:
-                self.close()
-
-
-        def onAction(self, action):
-            try:
-                F = self.getFocus()
-            except:
-                F = False
-            if F == self.videoCacheSize:
-                self.updateCurrent(self.videoCacheSize)
-            elif F == self.CURLTimeout:
-                self.updateCurrent(self.CURLTimeout)
-            elif F == self.readBufferFactor:
-                self.updateCurrent(self.readBufferFactor)
-            elif F in [self.Button0, self.Button1, self.Button2, self.Button3] and action in [window.ACTION_MOUSE_LEFT_CLICK, window.ACTION_SELECT_ITEM]:
-                self.updateCurrent(F)
-            elif action == window.ACTION_PREVIOUS_MENU:
-                self.close()
-            elif action == window.ACTION_NAV_BACK:
-                self.close()
-
-    maxW = 1280
-    maxH = 720
-    W = int(900)
-    H = int(650)
-    L = int((maxW-W)/2)
-    T = int((maxH-H)/2);
-    TempWindow = MyWindow(L=L, T=T, W=W, H=H, TxtColor=TxtColor, Font=Font, BorderWidth=BorderWidth)
-    TempWindow.doModal()
-    del TempWindow
-
-
-def QautoConfig(msg='', TxtColor='0xFFFFFFFF', Font='font10', BorderWidth=10):
-    class MyWindow(xbmcgui.WindowDialog):
-        scr = {}
-
-        def __init__(self, msg='', L=0, T=0, W=1280, H=720, TxtColor='0xFFFFFFFF', Font='font10', BorderWidth=10):
-            buttonfocus, buttonnofocus = window.get_artwork('button')
-            self.BG = xbmcgui.ControlImage(L+BorderWidth, T+BorderWidth, W-(BorderWidth*2), H-(BorderWidth*2), CONFIG.ADDON_FANART, aspectRatio=0)
-            self.addControl(self.BG)
-            top = T+BorderWidth
-            leftside = L+BorderWidth
-            rightside = L+(W/2)-(BorderWidth*2)
-            header = '[COLOR {0}]Quick Advanced Settings Configurator[/COLOR]'.format(CONFIG.COLOR2)
-            self.Header=xbmcgui.ControlLabel(L, top, W, 30, header, font='font13', textColor=TxtColor, alignment=0x00000002)
-            self.addControl(self.Header)
-            top += 30+BorderWidth
-            freeMemory = int(float(tools.get_info_label('System.Memory(free)')[:-2]) * .33)
-            recMemory = int(float(tools.get_info_label('System.Memory(free)')[:-2]) * .23)
-            self.videomin = 0
-            self.videomax = freeMemory if freeMemory < 2000 else 2000
-            self.recommendedVideo = recMemory if recMemory < 500 else 500
-            self.currentVideo = self.recommendedVideo
-            current1 = '[COLOR {0}]Video Cache Size[/COLOR]=[COLOR {1}]{2} MB[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, self.currentVideo)
-            recommended1 = '[COLOR {0}]Video Cache Size:[/COLOR] [COLOR {1}]{2} MB[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, self.recommendedVideo)
-            self.curlmin = 0
-            self.curlmax = 20
-            self.recommendedCurl = 10
-            self.currentCurl = self.recommendedCurl
-            curlpos = tools.percentage(self.currentCurl, self.curlmax)
-            recommended2 = '[COLOR {0}]CURL Timeout/CURL Low Speed:[/COLOR] [COLOR {1}]{2}s[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, self.recommendedCurl)
-            self.readmin = 0
-            self.readmax = 10
-            self.recommendedRead = 5
-            self.currentRead = self.recommendedRead
-            readpos = tools.percentage(self.currentRead, self.readmax)
-            recommended3 = '[COLOR {0}]Read Buffer Factor:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, self.recommendedRead)
-            recommended4 = '[COLOR {0}]Buffer Mode:[/COLOR] [COLOR {1}]2[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2)
-            msgbox = '[COLOR {0}]These settings will be written to the advancedsettings.xml[/COLOR]\r\n\r\n{1}\r\n{2}\r\n{3}\r\n{4}'.format(CONFIG.COLOR1, recommended4, recommended1, recommended3, recommended2)
-            self.box = xbmcgui.ControlTextBox(L+25, T+50, W, H, font='font14')
-            self.addControl(self.box)
-            self.box.setText(msgbox)
-            self.buttonWrite = xbmcgui.ControlButton(leftside, T+H-40-BorderWidth, (W/2)-(BorderWidth*2), 35, "Write File", textColor="0xFF000000", focusedColor="0xFF000000", alignment=2, focusTexture=buttonfocus, noFocusTexture=buttonnofocus)
-            self.buttonCancel = xbmcgui.ControlButton(rightside+BorderWidth*2, T+H-40-BorderWidth, (W/2)-(BorderWidth*2), 35, "Cancel", textColor="0xFF000000", focusedColor="0xFF000000", alignment=2, focusTexture=buttonfocus, noFocusTexture=buttonnofocus)
-            self.addControl(self.buttonWrite)
-            self.addControl(self.buttonCancel)
-            self.setFocus(self.buttonCancel)
-            self.buttonWrite.controlLeft(self.buttonCancel)
-            self.buttonWrite.controlRight(self.buttonCancel)
-            self.buttonCancel.controlLeft(self.buttonWrite)
-            self.buttonCancel.controlRight(self.buttonWrite)
-
-        def updateCurrent(self, control):
-            if control == self.videoCacheSize:
-                self.currentVideo = (self.videomax)*self.videoCacheSize.getPercent()/100
-                current = '[COLOR {0}]Current:[/COLOR] [COLOR {1}]{2} MB[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, int(self.currentVideo))
-                self.currentVideo1.setText(current)
-
-            elif control == self.CURLTimeout:
-                self.currentCurl = (self.curlmax)*self.CURLTimeout.getPercent()/100
-                current = '[COLOR {0}]Current:[/COLOR] [COLOR {1}]{2}s[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, int(self.currentCurl))
-                self.currentCurl2.setText(current)
-
-            elif control == self.readBufferFactor:
-                self.currentRead = (self.readmax)*self.readBufferFactor.getPercent()/100
-                current = '[COLOR {0}]Current:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.COLOR2, int(self.currentRead))
-                self.currentRead3.setText(current)
-
-
-        def doWrite(self):
-            dialog = xbmcgui.Dialog()
-            
-            buffermode = 2
-            if os.path.exists(CONFIG.ADVANCED):
-                choice = dialog.yesno(CONFIG.ADDONTITLE,
-                                          "[COLOR {0}]There is currently an active [COLOR {1}]advancedsettings.xml[/COLOR], would you like to remove it and continue?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1),
-                                          yeslabel="[B][COLOR green]Remove Settings[/COLOR][/B]",
-                                          nolabel="[B][COLOR red]Cancel Write[/COLOR][/B]")
-                if choice == 0:
-                    return
-                try:
-                    os.remove(CONFIG.ADVANCED)
-                except:
-                    f = open(CONFIG.ADVANCED, 'w'); f.close()
-            if CONFIG.KODIV < 17:
-                with open(CONFIG.ADVANCED, 'w+') as f:
-                    f.write('<advancedsettings>\n')
-                    f.write('	<network>\n')
-                    f.write('		<buffermode>%s</buffermode>\n' % buffermode)
-                    f.write('		<cachemembuffersize>%s</cachemembuffersize>\n' % int(self.currentVideo*1024*1024))
-                    f.write('		<readbufferfactor>%s</readbufferfactor>\n' % self.currentRead)
-                    f.write('		<curlclienttimeout>%s</curlclienttimeout>\n' % self.currentCurl)
-                    f.write('		<curllowspeedtime>%s</curllowspeedtime>\n' % self.currentCurl)
-                    f.write('	</network>\n')
-                    f.write('</advancedsettings>\n')
-                f.close()
-            else:
-                with open(CONFIG.ADVANCED, 'w+') as f:
-                    f.write('<advancedsettings>\n')
-                    f.write('	<cache>\n')
-                    f.write('		<buffermode>%s</buffermode>\n' % buffermode)
-                    f.write('		<memorysize>%s</memorysize>\n' % int(self.currentVideo*1024*1024))
-                    f.write('		<readfactor>%s</readfactor>\n' % self.currentRead)
-                    f.write('	</cache>\n')
-                    f.write('	<network>\n')
-                    f.write('		<curlclienttimeout>%s</curlclienttimeout>\n' % self.currentCurl)
-                    f.write('		<curllowspeedtime>%s</curllowspeedtime>\n' % self.currentCurl)
-                    f.write('	</network>\n')
-                    f.write('</advancedsettings>\n')
-                f.close()
-                logging.log_notify(CONFIG.ADDONTITLE,
-                                   '[COLOR {0}]advancedsettings.xml has been written[/COLOR]'.format(CONFIG.COLOR2))
-            self.close()
-
-
-        def onControl(self, control):
-            if control == self.buttonWrite:
-                self.doWrite()
-            elif control == self.buttonCancel:
-                self.close()
-
-
-        def onAction(self, action):
-            try:
-                F = self.getFocus()
-            except:
-                F = False
-            if action == window.ACTION_PREVIOUS_MENU:
-                self.close()
-            elif action == window.ACTION_NAV_BACK:
-                self.close()
-
-    maxW = 1280
-    maxH = 720
-    W = int(700)
-    H = int(350)
-    L = int((maxW-W)/2)
-    T = int((maxH-H)/2)
-    TempWindow = MyWindow(L=L, T=T, W=W, H=H, TxtColor=TxtColor, Font=Font, BorderWidth=BorderWidth);
-    TempWindow.doModal()
-    del TempWindow
-
-
-def write_advanced(name, url):
-    from resources.libs.common import tools
-    from resources.libs.common import logging
-    
-    dialog = xbmcgui.Dialog()
-
-    response = tools.open_url(url)
-    
-    if response:
-        if os.path.exists(CONFIG.ADVANCED):
-            choice = dialog.yesno(CONFIG.ADDONTITLE,
-                                      "[COLOR {0}]Would you like to overwrite your current Advanced Settings with [COLOR {1}]{}[/COLOR]?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, name),
-                                      yeslabel="[B][COLOR springgreen]Overwrite[/COLOR][/B]",
-                                      nolabel="[B][COLOR red]Cancel[/COLOR][/B]")
-        else:
-            choice = dialog.yesno(CONFIG.ADDONTITLE,
-                                      "[COLOR {0}]Would you like to download and install [COLOR {1}]{2}[/COLOR]?[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, name),
-                                      yeslabel="[B][COLOR springgreen]Install[/COLOR][/B]",
-                                      nolabel="[B][COLOR red]Cancel[/COLOR][/B]")
-
-        if choice == 1:
-            tools.write_to_file(CONFIG.ADVANCED, response.text)
-            dialog.ok(CONFIG.ADDONTITLE,
-                          '[COLOR {0}]AdvancedSettings.xml file has been successfully written. Once you click okay it will force close kodi.[/COLOR]'.format(CONFIG.COLOR2))
-            tools.kill_kodi(over=True)
-        else:
-            logging.log("[Advanced Settings] install canceled")
-            logging.log_notify(CONFIG.ADDONTITLE,
-                               "[COLOR {0}]Write Cancelled![/COLOR]".format(CONFIG.COLOR2))
-            return
-    else:
-        logging.log("[Advanced Settings] URL not working: {0}".format(url))
-        logging.log_notify(CONFIG.ADDONTITLE,
-                           "[COLOR {0}]URL Not Working[/COLOR]".format(CONFIG.COLOR2))
-
-
-def view_advanced():
-    from resources.libs.common import tools
-    from resources.libs.gui import window
-
+def view_current():
     window.show_text_box(CONFIG.ADDONTITLE, tools.read_from_file(CONFIG.ADVANCED).replace('\t', '    '))
 
 
-def remove_advanced():
-    from resources.libs.common import tools
-    from resources.libs.common import logging
+def remove_current():
+    dialog = xbmcgui.Dialog()
+    ok = dialog.yesno(CONFIG.ADDONTITLE, "[COLOR {0}]Are you sure you want to remove the current advancedsettings.xml?[/COLOR]".format(CONFIG.COLOR2),
+                                           yeslabel="[B][COLOR springgreen]Yes[/COLOR][/B]",
+                                           nolabel="[B][COLOR red]No[/COLOR][/B]")
 
-    if os.path.exists(CONFIG.ADVANCED):
-        tools.remove_file(CONFIG.ADVANCED)
+    if ok:
+        if os.path.exists(CONFIG.ADVANCED):
+            tools.remove_file(CONFIG.ADVANCED)
+        else:
+            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                               "[COLOR {0}]advancedsettings.xml not found[/COLOR]".format(CONFIG.COLOR2))
     else:
-        logging.log_notify(CONFIG.ADDONTITLE,
-                           "[COLOR {0}]AdvancedSettings.xml not found[/COLOR]".format(CONFIG.COLOR2))
+        logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                               "[COLOR {0}]advancedsettings.xml not removed[/COLOR]".format(CONFIG.COLOR2))
 
+def _write_setting(category, tag, value):
+    from xml.etree import ElementTree
+
+    exists = os.path.exists(CONFIG.ADVANCED)
+
+    root = None
+
+    if exists:
+        root = ElementTree.parse(CONFIG.ADVANCED).getroot()
+    else:
+        root = ElementTree.Element('advancedsettings')
+
+    tree_category = root.find('./{0}'.format(category))
+    if tree_category is None:
+        tree_category = ElementTree.SubElement(root, category)
+
+    category_tag = tree_category.find(tag)
+    if category_tag is None:
+        category_tag = ElementTree.SubElement(tree_category, tag)
+
+    category_tag.text = '{0}'.format(value)
+
+    tree = ElementTree.ElementTree(root)
+
+    logging.log('Writing {0} - {1}: {2} to advancedsettings.xml'.format(category, tag, value), level=xbmc.LOGDEBUG)
+    tree.write(CONFIG.ADVANCED)
+
+    xbmc.executebuiltin('Container.Refresh()')
+
+
+class Advanced:
+    def __init__(self):
+        self.dialog = xbmcgui.Dialog()
+
+        self.tags = {}
+
+    def show_menu(self, url=None):
+        directory.add_dir('Quick Configure advancedsettings.xml',
+                               {'mode': 'advanced_settings', 'action': 'quick_configure'}, icon=CONFIG.ICONMAINT,
+                               themeit=CONFIG.THEME3)
+
+        if os.path.exists(CONFIG.ADVANCED):
+            directory.add_file('View Current advancedsettings.xml',
+                               {'mode': 'advanced_settings', 'action': 'view_current'}, icon=CONFIG.ICONMAINT,
+                               themeit=CONFIG.THEME3)
+            directory.add_file('Remove Current advancedsettings.xml',
+                               {'mode': 'advanced_settings', 'action': 'remove_current'}, icon=CONFIG.ICONMAINT,
+                               themeit=CONFIG.THEME3)
+        
+        response = tools.open_url(CONFIG.ADVANCEDFILE)
+        url_response = tools.open_url(url)
+        local_file = os.path.join(CONFIG.ADDON_PATH, 'resources', 'text', 'advanced.json')
+        
+        if url_response:
+            TEMPADVANCEDFILE = url_response.text
+        elif response:
+            TEMPADVANCEDFILE = response.text
+        elif os.path.exists(local_file):
+            TEMPADVANCEDFILE = tools.read_from_file(local_file)
+        else:
+            logging.log("[Advanced Settings] No Presets Available")
+        
+        if TEMPADVANCEDFILE:
+            import json
+
+            directory.add_separator(icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+            
+            try:
+                advanced_json = json.loads(TEMPADVANCEDFILE)
+            except:
+                advanced_json = None
+                logging.log("[Advanced Settings] ERROR: Invalid Format for {0}.".format(CONFIG.ADVANCEDFILE))
+                
+            if advanced_json:
+                presets = advanced_json['presets']
+                if presets and len(presets) > 0:
+                    for preset in presets:
+                        name = preset.get('name', '')
+                        section = preset.get('section', '')
+                        preseturl = preset.get('url', '')
+                        icon = preset.get('icon', '')
+                        fanart = preset.get('fanart', '')
+                        description = preset.get('description', '')
+
+                        if not name:
+                            logging.log('[Advanced Settings] Missing tag \'name\'', level=xbmc.LOGDEBUG)
+                            continue
+                        if not preseturl:
+                            logging.log('[Advanced Settings] Missing tag \'url\'', level=xbmc.LOGDEBUG)
+                            continue
+                        
+                        if section:
+                            directory.add_dir(name, {'mode': 'advanced_settings', 'url': preseturl},
+                                              description=description, icon=icon, fanart=fanart, themeit=CONFIG.THEME3)
+                        else:
+                            directory.add_file(name,
+                                               {'mode': 'advanced_settings', 'action': 'write_advanced', 'name': name,
+                                                'url': preseturl},
+                                               description=description, icon=icon, fanart=fanart, themeit=CONFIG.THEME2)
+        else:
+            logging.log("[Advanced Settings] URL not working: {0}".format(CONFIG.ADVANCEDFILE))
+            
+
+    def quick_configure(self):
+        directory.add_file('Changes will not be reflected until Kodi is restarted.', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        directory.add_file('Click here to restart Kodi.', {'mode': 'forceclose'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        directory.add_file('More categories coming soon :)', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        directory.add_separator(middle='CATEGORIES')
+        # directory.add_dir('Troubleshooting', {'mode': 'advanced_settings', 'action': 'show_section', 'tags': 'loglevel|jsonrpc'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        # directory.add_dir('Playback', {'mode': 'advanced_settings', 'action': 'show_section', 'tags': 'skiploopfilter|video|audio|edl|pvr|epg|forcedswaptime'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        # directory.add_dir('Video Library', {'mode': 'advanced_settings', 'action': 'show_section', 'tags': 'videoextensions|discstubextensions|languagecodes|moviestacking|folderstacking|cleandatetime|cleanstrings|tvshowmatching|tvmultipartmatching'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        directory.add_dir('Network and Cache', {'mode': 'advanced_settings', 'action': 'show_section', 'tags': 'cache|network'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+
+    def show_section(self, tags):
+        from xml.etree import ElementTree
+
+        split_tags = tags.split('|')
+        logging.log(split_tags)
+
+        exists = os.path.exists(CONFIG.ADVANCED)
+
+        if exists:
+            root = ElementTree.parse(CONFIG.ADVANCED).getroot()
+
+            for category in root.findall('*'):
+                name = category.tag
+                if name not in split_tags:
+                    continue
+
+                values = {}
+
+                for element in category.findall('*'):
+                    values[element.tag] = element.text
+
+                self.tags[name] = values
+
+        if len(self.tags) == 0:
+            directory.add_file('No settings for this category exist in your current advancedsettings.xml file.', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+            directory.add_separator()
+            
+        for category in self.tags:
+            directory.add_separator(category.upper())
+
+            for tag in self.tags[category]:
+                value = self.tags[category][tag]
+
+                directory.add_file('{0}: {1}'.format(tag, value),
+                                   {'mode': 'advanced_settings', 'action': 'set_setting', 'category': category,
+                                    'tag': tag, 'value': value}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+
+    def set_setting(self, category, tag, current):
+        value = None
+        
+        if category == 'cache':
+            value = self._cache(tag, current)
+        elif category == 'network':
+            value = self._network(tag, current)
+            
+        if value:
+            _write_setting(category, tag, value)
+            
+    def _cache(self, tag, current):
+        value = None
+        
+        if tag == 'buffermode':
+            values = ['Buffer all internet filesystems',
+                      'Buffer all filesystems',
+                      'Only buffer true internet filesystems',
+                      'No buffer',
+                      'All network filesystems']
+                      
+            items = []
+            for i in range(len(values)):
+                items.append(xbmcgui.ListItem(label=str(i), label2=values[i]))
+                      
+            value = self.dialog.select('Choose a Value', items, preselect=int(current), useDetails=True)
+        elif tag == 'memorysize':
+            free_memory = tools.get_info_label('System.Memory(free)')
+            free_converted = tools.convert_size(int(float(free_memory[:-2])) * 1024 * 1024)
+            
+            recommended = int(float(free_memory[:-2]) / 3) * 1024 * 1024
+            recommended_converted = tools.convert_size(int(float(free_memory[:-2]) / 3) * 1024 * 1024)
+        
+            value = tools.get_keyboard(default='{0}'.format(recommended), heading='Memory Size in Bytes\n(Recommended: {0} = {1})'.format(recommended_converted, recommended))
+        elif tag == 'readfactor':
+            value = tools.get_keyboard(default='{0}'.format(current), heading='Fill Rate of Cache\n(High numbers will cause heavy bandwidth use!)')
+            
+        return value
+            
+    def _network(self, tag, current):
+        value = None
+        
+        msgs = {'curlclienttimeout': 'Timeout in seconds for libcurl (http/ftp) connections',
+                'curllowspeedtime': 'Time in seconds for libcurl to consider a connection lowspeed',
+                'curlretries': 'Amount of retries for certain failed libcurl operations (e.g. timeout)',
+                'httpproxyusername': 'Username for Basic Proxy Authentication',
+                'httpproxypassword': 'Password for Basic Proxy Authentication'}
+        
+        value = tools.get_keyboard(default='{0}'.format(current), heading=msgs[tag])
+            
+        return value
+                
+    def write_advanced(self, name, url):
+        response = tools.open_url(url)
+
+        if response:
+            if os.path.exists(CONFIG.ADVANCED):
+                choice = self.dialog.yesno(CONFIG.ADDONTITLE,
+                                           "[COLOR {0}]Would you like to overwrite your current Advanced Settings with [COLOR {1}]{2}[/COLOR]?[/COLOR]".format(
+                                               CONFIG.COLOR2, CONFIG.COLOR1, name),
+                                           yeslabel="[B][COLOR springgreen]Overwrite[/COLOR][/B]",
+                                           nolabel="[B][COLOR red]Cancel[/COLOR][/B]")
+            else:
+                choice = self.dialog.yesno(CONFIG.ADDONTITLE,
+                                           "[COLOR {0}]Would you like to download and install [COLOR {1}]{2}[/COLOR]?[/COLOR]".format(
+                                               CONFIG.COLOR2, CONFIG.COLOR1, name),
+                                           yeslabel="[B][COLOR springgreen]Install[/COLOR][/B]",
+                                           nolabel="[B][COLOR red]Cancel[/COLOR][/B]")
+
+            if choice == 1:
+                tools.write_to_file(CONFIG.ADVANCED, response.text)
+                tools.kill_kodi(msg='[COLOR {0}]The new advancedsettings.xml preset has been successfully written, but changes won\'t take effect until you close Kodi.[/COLOR]'.format(
+                                   CONFIG.COLOR2))
+            else:
+                logging.log("[Advanced Settings] install canceled")
+                logging.log_notify('[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                                   "[COLOR {0}]Write Cancelled![/COLOR]".format(CONFIG.COLOR2))
+                return
+        else:
+            logging.log("[Advanced Settings] URL not working: {0}".format(url))
+            logging.log_notify('[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                               "[COLOR {0}]URL Not Working[/COLOR]".format(CONFIG.COLOR2))

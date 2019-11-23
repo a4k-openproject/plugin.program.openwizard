@@ -26,16 +26,6 @@ import re
 from resources.libs.common.config import CONFIG
 
 
-def force_update(silent=False):
-    xbmc.executebuiltin('UpdateAddonRepos()')
-    xbmc.executebuiltin('UpdateLocalAddons()')
-    if not silent:
-        from resources.libs.common import logging
-
-        logging.log_notify(CONFIG.ADDONTITLE,
-                           '[COLOR {0}]Forcing Addon Updates[/COLOR]'.format(CONFIG.COLOR2))
-
-
 def wizard_update(startup=None):
     from resources.libs import check
     from resources.libs.common import logging
@@ -59,6 +49,7 @@ def wizard_update(startup=None):
                                    nolabel='[B][COLOR red]Remind Me Later[/COLOR][/B]',
                                    yeslabel="[B][COLOR springgreen]Update Wizard[/COLOR][/B]")
             if yes:
+                from resources.libs import db
                 from resources.libs.common import tools
 
                 logging.log("[Auto Update Wizard] Installing wizard v{0}".format(ver))
@@ -77,7 +68,7 @@ def wizard_update(startup=None):
                 percent, errors, error = extract.all(lib, CONFIG.ADDONS, True)
                 progress_dialog.close()
                 xbmc.sleep(1000)
-                force_update()
+                db.force_check_updates(auto=True, over=True)
                 xbmc.sleep(1000)
                 logging.log_notify(CONFIG.ADDONTITLE,
                                    '[COLOR {0}]Add-on updated[/COLOR]'.format(CONFIG.COLOR2))
