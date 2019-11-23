@@ -164,6 +164,10 @@ class Advanced:
 
                 self.tags[name] = values
 
+        if len(self.tags) == 0:
+            directory.add_file('No settings for this category exist in your current advancedsettings.xml file.', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+            directory.add_separator()
+            
         for category in self.tags:
             directory.add_separator(category.upper())
 
