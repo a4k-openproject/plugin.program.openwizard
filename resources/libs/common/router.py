@@ -305,7 +305,7 @@ class Router:
             tags = self.params['tags'] if 'tags' in self.params else None
 
             if not action:
-                self.route.show_menu(url=name)
+                self.route.show_menu(url=url)
             elif action == advanced_settings_actions[0]:  # Advanced Settings Quick Configure
                 self.route.quick_configure()
             elif action == advanced_settings_actions[1]:  # View Current Advanced Settings
@@ -314,9 +314,9 @@ class Router:
                 advanced.remove_current()
             elif action == advanced_settings_actions[3] and url:  # Write New Advanced Settings
                 self.route.write_advanced(name, url)
-            elif action == advanced_settings_actions[4]:
+            elif action == advanced_settings_actions[4]:  # Set a Setting
                 self.route.set_setting(category, tag, value)
-            elif action == advanced_settings_actions[5]:
+            elif action == advanced_settings_actions[5]:  # Open a Section
                 self.route.show_section(tags)
 
         # SAVE DATA

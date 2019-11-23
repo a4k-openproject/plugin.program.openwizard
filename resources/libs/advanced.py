@@ -134,7 +134,7 @@ class Advanced:
                         description = preset.get('description', '')
 
                         if section:
-                            directory.add_dir(name, {'mode': 'advanced_settings', 'name': preseturl},
+                            directory.add_dir(name, {'mode': 'advanced_settings', 'url': preseturl},
                                               description=description, icon=icon, fanart=fanart, themeit=CONFIG.THEME3)
                         else:
                             directory.add_file(name,
