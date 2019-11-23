@@ -339,14 +339,14 @@ class Router:
             from resources.libs import advanced
 
             self.route = advanced.Advanced()
-            advanced_settings_actions = ['quick_configure', 'view_current', 'remove_current', 'write_advanced', 'set_setting']
+            advanced_settings_actions = ['quick_configure', 'view_current', 'remove_current', 'write_advanced', 'set_setting', 'show_section']
 
             category = self.params['category'] if 'category' in self.params else None
             tag = self.params['tag'] if 'tag' in self.params else None
             value = self.params['value'] if 'value' in self.params else None
-            if not action and not name:
-                self.route.show_menu()
-            elif not action and name:
+            tags = self.params['tags'] if 'tags' in self.params else None
+
+            if not action:
                 self.route.show_menu(url=name)
             elif action == advanced_settings_actions[0]:  # Advanced Settings Quick Configure
                 self.route.quick_configure()
@@ -358,6 +358,8 @@ class Router:
                 self.route.write_advanced(name, url)
             elif action == advanced_settings_actions[4]:
                 self.route.set_setting(category, tag, value)
+            elif action == advanced_settings_actions[5]:
+                self.route.show_section(tags)
 
         # SAVE DATA
         elif mode == 'managedata':

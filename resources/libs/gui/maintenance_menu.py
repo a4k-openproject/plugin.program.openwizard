@@ -221,23 +221,8 @@ class MaintenanceMenu:
                            themeit=CONFIG.THEME3)
 
     def tweaks_menu(self):
-        from resources.libs.common import tools
-
-        response = tools.open_url(CONFIG.ADVANCEDFILE, check=True)
-
-        if response:
-            directory.add_dir('Advanced Settings', {'mode': 'advanced_settings'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-        else:
-            directory.add_dir('Quick Configure AdvancedSettings.xml',
-                               {'mode': 'advanced_settings', 'action': 'quick_configure'},
-                               icon=CONFIG.ICONMAINT,
-                               themeit=CONFIG.THEME3)
-            if os.path.exists(CONFIG.ADVANCED):
-                directory.add_file('View Current AdvancedSettings.xml', {'mode': 'advanced_settings', 'action': 'view_current'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-                directory.add_file('Remove Current AdvancedSettings.xml', {'mode': 'advanced_settings', 'action': 'remove_current'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-
-        directory.add_file('Scan Sources for broken links', {'mode': 'checksources'}, icon=CONFIG.ICONMAINT,
-                           themeit=CONFIG.THEME3)
+        directory.add_dir('Advanced Settings', {'mode': 'advanced_settings'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+        directory.add_file('Scan Sources for broken links', {'mode': 'checksources'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         directory.add_file('Scan For Broken Repositories', {'mode': 'checkrepos'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         directory.add_file('Remove Non-Ascii filenames', {'mode': 'asciicheck'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
         directory.add_file('Convert Paths to special', {'mode': 'convertpath'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
