@@ -701,13 +701,13 @@ def _check_url(url, cred):
                 logging.log("URL requires authentication for {0}: Status code [{1}]".format(url, response.status_code), level=xbmc.LOGDEBUG)
                 return 'auth'
             else:
-                logging.log("URL check failed for {0}: Status code [{1}]".format(url, response.status_code), level=xbmc.LOGERROR)
+                logging.log("URL check failed for {0}: Status code [{1}]".format(url, response.status_code), level=xbmc.LOGEBUG)
                 return False
         except Exception as e:
-            logging.log("URL check error for {0}: [{1}]".format(url, e), level=xbmc.LOGERROR)
+            logging.log("URL check error for {0}: [{1}]".format(url, e), level=xbmc.LOGDEBUG)
             return False
     else:
-        logging.log("URL is not of a valid schema: {0}".format(url), level=xbmc.LOGERROR)
+        logging.log("URL is not of a valid schema: {0}".format(url), level=xbmc.LOGDEBUG)
         return False
         
 
