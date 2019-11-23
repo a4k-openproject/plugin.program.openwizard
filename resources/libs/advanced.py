@@ -247,29 +247,27 @@ class Advanced:
             
         return value
                 
-    def write_advanced(self, category, tag, url):
+    def write_advanced(self, name, url):
         response = tools.open_url(url)
 
         if response:
             if os.path.exists(CONFIG.ADVANCED):
                 choice = self.dialog.yesno(CONFIG.ADDONTITLE,
                                            "[COLOR {0}]Would you like to overwrite your current Advanced Settings with [COLOR {1}]{2}[/COLOR]?[/COLOR]".format(
-                                               CONFIG.COLOR2, CONFIG.COLOR1, url),
+                                               CONFIG.COLOR2, CONFIG.COLOR1, name),
                                            yeslabel="[B][COLOR springgreen]Overwrite[/COLOR][/B]",
                                            nolabel="[B][COLOR red]Cancel[/COLOR][/B]")
             else:
                 choice = self.dialog.yesno(CONFIG.ADDONTITLE,
                                            "[COLOR {0}]Would you like to download and install [COLOR {1}]{2}[/COLOR]?[/COLOR]".format(
-                                               CONFIG.COLOR2, CONFIG.COLOR1, url),
+                                               CONFIG.COLOR2, CONFIG.COLOR1, name),
                                            yeslabel="[B][COLOR springgreen]Install[/COLOR][/B]",
                                            nolabel="[B][COLOR red]Cancel[/COLOR][/B]")
 
             if choice == 1:
                 tools.write_to_file(CONFIG.ADVANCED, response.text)
-                self.dialog.ok(CONFIG.ADDONTITLE,
-                               '[COLOR {0}]AdvancedSettings.xml file has been successfully written. Once you click okay it will force close kodi.[/COLOR]'.format(
+                tools.kill_kodi(msg='[COLOR {0}]The new AdvancedSettings.xml preset has been successfully written, but changes won\'t take effect until you close Kodi.[/COLOR]'.format(
                                    CONFIG.COLOR2))
-                tools.kill_kodi(over=True)
             else:
                 logging.log("[Advanced Settings] install canceled")
                 logging.log_notify('[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
