@@ -2,7 +2,7 @@
     "presets": [
         {
             "name": "Enable All Artwork",
-            "section": false
+            "section": false,
             "url": "https://raw.githubusercontent.com/drinfernoo/repository.openwizard/master/presets/artwork_preset.xml",
             "icon": "",
             "fanart": "",
