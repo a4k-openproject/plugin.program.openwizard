@@ -33,7 +33,7 @@ class Router:
 
         return self.params
 
-    def dispatch(self, paramstring):
+    def dispatch(self, handle, paramstring):
         self._log_params(paramstring)
 
         mode = self.params['mode'] if 'mode' in self.params else None
@@ -464,3 +464,13 @@ class Router:
         elif mode == 'contact':  # Contact
             from resources.libs.gui import window
             window.show_contact(CONFIG.CONTACT)
+            
+        self._finish(handle)
+        
+    def _finish(self, handle):
+        from resources.libs.common import directory
+        
+        directory.set_view()
+        
+        xbmcplugin.setContent(handle, 'files')
+        xbmcplugin.endOfDirectory(handle)                       

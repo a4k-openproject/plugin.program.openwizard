@@ -17,26 +17,13 @@
 #  http://www.gnu.org/copyleft/gpl.html                                        #
 ################################################################################
 
-import xbmcplugin
-
-import sys
-
-from resources.libs.common import directory
-from resources.libs.common import router
-
-
-def _finish():
-    _handle = int(sys.argv[1])
-
-    directory.set_view()
-
-    xbmcplugin.setContent(_handle, 'files')
-    xbmcplugin.endOfDirectory(_handle)
-
 
 if __name__ == '__main__':
+    import sys
+    from resources.libs.common import router
+
+    _handle = int(sys.argv[1])
+    _params = sys.argv[2][1:]
+    
     dispatcher = router.Router()
-
-    dispatcher.dispatch(sys.argv[2][1:])
-
-    _finish()
+    dispatcher.dispatch(_handle, _params)
