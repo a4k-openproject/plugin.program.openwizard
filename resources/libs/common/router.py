@@ -296,7 +296,7 @@ class Router:
         elif mode == advanced_settings_mode:
             from resources.libs import advanced
 
-            self.route = advanced.Advanced()
+            self.route = advanced.AdvancedMenu()
             advanced_settings_actions = ['quick_configure', 'view_current', 'remove_current', 'write_advanced', 'set_setting', 'show_section']
 
             category = self.params['category'] if 'category' in self.params else None

@@ -42,6 +42,9 @@ def remove_current():
     if ok:
         if os.path.exists(CONFIG.ADVANCED):
             tools.remove_file(CONFIG.ADVANCED)
+            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                               "[COLOR {0}]advancedsettings.xml removed[/COLOR]".format(CONFIG.COLOR2))
+            xbmc.executebuiltin('Container.Refresh()')
         else:
             logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                "[COLOR {0}]advancedsettings.xml not found[/COLOR]".format(CONFIG.COLOR2))
@@ -49,12 +52,11 @@ def remove_current():
         logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
                                "[COLOR {0}]advancedsettings.xml not removed[/COLOR]".format(CONFIG.COLOR2))
 
+
 def _write_setting(category, tag, value):
     from xml.etree import ElementTree
 
     exists = os.path.exists(CONFIG.ADVANCED)
-
-    root = None
 
     if exists:
         root = ElementTree.parse(CONFIG.ADVANCED).getroot()
@@ -79,7 +81,7 @@ def _write_setting(category, tag, value):
     xbmc.executebuiltin('Container.Refresh()')
 
 
-class Advanced:
+class AdvancedMenu:
     def __init__(self):
         self.dialog = xbmcgui.Dialog()
 
@@ -101,7 +103,7 @@ class Advanced:
         response = tools.open_url(CONFIG.ADVANCEDFILE)
         url_response = tools.open_url(url)
         local_file = os.path.join(CONFIG.ADDON_PATH, 'resources', 'text', 'advanced.json')
-        
+
         if url_response:
             TEMPADVANCEDFILE = url_response.text
         elif response:
@@ -109,6 +111,7 @@ class Advanced:
         elif os.path.exists(local_file):
             TEMPADVANCEDFILE = tools.read_from_file(local_file)
         else:
+            TEMPADVANCEDFILE = None
             logging.log("[Advanced Settings] No Presets Available")
         
         if TEMPADVANCEDFILE:
@@ -150,7 +153,6 @@ class Advanced:
                                                description=description, icon=icon, fanart=fanart, themeit=CONFIG.THEME2)
         else:
             logging.log("[Advanced Settings] URL not working: {0}".format(CONFIG.ADVANCEDFILE))
-            
 
     def quick_configure(self):
         directory.add_file('Changes will not be reflected until Kodi is restarted.', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
@@ -195,9 +197,12 @@ class Advanced:
             for tag in self.tags[category]:
                 value = self.tags[category][tag]
 
-                directory.add_file('{0}: {1}'.format(tag, value),
-                                   {'mode': 'advanced_settings', 'action': 'set_setting', 'category': category,
-                                    'tag': tag, 'value': value}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+                if value is None:
+                    value = ''
+
+                directory.add_file('{0}: {1}'.format(tag, value), {'mode': 'advanced_settings', 'action': 'set_setting',
+                                                                   'category': category, 'tag': tag, 'value': value},
+                                   icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
 
     def set_setting(self, category, tag, current):
         value = None
@@ -239,8 +244,6 @@ class Advanced:
         return value
             
     def _network(self, tag, current):
-        value = None
-        
         msgs = {'curlclienttimeout': 'Timeout in seconds for libcurl (http/ftp) connections',
                 'curllowspeedtime': 'Time in seconds for libcurl to consider a connection lowspeed',
                 'curlretries': 'Amount of retries for certain failed libcurl operations (e.g. timeout)',
