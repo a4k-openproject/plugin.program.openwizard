@@ -201,7 +201,7 @@ def restore(action, external=False):
 
     if action == 'build':
         cls.choose(CONFIG.HOME)  # Install into special://home/
-    elif action in ['guifix', 'theme', 'addonpack']:
+    elif action in ['gui', 'theme', 'addonpack']:
         cls.choose(CONFIG.USERDATA)  # Install into special://userdata/
     elif action == 'addondata':
         cls.choose(CONFIG.ADDON_DATA)  # Install into special://userdata/addon_data/
