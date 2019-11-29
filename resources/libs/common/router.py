@@ -13,6 +13,7 @@ from resources.libs.common import logging
 from resources.libs.gui import menu
 
 advanced_settings_mode = 'advanced_settings'
+addon_installer_mode = 'addons'
 
 
 class Router:
@@ -80,12 +81,6 @@ class Router:
                 Wizard().gui(name)
             elif action == 'theme':  # Builds -> "Your Build" -> "Your Theme"
                 Wizard().theme(name, url)
-        elif mode == 'addonpack':  # Install Addon Pack
-            from resources.libs import install
-            install.install_addon_pack(name, url)
-        elif mode == 'skinpack':  # Install Skin Pack
-            from resources.libs import install
-            install.install_skin(name, url)
 
         elif mode == 'maint':  # Maintenance + Maintenance -> any "Tools" section
             from resources.libs.gui.maintenance_menu import MaintenanceMenu
@@ -149,11 +144,6 @@ class Router:
         elif mode == 'viewVideo':  # View  Video
             from resources.libs import yt
             yt.play_video(url)
-        elif mode == 'addons':  # Addon Installer
-            menu.addon_menu(url)
-        elif mode == 'addoninstall':  # Install Addon
-            from resources.libs import install
-            install.install_addon(name, url)
         elif mode == 'trakt':  # Save Data -> Keep Trakt Data
             menu.trakt_menu()
         elif mode == 'realdebrid':  # Save Data -> Keep Debrid
@@ -318,7 +308,31 @@ class Router:
                 self.route.set_setting(category, tag, value)
             elif action == advanced_settings_actions[5]:  # Open a Section
                 self.route.show_section(tags)
+                
+        # ADDON INSTALLER
+        elif mode == addon_installer_mode:
+            from resources.libs.gui import addon_menu
+            
+            self.route = addon_menu.AddonMenu()
+            addon_installer_actions = ['addon', 'skin', 'addonpack']
 
+            addonurl = self.params['addonurl'] if 'addonurl' in self.params else None
+            repository = self.params['repository'] if 'repository' in self.params else None
+            repositoryurl = self.params['repositoryurl'] if 'repositoryurl' in self.params else None
+            repositoryxml = self.params['repositoryxml'] if 'repositoryxml' in self.params else None
+            urls = [addonurl, repository, repositoryurl, repositoryxml]
+            
+            if not action:
+                self.route.show_menu(url=url)
+            elif action == addon_installer_actions[0]:
+                self.route.install_addon(name, urls)
+            elif action == addon_installer_actions[1]:
+                pass
+                # self.route.install_skin(name, url)
+            elif action == addon_installer_actions[2]:
+                pass
+                # self.route.install_addon_pack(name, url)
+            
         # SAVE DATA
         elif mode == 'managedata':
             from resources.libs import save

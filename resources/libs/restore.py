@@ -36,8 +36,6 @@ from resources.libs.common.config import CONFIG
 
 
 def binaries():
-    from resources.libs import install
-
     dialog = xbmcgui.Dialog()
 
     binarytxt = os.path.join(CONFIG.USERDATA, 'build_binaries.txt')
@@ -62,9 +60,11 @@ def binaries():
         logging.log('No addons selected for installation.')
         return
 
+    from resources.libs.gui import addon_menu
+
     # finally, reinstall addons
     for addonid in binaryids:
-        if install.install_from_kodi(addonid):
+        if addon_menu.install_from_kodi(addonid):
             logging.log('{0} install succeeded.'.format(addonid))
             success.append(addonid)
         else:
