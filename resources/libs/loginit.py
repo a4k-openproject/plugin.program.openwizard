@@ -733,17 +733,11 @@ def update_login(do, who):
                 user = addonid.getSetting(default)
                 CONFIG.set_setting(saved, user)
                 
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name),
-                                   '[COLOR {0}]Login Data: Saved![/COLOR]'.format(CONFIG.COLOR2),
-                                   2000,
-                                   icon)
+                logging.log('Login Data Saved for {0}'.format(name), level=xbmc.LOGNOTICE)
             except Exception as e:
                 logging.log("[Login Data] Unable to Update {0} ({1})".format(who, str(e)), level=xbmc.LOGERROR)
         else:
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name),
-                               '[COLOR {0}]Login Data: Not Registered![/COLOR]'.format(CONFIG.COLOR2),
-                               2000,
-                               icon)
+            logging.log('Login Data Not Registered for {0}'.format(name))
     elif do == 'restore':
         if os.path.exists(file):
             tree = ElementTree.parse(file)
@@ -757,14 +751,11 @@ def update_login(do, who):
                     
                 user = addonid.getSetting(default)
                 CONFIG.set_setting(saved, user)
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name),
-                                   '[COLOR {0}]Login: Restored![/COLOR]'.format(CONFIG.COLOR2),
-                                   2000,
-                                   icon)
+                logging.log('Login Data Restored for {0}'.format(name), level=xbmc.LOGNOTICE)
             except Exception as e:
                 logging.log("[Login Info] Unable to Restore {0} ({1})".format(who, str(e)), level=xbmc.LOGERROR)
         else:
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name), 'Login Data: [COLOR red]Not Found![/COLOR]', 2000, icon)
+            logging.log('Login Data Not Found for {0}'.format(name))
     elif do == 'clearaddon':
         logging.log('{0} SETTINGS: {1}'.format(name, settings), level=xbmc.LOGDEBUG)
         if os.path.exists(settings):

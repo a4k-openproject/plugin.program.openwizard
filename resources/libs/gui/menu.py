@@ -182,59 +182,6 @@ def apk_menu(url=None):
         logging.log("[APK Menu] No APK list added.")
 
 
-def addon_menu(url=None):
-    from resources.libs.common import logging
-    from resources.libs.common import tools
-
-    response = tools.open_url(CONFIG.ADDONFILE)
-    url_response = tools.open_url(url)
-
-    if response:
-        TEMPADDONFILE = url_response.text if url else response.text
-
-        if TEMPADDONFILE:
-            link = TEMPADDONFILE.replace('\n', '').replace('\r', '').replace('\t', '').replace('repository=""', 'repository="none"').replace('repositoryurl=""', 'repositoryurl="http://"').replace('repositoryxml=""', 'repositoryxml="http://"')
-            match = re.compile('name="(.+?)".+?lugin="(.+?)".+?rl="(.+?)".+?epository="(.+?)".+?epositoryxml="(.+?)".+?epositoryurl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"').findall(link)
-            if len(match) > 0:
-                x = 0
-                for aname, plugin, aurl, repository, repositoryxml, repositoryurl, icon, fanart, adult, description in match:
-                    if plugin.lower() == 'section':
-                        x += 1
-                        directory.add_dir("[B]{0}[/B]".format(aname), {'mode': 'addons', 'name': aname, 'url': aurl}, description=description, icon=icon, fanart=fanart, themeit=CONFIG.THEME3)
-                    elif plugin.lower() == 'skin':
-                        if not CONFIG.SHOWADULT == 'true' and adult.lower() == 'yes':
-                            continue
-                        x += 1
-                        directory.add_file("[B]{0}[/B]".format(aname), {'mode': 'skinpack', 'name': aname, 'url': aurl}, description=description, icon=icon, fanart=fanart, themeit=CONFIG.THEME2)
-                    elif plugin.lower() == 'pack':
-                        if not CONFIG.SHOWADULT == 'true' and adult.lower() == 'yes':
-                            continue
-                        x += 1
-                        directory.add_file("[B]{0}[/B]".format(aname), {'mode': 'addonpack', 'name': aname, 'url': aurl}, description=description, icon=icon, fanart=fanart, themeit=CONFIG.THEME2)
-                    else:
-                        if not CONFIG.SHOWADULT == 'true' and adult.lower() == 'yes':
-                            continue
-                        try:
-                            add = xbmcaddon.Addon(id=plugin).getAddonInfo('path')
-                            if os.path.exists(add):
-                                aname = "[COLOR springgreen][Installed][/COLOR] {0}".format(aname)
-                        except:
-                            pass
-                        x += 1
-                        directory.add_file(aname, {'mode': 'addoninstall', 'name': plugin, 'url': url}, description=description, icon=icon, fanart=fanart, themeit=CONFIG.THEME2)
-                    if x < 1:
-                        directory.add_file("No addons added to this menu yet!", themeit=CONFIG.THEME2)
-            else:
-                directory.add_file('Text File not formated correctly!', themeit=CONFIG.THEME3)
-                logging.log("[Addon Menu] ERROR: Invalid Format.")
-        else:
-            logging.log("[Addon Menu] ERROR: URL for Addon list not working.")
-            directory.add_file('Url for txt file not valid', themeit=CONFIG.THEME3)
-            directory.add_file('{0}'.format(CONFIG.ADDONFILE), themeit=CONFIG.THEME3)
-    else:
-        logging.log("[Addon Menu] No Addon list added.")
-
-
 def youtube_menu(url=None):
     from resources.libs.common import logging
     from resources.libs.common import tools
