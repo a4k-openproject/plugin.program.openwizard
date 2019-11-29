@@ -123,17 +123,17 @@ class AdvancedMenu:
                 advanced_json = json.loads(TEMPADVANCEDFILE)
             except:
                 advanced_json = None
-                logging.log("[Advanced Settings] ERROR: Invalid Format for {0}.".format(CONFIG.ADVANCEDFILE))
+                logging.log("[Advanced Settings] ERROR: Invalid Format for {0}.".format(TEMPADVANCEDFILE))
                 
             if advanced_json:
                 presets = advanced_json['presets']
                 if presets and len(presets) > 0:
                     for preset in presets:
                         name = preset.get('name', '')
-                        section = preset.get('section', '')
+                        section = preset.get('section', False)
                         preseturl = preset.get('url', '')
-                        icon = preset.get('icon', '')
-                        fanart = preset.get('fanart', '')
+                        icon = preset.get('icon', CONFIG.ADDON_ICON)
+                        fanart = preset.get('fanart', CONFIG.ADDON_FANART)
                         description = preset.get('description', '')
 
                         if not name:
