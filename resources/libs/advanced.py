@@ -112,7 +112,7 @@ class Advanced:
                 if presets and len(presets) > 0:
                     for preset in presets:
                         name = preset.get('name', '')
-                        section = preset.get('section', 'false')
+                        section = preset.get('section', False)
                         preseturl = preset.get('url', '')
                         icon = preset.get('icon', CONFIG.ADDON_ICON)
                         fanart = preset.get('fanart', CONFIG.ADDON_FANART)
