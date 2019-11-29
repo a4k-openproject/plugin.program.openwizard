@@ -242,17 +242,11 @@ def update_debrid(do, who):
                 user = addonid.getSetting(default)
                 CONFIG.set_setting(saved, user)
                 
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name),
-                                   '[COLOR {0}]Debrid Info: Saved![/COLOR]'.format(CONFIG.COLOR2),
-                                   2000,
-                                   icon)
+                logging.log('Debrid Info Saved for {0}'.format(name), level=xbmc.LOGNOTICE)
             except Exception as e:
                 logging.log("[Debrid Info] Unable to Update {0} ({1})".format(who, str(e)), level=xbmc.LOGERROR)
         else:
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name),
-                                 '[COLOR {0}]Debrid Info: Not Registered![/COLOR]'.format(CONFIG.COLOR2),
-                                 2000,
-                                 icon)
+            logging.log('Debrid Info Not Registered for {0}'.format(name))
     elif do == 'restore':
         if os.path.exists(file):
             tree = ElementTree.parse(file)
@@ -266,14 +260,11 @@ def update_debrid(do, who):
                 
                 user = addonid.getSetting(default)
                 CONFIG.set_setting(saved, user)
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name),
-                                   '[COLOR {0}]Debrid Info: Restored![/COLOR]'.format(CONFIG.COLOR2),
-                                   2000,
-                                   icon)
+                logging.log('Debrid Info Restored for {0}'.format(name), level=xbmc.LOGNOTICE)
             except Exception as e:
                 logging.log("[Debrid Info] Unable to Restore {0} ({1})".format(who, str(e)), level=xbmc.LOGERROR)
         else:
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name), 'Real Debrid Info: [COLOR red]Not Found![/COLOR]', 2000, icon)
+            logging.log('Debrid Info Not Found for {0}'.format(name))
     elif do == 'clearaddon':
         logging.log('{0} SETTINGS: {1}'.format(name, settings))
         if os.path.exists(settings):
