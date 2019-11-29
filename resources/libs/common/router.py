@@ -316,7 +316,11 @@ class Router:
             self.route = addon_menu.AddonMenu()
             addon_installer_actions = ['addon', 'skin', 'addonpack']
 
-            urls = self.parmas['urls'] if 'urls' in self.params else None
+            addonurl = self.params['addonurl'] if 'addonurl' in self.params else None
+            repository = self.params['repository'] if 'repository' in self.params else None
+            repositoryurl = self.params['repositoryurl'] if 'repositoryurl' in self.params else None
+            repositoryxml = self.params['repositoryxml'] if 'repositoryxml' in self.params else None
+            urls = [addonurl, repository, repositoryurl, repositoryxml]
             
             if not action:
                 self.route.show_menu(url=url)

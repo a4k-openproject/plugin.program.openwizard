@@ -111,7 +111,7 @@ class AddonMenu:
                     for addon in addons:
                         addonname = addon.get('name', '')
                         type = addon.get('type', 'addon')
-                        section = addon.get('section', 'false')
+                        section = addon.get('section', False)
                         plugin = addon.get('plugin', '')
                         addonurl = addon.get('url', '')
                         repository = addon.get('repository', '')
@@ -119,7 +119,7 @@ class AddonMenu:
                         repositoryurl = addon.get('repositoryurl', '')
                         icon = addon.get('icon', CONFIG.ADDON_ICON)
                         fanart = addon.get('fanart', CONFIG.ADDON_FANART)
-                        adult = addon.get('adult', 'false')
+                        adult = addon.get('adult', False)
                         description = addon.get('description', '')
 
                         if not addonname:
@@ -132,7 +132,7 @@ class AddonMenu:
                         else:
                             if '.zip' in addonurl:
                                 pass
-                            else:
+                            elif not section:
                                 broken = False
                                 if not repository:
                                     logging.log('[Advanced Settings] Missing tag \'repository\'', level=xbmc.LOGDEBUG)
@@ -152,7 +152,7 @@ class AddonMenu:
                             directory.add_dir(addonname, {'mode': 'addons', 'url': addonurl}, description=description,
                                               icon=icon, fanart=fanart, themeit=CONFIG.THEME3)
                         else:
-                            if not CONFIG.SHOWADULT == 'true' and adult.lower() == 'yes':
+                            if not CONFIG.SHOWADULT == 'true' and adult:
                                 continue
 
                             if type.lower() == 'skin':
@@ -174,8 +174,8 @@ class AddonMenu:
                                     pass
 
                                 directory.add_file(addonname, {'mode': 'addons', 'action': 'addon', 'name': plugin,
-                                                               'urls': (addonurl, repository, repositoryxml,
-                                                                        repositoryurl)}, description=description,
+                                                               'addonurl': addonurl, 'repository': repository, 'repositoryxml': repositoryxml,
+                                                                        'repositoryurl': repositoryurl}, description=description,
                                                    icon=icon, fanart=fanart, themeit=CONFIG.THEME2)
                 else:
                     if not addons:
@@ -234,7 +234,7 @@ class AddonMenu:
             os.remove(lib)
         except:
             pass
-
+            
         Downloader().download(url, lib)
         title = '[COLOR {0}][B]Installing:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1,
                                                                                       plugin)
@@ -258,69 +258,62 @@ class AddonMenu:
                     CONFIG.set_setting('defaultskinignore', 'true')
                 skin.switch_to_skin(item, 'Skin Installer')
 
-    def install_addon(self, plugin, urls):
+    def install_addon(self, plugin, urls, over=False):
         from resources.libs import db
 
-        if xbmc.getCondVisibility('System.HasAddon({0})'.format(plugin)):
-            logging.log_notify("[COLOR {0}]Addon Installer[/COLOR]".format(CONFIG.COLOR1),
-                               '[COLOR {0}]{1}:[/COLOR] [COLOR {2}]Already installed[/COLOR]'.format(CONFIG.COLOR1,
-                                                                                                    plugin,
-                                                                                                    CONFIG.COLOR2))
+        install = None
 
+        if not over:        
+            if xbmc.getCondVisibility('System.HasAddon({0})'.format(plugin)):
+                install = self.dialog.yesno(CONFIG.ADDONTITLE, '[COLOR {0}]{1}[/COLOR] already installed. Would you like to reinstall it?'.format(CONFIG.COLOR1, plugin))
+            else:
+                install = self.dialog.yesno(CONFIG.ADDONTITLE, 'Would you like to install [COLOR {0}]{1}[/COLOR]?'.format(CONFIG.COLOR1, plugin))
+        else:
+            install = True
+            
+        if not install:
+            return
+            
         url_response = tools.open_url(urls[0], check=True)
-        repository_response = tools.open_url(urls[1], check=True)
-        repositoryxml_response = tools.open_url(urls[2])
-        repositoryurl_response = tools.open_url(urls[3], check=True)
-
-        repo_id = os.path.basename(urls[1])
-
-        if False not in [url_response, repository_response, repositoryxml_response, repositoryurl_response]:
-
+        repositoryurl_response = tools.open_url(urls[2], check=True)
+        repositoryxml_response = tools.open_url(urls[3])
+        
+        if False not in [repositoryxml_response, repositoryurl_response]:
+        
+            repo_id = urls[1]
+        
             if not xbmc.getCondVisibility('System.HasAddon({0})'.format(repo_id)):
                 logging.log("Repository not installed, installing it")
-                if self.dialog.yesno(CONFIG.ADDONTITLE,
-                                     ("[COLOR {0}]Would you like to install the"
-                                      "repository for [COLOR {1}]{2}[/COLOR]: ").format(CONFIG.COLOR2, CONFIG.COLOR1,
-                                                                                        plugin),
-                                     "[COLOR {0}]{1}[/COLOR]?[/COLOR]".format(CONFIG.COLOR1, plugin),
-                                     yeslabel="[B][COLOR springgreen]Yes Install[/COLOR][/B]",
-                                     nolabel="[B][COLOR red]No Skip[/COLOR][/B]"):
 
-                    from xml.etree import ElementTree
-                    root = ElementTree.parse(repositoryxml_response.text)
-                    entries = root.findall('addon')
-                    version = None
+                from xml.etree import ElementTree
+                root = ElementTree.fromstring(repositoryxml_response.text.encode('ascii', 'backslashreplace'))
+                entries = root.findall('addon')
+                version = None
 
-                    for entry in entries:
-                        if entry.attrib['id'] == repo_id:
-                            version = entry.attrib['version']
+                for entry in entries:
+                    if entry.attrib['id'] == repo_id:
+                        version = entry.attrib['version']
 
-                    if version:
-                        repozip = '{0}{1}-{2}.zip'.format(urls[3], repo_id, version)
-                        logging.log(repozip)
-                        db.addon_database(repo_id, 1)
-                        self.install_addon(repo_id, repozip)
-                        xbmc.executebuiltin('UpdateAddonRepos()')
-                        logging.log("Installing Addon from Kodi")
-                        install = install_from_kodi(plugin)
-                        logging.log("Install from Kodi: {0}".format(install))
-                        if install:
-                            xbmc.executebuiltin('Container.Refresh()')
-                            return True
-                    else:
-                        logging.log(
-                            "[Addon Installer] Repository not installed: Unable to grab url! ({0})".format(
-                                urls[1]))
+                if version:
+                    repozip = '{0}{1}-{2}.zip'.format(urls[2], repo_id, version)
+                    logging.log(repozip)
+                    db.addon_database(repo_id, 1)
+                    self.install_addon(repo_id, repozip, over=True)
+                    xbmc.executebuiltin('UpdateAddonRepos()')
+                    install = install_from_kodi(plugin)
+                    if install:
+                        xbmc.executebuiltin('Container.Refresh()')
+                        return True
                 else:
-                    logging.log("[Addon Installer] Repository for {0} not installed: {1}".format(plugin,
-                                                                                                 repo_id))
+                    logging.log(
+                        "[Addon Installer] Repository not installed: Unable to grab url! ({0})".format(urls[1]))
             else:
                 logging.log("Repository installed, installing addon")
                 install = install_from_kodi(plugin)
                 if install:
                     xbmc.executebuiltin('Container.Refresh()')
                     return True
-        elif not repository_response:
+        elif url_response:
             logging.log("No repository, installing addon")
             self.install_addon_from_url(plugin, urls[0])
 
