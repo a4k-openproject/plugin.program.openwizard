@@ -264,17 +264,11 @@ def update_trakt(do, who):
                 
                 user = addonid.getSetting(default)
                 CONFIG.set_setting(saved, user)
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name),
-                                   '[COLOR {0}]Trakt Data: Saved![/COLOR]'.format(CONFIG.COLOR2),
-                                   2000,
-                                   icon)
+                logging.log('Trakt Data Saved for {0}'.format(name), level=xbmc.LOGNOTICE)
             except Exception as e:
                 logging.log("[Trakt Data] Unable to Update {0} ({1})".format(who, str(e)), level=xbmc.LOGERROR)
         else:
-            logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name),
-                               '[COLOR {0}]Trakt Data: Not Registered![/COLOR]'.format(CONFIG.COLOR2),
-                               2000,
-                               icon)
+            logging.log('Trakt Data Not Registered for {0}'.format(name))
     elif do == 'restore':
         if os.path.exists(file):
             tree = ElementTree.parse(file)
@@ -288,14 +282,11 @@ def update_trakt(do, who):
                 
                 user = addonid.getSetting(default)
                 CONFIG.set_setting(saved, user)
-                logging.log_notify("[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name),
-                                   '[COLOR {0}]Trakt: Restored![/COLOR]'.format(CONFIG.COLOR2),
-                                   2000,
-                                   icon)
+                logging.log('Trakt Data Restored for {0}'.format(name), level=xbmc.LOGNOTICE)
             except Exception as e:
                 logging.log("[Trakt Data] Unable to Restore {0} ({1})".format(who, str(e)), level=xbmc.LOGERROR)
         else:
-            logging.log_notify(name, 'Trakt Data: [COLOR red]Not Found![/COLOR]', 2000, icon)
+            logging.log('Trakt Data Not Found for {0}'.format(name))
     elif do == 'clearaddon':
         logging.log('{0} SETTINGS: {1}'.format(name, settings))
         if os.path.exists(settings):
