@@ -121,15 +121,15 @@ def show_notification():
                         if CONFIG.NOTEDISMISS == 'false':
                             window.show_notification(msg)
                         else:
-                            logging.log("[Notifications] id[{0}] Dismissed".format(int(id)), level=xbmc.LOGNOTICE)
+                            logging.log("[Notifications] id[{0}] Dismissed".format(note_id), level=xbmc.LOGNOTICE)
                     elif note_id > CONFIG.NOTEID:
-                        logging.log("[Notifications] id: {0}".format(str(id)), level=xbmc.LOGNOTICE)
-                        CONFIG.set_setting('noteid', str(id))
+                        logging.log("[Notifications] id: {0}".format(note_id), level=xbmc.LOGNOTICE)
+                        CONFIG.set_setting('noteid', note_id)
                         CONFIG.set_setting('notedismiss', 'false')
                         window.show_notification(msg=msg)
                         logging.log("[Notifications] Complete", level=xbmc.LOGNOTICE)
                 except Exception as e:
-                    logging.log("Error on Notifications Window: {0}".format(str(e)), level=xbmc.LOGERROR)
+                    logging.log("Error on Notifications Window: {0}".format(e), level=xbmc.LOGERROR)
             else:
                 logging.log("[Notifications] Text File not formatted Correctly")
         else:
