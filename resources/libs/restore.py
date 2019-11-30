@@ -133,8 +133,8 @@ class Restore:
         self._view_errors(percent, errors, error, file)
 
         CONFIG.set_setting('installed', 'true')
-        CONFIG.set_setting('extract', str(percent))
-        CONFIG.set_setting('errors', str(errors))
+        CONFIG.set_setting('extract', percent)
+        CONFIG.set_setting('errors', errors)
 
         if not self.external:
             try:
