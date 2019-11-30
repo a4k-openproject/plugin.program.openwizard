@@ -104,6 +104,9 @@ class Router:
             from resources.libs import db
             db.toggle_addon(name, url)
             xbmc.executebuiltin('Container.Refresh()')
+        elif mode == 'forceupdate':
+            from resources.libs import db
+            db.force_check_updates(auto=action)
         elif mode == 'togglecache':
             from resources.libs import clear
             clear.toggle_cache(name)
@@ -162,7 +165,7 @@ class Router:
             skin.swap_us()
         elif mode == 'enabledebug':  # Misc Maintenance -> Enable Debug Logging
             logging.swap_debug()
-        elif mode == 'enabledebug':  # Misc Maintenance -> Toggle Addon Updates
+        elif mode == 'toggleupdates':  # Misc Maintenance -> Toggle Addon Updates
             from resources.libs import update
             update.toggle_addon_updates()
         elif mode == 'asciicheck':  # System Tweaks -> Scan for Non-Ascii Files
