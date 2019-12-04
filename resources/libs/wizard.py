@@ -124,6 +124,9 @@ class Wizard:
                 
             if action == 'normal':
                 self._prompt_for_wipe()
+            else:
+                from resources.libs import install
+                install.wipe()
                 
             skin.look_and_feel_data('save')
             skin.skin_to_default('Build Install')
