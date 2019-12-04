@@ -141,7 +141,7 @@ def show_notification():
 def installed_build_check():
     dialog = xbmcgui.Dialog()
 
-    if not CONFIG.EXTRACT == '100' and not CONFIG.BUILDNAME == "":
+    if not CONFIG.EXTRACT == '100' and CONFIG.EXTERROR > 0:
         logging.log("[Build Installed Check] Build was extracted {0}/100 with [ERRORS: {1}]".format(CONFIG.EXTRACT,
                                                                                                     CONFIG.EXTERROR),
                     level=xbmc.LOGNOTICE)
