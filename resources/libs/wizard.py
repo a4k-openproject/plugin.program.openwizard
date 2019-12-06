@@ -124,6 +124,9 @@ class Wizard:
                 
             if action == 'normal':
                 self._prompt_for_wipe()
+            else:
+                from resources.libs import install
+                install.wipe()
                 
             skin.look_and_feel_data('save')
             skin.skin_to_default('Build Install')
@@ -140,8 +143,8 @@ class Wizard:
                 CONFIG.set_setting('latestversion', check.check_build(name, 'version'))
                 CONFIG.set_setting('lastbuildcheck', str(CONFIG.BUILDCHECK))
                 CONFIG.set_setting('installed', 'true')
-                CONFIG.set_setting('extract', str(percent))
-                CONFIG.set_setting('errors', str(errors))
+                CONFIG.set_setting('extract', percent)
+                CONFIG.set_setting('errors', errors)
                 logging.log('INSTALLED {0}: [ERRORS:{1}]'.format(percent, errors))
 
                 try:

@@ -121,15 +121,15 @@ def show_notification():
                         if CONFIG.NOTEDISMISS == 'false':
                             window.show_notification(msg)
                         else:
-                            logging.log("[Notifications] id[{0}] Dismissed".format(int(id)), level=xbmc.LOGNOTICE)
+                            logging.log("[Notifications] id[{0}] Dismissed".format(note_id), level=xbmc.LOGNOTICE)
                     elif note_id > CONFIG.NOTEID:
-                        logging.log("[Notifications] id: {0}".format(str(id)), level=xbmc.LOGNOTICE)
-                        CONFIG.set_setting('noteid', str(id))
+                        logging.log("[Notifications] id: {0}".format(note_id), level=xbmc.LOGNOTICE)
+                        CONFIG.set_setting('noteid', note_id)
                         CONFIG.set_setting('notedismiss', 'false')
                         window.show_notification(msg=msg)
                         logging.log("[Notifications] Complete", level=xbmc.LOGNOTICE)
                 except Exception as e:
-                    logging.log("Error on Notifications Window: {0}".format(str(e)), level=xbmc.LOGERROR)
+                    logging.log("Error on Notifications Window: {0}".format(e), level=xbmc.LOGERROR)
             else:
                 logging.log("[Notifications] Text File not formatted Correctly")
         else:
@@ -139,24 +139,25 @@ def show_notification():
 
 
 def installed_build_check():
-    # This may not be necessary anymore
-    #
-    # db.kodi_17_fix()
-    # if CONFIG.SKIN in ['skin.confluence', 'skin.estuary', 'skin.estouchy']:
-    #     check.check_skin()
-
     dialog = xbmcgui.Dialog()
 
-    if not CONFIG.EXTRACT == '100' and not CONFIG.BUILDNAME == "":
-        logging.log("[Build Installed Check] Build was extracted {0}/100 with [ERRORS: {1}]".format(CONFIG.EXTRACT, CONFIG.EXTERROR), level=xbmc.LOGNOTICE)
+    if not CONFIG.EXTRACT == '100' and CONFIG.EXTERROR > 0:
+        logging.log("[Build Installed Check] Build was extracted {0}/100 with [ERRORS: {1}]".format(CONFIG.EXTRACT,
+                                                                                                    CONFIG.EXTERROR),
+                    level=xbmc.LOGNOTICE)
         yes = dialog.yesno(CONFIG.ADDONTITLE,
-                               '[COLOR {0}]{1}[/COLOR] [COLOR {2}]was not installed correctly!'.format(CONFIG.COLOR1, CONFIG.COLOR2, CONFIG.BUILDNAME),
-                               'Installed: [COLOR {0}]{1}[/COLOR] / Error Count: [COLOR {2}]{3}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.EXTRACT, CONFIG.COLOR1, CONFIG.EXTERROR),
-                               'Would you like to try again?[/COLOR]',
-                               nolabel='[B]No Thanks![/B]', yeslabel='[B]Retry Install[/B]')
+                           '[COLOR {0}]{1}[/COLOR] [COLOR {2}]was not installed correctly!'.format(CONFIG.COLOR1,
+                                                                                                   CONFIG.COLOR2,
+                                                                                                   CONFIG.BUILDNAME),
+                           ('Installed: [COLOR {0}]{1}[/COLOR] / '
+                            'Error Count: [COLOR {2}]{3}[/COLOR]').format(CONFIG.COLOR1, CONFIG.EXTRACT, CONFIG.COLOR1,
+                                                                          CONFIG.EXTERROR),
+                           'Would you like to try again?[/COLOR]', nolabel='[B]No Thanks![/B]',
+                           yeslabel='[B]Retry Install[/B]')
         CONFIG.clear_setting('build')
         if yes:
-            xbmc.executebuiltin("PlayMedia(plugin://{0}/?mode=install&name={1}&url=fresh)".format(CONFIG.ADDON_ID, quote_plus(CONFIG.BUILDNAME)))
+            xbmc.executebuiltin("PlayMedia(plugin://{0}/?mode=install&name={1}&url=fresh)".format(CONFIG.ADDON_ID,
+                                                                                                  quote_plus(CONFIG.BUILDNAME)))
             logging.log("[Build Installed Check] Fresh Install Re-activated", level=xbmc.LOGNOTICE)
         else:
             logging.log("[Build Installed Check] Reinstall Ignored")
@@ -174,9 +175,9 @@ def installed_build_check():
             if not response:
                 logging.log("[Build Installed Check] Guifix was set to http://", level=xbmc.LOGNOTICE)
                 dialog.ok(CONFIG.ADDONTITLE,
-                              "[COLOR {0}]It looks like the skin settings was not applied to the build.".format(CONFIG.COLOR2),
-                              "Sadly no gui fix was attached to the build",
-                              "You will need to reinstall the build and make sure to do a force close[/COLOR]")
+                          "[COLOR {0}]It looks like the skin settings was not applied to the build.".format(CONFIG.COLOR2),
+                          "Sadly no gui fix was attached to the build",
+                          "You will need to reinstall the build and make sure to do a force close[/COLOR]")
             else:
                 yes = dialog.yesno(CONFIG.ADDONTITLE,
                                        '{0} was not installed correctly!'.format(CONFIG.BUILDNAME),
@@ -184,10 +185,12 @@ def installed_build_check():
                                        'Would you like to apply the GuiFix?',
                                        nolabel='[B]No, Cancel[/B]', yeslabel='[B]Apply Fix[/B]')
                 if yes:
-                    xbmc.executebuiltin("PlayMedia(plugin://{0}/?mode=install&name={1}&url=gui)".format(CONFIG.ADDON_ID, quote_plus(CONFIG.BUILDNAME)))
+                    xbmc.executebuiltin("PlayMedia(plugin://{0}/?mode=install&name={1}&url=gui)".format(CONFIG.ADDON_ID,
+                                                                                                        quote_plus(CONFIG.BUILDNAME)))
                     logging.log("[Build Installed Check] Guifix attempting to install")
                 else:
-                    logging.log('[Build Installed Check] Guifix url working but cancelled: {0}'.format(gui_xml), level=xbmc.LOGNOTICE)
+                    logging.log('[Build Installed Check] Guifix url working but cancelled: {0}'.format(gui_xml),
+                                level=xbmc.LOGNOTICE)
     else:
         logging.log('[Build Installed Check] Install seems to be completed correctly', level=xbmc.LOGNOTICE)
 
@@ -229,8 +232,9 @@ def save_trakt():
         traktit.auto_update('all')
         CONFIG.set_setting('traktlastsave', str(tools.get_date(days=3)))
     else:
-        logging.log("[Trakt Data] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.get_setting('traktlastsave'), str(
-            tools.get_date())), level=xbmc.LOGNOTICE)
+        logging.log("[Trakt Data] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.get_setting('traktlastsave'),
+                                                                                          str(tools.get_date())),
+                    level=xbmc.LOGNOTICE)
 
 
 def save_debrid():
@@ -240,8 +244,9 @@ def save_debrid():
         debridit.auto_update('all')
         CONFIG.set_setting('debridlastsave', str(tools.get_date(days=3)))
     else:
-        logging.log("[Debrid Data] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.get_setting('debridlastsave'), str(
-            tools.get_date())), level=xbmc.LOGNOTICE)
+        logging.log("[Debrid Data] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.get_setting('debridlastsave'),
+                                                                                           str(tools.get_date())),
+                    level=xbmc.LOGNOTICE)
 
 
 def save_login():
@@ -251,13 +256,15 @@ def save_login():
         loginit.auto_update('all')
         CONFIG.set_setting('loginlastsave', str(tools.get_date(days=3)))
     else:
-        logging.log("[Login Info] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.get_setting('loginlastsave'), str(
-            tools.get_date())), level=xbmc.LOGNOTICE)
+        logging.log("[Login Info] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.get_setting('loginlastsave'),
+                                                                                          str(tools.get_date())),
+                    level=xbmc.LOGNOTICE)
 
 
 def auto_clean():
     service = False
-    days = [tools.get_date(), tools.get_date(days=1), tools.get_date(days=3), tools.get_date(days=7), tools.get_date(days=30)]
+    days = [tools.get_date(), tools.get_date(days=1), tools.get_date(days=3), tools.get_date(days=7),
+            tools.get_date(days=30)]
 
     freq = int(float(CONFIG.AUTOFREQ))
 
@@ -266,7 +273,8 @@ def auto_clean():
         next_run = days[freq]
         CONFIG.set_setting('nextautocleanup', str(next_run))
     else:
-        logging.log("[Auto Clean Up] Next Clean Up {0}".format(CONFIG.get_setting('nextautocleanup')), level=xbmc.LOGNOTICE)
+        logging.log("[Auto Clean Up] Next Clean Up {0}".format(CONFIG.get_setting('nextautocleanup')),
+                    level=xbmc.LOGNOTICE)
     if service:
         if CONFIG.AUTOCACHE == 'true':
             logging.log('[Auto Clean Up] Cache: On', level=xbmc.LOGNOTICE)

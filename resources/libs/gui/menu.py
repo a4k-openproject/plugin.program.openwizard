@@ -236,17 +236,17 @@ def view_ip():
 def speed_test():
     from datetime import date
 
-    directory.add_file('Run Speed Test', {'mode': 'runspeedtest'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+    directory.add_file('Run Speed Test', {'mode': 'runspeedtest'}, icon=CONFIG.ICONSPEED, themeit=CONFIG.THEME3)
     if os.path.exists(CONFIG.SPEEDTEST):
         speedimg = glob.glob(os.path.join(CONFIG.SPEEDTEST, '*.png'))
         speedimg.sort(key=lambda f: os.path.getmtime(f), reverse=True)
         if len(speedimg) > 0:
-            directory.add_file('Clear Results', {'mode': 'clearspeedtest'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-            directory.add_separator('Previous Runs', icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+            directory.add_file('Clear Results', {'mode': 'clearspeedtest'}, icon=CONFIG.ICONSPEED, themeit=CONFIG.THEME3)
+            directory.add_separator('Previous Runs', icon=CONFIG.ICONSPEED, themeit=CONFIG.THEME3)
             for item in speedimg:
                 created = date.fromtimestamp(os.path.getmtime(item)).strftime('%m/%d/%Y %H:%M:%S')
                 img = item.replace(os.path.join(CONFIG.SPEEDTEST, ''), '')
-                directory.add_file('[B]{0}[/B]: [I]Ran {1}[/I]'.format(img, created), {'mode': 'viewspeedtest', 'name': img}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+                directory.add_file('[B]{0}[/B]: [I]Ran {1}[/I]'.format(img, created), {'mode': 'viewspeedtest', 'name': img}, icon=CONFIG.ICONSPEED, themeit=CONFIG.THEME3)
 
 
 def clear_speed_test():

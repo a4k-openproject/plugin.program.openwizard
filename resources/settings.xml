@@ -18,8 +18,8 @@
         <setting id="first_install" type="bool" label="First Install" visible="false" default="true" />
         <setting id="time_started" type="text" label="Time Startup Script Last Run" visible="false" default="" />
         <setting id="installed" type="text" label="Build Installed" visible="false" default="" />
-        <setting id="extract" type="text" label="Extract Build %" visible="false" default="100" />
-        <setting id="errors" type="text" label="Extract Error" visible="false" default="" />
+        <setting id="extract" type="number" label="Extract Build %" visible="false" default="100" />
+        <setting id="errors" type="number" label="Extract Error" visible="false" default="0" />
         <setting id="defaultskin" type="text" label="Default Skin: " enable="false" default="" visible="false"/>
         <setting id="defaultskinname" type="text" label="Default Skin Name: " enable="false" default="" visible="false"/>
         <setting id="defaultskinignore" type="bool" label="Ignore default skin check:" enable="false" default="false" visible="false"/>
