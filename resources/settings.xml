@@ -73,13 +73,18 @@
         <setting id="trakt" type="text" default="" visible="false"/>
         <setting id="venom" type="text" default="" visible="false"/>
 
+        <setting id="gaiaad" type="text" default="" visible="false"/>
         <setting id="gaiard" type="text" default="" visible="false"/>
         <setting id="gaiapm" type="text" default="" visible="false"/>
         <setting id="pmzer" type="text" default="" visible="false"/>
+        <setting id="serenad" type="text" default="" visible="false"/>
         <setting id="serenrd" type="text" default="" visible="false"/>
         <setting id="serenpm" type="text" default="" visible="false"/>
+        <setting id="serenpm-oauth" type="text" default="" visible="false"/>
+        <setting id="rurlad" type="text" default="" visible="false"/>
         <setting id="rurlrd" type="text" default="" visible="false"/>
         <setting id="rurlpm" type="text" default="" visible="false"/>
+        <setting id="urlad" type="text" default="" visible="false"/>
         <setting id="urlrd" type="text" default="" visible="false"/>
         <setting id="urlpm" type="text" default="" visible="false"/>
 
