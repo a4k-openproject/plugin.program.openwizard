@@ -29,7 +29,7 @@ from resources.libs.common.config import CONFIG
 from resources.libs.common import logging
 from resources.libs.common import tools
 
-ORDER = ['gaiard', 'gaiapm', 'pmzer', 'serenrd', 'serenpm', 'rurlrd', 'rurlpm', 'urlrd', 'urlpm']
+ORDER = ['gaiard', 'gaiapm', 'pmzer', 'serenrd', 'serenpm', 'serenpmoauth', 'rurlrd', 'rurlpm', 'urlrd', 'urlpm']
 
 DEBRIDID = {
     'gaiard': {
@@ -69,7 +69,7 @@ DEBRIDID = {
         'data'     : [ 'rd.auth', 'rd.client_id', 'rd.expiry', 'rd.refresh', 'rd.secret', 'rd.username', 'realdebrid.enabled'],
         'activate' : 'RunPlugin(plugin://plugin.video.seren/?action=authRealDebrid)'},
     'serenpm': {
-        'name'     : 'Seren PM',
+        'name'     : 'Seren PM (API Key)',
         'plugin'   : 'plugin.video.seren',
         'saved'    : 'serenpm',
         'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.seren'),
@@ -79,6 +79,18 @@ DEBRIDID = {
         'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.seren', 'settings.xml'),
         'default'  : 'premiumize.pin',
         'data'     : ['premiumize.enabled', 'premiumize.pin'],
+        'activate' : 'RunPlugin(plugin.video.seren/?action=openSettings)'},
+    'serenpm-oauth': {
+        'name'     : 'Seren PM (OAuth)',
+        'plugin'   : 'plugin.video.seren',
+        'saved'    : 'serenpm',
+        'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.seren'),
+        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.seren', 'temp-icon.png'),
+        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.seren', 'temp-fanart.png'),
+        'file'     : os.path.join(CONFIG.DEBRIDFOLD, 'seren_pmoauth'),
+        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.seren', 'settings.xml'),
+        'default'  : 'premiumize.username',
+        'data'     : ['premiumize.enabled', 'premiumize.username', 'premiumize.token'],
         'activate' : 'RunPlugin(plugin.video.seren/?action=openSettings)'},
     'urlrd': {
         'name'     : 'URLResolver RD',

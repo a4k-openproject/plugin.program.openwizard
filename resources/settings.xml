@@ -78,6 +78,7 @@
         <setting id="pmzer" type="text" default="" visible="false"/>
         <setting id="serenrd" type="text" default="" visible="false"/>
         <setting id="serenpm" type="text" default="" visible="false"/>
+        <setting id="serenpm-oauth" type="text" default="" visible="false"/>
         <setting id="rurlrd" type="text" default="" visible="false"/>
         <setting id="rurlpm" type="text" default="" visible="false"/>
         <setting id="urlrd" type="text" default="" visible="false"/>
