@@ -124,7 +124,7 @@ def show_notification():
                             logging.log("[Notifications] id[{0}] Dismissed".format(note_id), level=xbmc.LOGNOTICE)
                     elif note_id > CONFIG.NOTEID:
                         logging.log("[Notifications] id: {0}".format(note_id), level=xbmc.LOGNOTICE)
-                        CONFIG.set_setting('noteid', note_id)
+                        CONFIG.set_setting('noteid', '{0}'.format(note_id))
                         CONFIG.set_setting('notedismiss', 'false')
                         window.show_notification(msg=msg)
                         logging.log("[Notifications] Complete", level=xbmc.LOGNOTICE)
