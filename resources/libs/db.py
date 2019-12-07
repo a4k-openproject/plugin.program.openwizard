@@ -462,7 +462,11 @@ def find_binary_addons(addon='all'):
                 addonid = root.get('id')
                 addonname = root.get('name')
                 extension = root.find('extension')
-                ext_attrs = extension.keys()
+                
+                try:
+                    ext_attrs = extension.keys()
+                except:
+                    continue
                 
                 for attr in ext_attrs:
                     if attr.startswith('library_'):
@@ -484,11 +488,16 @@ def find_binary_addons(addon='all'):
         xml = os.path.join(CONFIG.ADDONS, addon, 'addon.xml')
         
         if os.path.exists(xml):
+            logging.log('Checking {0}'.format(xml), level=xbmc.LOGNOTICE)
             root = ElementTree.parse(xml).getroot()
             addonid = root.get('id')
             addonname = root.get('name')
             extension = root.find('extension')
-            ext_attrs = extension.keys()
+            
+            try:
+                ext_attrs = extension.keys()
+            except:
+                return None, None
             
             for attr in ext_attrs:
                 if attr.startswith('library_'):
