@@ -29,7 +29,7 @@ from resources.libs.common.config import CONFIG
 from resources.libs.common import logging
 from resources.libs.common import tools
 
-ORDER = ['gaiaad', 'gaiard', 'gaiapm', 'pmzer', 'serenad', 'serenrd', 'serenpm', 'serenpmoauth', 'rurlad', 'rurlrd', 'rurlpm', 'urlad', 'urlrd', 'urlpm']
+ORDER = ['gaiaad', 'gaiard', 'gaiapm', 'pmzer', 'serenad', 'serenrd', 'serenpm', 'serenpm-oauth', 'rurlad', 'rurlrd', 'rurlpm', 'urlad', 'urlrd', 'urlpm']
 
 DEBRIDID = {
     'gaiaad': {
@@ -108,7 +108,7 @@ DEBRIDID = {
     'serenpm-oauth': {
         'name'     : 'Seren PM (OAuth)',
         'plugin'   : 'plugin.video.seren',
-        'saved'    : 'serenpm',
+        'saved'    : 'serenpm-oauth',
         'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.seren'),
         'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.seren', 'temp-icon.png'),
         'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.seren', 'temp-fanart.png'),
