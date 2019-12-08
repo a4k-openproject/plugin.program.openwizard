@@ -29,7 +29,7 @@ from resources.libs.common.config import CONFIG
 from resources.libs.common import logging
 from resources.libs.common import tools
 
-ORDER = ['gaiaad', 'gaiard', 'gaiapm', 'pmzer' 'serenad', 'serenrd', 'serenpm', 'serenpmoauth', 'rurlad', 'rurlrd', 'rurlpm', 'urlad', 'urlrd', 'urlpm']
+ORDER = ['gaiaad', 'gaiard', 'gaiapm', 'pmzer', 'serenad', 'serenrd', 'serenpm', 'serenpmoauth', 'rurlad', 'rurlrd', 'rurlpm', 'urlad', 'urlrd', 'urlpm']
 
 DEBRIDID = {
     'gaiaad': {
