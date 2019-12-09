@@ -30,6 +30,7 @@ Currently, this version of the wizard supports:
 | Seren                              | [x]            | [x]   | [x]        | [x]         | [x]        | [x]       | [x]  | [x]  |      |      |           |          |                         |
 | simplecache                        | [x]            |       |            |             |            |           |      |      |      |      |           |          |                         |
 | THE CREW                           | [x]            | [x]   |            |             |            |           | [x]  |      |      | [x]  | [x]       |          |                         |
+| TheMovieDb Helper                  |                | [x]   |            |             |            |           | [x]  |      | [x]  |      |           |          |                         |
 | Trakt                              |                | [x]   |            |             |            |           |      |      |      |      |           |          |                         |
 | URLResolver                        | [x]            |       | [x]        | [x]         | [x]        |           |      |      |      |      |           |          |                         |
 | WonderfulSubs                      |                |       |            |             |            |           |      |      |      |      |           |          | [x]                     |

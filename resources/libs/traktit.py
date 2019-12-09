@@ -175,7 +175,19 @@ TRAKTID = {
         'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.realizer', 'settings.xml'),
         'default'  : 'trakt.user',
         'data'     : ['trakt.token', 'trakt.refresh', 'trakt.user'],
-        'activate' : 'RunPlugin(plugin://plugin.video.realizer/?action=authTrakt)'}
+        'activate' : 'RunPlugin(plugin://plugin.video.realizer/?action=authTrakt)'},
+    'tmdbhelper': {
+        'name'     : 'TheMovieDb Helper',
+        'plugin'   : 'plugin.video.themoviedb.helper',
+        'saved'    : 'tmdbhelper',
+        'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.themoviedb.helper'),
+        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.themoviedb.helper', 'icon.png'),
+        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.themoviedb.helper', 'fanart.jpg'),
+        'file'     : os.path.join(CONFIG.TRAKTFOLD, 'tmdbhelper_trakt'),
+        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.themoviedb.helper', 'settings.xml'),
+        'default'  : 'trakt.management',
+        'data'     : ['trakt.token', 'trakt.management'],
+        'activate' : 'RunScript(plugin.video.themoviedb.helper, authenticate_trakt)'}
 }
 
 
