@@ -70,6 +70,7 @@
         <setting id="scrubs" type="text" default="" visible="false"/>
         <setting id="seren" type="text" default="" visible="false"/>
         <setting id="thecrew" type="text" default="" visible="false"/>
+        <setting id="tmdbhelper" type="text" default="" visible="false"/>
         <setting id="trakt" type="text" default="" visible="false"/>
         <setting id="venom" type="text" default="" visible="false"/>
 
@@ -112,6 +113,7 @@
         <setting id="mal-wonderfulsubs" type="text" default="" visible="false"/>
         <setting id="omdb-metadatautils" type="text" default="" visible="false"/>
         <setting id="omdb-metahandler" type="text" default="" visible="false"/>
+        <setting id="omdb-tmdbhelper" type="text" default="" visible="false"/>
         <setting id="login-opensubtitles" type="text" default="" visible="false"/>
         <setting id="login-opensubsbyopensubs" type="text" default="" visible="false"/>
         <setting id="login-orion" type="text" default="" visible="false"/>
@@ -127,6 +129,7 @@
         <setting id="tmdb-realizer" type="text" default="" visible="false"/>
         <setting id="tmdb-scrubs" type="text" default="" visible="false"/>
         <setting id="tmdb-seren" type="text" default="" visible="false"/>
+        <setting id="tmdb-tmdbhelper" type="text" default="" visible="false"/>
         <setting id="tmdb-venom" type="text" default="" visible="false"/>
         <setting id="trakt-openmeta" type="text" default="" visible="false"/>
         <setting id="trakt-seren" type="text" default="" visible="false"/>
