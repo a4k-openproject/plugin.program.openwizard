@@ -342,18 +342,12 @@ def parse_dom(html, name=u"", attrs={}, ret=False):
     return ret_lst
 
 
-def get_date(days=0, now=False):
-    from datetime import date
-    from datetime import datetime
-    from datetime import timedelta
+def get_date(days=0, formatted=False):
+    import time
 
-    if now:
-        return datetime.now()
-    else:
-        if days == 0:
-            return date.today()
-        else:
-            return date.today() + timedelta(days)
+    value = time.time() + (days * 24 * 60 * 60)  # days * 24h * 60m * 60s
+
+    return value if not formatted else time.strftime("%d-%m-%Y %I:%M %p", time.gmtime(value))
 
 
 def basecode(text, encode=True):

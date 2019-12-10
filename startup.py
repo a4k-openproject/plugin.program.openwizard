@@ -222,18 +222,18 @@ def build_update_check():
         logging.log("[Build Check] Build Installed: Checking Updates", level=xbmc.LOGNOTICE)
         check.check_build_update()
 
-    CONFIG.set_setting('lastbuildcheck', str(tools.get_date(now=True)))
+    CONFIG.set_setting('lastbuildcheck', tools.get_date())
 
 
 def save_trakt():
-    if CONFIG.TRAKTSAVE <= str(tools.get_date()):
+    if CONFIG.TRAKTSAVE <= tools.get_date():
         from resources.libs import traktit
         logging.log("[Trakt Data] Saving all Data", level=xbmc.LOGNOTICE)
         traktit.auto_update('all')
-        CONFIG.set_setting('traktlastsave', str(tools.get_date(days=3)))
+        CONFIG.set_setting('traktlastsave', tools.get_date(days=3))
     else:
         logging.log("[Trakt Data] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.get_setting('traktlastsave'),
-                                                                                          str(tools.get_date())),
+                                                                                          tools.get_date(formatted=True)),
                     level=xbmc.LOGNOTICE)
 
 
@@ -242,10 +242,10 @@ def save_debrid():
         from resources.libs import debridit
         logging.log("[Debrid Data] Saving all Data", level=xbmc.LOGNOTICE)
         debridit.auto_update('all')
-        CONFIG.set_setting('debridlastsave', str(tools.get_date(days=3)))
+        CONFIG.set_setting('debridlastsave', tools.get_date(days=3))
     else:
         logging.log("[Debrid Data] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.get_setting('debridlastsave'),
-                                                                                           str(tools.get_date())),
+                                                                                           tools.get_date(formatted=True)),
                     level=xbmc.LOGNOTICE)
 
 
@@ -254,10 +254,10 @@ def save_login():
         from resources.libs import loginit
         logging.log("[Login Info] Saving all Data", level=xbmc.LOGNOTICE)
         loginit.auto_update('all')
-        CONFIG.set_setting('loginlastsave', str(tools.get_date(days=3)))
+        CONFIG.set_setting('loginlastsave', tools.get_date(days=3))
     else:
         logging.log("[Login Info] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.get_setting('loginlastsave'),
-                                                                                          str(tools.get_date())),
+                                                                                          tools.get_date(formatted=True)),
                     level=xbmc.LOGNOTICE)
 
 
@@ -268,10 +268,10 @@ def auto_clean():
 
     freq = int(float(CONFIG.AUTOFREQ))
 
-    if CONFIG.get_setting('nextautocleanup') <= str(tools.get_date()) or freq == 0:
+    if CONFIG.get_setting('nextautocleanup') <= tools.get_date() or freq == 0:
         service = True
         next_run = days[freq]
-        CONFIG.set_setting('nextautocleanup', str(next_run))
+        CONFIG.set_setting('nextautocleanup', next_run)
     else:
         logging.log("[Auto Clean Up] Next Clean Up {0}".format(CONFIG.get_setting('nextautocleanup')),
                     level=xbmc.LOGNOTICE)
@@ -294,19 +294,21 @@ def auto_clean():
 
 
 def stop_if_duplicate():
-    NOW = datetime.now()
+    import time
+
+    NOW = time.time()
     temp = CONFIG.get_setting('time_started')
     
     if not temp == '':
-        if temp > str(NOW - timedelta(minutes=2)):
+        if temp > NOW - 240:
             logging.log("Killing Start Up Script", xbmc.LOGDEBUG)
             sys.exit()
             
     logging.log("{0}".format(NOW))
-    CONFIG.set_setting('time_started', str(NOW))
+    CONFIG.set_setting('time_started', NOW)
     xbmc.sleep(1000)
     
-    if not CONFIG.get_setting('time_started') == str(NOW):
+    if not CONFIG.get_setting('time_started') == NOW:
         logging.log("Killing Start Up Script", xbmc.LOGDEBUG)
         sys.exit()
     else:
@@ -345,7 +347,7 @@ else:
     
 # BUILD UPDATE CHECK
 buildcheck = CONFIG.get_setting('lastbuildcheck')
-if CONFIG.get_setting('buildname') != '' and buildcheck <= str(tools.get_date(days=CONFIG.UPDATECHECK, now=True)):
+if CONFIG.get_setting('buildname') != '' and buildcheck <= tools.get_date(days=CONFIG.UPDATECHECK):
     logging.log("[Build Update Check] Started", level=xbmc.LOGNOTICE)
     build_update_check()
 else:

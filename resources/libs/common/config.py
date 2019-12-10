@@ -49,7 +49,7 @@ class Config:
         self.BUILDERNAME = uservar.BUILDERNAME
         self.EXCLUDES = uservar.EXCLUDES
         self.BUILDFILE = uservar.BUILDFILE
-        self.UPDATECHECK = uservar.UPDATECHECK if str(uservar.UPDATECHECK).isdigit() else 0
+        self.UPDATECHECK = uservar.UPDATECHECK
         self.APKFILE = uservar.APKFILE
         self.YOUTUBETITLE = uservar.YOUTUBETITLE
         self.YOUTUBEFILE = uservar.YOUTUBEFILE

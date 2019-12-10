@@ -65,12 +65,12 @@ def log(msg, level=xbmc.LOGNOTICE):
         except:
             pass
     if CONFIG.ENABLEWIZLOG == 'true':
-        lastcheck = CONFIG.NEXTCLEANDATE if not CONFIG.NEXTCLEANDATE == '' else str(tools.get_date())
-        if CONFIG.CLEANWIZLOG == 'true' and lastcheck <= str(tools.get_date()):
+        lastcheck = CONFIG.NEXTCLEANDATE if not CONFIG.NEXTCLEANDATE == 0 else tools.get_date()
+        if CONFIG.CLEANWIZLOG == 'true' and lastcheck <= tools.get_date():
             check_log()
 
-        line = "[{0} {1}] {2}".format(tools.get_date(now=True).date(),
-                                      str(tools.get_date(now=True).time())[:8],
+        line = "[{0} {1}] {2}".format(tools.get_date().date(),
+                                      str(tools.get_date().time())[:8],
                                       msg)
         line = line.rstrip('\r\n') + '\n'
         tools.write_to_file(CONFIG.WIZLOG, line, mode='a')
@@ -103,7 +103,7 @@ def check_log():
             start = len(lines) - int(maxlines/2)
             newfile = lines[start:]
             tools.write_to_file(CONFIG.WIZLOG, '\n'.join(newfile))
-    CONFIG.set_setting('nextcleandate', str(next))
+    CONFIG.set_setting('nextcleandate', next)
 
 
 def log_notify(title, message, times=2000, icon=CONFIG.ADDON_ICON, sound=False):
