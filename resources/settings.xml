@@ -168,7 +168,7 @@
         <setting id="viewType" type="number" label="View Type" default="50" visible="!eq(-1, false)" enable="!eq(-1,false)"/>
         <setting type="lsep" label="Notification Window on Startup:"/>
         <setting id="notify" type="bool" label="Disable Notification on Startup" default="false" />
-        <setting id="noteid" type="number" label="Latest Notification" visible="false" />
+        <setting id="noteid" type="number" label="Latest Notification" visible="false" default="0" />
         <setting id="notedismiss" type="bool" label="Dismiss or Remind me later" visible="false" />
     </category>
 
