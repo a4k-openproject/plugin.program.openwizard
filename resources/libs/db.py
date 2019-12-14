@@ -94,30 +94,48 @@ def latest_db(db):
         
         
 def force_check_updates(auto=False, over=False):
+    import time
+
     if not over:
         logging.log_notify(CONFIG.ADDONTITLE,
                            '[COLOR {0}]Force Checking for Updates[/COLOR]'.format(CONFIG.COLOR2))
-    
-    force_rollback_repos()
-    xbmc.executebuiltin('UpdateAddonRepos')
 
-    if auto:
-        xbmc.executebuiltin('UpdateLocalAddons')
-
-
-def force_rollback_repos():
     dbfile = latest_db('Addons')
     dbfile = os.path.join(CONFIG.DATABASE, dbfile)
     sqldb = database.connect(dbfile)
     sqlexe = sqldb.cursor()
+    
+    # force rollback all installed repos
+    sqlexe.execute("UPDATE repo SET version = ?, checksum = ?, lastcheck = ?", ('', '', '',))
+    sqldb.commit()
 
-    installed_repos = sqlexe.execute("SELECT * FROM repo")
-    for repo in installed_repos.fetchall():
-        logging.log('Force Checking for Updates: {0}'.format(repo[1]), level=xbmc.LOGDEBUG)
-        sqlexe.execute("UPDATE repo SET version = ?, checksum = ?, lastcheck = ? WHERE addonID = ?", ('', '', '', repo[1],))
-        sqldb.commit()
+    # trigger kodi to check them for updates
+    xbmc.executebuiltin('UpdateAddonRepos')
 
+    # wait until they have finished updating
+    with tools.busy_dialog():
+        installed_repos = sqlexe.execute('SELECT addonID FROM repo')
+
+        start_time = time.time()
+        checked_time = 0
+        for repo in installed_repos.fetchall():
+            repo = repo[0]
+            while checked_time < start_time:
+                logging.log('Making sure {0} was checked successfully.'.format(repo), level=xbmc.LOGDEBUG)
+                lastcheck = sqlexe.execute('SELECT lastcheck FROM repo WHERE addonID = ?', (repo,))
+                
+                if lastcheck:
+                    checked_time = lastcheck.fetchone()[0]
+                    if checked_time:
+                        checked_time = time.mktime(time.strptime(checked_time, '%Y-%m-%d %H:%M:%S'))
+                    
+            checked_time = 0
+            logging.log('{0} successfully force checked.'.format(repo), level=xbmc.LOGDEBUG)
+            
     sqlexe.close()
+                    
+    if auto:
+        xbmc.executebuiltin('UpdateLocalAddons')
 
 
 def purge_db_file(name):
