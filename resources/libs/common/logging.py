@@ -69,9 +69,7 @@ def log(msg, level=xbmc.LOGNOTICE):
         if CONFIG.CLEANWIZLOG == 'true' and lastcheck <= tools.get_date():
             check_log()
 
-        line = "[{0} {1}] {2}".format(tools.get_date().date(),
-                                      str(tools.get_date().time())[:8],
-                                      msg)
+        line = "[{0}] {1}".format(tools.get_date(formatted=True), msg)
         line = line.rstrip('\r\n') + '\n'
         tools.write_to_file(CONFIG.WIZLOG, line, mode='a')
 
