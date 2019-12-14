@@ -94,27 +94,30 @@ def latest_db(db):
         
         
 def force_check_updates(auto=False, over=False):
-    dbfile = latest_db('Addons')
-    dbfile = os.path.join(CONFIG.DATABASE, dbfile)
-    sqldb = database.connect(dbfile)
-    sqlexe = sqldb.cursor()
-    
     if not over:
         logging.log_notify(CONFIG.ADDONTITLE,
                            '[COLOR {0}]Force Checking for Updates[/COLOR]'.format(CONFIG.COLOR2))
     
-    installed_repos = sqlexe.execute("SELECT * FROM repo")
-    for repo in installed_repos:
-        logging.log('Force Checking for Updates: {0}'.format(repo), level=xbmc.LOGDEBUG)
-        sqlexe.execute("UPDATE repo SET version = ? WHERE addonID = ?", ('0.0.1', repo[1],))
-        sqldb.commit()
-        
-    sqlexe.close()
-    
+    force_rollback_repos()
     xbmc.executebuiltin('UpdateAddonRepos')
 
     if auto:
         xbmc.executebuiltin('UpdateLocalAddons')
+
+
+def force_rollback_repos():
+    dbfile = latest_db('Addons')
+    dbfile = os.path.join(CONFIG.DATABASE, dbfile)
+    sqldb = database.connect(dbfile)
+    sqlexe = sqldb.cursor()
+
+    installed_repos = sqlexe.execute("SELECT * FROM repo")
+    for repo in installed_repos.fetchall():
+        logging.log('Force Checking for Updates: {0}'.format(repo[1]), level=xbmc.LOGDEBUG)
+        sqlexe.execute("UPDATE repo SET version = ?, checksum = ?, lastcheck = ? WHERE addonID = ?", ('', '', '', repo[1],))
+        sqldb.commit()
+
+    sqlexe.close()
 
 
 def purge_db_file(name):
