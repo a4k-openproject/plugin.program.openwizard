@@ -20,6 +20,7 @@
 import xbmc
 import xbmcgui
 
+import time
 from datetime import datetime
 from datetime import timedelta
 
@@ -222,7 +223,7 @@ def build_update_check():
         logging.log("[Build Check] Build Installed: Checking Updates", level=xbmc.LOGNOTICE)
         check.check_build_update()
 
-    CONFIG.set_setting('lastbuildcheck', tools.get_date())
+    CONFIG.set_setting('lastbuildcheck', tools.get_date(formatted=True))
 
 
 def save_trakt():
@@ -294,21 +295,19 @@ def auto_clean():
 
 
 def stop_if_duplicate():
-    import time
-
-    NOW = time.time()
+    NOW = datetime.now()
     temp = CONFIG.get_setting('time_started')
     
     if not temp == '':
-        if temp > NOW - 240:
+        if temp > str(NOW - timedelta(minutes=2)):
             logging.log("Killing Start Up Script", xbmc.LOGDEBUG)
             sys.exit()
             
     logging.log("{0}".format(NOW))
-    CONFIG.set_setting('time_started', NOW)
+    CONFIG.set_setting('time_started', str(NOW))
     xbmc.sleep(1000)
     
-    if not CONFIG.get_setting('time_started') == NOW:
+    if not CONFIG.get_setting('time_started') == str(NOW):
         logging.log("Killing Start Up Script", xbmc.LOGDEBUG)
         sys.exit()
     else:
@@ -347,7 +346,7 @@ else:
     
 # BUILD UPDATE CHECK
 buildcheck = CONFIG.get_setting('lastbuildcheck')
-if CONFIG.get_setting('buildname') != '' and buildcheck <= tools.get_date(days=CONFIG.UPDATECHECK):
+if CONFIG.get_setting('buildname') != '' and time.mktime(time.strptime(buildcheck, "%Y-%m-%d %H:%M:%S")) <= tools.get_date(days=CONFIG.UPDATECHECK):
     logging.log("[Build Update Check] Started", level=xbmc.LOGNOTICE)
     build_update_check()
 else:
