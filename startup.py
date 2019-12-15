@@ -264,12 +264,12 @@ def save_login():
 
 def auto_clean():
     service = False
-    days = [tools.get_date(), tools.get_date(days=1), tools.get_date(days=3), tools.get_date(days=7),
-            tools.get_date(days=30)]
+    days = [tools.get_date(formatted=True), tools.get_date(days=1, formatted=True), tools.get_date(days=3, formatted=True), tools.get_date(days=7, formatted=True),
+            tools.get_date(days=30, formatted=True)]
 
-    freq = int(float(CONFIG.AUTOFREQ))
+    freq = int(CONFIG.AUTOFREQ)
 
-    if CONFIG.get_setting('nextautocleanup') <= tools.get_date() or freq == 0:
+    if CONFIG.get_setting('nextautocleanup') <= time.mktime(time.strptime(tools.get_date(formatted=True), "%Y-%m-%d %H:%M:%S")) or freq == 0:
         service = True
         next_run = days[freq]
         CONFIG.set_setting('nextautocleanup', next_run)
