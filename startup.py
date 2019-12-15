@@ -197,16 +197,16 @@ def installed_build_check():
 
     if CONFIG.get_setting('keeptrakt') == 'true':
         from resources.libs import traktit
-        traktit.trakt_it('restore', 'all')
         logging.log('[Build Installed Check] Restoring Trakt Data', level=xbmc.LOGNOTICE)
+        traktit.trakt_it('restore', 'all')
     if CONFIG.get_setting('keepdebrid') == 'true':
         from resources.libs import debridit
-        debridit.debrid_it('restore', 'all')
         logging.log('[Build Installed Check] Restoring Real Debrid Data', level=xbmc.LOGNOTICE)
+        debridit.debrid_it('restore', 'all')
     if CONFIG.get_setting('keeplogin') == 'true':
         from resources.libs import loginit
-        loginit.login_it('restore', 'all')
         logging.log('[Build Installed Check] Restoring Login Data', level=xbmc.LOGNOTICE)
+        loginit.login_it('restore', 'all')
 
     CONFIG.clear_setting('install')
 
@@ -227,11 +227,11 @@ def build_update_check():
 
 
 def save_trakt():
-    if CONFIG.TRAKTSAVE <= tools.get_date():
+    if CONFIG.TRAKTSAVE <= time.mktime(time.strptime(tools.get_date(formatted=True), "%Y-%m-%d %H:%M:%S")):
         from resources.libs import traktit
         logging.log("[Trakt Data] Saving all Data", level=xbmc.LOGNOTICE)
         traktit.auto_update('all')
-        CONFIG.set_setting('traktlastsave', tools.get_date(days=3))
+        CONFIG.set_setting('traktlastsave', tools.get_date(days=3, formatted=True))
     else:
         logging.log("[Trakt Data] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.get_setting('traktlastsave'),
                                                                                           tools.get_date(formatted=True)),
@@ -239,11 +239,11 @@ def save_trakt():
 
 
 def save_debrid():
-    if CONFIG.DEBRIDSAVE <= str(tools.get_date()):
+    if CONFIG.DEBRIDSAVE <= time.mktime(time.strptime(tools.get_date(formatted=True), "%Y-%m-%d %H:%M:%S")):
         from resources.libs import debridit
         logging.log("[Debrid Data] Saving all Data", level=xbmc.LOGNOTICE)
         debridit.auto_update('all')
-        CONFIG.set_setting('debridlastsave', tools.get_date(days=3))
+        CONFIG.set_setting('debridlastsave', tools.get_date(days=3, formatted=True))
     else:
         logging.log("[Debrid Data] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.get_setting('debridlastsave'),
                                                                                            tools.get_date(formatted=True)),
@@ -251,11 +251,11 @@ def save_debrid():
 
 
 def save_login():
-    if CONFIG.LOGINSAVE <= str(tools.get_date()):
+    if CONFIG.LOGINSAVE <= time.mktime(time.strptime(tools.get_date(formatted=True), "%Y-%m-%d %H:%M:%S")):
         from resources.libs import loginit
         logging.log("[Login Info] Saving all Data", level=xbmc.LOGNOTICE)
         loginit.auto_update('all')
-        CONFIG.set_setting('loginlastsave', tools.get_date(days=3))
+        CONFIG.set_setting('loginlastsave', tools.get_date(days=3, formatted=True))
     else:
         logging.log("[Login Info] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.get_setting('loginlastsave'),
                                                                                           tools.get_date(formatted=True)),

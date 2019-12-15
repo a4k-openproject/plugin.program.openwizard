@@ -249,7 +249,7 @@ def debrid_it(do, who):
                     pass
             else:
                 logging.log('[Debrid Info] {0}({1}) is not installed'.format(DEBRIDID[log]['name'], DEBRIDID[log]['plugin']), level=xbmc.LOGERROR)
-        CONFIG.set_setting('debridlastsave', tools.get_date(days=3))
+        CONFIG.set_setting('debridlastsave', tools.get_date(days=3, formatted=True))
     else:
         if DEBRIDID[who]:
             if os.path.exists(DEBRIDID[who]['path']):
