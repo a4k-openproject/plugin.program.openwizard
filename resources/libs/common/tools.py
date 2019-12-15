@@ -358,7 +358,7 @@ def get_date(days=0, formatted=False):
 
     value = time.time() + (days * 24 * 60 * 60)  # days * 24h * 60m * 60s
 
-    return value if not formatted else time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(value))
+    return value if not formatted else time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(value))
 
 
 def basecode(text, encode=True):
