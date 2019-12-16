@@ -255,7 +255,7 @@ class Config:
         self.KEEPWIZLOG = self.get_setting('wizlog') == 'true'
         self.KEEPCRASHLOG = self.get_setting('crashlog') == 'true'
         self.LOGEMAIL = self.get_setting('email')
-        self.NEXTCLEANDATE = self.get_setting('nextcleandate')
+        self.NEXTCLEANDATE = self.get_setting('nextwizcleandate')
 
     def get_setting(self, key, id=xbmcaddon.Addon().getAddonInfo('id')):
         try:

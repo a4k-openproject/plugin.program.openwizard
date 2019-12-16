@@ -272,7 +272,7 @@ def auto_clean():
 
     freq = int(CONFIG.AUTOFREQ)
 
-    if CONFIG.get_setting('nextautocleanup') <= time.mktime(time.strptime(tools.get_date(formatted=True), "%Y-%m-%d %H:%M:%S")) or freq == 0:
+    if CONFIG.get_setting('nextautocleanup') <= time.mktime(time.strptime(tools.get_date(), "%Y-%m-%d %H:%M:%S")) or freq == 0:
         service = True
         next_run = days[freq]
         CONFIG.set_setting('nextautocleanup', next_run)
