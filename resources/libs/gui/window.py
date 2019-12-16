@@ -333,6 +333,7 @@ def show_build_prompt():
 
         def do_build_menu(self):
             from resources.libs.common import logging
+            from resources.libs.common import tools
 
             logging.log("[Current Build Check] [User Selected: Open Build Menu] [Next Check: {0}]".format(CONFIG.BUILDCHECK),
                         level=xbmc.LOGNOTICE)
@@ -347,6 +348,8 @@ def show_build_prompt():
 
         def do_ignore(self):
             from resources.libs.common import logging
+            from resources.libs.common import tools
+            
             logging.log("[Current Build Check] [User Selected: Ignore Build Menu] [Next Check: {0}]".format(CONFIG.BUILDCHECK),
                         level=xbmc.LOGNOTICE)
             CONFIG.set_setting('lastbuildcheck', tools.get_date(days=CONFIG.UPDATECHECK, formatted=True))
