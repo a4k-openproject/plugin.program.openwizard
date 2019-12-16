@@ -223,7 +223,7 @@ def build_update_check():
         logging.log("[Build Check] Build Installed: Checking Updates", level=xbmc.LOGNOTICE)
         check.check_build_update()
 
-    CONFIG.set_setting('lastbuildcheck', tools.get_date(formatted=True))
+    CONFIG.set_setting('nextbuildcheck', tools.get_date(days=CONFIG.UPDATECHECK, formatted=True))
 
 
 def save_trakt():
@@ -338,17 +338,21 @@ else:
     logging.log("[First Run] Skipping Save Data Settings", level=xbmc.LOGNOTICE)
 
 # BUILD INSTALL PROMPT
-if tools.open_url(CONFIG.BUILDFILE, check=True) and CONFIG.get_setting('installed') == '':
+if tools.open_url(CONFIG.BUILDFILE, check=True) and not CONFIG.get_setting('installed'):
     logging.log("[Current Build Check] Build Not Installed", level=xbmc.LOGNOTICE)
     window.show_build_prompt()
 else:
     logging.log("[Current Build Check] Build Installed: {0}".format(CONFIG.BUILDNAME), level=xbmc.LOGNOTICE)
     
 # BUILD UPDATE CHECK
-buildcheck = CONFIG.get_setting('lastbuildcheck')
-if CONFIG.get_setting('buildname') != '' and time.mktime(time.strptime(buildcheck, "%Y-%m-%d %H:%M:%S")) <= tools.get_date(days=CONFIG.UPDATECHECK):
-    logging.log("[Build Update Check] Started", level=xbmc.LOGNOTICE)
-    build_update_check()
+buildcheck = CONFIG.get_setting('nextbuildcheck')
+if CONFIG.get_setting('buildname'):
+    current_time = time.time()
+    epoch_check = time.mktime(time.strptime(buildcheck, "%Y-%m-%d %H:%M:%S"))
+    
+    if current_time >= epoch_check:
+        logging.log("[Build Update Check] Started", level=xbmc.LOGNOTICE)
+        build_update_check()
 else:
     logging.log("[Build Update Check] Next Check: {0}".format(buildcheck), level=xbmc.LOGNOTICE)
 

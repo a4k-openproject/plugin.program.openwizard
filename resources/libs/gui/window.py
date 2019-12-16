@@ -337,7 +337,7 @@ def show_build_prompt():
 
             logging.log("[Current Build Check] [User Selected: Open Build Menu] [Next Check: {0}]".format(CONFIG.BUILDCHECK),
                         level=xbmc.LOGNOTICE)
-            CONFIG.set_setting('lastbuildcheck', tools.get_date(days=CONFIG.UPDATECHECK, formatted=True))
+            CONFIG.set_setting('nextbuildcheck', tools.get_date(days=CONFIG.UPDATECHECK, formatted=True))
             CONFIG.set_setting('installed', 'ignored')
             
             url = 'plugin://{0}/?mode=builds'.format(CONFIG.ADDON_ID)
@@ -352,7 +352,7 @@ def show_build_prompt():
             
             logging.log("[Current Build Check] [User Selected: Ignore Build Menu] [Next Check: {0}]".format(CONFIG.BUILDCHECK),
                         level=xbmc.LOGNOTICE)
-            CONFIG.set_setting('lastbuildcheck', tools.get_date(days=CONFIG.UPDATECHECK, formatted=True))
+            CONFIG.set_setting('nextbuildcheck', tools.get_date(days=CONFIG.UPDATECHECK, formatted=True))
             CONFIG.set_setting('installed', 'ignored')
             
             self.close()

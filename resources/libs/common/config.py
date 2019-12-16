@@ -173,7 +173,7 @@ class Config:
 
         # Build variables
         self.BUILDNAME = self.get_setting('buildname')
-        self.BUILDCHECK = self.get_setting('lastbuildcheck')
+        self.BUILDCHECK = self.get_setting('nextbuildcheck')
         self.DEFAULTSKIN = self.get_setting('defaultskin')
         self.DEFAULTNAME = self.get_setting('defaultskinname')
         self.DEFAULTIGNORE = self.get_setting('defaultskinignore')
@@ -277,7 +277,7 @@ class Config:
 
     def clear_setting(self, type):
         build = {'buildname': '', 'buildversion': '', 'buildtheme': '', 'latestversion': '',
-                 'lastbuildcheck': '2019-01-01 00:00:00'}
+                 'nextbuildcheck': '2019-01-01 00:00:00'}
         install = {'extract': '', 'errors': ''}
         default = {'defaultskinignore': 'false', 'defaultskin': '', 'defaultskinname': ''}
         lookfeel = ['default.enablerssfeeds', 'default.font', 'default.rssedit', 'default.skincolors',

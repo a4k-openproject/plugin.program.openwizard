@@ -141,7 +141,7 @@ class Wizard:
                 CONFIG.set_setting('buildversion', check.check_build(name, 'version'))
                 CONFIG.set_setting('buildtheme', '')
                 CONFIG.set_setting('latestversion', check.check_build(name, 'version'))
-                CONFIG.set_setting('lastbuildcheck', tools.get_date(days=CONFIG.UPDATECHECK, formatted=True))
+                CONFIG.set_setting('nextbuildcheck', tools.get_date(days=CONFIG.UPDATECHECK, formatted=True))
                 CONFIG.set_setting('installed', 'true')
                 CONFIG.set_setting('extract', percent)
                 CONFIG.set_setting('errors', errors)
