@@ -231,9 +231,10 @@ def save_trakt():
         from resources.libs import traktit
         logging.log("[Trakt Data] Saving all Data", level=xbmc.LOGNOTICE)
         traktit.auto_update('all')
-        CONFIG.set_setting('traktlastsave', tools.get_date(days=3, formatted=True))
+        CONFIG.set_setting('traktnextsave', tools.get_date(days=3, formatted=True))
     else:
-        logging.log("[Trakt Data] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.get_setting('traktlastsave'),
+        local_time = time.localtime(time.mktime(time.strptime(CONFIG.get_setting('traktnextsave'), "%Y-%m-%d %H:%M:%S")))
+        logging.log("[Trakt Data] Next Auto Save isn't until: {0} / TODAY is: {1}".format(local_time,
                                                                                           tools.get_date(formatted=True)),
                     level=xbmc.LOGNOTICE)
 
@@ -243,9 +244,10 @@ def save_debrid():
         from resources.libs import debridit
         logging.log("[Debrid Data] Saving all Data", level=xbmc.LOGNOTICE)
         debridit.auto_update('all')
-        CONFIG.set_setting('debridlastsave', tools.get_date(days=3, formatted=True))
+        CONFIG.set_setting('debridnextsave', tools.get_date(days=3, formatted=True))
     else:
-        logging.log("[Debrid Data] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.get_setting('debridlastsave'),
+        local_time = time.localtime(time.mktime(time.strptime(CONFIG.get_setting('debridnextsave'), "%Y-%m-%d %H:%M:%S")))
+        logging.log("[Debrid Data] Next Auto Save isn't until: {0} / TODAY is: {1}".format(local_time,
                                                                                            tools.get_date(formatted=True)),
                     level=xbmc.LOGNOTICE)
 
@@ -255,9 +257,10 @@ def save_login():
         from resources.libs import loginit
         logging.log("[Login Info] Saving all Data", level=xbmc.LOGNOTICE)
         loginit.auto_update('all')
-        CONFIG.set_setting('loginlastsave', tools.get_date(days=3, formatted=True))
+        CONFIG.set_setting('loginnextsave', tools.get_date(days=3, formatted=True))
     else:
-        logging.log("[Login Info] Next Auto Save isn't until: {0} / TODAY is: {1}".format(CONFIG.get_setting('loginlastsave'),
+        local_time = time.localtime(time.mktime(time.strptime(CONFIG.get_setting('loginnextsave'), "%Y-%m-%d %H:%M:%S")))
+        logging.log("[Login Info] Next Auto Save isn't until: {0} / TODAY is: {1}".format(local_time,
                                                                                           tools.get_date(formatted=True)),
                     level=xbmc.LOGNOTICE)
 

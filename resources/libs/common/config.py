@@ -220,9 +220,9 @@ class Config:
         self.NOTEDISMISS = self.get_setting('notedismiss')
         
         # Save Data variables
-        self.TRAKTSAVE = self.get_setting('traktlastsave')
-        self.DEBRIDSAVE = self.get_setting('debridlastsave')
-        self.LOGINSAVE = self.get_setting('loginlastsave')
+        self.TRAKTSAVE = self.get_setting('traktnextsave')
+        self.DEBRIDSAVE = self.get_setting('debridnextsave')
+        self.LOGINSAVE = self.get_setting('loginnextsave')
         self.KEEPFAVS = self.get_setting('keepfavourites')
         self.KEEPSOURCES = self.get_setting('keepsources')
         self.KEEPPROFILES = self.get_setting('keepprofiles')

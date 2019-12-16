@@ -145,11 +145,11 @@
     <category label="Install Settings">
         <setting type="lsep" label="Save Data When Installing Build:"/>
         <setting id="keeptrakt" type="bool" label="Keep My Trakt Data" default="true"/>
-        <setting id="traktlastsave" type="number" label="Last Time Trakt Data Saved:" visible="!eq(-1, false)" enable="false" default="0"/>
+        <setting id="traktnextsave" type="text" label="Last Time Trakt Data Saved:" visible="!eq(-1, false)" enable="false" default="2019-01-01 00:00:00"/>
         <setting id="keepdebrid" type="bool" label="Keep My Debrid Data" default="true"/>
-        <setting id="debridlastsave" type="number" label="Last Time Debrid Data Saved:" visible="!eq(-1, false)" enable="false" default="0"/>
+        <setting id="debridnextsave" type="text" label="Last Time Debrid Data Saved:" visible="!eq(-1, false)" enable="false" default="2019-01-01 00:00:00"/>
         <setting id="keeplogin" type="bool" label="Keep My Login Data" default="true"/>
-        <setting id="loginlastsave" type="number" label="Last Time Login Data Saved:" visible="!eq(-1, false)" enable="false" default="0"/>
+        <setting id="loginnextsave" type="text" label="Last Time Login Data Saved:" visible="!eq(-1, false)" enable="false" default="2019-01-01 00:00:00"/>
         <setting type="lsep" label="Keep Settings When Installing Build:"/>
         <setting id="keepfavourites" type="bool" label="Keep My Favourites" default="true"/>
         <setting id="keepsources" type="bool" label="Keep My Sources" default="true"/>
