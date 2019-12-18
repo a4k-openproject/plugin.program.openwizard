@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.program.openwizard" name="[COLOR limegreen][B]Open[/B][/COLOR]Wizard" version="1.2.8" provider-name="drinfernoo">
+<addon id="plugin.program.kwtvwizard2020" name="[COLOR limegreen][B]KWTV[/B][/COLOR]Wizard" version="1.0.0" provider-name="kwhome2417">
     <requires>
         <import addon="xbmc.python" version="2.1.0" />
         <import addon="script.module.requests" />
@@ -13,60 +13,12 @@
     <extension point="xbmc.service" library="startup.py" start="startup" />
     
     <extension point="xbmc.addon.metadata">
-        <summary lang="en">[COLOR limegreen][B]Open[/B][/COLOR]Wizard</summary>
-        <description lang="en">[COLOR limegreen][B]Open[/B][/COLOR]Wizard offers many maintenance features, selective add-on data saving, and automated build installs.</description>
+        <summary lang="en">[COLOR limegreen][B]KWTV[/B][/COLOR]Wizard</summary>
+        <description lang="en">[COLOR limegreen][B]KWTV[/B][/COLOR]Wizard offers many maintenance features, selective add-on data saving, and automated build installs.</description>
         <platform>all</platform>
         <reuselanguageinvoker>false</reuselanguageinvoker>
-        <source>https://www.github.com/drinfernoo/plugin.program.openwizard/</source>
+        <source>https://www.github.com/xxkwhome2417xx/plugin.program.kwtvwizard2020/</source>
         <news>
-        1.2.8
-         - Add Gaia PM OAuth
-         - Fix binary add-on restoration
-         - Fix some issues with old settings
-         - Fix timing on many startup tasks
-        1.2.7
-         - Add TheMovieDb Helper
-        1.2.6
-         - Fix Seren PM OAuth    
-        1.2.5
-         - Fix typo in debridit.py
-        1.2.4
-         - Cover more edge cases during binary detection
-        1.2.3
-         - Fix notification ID bug
-        1.2.2
-         - Add Seren PM OAuth
-         - Add AllDebrid spport for Gaia, Seren, ResolveURL, and URLResolver
-        1.2.1
-         - General bug fixes
-        1.2.0
-         - Silence save data notifications on startup
-         - Fix Addon Installer menu
-         - Convert addons.txt to JSON format
-        1.1.1
-         - Fix error on advancedsettings categories
-        1.1.0
-         - Add back advancedsettings area under System Tweaks/Fixes
-         - Rudimentary version of advancedsettings editor. Can currently only handle editing pre-existing tags under 'cache' and 'network'.
-         - Convert advanced.txt to JSON format
-         - Add "built-in" advancedsettings.xml presets
-        1.0.3
-         - Update artwork
-         - Fix rare issues with URLs not working
-         - Fix repetitive build prompt (again)
-         - Fix builds downloading twice
-         - Fix title coloring on notifications
-         - Fix auto repo install
-         - Fix first run settings not being respected
-        1.0.2
-         - Fix crash in login menu
-         - Fix auto install repo
-        1.0.1
-         - Fix double startup
-         - Fix repetitive build prompt
-         - Fix main menu not opening on Krypton
-         - Fix notification timeout
-         - Fix crash in Trakt menu
         1.0.0
          - Initial Commit
         </news>
