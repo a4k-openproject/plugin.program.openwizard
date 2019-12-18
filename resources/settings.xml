@@ -43,10 +43,10 @@
         <setting type="lsep" label="Maintenance Menu: "/>
         <setting id="path" type="folder" label="Choose Backup Storage Location" default="special://home/"/>
         <setting type="lsep" label="Auto Clean On Startup:"/>
-        <setting id="autoclean" type="bool" label="Enable Auto Clean" default="false"/>
-        <setting id="clearcache" type="bool" label="Clear Cache on Startup" default="false" enable="!eq(-1,false)"/>
-        <setting id="clearpackages" type="bool" label="Clear Packages on Startup" default="false" enable="!eq(-2,false)"/>
-        <setting id="clearthumbs" type="bool" label="Clear Week Old Thumbnails on Startup" default="false" enable="!eq(-3,false)"/>
+        <setting id="autoclean" type="bool" label="Enable Auto Clean" default="true"/>
+        <setting id="clearcache" type="bool" label="Clear Cache on Startup" default="true" enable="!eq(-1,false)"/>
+        <setting id="clearpackages" type="bool" label="Clear Packages on Startup" default="true" enable="!eq(-2,false)"/>
+        <setting id="clearthumbs" type="bool" label="Clear Week Old Thumbnails on Startup" default="true" enable="!eq(-3,false)"/>
         <setting id="autocleanfreq" type="enum" label="How often would you like to Auto Clean on Startup?" values="Always|Daily|3 Days|Weekly|Monthly" default="3" enable="!eq(-4,false)"/>
         <setting id="nextautocleanup" type="text" label="Next Auto Clean Up: " enable="false" visible="false" default="2019-01-01 00:00:00" />
         <setting type="lsep" label="Clearing Video Cache:"/>
