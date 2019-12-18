@@ -129,6 +129,7 @@ def force_check_updates(auto=False, over=False):
                     if checked_time:
                         checked_time = time.mktime(time.strptime(checked_time, '%Y-%m-%d %H:%M:%S'))
                     
+                xbmc.sleep(1000)
             checked_time = 0
             logging.log('{0} successfully force checked.'.format(repo), level=xbmc.LOGDEBUG)
             
