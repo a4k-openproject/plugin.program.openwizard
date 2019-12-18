@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.program.openwizard" name="[COLOR limegreen][B]Open[/B][/COLOR]Wizard" version="1.2.7" provider-name="drinfernoo">
+<addon id="plugin.program.openwizard" name="[COLOR limegreen][B]Open[/B][/COLOR]Wizard" version="1.2.8" provider-name="drinfernoo">
     <requires>
         <import addon="xbmc.python" version="2.1.0" />
         <import addon="script.module.requests" />
@@ -19,6 +19,11 @@
         <reuselanguageinvoker>false</reuselanguageinvoker>
         <source>https://www.github.com/drinfernoo/plugin.program.openwizard/</source>
         <news>
+        1.2.8
+         - Add Gaia PM OAuth
+         - Fix binary add-on restoration
+         - Fix some issues with old settings
+         - Fix timing on many startup tasks
         1.2.7
          - Add TheMovieDb Helper
         1.2.6
