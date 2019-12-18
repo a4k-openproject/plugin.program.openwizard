@@ -299,19 +299,19 @@ def auto_clean():
 
 
 def stop_if_duplicate():
-    NOW = datetime.now()
+    NOW = time.time()
     temp = CONFIG.get_setting('time_started')
     
-    if not temp == '':
-        if temp > str(NOW - timedelta(minutes=2)):
+    if temp:
+        if temp > NOW - (60 * 2):
             logging.log("Killing Start Up Script", xbmc.LOGDEBUG)
             sys.exit()
             
     logging.log("{0}".format(NOW))
-    CONFIG.set_setting('time_started', str(NOW))
+    CONFIG.set_setting('time_started', NOW)
     xbmc.sleep(1000)
     
-    if not CONFIG.get_setting('time_started') == str(NOW):
+    if not CONFIG.get_setting('time_started') == NOW:
         logging.log("Killing Start Up Script", xbmc.LOGDEBUG)
         sys.exit()
     else:
