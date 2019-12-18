@@ -13,11 +13,11 @@ ART = os.path.join(PATH, 'resources', 'media')
 #########################################################
 #        User Edit Variables                            #
 #########################################################
-ADDONTITLE = '[COLOR limegreen][B]Open[/B][/COLOR]Wizard'
-BUILDERNAME = 'OpenWizard'
+ADDONTITLE = '[COLOR limegreen][B]KWTV[/B][/COLOR]Wizard'
+BUILDERNAME = 'KWHome_2417/KWTV'
 EXCLUDES = [ADDON_ID, 'repository.openwizard']
 # Text File with build info in it.
-BUILDFILE = 'http://'
+BUILDFILE = 'http://kwhome2417.tech/kodi18/k18buildfile.txt'
 # How often you would like it to check for build updates in days
 # 0 being every startup of kodi
 UPDATECHECK = 0
@@ -94,7 +94,7 @@ AUTOUPDATE = 'Yes'
 #        Auto Install Repo If Not Installed             #
 #########################################################
 # Enable Auto Install 'Yes' or 'No'
-AUTOINSTALL = 'Yes'
+AUTOINSTALL = 'No'
 # Addon ID for the repository
 REPOID = 'repository.openwizard'
 # Url to Addons.xml file in your repo folder(this is so we can get the latest version)
