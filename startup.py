@@ -271,13 +271,14 @@ def auto_clean():
             tools.get_date(days=30, formatted=True)]
 
     freq = int(CONFIG.AUTOFREQ)
+    next_cleanup = time.mktime(time.strptime(CONFIG.NEXTCLEANDATE, "%Y-%m-%d %H:%M:%S"))
 
-    if CONFIG.get_setting('nextautocleanup') <= time.mktime(time.strptime(tools.get_date(), "%Y-%m-%d %H:%M:%S")) or freq == 0:
+    if next_cleanup <= tools.get_date() or freq == 0:
         service = True
         next_run = days[freq]
         CONFIG.set_setting('nextautocleanup', next_run)
     else:
-        logging.log("[Auto Clean Up] Next Clean Up {0}".format(CONFIG.get_setting('nextautocleanup')),
+        logging.log("[Auto Clean Up] Next Clean Up {0}".format(CONFIG.NEXTCLEANDATE),
                     level=xbmc.LOGNOTICE)
     if service:
         if CONFIG.AUTOCACHE == 'true':

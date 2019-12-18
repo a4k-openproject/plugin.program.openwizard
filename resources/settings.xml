@@ -48,7 +48,7 @@
         <setting id="clearpackages" type="bool" label="Clear Packages on Startup" default="false" enable="!eq(-2,false)"/>
         <setting id="clearthumbs" type="bool" label="Clear Week Old Thumbnails on Startup" default="false" enable="!eq(-3,false)"/>
         <setting id="autocleanfreq" type="enum" label="How often would you like to Auto Clean on Startup?" values="Always|Daily|3 Days|Weekly|Monthly" default="3" enable="!eq(-4,false)"/>
-        <setting id="nextautocleanup" type="number" label="Next Auto Clean Up: " enable="false" visible="false" default="0"/>
+        <setting id="nextautocleanup" type="text" label="Next Auto Clean Up: " enable="false" visible="false" default="2019-01-01 00:00:00" />
         <setting type="lsep" label="Clearing Video Cache:"/>
         <setting id="includevideo" type="bool" label="Include Video Addons in Clear Cache: " default="true"/>
         <setting id="includeall" type="bool" label="Include All Addons: " default="true" enable="!eq(-1,false)"/>
