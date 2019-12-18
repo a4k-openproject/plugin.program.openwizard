@@ -43,17 +43,17 @@ def wipe():
         from resources.libs import traktit
 
         traktit.auto_update('all')
-        CONFIG.set_setting('traktlastsave', str(tools.get_date(days=3)))
+        CONFIG.set_setting('traktnextsave', str(tools.get_date(days=3, formatted=True)))
     if CONFIG.KEEPDEBRID == 'true':
         from resources.libs import debridit
 
         debridit.auto_update('all')
-        CONFIG.set_setting('debridlastsave', str(tools.get_date(days=3)))
+        CONFIG.set_setting('debridnextsave', str(tools.get_date(days=3, formatted=True)))
     if CONFIG.KEEPLOGIN == 'true':
         from resources.libs import loginit
 
         loginit.auto_update('all')
-        CONFIG.set_setting('loginlastsave', str(tools.get_date(days=3)))
+        CONFIG.set_setting('loginnextsave', str(tools.get_date(days=3, formatted=True)))
 
     exclude_dirs = CONFIG.EXCLUDES
     exclude_dirs.append('My_Builds')
@@ -173,17 +173,17 @@ def fresh_start(install=None, over=False):
         from resources.libs import traktit
 
         traktit.auto_update('all')
-        CONFIG.set_setting('traktlastsave', str(tools.get_date(days=3)))
+        CONFIG.set_setting('traktnextsave', str(tools.get_date(days=3, formatted=True)))
     if CONFIG.KEEPDEBRID == 'true':
         from resources.libs import debridit
 
         debridit.auto_update('all')
-        CONFIG.set_setting('debridlastsave', str(tools.get_date(days=3)))
+        CONFIG.set_setting('debridnextsave', str(tools.get_date(days=3, formatted=True)))
     if CONFIG.KEEPLOGIN == 'true':
         from resources.libs import loginit
 
         loginit.auto_update('all')
-        CONFIG.set_setting('loginlastsave', str(tools.get_date(days=3)))
+        CONFIG.set_setting('loginnextsave', str(tools.get_date(days=3, formatted=True)))
 
     if over:
         yes_pressed = 1

@@ -54,6 +54,8 @@ except ImportError:  # Python 2
     from urlparse import urlparse
     import HTMLParser
 
+from contextlib import contextmanager
+
 from resources.libs.common.config import CONFIG
 
 
@@ -215,6 +217,15 @@ def ensure_folders(folder=None):
 #########################
 
 
+@contextmanager
+def busy_dialog():
+    xbmc.executebuiltin('ActivateWindow(busydialognocancel)')
+    try:
+        yield
+    finally:
+        xbmc.executebuiltin('Dialog.Close(busydialognocancel)')
+
+
 def convert_size(num, suffix='B'):
     for unit in ['', 'K', 'M', 'G']:
         if abs(num) < 1024.0:
@@ -342,18 +353,12 @@ def parse_dom(html, name=u"", attrs={}, ret=False):
     return ret_lst
 
 
-def get_date(days=0, now=False):
-    from datetime import date
-    from datetime import datetime
-    from datetime import timedelta
+def get_date(days=0, formatted=False):
+    import time
 
-    if now:
-        return datetime.now()
-    else:
-        if days == 0:
-            return date.today()
-        else:
-            return date.today() + timedelta(days)
+    value = time.time() + (days * 24 * 60 * 60)  # days * 24h * 60m * 60s
+
+    return value if not formatted else time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(value))
 
 
 def basecode(text, encode=True):

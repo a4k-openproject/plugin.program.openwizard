@@ -689,7 +689,7 @@ def login_it(do, who):
                     pass
             else:
                 logging.log('[Login Info] {0}({1}) is not installed'.format(LOGINID[log]['name'], LOGINID[log]['plugin']), level=xbmc.LOGERROR)
-        CONFIG.set_setting('loginlastsave', tools.get_date(days=3))
+        CONFIG.set_setting('loginnextsave', tools.get_date(days=3, formatted=True))
     else:
         if LOGINID[who]:
             if os.path.exists(LOGINID[who]['path']):

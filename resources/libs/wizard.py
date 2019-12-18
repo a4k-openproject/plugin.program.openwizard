@@ -57,15 +57,15 @@ class Wizard:
             if CONFIG.KEEPTRAKT == 'true':
                 from resources.libs import traktit
                 traktit.auto_update('all')
-                CONFIG.set_setting('traktlastsave', tools.get_date(days=3))
+                CONFIG.set_setting('traktnextsave', tools.get_date(days=3, formatted=True))
             if CONFIG.KEEPDEBRID == 'true':
                 from resources.libs import debridit
                 debridit.auto_update('all')
-                CONFIG.set_setting('debridlastsave', tools.get_date(days=3))
+                CONFIG.set_setting('debridnextsave', tools.get_date(days=3, formatted=True))
             if CONFIG.KEEPLOGIN == 'true':
                 from resources.libs import loginit
                 loginit.auto_update('all')
-                CONFIG.set_setting('loginlastsave', tools.get_date(days=3))
+                CONFIG.set_setting('loginnextsave', tools.get_date(days=3, formatted=True))
 
         temp_kodiv = int(CONFIG.KODIV)
         buildv = int(float(check.check_build(name, 'kodi')))
@@ -141,7 +141,7 @@ class Wizard:
                 CONFIG.set_setting('buildversion', check.check_build(name, 'version'))
                 CONFIG.set_setting('buildtheme', '')
                 CONFIG.set_setting('latestversion', check.check_build(name, 'version'))
-                CONFIG.set_setting('lastbuildcheck', str(CONFIG.BUILDCHECK))
+                CONFIG.set_setting('nextbuildcheck', tools.get_date(days=CONFIG.UPDATECHECK, formatted=True))
                 CONFIG.set_setting('installed', 'true')
                 CONFIG.set_setting('extract', percent)
                 CONFIG.set_setting('errors', errors)

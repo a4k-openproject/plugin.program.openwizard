@@ -88,8 +88,6 @@ CONTACTFANART = 'http://'
 #########################################################
 # Enable Auto Update 'Yes' or 'No'
 AUTOUPDATE = 'Yes'
-# Url to wizard version
-WIZARDFILE = BUILDFILE
 #########################################################
 
 #########################################################

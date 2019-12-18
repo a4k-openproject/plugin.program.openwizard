@@ -466,7 +466,7 @@ class Backup:
             f.write('extracted="{0}"\n'.format(extractsize))
             f.write('zipsize="{0}"\n'.format(os.path.getsize(backup_zip)))
             f.write('skin="{0}"\n'.format(CONFIG.SKIN))
-            f.write('created="{0}"\n'.format(tools.get_date(now=True)))
+            f.write('created="{0}"\n'.format(tools.get_date(formatted=True)))
             f.write('programs="{0}"\n'.format(', '.join(programs)) if len(programs) > 0 else 'programs="none"\n')
             f.write('video="{0}"\n'.format(', '.join(video)) if len(video) > 0 else 'video="none"\n')
             f.write('music="{0}"\n'.format(', '.join(music)) if len(music) > 0 else 'music="none"\n')

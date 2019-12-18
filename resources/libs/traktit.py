@@ -221,7 +221,7 @@ def trakt_it(do, who):
                     pass
             else:
                 logging.log('[Trakt Data] {0}({1}) is not installed'.format(TRAKTID[log]['name'], TRAKTID[log]['plugin']), level=xbmc.LOGERROR)
-        CONFIG.set_setting('traktlastsave', tools.get_date(days=3))
+        CONFIG.set_setting('traktnextsave', tools.get_date(days=3, formatted=True))
     else:
         if TRAKTID[who]:
             if os.path.exists(TRAKTID[who]['path']):

@@ -49,7 +49,7 @@ class Config:
         self.BUILDERNAME = uservar.BUILDERNAME
         self.EXCLUDES = uservar.EXCLUDES
         self.BUILDFILE = uservar.BUILDFILE
-        self.UPDATECHECK = uservar.UPDATECHECK if str(uservar.UPDATECHECK).isdigit() else 0
+        self.UPDATECHECK = uservar.UPDATECHECK
         self.APKFILE = uservar.APKFILE
         self.YOUTUBETITLE = uservar.YOUTUBETITLE
         self.YOUTUBEFILE = uservar.YOUTUBEFILE
@@ -173,7 +173,7 @@ class Config:
 
         # Build variables
         self.BUILDNAME = self.get_setting('buildname')
-        self.BUILDCHECK = self.get_setting('lastbuildcheck')
+        self.BUILDCHECK = self.get_setting('nextbuildcheck')
         self.DEFAULTSKIN = self.get_setting('defaultskin')
         self.DEFAULTNAME = self.get_setting('defaultskinname')
         self.DEFAULTIGNORE = self.get_setting('defaultskinignore')
@@ -216,14 +216,13 @@ class Config:
         
         # Notification variables
         self.NOTIFY = self.get_setting('notify')
-        self.NOTEID = int(self.get_setting('noteid'))
-        self.NOTEID = 0 if self.NOTEID == "" else int(self.NOTEID)
+        self.NOTEID = self.get_setting('noteid')
         self.NOTEDISMISS = self.get_setting('notedismiss')
         
         # Save Data variables
-        self.TRAKTSAVE = self.get_setting('traktlastsave')
-        self.DEBRIDSAVE = self.get_setting('debridlastsave')
-        self.LOGINSAVE = self.get_setting('loginlastsave')
+        self.TRAKTSAVE = self.get_setting('traktnextsave')
+        self.DEBRIDSAVE = self.get_setting('debridnextsave')
+        self.LOGINSAVE = self.get_setting('loginnextsave')
         self.KEEPFAVS = self.get_setting('keepfavourites')
         self.KEEPSOURCES = self.get_setting('keepsources')
         self.KEEPPROFILES = self.get_setting('keepprofiles')
@@ -256,7 +255,7 @@ class Config:
         self.KEEPWIZLOG = self.get_setting('wizlog') == 'true'
         self.KEEPCRASHLOG = self.get_setting('crashlog') == 'true'
         self.LOGEMAIL = self.get_setting('email')
-        self.NEXTCLEANDATE = self.get_setting('nextcleandate')
+        self.NEXTCLEANDATE = self.get_setting('nextwizcleandate')
 
     def get_setting(self, key, id=xbmcaddon.Addon().getAddonInfo('id')):
         try:
@@ -278,7 +277,7 @@ class Config:
 
     def clear_setting(self, type):
         build = {'buildname': '', 'buildversion': '', 'buildtheme': '', 'latestversion': '',
-                 'lastbuildcheck': '2016-01-01'}
+                 'nextbuildcheck': '2019-01-01 00:00:00'}
         install = {'extract': '', 'errors': ''}
         default = {'defaultskinignore': 'false', 'defaultskin': '', 'defaultskinname': ''}
         lookfeel = ['default.enablerssfeeds', 'default.font', 'default.rssedit', 'default.skincolors',
