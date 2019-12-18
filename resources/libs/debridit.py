@@ -66,8 +66,8 @@ DEBRIDID = {
         'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.gaia', 'fanart.jpg'),
         'file'     : os.path.join(CONFIG.DEBRIDFOLD, 'gaia_pm'),
         'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.gaia', 'settings.xml'),
-        'default'  : 'accounts.debrid.premiumize.user',
-        'data'     : [ 'accounts.debrid.premiumize.enabled', 'accounts.debrid.premiumize.user', 'accounts.debrid.premiumize.pin'],
+        'default'  : 'accounts.debrid.premiumize.auth',
+        'data'     : [ 'accounts.debrid.premiumize.enabled', 'accounts.debrid.premiumize.token', 'accounts.debrid.premiumize.auth'],
         'activate' : 'RunPlugin(plugin://plugin.video.gaia/?action=premiumizeSettings)'},
     'serenad': {
         'name'     : 'Seren AD',
