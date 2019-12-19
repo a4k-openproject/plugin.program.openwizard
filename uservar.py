@@ -63,7 +63,7 @@ SPACER = '='
 COLOR1 = 'limegreen'
 COLOR2 = 'white'
 # Primary menu items   / {0} is the menu item and is required
-THEME1 = '[COLOR '+COLOR1+'][I]([COLOR '+COLOR1+'][B]Open[/B][/COLOR][COLOR ' + COLOR2 + ']Wizard[COLOR ' + COLOR1 + '])[/I][/COLOR] [COLOR '+COLOR2+']{0}[/COLOR]'
+THEME1 = '[COLOR '+COLOR1+'][I]()[/I][/COLOR] [COLOR '+COLOR2+']{0}[/COLOR]'
 # Build Names          / {0} is the menu item and is required
 THEME2 = '[COLOR '+COLOR2+']{0}[/COLOR]'
 # Alternate items      / {0} is the menu item and is required
