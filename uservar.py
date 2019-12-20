@@ -17,7 +17,7 @@ ADDONTITLE = '[COLOR white][B]KWTV[/B][/COLOR] Wizard'
 BUILDERNAME = 'KWHome_2417/KWTV'
 EXCLUDES = [ADDON_ID, 'repository.openwizard']
 # Text File with build info in it.
-BUILDFILE = 'http://kwhome2417.tech/kodi18/KWTVBuild2020.txt'
+BUILDFILE = 'http://kwhome2417.tech/kodi18/kwtvbuild2020.txt'
 # How often you would like it to check for build updates in days
 # 0 being every startup of kodi
 UPDATECHECK = 0
