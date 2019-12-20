@@ -13,7 +13,7 @@ ART = os.path.join(PATH, 'resources', 'media')
 #########################################################
 #        User Edit Variables                            #
 #########################################################
-ADDONTITLE = '[COLOR purple][B]KWTV[/B][/COLOR] Wizard'
+ADDONTITLE = '[COLOR white][B]KWTV[/B][/COLOR] Wizard'
 BUILDERNAME = 'KWHome_2417/KWTV'
 EXCLUDES = [ADDON_ID, 'repository.openwizard']
 # Text File with build info in it.
@@ -60,7 +60,7 @@ SPACER = '='
 
 # You can edit these however you want, just make sure that you have a %s in each of the
 # THEME's so it grabs the text from the menu item
-COLOR1 = 'purple'
+COLOR1 = 'white'
 COLOR2 = 'white'
 # Primary menu items   / {0} is the menu item and is required
 THEME1 = '[COLOR '+COLOR1+'][I]()[/I][/COLOR] [COLOR '+COLOR2+']{0}[/COLOR]'
