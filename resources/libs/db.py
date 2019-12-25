@@ -95,7 +95,7 @@ def latest_db(db):
         
 def force_check_updates(auto=False, over=False):
     import time
-
+    
     if not over:
         logging.log_notify(CONFIG.ADDONTITLE,
                            '[COLOR {0}]Force Checking for Updates[/COLOR]'.format(CONFIG.COLOR2))
@@ -110,7 +110,7 @@ def force_check_updates(auto=False, over=False):
     sqldb.commit()
 
     # trigger kodi to check them for updates
-    xbmc.executebuiltin('UpdateAddonRepos')
+    xbmc.executebuiltin('UpdateAddonRepos', wait=True)
 
     # wait until they have finished updating
     with tools.busy_dialog():
@@ -132,6 +132,8 @@ def force_check_updates(auto=False, over=False):
                 xbmc.sleep(1000)
             checked_time = 0
             logging.log('{0} successfully force checked.'.format(repo), level=xbmc.LOGDEBUG)
+            logging.log_notify('[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                               "[COLOR {0}]{1} succesffuly force checked.[/COLOR]".format(CONFIG.COLOR2, repo))
             
     sqlexe.close()
                     
