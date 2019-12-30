@@ -490,7 +490,7 @@ def force_text():
 
 
 def toggle_cache(state):
-    cachelist = ['includevideo', 'includeall', 'includeexodusredux', 'includegaia', 'inlcudenumbers', 'includescrubs', 'includeseren', 'includethecrew', 'includevenom']
+    cachelist = ['includevideo', 'includeall', 'includeexodusredux', 'includegaia', 'includenumbers', 'includescrubs', 'includeseren', 'includethecrew', 'includevenom']
     titlelist = ['Include Video Addons', 'Include All Addons', 'Include Exodus Redux', 'Include Gaia', 'Include NuMb3r5', 'Include Scrubs v2', 'Include Seren', 'Include THE CREW', 'Include Venom']
     if state in ['true', 'false']:
         for item in cachelist:
