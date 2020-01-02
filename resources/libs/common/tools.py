@@ -460,7 +460,11 @@ def convert_special(url, over=False):
                 encodedpath = quote(CONFIG.HOME)
                 encodedpath2 = quote(CONFIG.HOME).replace('%3A', '%3a').replace('%5C', '%5c')
                 b = a.replace(CONFIG.HOME, 'special://home/').replace(encodedpath, 'special://home/').replace(encodedpath2, 'special://home/')
-                write_to_file(os.path.join(root, file), b)
+                
+                try:
+                    write_to_file(os.path.join(root, file), b)
+                except IOError as e:
+                    logging.log('Unable to open file to convert special paths: {}'.format(os.path.join(root, file)))
 
                 if progress_dialog.iscanceled():
                     progress_dialog.close()
