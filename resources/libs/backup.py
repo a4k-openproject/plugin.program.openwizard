@@ -365,12 +365,12 @@ class Backup:
                         elif os.path.join('addons', 'packages') in fn:
                             logging.log("[Back Up] Type = build: Ignore {0} - Packages Folder".format(file))
                             continue
-                        elif file.endswith('.csv'):
-                            logging.log("[Back Up] Type = build: Ignore {0} - CSV File".format(file))
+                        elif file.startswith('._') or file.lower().startswith('.ds_store'):
+                            logging.log("[Back Up] Type = build: Ignore {0} - OSX metadata file".format(file))
                             continue
                         elif file.endswith('.pyo'):
                             continue
-                        elif file.endswith('.db') and 'Database' in base:
+                        elif file.lower().endswith('.db') and 'database' in base:
                             temp = file.replace('.db', '')
                             temp = ''.join([i for i in temp if not i.isdigit()])
                             if temp in CONFIG.DB_FILES:
