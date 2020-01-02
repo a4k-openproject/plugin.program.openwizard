@@ -110,7 +110,7 @@ def force_check_updates(auto=False, over=False):
     sqldb.commit()
 
     # trigger kodi to check them for updates
-    xbmc.executebuiltin('UpdateAddonRepos', wait=True)
+    xbmc.executebuiltin('UpdateAddonRepos', wait=False)  # needs further testing
 
     # wait until they have finished updating
     with tools.busy_dialog():
