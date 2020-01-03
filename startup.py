@@ -194,21 +194,22 @@ def installed_build_check():
                                 level=xbmc.LOGNOTICE)
     else:
         logging.log('[Build Installed Check] Install seems to be completed correctly', level=xbmc.LOGNOTICE)
+        
+    if CONFIG.get_setting('installed') == 'true':
+        if CONFIG.get_setting('keeptrakt') == 'true':
+            from resources.libs import traktit
+            logging.log('[Build Installed Check] Restoring Trakt Data', level=xbmc.LOGNOTICE)
+            traktit.trakt_it('restore', 'all')
+        if CONFIG.get_setting('keepdebrid') == 'true':
+            from resources.libs import debridit
+            logging.log('[Build Installed Check] Restoring Real Debrid Data', level=xbmc.LOGNOTICE)
+            debridit.debrid_it('restore', 'all')
+        if CONFIG.get_setting('keeplogin') == 'true':
+            from resources.libs import loginit
+            logging.log('[Build Installed Check] Restoring Login Data', level=xbmc.LOGNOTICE)
+            loginit.login_it('restore', 'all')
 
-    if CONFIG.get_setting('keeptrakt') == 'true':
-        from resources.libs import traktit
-        logging.log('[Build Installed Check] Restoring Trakt Data', level=xbmc.LOGNOTICE)
-        traktit.trakt_it('restore', 'all')
-    if CONFIG.get_setting('keepdebrid') == 'true':
-        from resources.libs import debridit
-        logging.log('[Build Installed Check] Restoring Real Debrid Data', level=xbmc.LOGNOTICE)
-        debridit.debrid_it('restore', 'all')
-    if CONFIG.get_setting('keeplogin') == 'true':
-        from resources.libs import loginit
-        logging.log('[Build Installed Check] Restoring Login Data', level=xbmc.LOGNOTICE)
-        loginit.login_it('restore', 'all')
-
-    CONFIG.clear_setting('install')
+        CONFIG.clear_setting('installed')
 
 
 def build_update_check():
