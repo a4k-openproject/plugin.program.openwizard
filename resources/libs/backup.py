@@ -459,9 +459,10 @@ class Backup:
         zipname = name + '.zip'
         txtname = name + '.txt'
         backup_zip = os.path.join(backup_path, zipname)
+        temp_txt = os.path.join(CONFIG.PACKAGES, txtname)
         info_txt = os.path.join(backup_path, txtname)
 
-        with open(info_txt, 'w') as f:
+        with open(temp_txt, 'w') as f:
             f.write('name="{0}"\n'.format(name))
             f.write('extracted="{0}"\n'.format(extractsize))
             f.write('zipsize="{0}"\n'.format(os.path.getsize(backup_zip)))
@@ -474,6 +475,9 @@ class Backup:
             f.write('repos="{0}"\n'.format(', '.join(repos)) if len(repos) > 0 else 'repos="none"\n')
             f.write('scripts="{0}"\n'.format(', '.join(scripts)) if len(scripts) > 0 else 'scripts="none"\n')
             f.write('binaries="{0}"\n'.format(', '.join(binaries)) if len(binaries) > 0 else 'binaries="none"\n')
+            
+        xbmcvfs.copy(temp_txt, info_txt)
+        xbmcvfs.delete(temp_txt)
 
     def _backup_binaries(self, ids):
         txtname = None
