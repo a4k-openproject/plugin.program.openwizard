@@ -110,7 +110,7 @@ def force_check_updates(auto=False, over=False):
     sqldb.commit()
 
     # trigger kodi to check them for updates
-    xbmc.executebuiltin('UpdateAddonRepos', wait=False)  # needs further testing
+    xbmc.executebuiltin('UpdateAddonRepos')
 
     # wait until they have finished updating
     with tools.busy_dialog():
@@ -120,8 +120,12 @@ def force_check_updates(auto=False, over=False):
         checked_time = 0
         for repo in installed_repos.fetchall():
             repo = repo[0]
+            logging.log('Force checking {0}...'.format(repo), level=xbmc.LOGDEBUG)
             while checked_time < start_time:
-                logging.log('Making sure {0} was checked successfully.'.format(repo), level=xbmc.LOGDEBUG)
+                if time.time() >= start_time + 20:
+                    logging.log('{0} timed out during repo force check.'.format(repo), level=xbmc.LOGDEBUG)
+                    break
+                
                 lastcheck = sqlexe.execute('SELECT lastcheck FROM repo WHERE addonID = ?', (repo,))
                 
                 if lastcheck:
@@ -133,7 +137,7 @@ def force_check_updates(auto=False, over=False):
             checked_time = 0
             logging.log('{0} successfully force checked.'.format(repo), level=xbmc.LOGDEBUG)
             logging.log_notify('[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
-                               "[COLOR {0}]{1} succesffuly force checked.[/COLOR]".format(CONFIG.COLOR2, repo))
+                               "[COLOR {0}]{1} successfully force checked.[/COLOR]".format(CONFIG.COLOR2, repo))
             
     sqlexe.close()
                     
