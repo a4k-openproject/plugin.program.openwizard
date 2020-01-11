@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.program.openwizard" name="[COLOR limegreen][B]Open[/B][/COLOR]Wizard" version="1.2.8" provider-name="drinfernoo">
+<addon id="plugin.program.openwizard" name="[COLOR limegreen][B]Open[/B][/COLOR]Wizard" version="1.2.9" provider-name="drinfernoo">
     <requires>
         <import addon="xbmc.python" version="2.1.0" />
         <import addon="script.module.requests" />
@@ -19,6 +19,12 @@
         <reuselanguageinvoker>false</reuselanguageinvoker>
         <source>https://www.github.com/drinfernoo/plugin.program.openwizard/</source>
         <news>
+        1.2.9
+         - Fix NuMb3r5 cache clearing
+         - Fix hang during repo force check
+         - Fix logins being restored every startup
+         - Fix some file permission errors
+         - Fix OS X backup errors
         1.2.8
          - Add Gaia PM OAuth
          - Fix binary add-on restoration
