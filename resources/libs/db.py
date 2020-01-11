@@ -95,7 +95,7 @@ def latest_db(db):
         
 def force_check_updates(auto=False, over=False):
     import time
-
+    
     if not over:
         logging.log_notify(CONFIG.ADDONTITLE,
                            '[COLOR {0}]Force Checking for Updates[/COLOR]'.format(CONFIG.COLOR2))
@@ -120,8 +120,12 @@ def force_check_updates(auto=False, over=False):
         checked_time = 0
         for repo in installed_repos.fetchall():
             repo = repo[0]
+            logging.log('Force checking {0}...'.format(repo), level=xbmc.LOGDEBUG)
             while checked_time < start_time:
-                logging.log('Making sure {0} was checked successfully.'.format(repo), level=xbmc.LOGDEBUG)
+                if time.time() >= start_time + 20:
+                    logging.log('{0} timed out during repo force check.'.format(repo), level=xbmc.LOGDEBUG)
+                    break
+                
                 lastcheck = sqlexe.execute('SELECT lastcheck FROM repo WHERE addonID = ?', (repo,))
                 
                 if lastcheck:
@@ -132,6 +136,8 @@ def force_check_updates(auto=False, over=False):
                 xbmc.sleep(1000)
             checked_time = 0
             logging.log('{0} successfully force checked.'.format(repo), level=xbmc.LOGDEBUG)
+            logging.log_notify('[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.ADDONTITLE),
+                               "[COLOR {0}]{1} successfully force checked.[/COLOR]".format(CONFIG.COLOR2, repo))
             
     sqlexe.close()
                     
