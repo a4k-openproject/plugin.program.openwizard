@@ -14,7 +14,7 @@ ART = os.path.join(PATH, 'resources', 'media')
 #        User Edit Variables                            #
 #########################################################
 ADDONTITLE = 'Jamie[B]5[/B][COLOR limegreen]Kodi[/COLOR] Wizard'
-BUILDERNAME = 'J5K_Wizard'
+BUILDERNAME = 'j5kwizard'
 EXCLUDES = [ADDON_ID, 'repository.tjamieg']
 # Text File with build info in it.
 BUILDFILE = 'http://'
