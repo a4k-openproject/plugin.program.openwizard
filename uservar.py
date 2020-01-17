@@ -13,9 +13,9 @@ ART = os.path.join(PATH, 'resources', 'media')
 #########################################################
 #        User Edit Variables                            #
 #########################################################
-ADDONTITLE = '[COLOR limegreen][B]Open[/B][/COLOR]Wizard'
-BUILDERNAME = 'OpenWizard'
-EXCLUDES = [ADDON_ID, 'repository.openwizard']
+ADDONTITLE = 'Jamie[B]5[/B][COLOR limegreen]Kodi[/COLOR] Wizard'
+BUILDERNAME = 'Jamie5Kodi_Wizard'
+EXCLUDES = [ADDON_ID, 'repository.tjamieg']
 # Text File with build info in it.
 BUILDFILE = 'http://'
 # How often you would like it to check for build updates in days
@@ -77,7 +77,7 @@ THEME5 = '[COLOR '+COLOR1+']Current Theme:[/COLOR] [COLOR '+COLOR2+']{0}[/COLOR]
 # Enable 'Contact' menu item 'Yes' hide or 'No' dont hide
 HIDECONTACT = 'No'
 # You can add \n to do line breaks
-CONTACT = 'Thank you for choosing OpenWizard.\n\nContact us on Github at http://www.github.com/drinfernoo/plugin.program.openwizard/'
+CONTACT = 'Thank you for choosing Jamie5Kodi Wizard.\n\nContact us on Github at https://github.com/tjamieg/plugin.program.jamie5kodi'
 # Images used for the contact window.  http:// for default icon and fanart
 CONTACTICON = os.path.join(ART, 'qricon.png')
 CONTACTFANART = 'http://'
@@ -96,11 +96,11 @@ AUTOUPDATE = 'Yes'
 # Enable Auto Install 'Yes' or 'No'
 AUTOINSTALL = 'Yes'
 # Addon ID for the repository
-REPOID = 'repository.openwizard'
+REPOID = 'repository.tjamieg'
 # Url to Addons.xml file in your repo folder(this is so we can get the latest version)
-REPOADDONXML = 'https://raw.githubusercontent.com/drinfernoo/repository.openwizard/master/zips/addons.xml'
+REPOADDONXML = 'https://raw.githubusercontent.com/tjamieg/tjamieg.github.io/master/zips/addons.xml'
 # Url to folder zip is located in
-REPOZIPURL = 'https://raw.githubusercontent.com/drinfernoo/repository.openwizard/master/zips/repository.openwizard/'
+REPOZIPURL = 'https://raw.githubusercontent.com/tjamieg/tjamieg.github.io/master/zips/repository.tjamieg/'
 #########################################################
 
 #########################################################
@@ -114,7 +114,7 @@ NOTIFICATION = 'http://'
 HEADERTYPE = 'Text'
 # Font size of header
 FONTHEADER = 'Font14'
-HEADERMESSAGE = '[COLOR limegreen][B]Open[/B][/COLOR]Wizard'
+HEADERMESSAGE = 'Jamie[B]5[/B][COLOR limegreen]Kodi[/COLOR] Wizard'
 # url to image if using Image 424x180
 HEADERIMAGE = 'http://'
 # Font for Notification Window
