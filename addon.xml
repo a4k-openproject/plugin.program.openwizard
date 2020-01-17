@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.program.j5kwizard" name="[B]Jamie[/B]5[COLOR limegreen]Kodi[/COLOR] Wizard" version="0.0.1" provider-name="tjamieg">
+<addon id="plugin.program.j5kwizard" name="Jamie[B]5[/B][COLOR limegreen]Kodi[/COLOR] Wizard" version="1.0.1" provider-name="tjamieg">
     <requires>
         <import addon="xbmc.python" version="2.1.0" />
         <import addon="script.module.requests" />
@@ -13,8 +13,8 @@
     <extension point="xbmc.service" library="startup.py" start="startup" />
     
     <extension point="xbmc.addon.metadata">
-        <summary lang="en">[B]Jamie[/B]5[COLOR limegreen]Kodi[/COLOR] Wizard</summary>
-        <description lang="en">[B]Jamie[/B]5[COLOR limegreen]Kodi[/COLOR] Wizard offers many maintenance features, selective add-on data saving, and automated build installs.</description>
+        <summary lang="en">Jamie[B]5[/B][COLOR limegreen]Kodi[/COLOR] Wizard</summary>
+        <description lang="en">Jamie[B]5[/B][COLOR limegreen]Kodi[/COLOR] Wizard offers many maintenance features, selective add-on data saving, and automated build installs.</description>
         <platform>all</platform>
         <reuselanguageinvoker>false</reuselanguageinvoker>
         <source>https://github.com/tjamieg/plugin.program.j5kwizard/</source>
