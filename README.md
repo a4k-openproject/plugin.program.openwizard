@@ -1,7 +1,7 @@
-# plugin.program.openwizard
-OpenWizard
+# plugin.program.jamie5kodi
+Jamie5Kodi
 
-OpenWizard was created to help the Kodi community out and help get rid of the broken personal wizards that are floating around. As this is a work in progress, a repository is highly recommended, but if you prefer not to, there is a built-in auto-updater.
+Jamie5Kodi was created to help the Kodi community out and help get rid of the broken personal wizards that are floating around. As this is a work in progress, a repository is highly recommended, but if you prefer not to, there is a built-in auto-updater.
 
 For more information on how to edit/customize this wizard for your own usage, please read [the wiki](https://github.com/drinfernoo/plugin.program.openwizard/wiki).
 
