@@ -14,7 +14,7 @@ ART = os.path.join(PATH, 'resources', 'media')
 #        User Edit Variables                            #
 #########################################################
 ADDONTITLE = 'Jamie[B]5[/B][COLOR limegreen]Kodi[/COLOR] Wizard'
-BUILDERNAME = 'Jamie5Kodi_Wizard'
+BUILDERNAME = 'J5K_Wizard'
 EXCLUDES = [ADDON_ID, 'repository.tjamieg']
 # Text File with build info in it.
 BUILDFILE = 'http://'
@@ -77,7 +77,7 @@ THEME5 = '[COLOR '+COLOR1+']Current Theme:[/COLOR] [COLOR '+COLOR2+']{0}[/COLOR]
 # Enable 'Contact' menu item 'Yes' hide or 'No' dont hide
 HIDECONTACT = 'No'
 # You can add \n to do line breaks
-CONTACT = 'Thank you for choosing Jamie5Kodi Wizard.\n\nContact us on Github at https://github.com/tjamieg/plugin.program.jamie5kodi'
+CONTACT = 'Thank you for choosing Jamie5Kodi Wizard.\n\nContact us on Github at https://github.com/tjamieg/plugin.program.j5kwizard'
 # Images used for the contact window.  http:// for default icon and fanart
 CONTACTICON = os.path.join(ART, 'qricon.png')
 CONTACTFANART = 'http://'
