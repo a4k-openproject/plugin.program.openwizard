@@ -29,7 +29,20 @@ from resources.libs.common.config import CONFIG
 from resources.libs.common import logging
 from resources.libs.common import tools
 
-ORDER = ['fanart-exodusredux', 'fanart-gaia', 'fanart-numbers', 'fanart-metadatautils', 'fanart-premiumizer', 'fanart-realizer', 'fanart-scrubs', 'fanart-thecrew', 'fanart-venom', 'imdb-exodusredux', 'imdb-gaia', 'imdb-numbers', 'imdb-premiumizer', 'imdb-realizer', 'imdb-scrubs', 'imdb-thecrew', 'imdb-venom', 'kitsu-wonderfulsubs', 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'omdb-tmdbhelper', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-metadatautils', 'tmdb-numbers', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-premiumizer', 'tmdb-realizer', 'tmdb-scrubs', 'tmdb-seren', 'tmdb-thecrew', 'tmdb-tmdbhelper', 'tmdb-venom', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-premiumizer', 'tvdb-realizer', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
+ORDER = ['fanart-exodusredux', 'fanart-gaia', 'fanart-numbers',
+         'fanart-metadatautils', 'fanart-premiumizer', 'fanart-realizer',
+         'fanart-scrubs', 'fanart-seren', 'fanart-thecrew', 'fanart-venom',
+         'imdb-exodusredux', 'imdb-gaia', 'imdb-numbers', 'imdb-premiumizer',
+         'imdb-realizer', 'imdb-scrubs', 'imdb-thecrew', 'imdb-venom',
+         'kitsu-wonderfulsubs', 'login-iagl', 'login-netflix',
+         'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler',
+         'omdb-tmdbhelper', 'login-opensubtitles', 'login-opensubsbyopensubs',
+         'login-orion', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia',
+         'tmdb-metadatautils', 'tmdb-numbers', 'tmdb-eis', 'tmdb-openmeta',
+         'tmdb-premiumizer', 'tmdb-realizer', 'tmdb-scrubs', 'tmdb-seren',
+         'tmdb-thecrew', 'tmdb-tmdbhelper', 'tmdb-venom', 'trakt-openmeta',
+         'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-premiumizer',
+         'tvdb-realizer', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
 
 LOGINID = {
     'login-opensubtitles': {
