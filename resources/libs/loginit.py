@@ -746,10 +746,10 @@ def update_login(do, who):
                 root = ElementTree.Element(saved)
                 
                 for setting in data:
-                    debrid = ElementTree.SubElement(root, 'login')
-                    id = ElementTree.SubElement(debrid, 'id')
+                    login = ElementTree.SubElement(root, 'login')
+                    id = ElementTree.SubElement(login, 'id')
                     id.text = setting
-                    value = ElementTree.SubElement(debrid, 'value')
+                    value = ElementTree.SubElement(login, 'value')
                     value.text = addonid.getSetting(setting)
                   
                 tree = ElementTree.ElementTree(root)
@@ -769,7 +769,7 @@ def update_login(do, who):
             root = tree.getroot()
             
             try:
-                for setting in root.iter('login'):
+                for setting in root.findall('login'):
                     id = setting.find('id').text
                     value = setting.find('value').text
                     addonid.setSetting(id, value)
@@ -788,7 +788,7 @@ def update_login(do, who):
                 tree = ElementTree.parse(settings)
                 root = tree.getroot()
                 
-                for setting in root.iter('setting'):
+                for setting in root.findall('setting'):
                     if setting.attrib['id'] in data:
                         logging.log('Removing Setting: {0}'.format(setting.attrib))
                         root.remove(setting)
@@ -849,7 +849,7 @@ def import_list(who):
             tree = ElementTree.parse(file)
             root = tree.getroot()
             
-            for setting in root.iter('login'):
+            for setting in root.findall('login'):
                 id = setting.find('id').text
                 value = setting.find('value').text
             
