@@ -17,7 +17,7 @@ ADDONTITLE = 'Jamie[B]5[/B][COLOR limegreen]Kodi[/COLOR] Wizard'
 BUILDERNAME = 'j5kwizard'
 EXCLUDES = [ADDON_ID, 'repository.tjamieg']
 # Text File with build info in it.
-BUILDFILE = 'https://raw.githubusercontent.com/tjamieg/tjamieg.github.io/master/builds.txt'
+BUILDFILE = 'https://jamie5kodi.000webhostapp.com/builds.txt'
 # How often you would like it to check for build updates in days
 # 0 being every startup of kodi
 UPDATECHECK = 0
