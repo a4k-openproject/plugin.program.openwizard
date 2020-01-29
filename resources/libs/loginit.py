@@ -32,6 +32,7 @@ from resources.libs.common import tools
 ORDER = ['fanart-exodusredux', 'fanart-gaia', 'fanart-numbers',
          'fanart-metadatautils', 'fanart-premiumizer', 'fanart-realizer',
          'fanart-scrubs', 'fanart-seren', 'fanart-thecrew', 'fanart-venom',
+         'fanart-tmdbhelper',
          'imdb-exodusredux', 'imdb-gaia', 'imdb-numbers', 'imdb-premiumizer',
          'imdb-realizer', 'imdb-scrubs', 'imdb-thecrew', 'imdb-venom',
          'kitsu-wonderfulsubs', 'login-iagl', 'login-netflix',
@@ -665,9 +666,21 @@ LOGINID = {
         'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.themoviedb.helper', 'icon.png'),
         'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.themoviedb.helper', 'fanart.jpg'),
         'file'     : os.path.join(CONFIG.LOGINFOLD, 'tmdbhelper_omdb'),
-        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.numbersbynumbers', 'settings.xml'),
+        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.themoviedb.helper', 'settings.xml'),
         'default'  : 'omdb_apikey',
         'data'     : ['omdb_apikey'],
+        'activate' : ''},
+    'fanart-tmdbhelper': {
+        'name'     : 'fanart - TheMovieDb Helper',
+        'saved'    : 'fanart-tmdbhelper',
+        'plugin'   : 'plugin.video.themoviedb.helper',
+        'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.themoviedb.helper'),
+        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.themoviedb.helper', 'icon.png'),
+        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.themoviedb.helper', 'fanart.jpg'),
+        'file'     : os.path.join(CONFIG.LOGINFOLD, 'tmdbhelper_fanart'),
+        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.themoviedb.helper', 'settings.xml'),
+        'default'  : 'fanarttv_clientkey',
+        'data'     : ['fanarttv_clientkey'],
         'activate' : ''}
 }
 
