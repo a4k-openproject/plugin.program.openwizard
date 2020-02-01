@@ -95,6 +95,8 @@ class Router:
                 MaintenanceMenu().backup_menu()
             elif name == 'tweaks':
                 MaintenanceMenu().tweaks_menu()
+            elif name == 'logging':
+                MaintenanceMenu().logging_menu()
             elif name is None:
                 MaintenanceMenu().get_listing()
 
