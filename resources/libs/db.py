@@ -467,6 +467,7 @@ def find_binary_addons(addon='all'):
     from xml.etree import ElementTree
     
     dialog = xbmcgui.Dialog()
+    logging.log('Checking {} for platform-dependence...'.format(addon), level=xbmc.LOGDEBUG)
     
     if addon == 'all':
         addonfolders = glob.iglob(os.path.join(CONFIG.ADDONS, '*/'))
