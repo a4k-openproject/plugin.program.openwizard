@@ -99,6 +99,7 @@
         <setting id="fanart-scrubs" type="text" default="" visible="false"/>
         <setting id="fanart-venom" type="text" default="" visible="false"/>
         <setting id="fanart-seren" type="text" default="" visible="false"/>
+        <setting id="fanart-tmdbhelper" type="text" default="" visible="false"/>
         <setting id="imdb-exodusredux" type="text" default="" visible="false"/>
         <setting id="imdb-gaia" type="text" default="" visible="false"/>
         <setting id="imdb-numbers" type="text" default="" visible="false"/>
