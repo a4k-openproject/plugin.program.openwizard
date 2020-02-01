@@ -255,6 +255,7 @@ def show_save_data_settings():
             self.sources = 304
             self.profiles = 305
             self.playercore = 314
+            self.guisettings = 315
             self.advanced = 306
             self.favourites = 307
             self.superfav = 308
@@ -265,12 +266,12 @@ def show_save_data_settings():
             self.thumbs = 313
             self.show_dialog()
             self.controllist = [self.trakt, self.debrid, self.login,
-                                    self.sources, self.profiles, self.playercore, self.advanced,
+                                    self.sources, self.profiles, self.playercore, self.guisettings, self.advanced,
                                     self.favourites, self.superfav, self.repo,
                                     self.whitelist, self.cache, self.packages,
                                     self.thumbs]
             self.controlsettings = ['keeptrakt', 'keepdebrid', 'keeplogin',
-                                    'keepsources', 'keepprofiles', 'keepplayercore', 'keepadvanced',
+                                    'keepsources', 'keepprofiles', 'keepplayercore', 'keepguisettings', 'keepadvanced',
                                     'keepfavourites', 'keeprepos', 'keepsuper',
                                     'keepwhitelist', 'clearcache', 'clearpackages',
                                     'clearthumbs']

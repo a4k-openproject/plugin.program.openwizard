@@ -118,6 +118,8 @@ def wipe():
                 logging.log("Keep profiles.xml: {0}".format(os.path.join(root, name)))
             elif name == 'playercorefactory.xml' and fold[-1] == 'userdata' and CONFIG.KEEPPLAYERCORE == 'true':
                 logging.log("Keep playercorefactory.xml: {0}".format(os.path.join(root, name)))
+            elif name == 'guisettings.xml' and fold[-1] == 'userdata' and CONFIG.KEEPGUISETTINGS == 'true':
+                logging.log("Keep guisettings.xml: {0}".format(os.path.join(root, name)))
             elif name == 'advancedsettings.xml' and fold[-1] == 'userdata' and CONFIG.KEEPADVANCED == 'true':
                 logging.log("Keep advancedsettings.xml: {0}".format(os.path.join(root, name)))
             elif name in CONFIG.LOGFILES:

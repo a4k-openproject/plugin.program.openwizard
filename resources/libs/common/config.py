@@ -132,7 +132,7 @@ class Config:
                              'Thumbnails', 'peripheral_data', 'temp',
                              'My_Builds', 'library', 'cdm', 'archive_cache']
         self.XMLS = ['advancedsettings.xml', 'sources.xml', 'favourites.xml',
-                     'profiles.xml', 'playercorefactory.xml']
+                     'profiles.xml', 'playercorefactory.xml', 'guisettings.xml']
         self.MODURL = 'http://tribeca.tvaddons.ag/tools/maintenance/modules/'
         self.MODURL2 = 'http://mirrors.kodi.tv/addons/jarvis/'
         self.DEPENDENCIES = ['script.module.bottle', 'script.module.certifi',
@@ -242,6 +242,7 @@ class Config:
         self.KEEPPROFILES = self.get_setting('keepprofiles')
         self.KEEPPLAYERCORE = self.get_setting('keepplayercore')
         self.KEEPADVANCED = self.get_setting('keepadvanced')
+        self.KEEPGUISETTINGS = self.get_setting('keepguisettings')
         self.KEEPREPOS = self.get_setting('keeprepos')
         self.KEEPSUPER = self.get_setting('keepsuper')
         self.KEEPWHITELIST = self.get_setting('keepwhitelist')

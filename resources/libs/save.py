@@ -191,7 +191,7 @@ def export_save_data():
     dialog = xbmcgui.Dialog()
 
     dir = ['debrid', 'login', 'trakt']
-    keepx = [CONFIG.KEEPADVANCED, CONFIG.KEEPSOURCES, CONFIG.KEEPFAVS, CONFIG.KEEPPROFILES, CONFIG.KEEPPLAYERCORE]
+    keepx = [CONFIG.KEEPADVANCED, CONFIG.KEEPSOURCES, CONFIG.KEEPFAVS, CONFIG.KEEPPROFILES, CONFIG.KEEPPLAYERCORE, CONFIG.KEEPGUISETTINGS]
     traktit.trakt_it('update', 'all')
     loginit.login_it('update', 'all')
     debridit.debrid_it('update', 'all')
