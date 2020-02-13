@@ -124,11 +124,12 @@ class Wizard:
             install.wipe()
                 
             skin.look_and_feel_data('save')
-            skin.skin_to_default('Build Install')
             
             title = '[COLOR {0}][B]Installing:[/B][/COLOR] [COLOR {1}]{2} v{3}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name, check.check_build(name, 'version'))
             self.dialogProgress.update(0, title, '', 'Please Wait')
             percent, errors, error = extract.all(lib, CONFIG.HOME, title=title)
+            
+            skin.skin_to_default('Build Install')
 
             if int(float(percent)) > 0:
                 db.fix_metas()
