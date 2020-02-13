@@ -272,7 +272,6 @@ class Router:
         elif mode == 'uploadlog':  # Upload Log File
             logging.upload_log()
         elif mode == 'viewlog':  # View kodi.log
-            from resources.libs.gui import window
             logging.view_log_file()
         elif mode == 'viewwizlog':  # View wizard.log
             from resources.libs.gui import window

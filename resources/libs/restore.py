@@ -167,7 +167,7 @@ class Restore:
     def choose(self, location):
         from resources.libs import skin
 
-        skin.look_and_feel_data()
+        skin.look_and_feel_data('restore')
         external = 'External' if self.external else 'Local'
 
         file = self.dialog.browseSingle(1, '[COLOR {0}]Select the backup file you want to restore[/COLOR]'.format(
