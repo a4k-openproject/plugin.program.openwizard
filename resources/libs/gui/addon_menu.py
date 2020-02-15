@@ -81,7 +81,7 @@ class AddonMenu:
         self.progress_dialog = xbmcgui.DialogProgress()
 
     def show_menu(self, url=None):
-        response = tools.open_url(CONFIG.ADVANCEDFILE)
+        response = tools.open_url(CONFIG.ADDONFILE)
         url_response = tools.open_url(url)
         local_file = os.path.join(CONFIG.ADDON_PATH, 'resources', 'text', 'addons.json')
 
