@@ -92,8 +92,8 @@ def _add_menu_item(display, params, menu, description, overwrite, fanart, icon, 
     liz.setProperty("Fanart_Image", fanart)
 
     # build context menu
-    if menu is not None:
-        liz.addContextMenuItems(menu, replaceItems=overwrite)
+    # if menu is not None:
+        # liz.addContextMenuItems(menu, replaceItems=overwrite)
 
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=isFolder)
     return ok
