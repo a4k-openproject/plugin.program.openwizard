@@ -697,7 +697,7 @@ LOGINID = {
         'file'     : os.path.join(CONFIG.LOGINFOLD, 'youtube_login'),
         'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.youtube', 'settings.xml'),
         'default'  : 'youtube.api.key',
-        'data'     : ['youtube.api.enable', 'youtube.api.key', 'youtube.api.id', 'youtube.api.secret']
+        'data'     : ['youtube.api.enable', 'youtube.api.key', 'youtube.api.id', 'youtube.api.secret'],
         'activate' : ''}
 }
 
