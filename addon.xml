@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.program.openwizard" name="[COLOR limegreen][B]Open[/B][/COLOR]Wizard" version="1.2.9" provider-name="drinfernoo">
+<addon id="plugin.program.openwizard" name="[COLOR limegreen][B]Open[/B][/COLOR]Wizard" version="1.3.0" provider-name="drinfernoo">
     <requires>
         <import addon="xbmc.python" version="2.1.0" />
         <import addon="script.module.requests" />
@@ -19,6 +19,18 @@
         <reuselanguageinvoker>false</reuselanguageinvoker>
         <source>https://www.github.com/drinfernoo/plugin.program.openwizard/</source>
         <news>
+        1.3.0
+         - Fix formatting of saved restore times
+         - Fix local build zip being deleted on restore
+         - Add YouTube API saving
+         - Remove broken context menus
+         - Fix repeating dialogs from shortcuts/favorites
+         - Remove "Normal Install" option
+         - Add "Logging Tools" menu
+         - Add option to save guisettings.xml
+         - Add TMDbHelper Fanart.tv saving
+         - More fixes for OS X
+         - Fix Seren Fanart.tv saving
         1.2.9
          - Fix NuMb3r5 cache clearing
          - Fix hang during repo force check
