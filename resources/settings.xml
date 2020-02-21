@@ -140,6 +140,7 @@
         <setting id="tvdb-realizer" type="text" default="" visible="false"/>
         <setting id="tvdb-seren" type="text" default="" visible="false"/>
         <setting id="location-yahoo" type="text" default="" visible="false"/>
+        <setting id="login-youtube" type="text" default="" visible="false"/>
         <setting id="ws-wonderfulsubs" type="text" default="" visible="false"/>
     </category>
 

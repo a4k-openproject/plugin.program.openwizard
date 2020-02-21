@@ -47,7 +47,7 @@ ORDER = ['fanart-exodusredux', 'fanart-gaia', 'fanart-numbers',
          'trakt-openmeta', 'trakt-seren',
          'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-premiumizer',
          'tvdb-realizer', 'tvdb-seren',
-         'location-yahoo',
+         'location-yahoo', 'login-youtube',
          'ws-wonderfulsubs']
 
 LOGINID = {
@@ -686,6 +686,18 @@ LOGINID = {
         'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.themoviedb.helper', 'settings.xml'),
         'default'  : 'fanarttv_clientkey',
         'data'     : ['fanarttv_clientkey'],
+        'activate' : ''},
+    'login-youtube': {
+        'name'     : 'Personal API - YouTube',
+        'saved'    : 'login-youtube',
+        'plugin'   : 'plugin.video.youtube',
+        'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.youtube'),
+        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.youtube', 'icon.png'),
+        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.youtube', 'fanart.jpg'),
+        'file'     : os.path.join(CONFIG.LOGINFOLD, 'youtube_login'),
+        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.youtube', 'settings.xml'),
+        'default'  : 'youtube.api.key',
+        'data'     : ['youtube.api.enable', 'youtube.api.key', 'youtube.api.id', 'youtube.api.secret']
         'activate' : ''}
 }
 
