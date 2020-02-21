@@ -136,7 +136,7 @@ class Restore:
         CONFIG.set_setting('extract', percent)
         CONFIG.set_setting('errors', errors)
 
-        if not self.external:
+        if self.external:
             try:
                 os.remove(file)
             except:
@@ -167,8 +167,8 @@ class Restore:
     def choose(self, location):
         from resources.libs import skin
 
-        skin.look_and_feel_data()
-        external = 'External' if self.external else 'Local'
+        skin.look_and_feel_data('restore')
+        location = 'External' if self.external else 'Local'
 
         file = self.dialog.browseSingle(1, '[COLOR {0}]Select the backup file you want to restore[/COLOR]'.format(
             CONFIG.COLOR2), '' if self.external else 'files', mask='.zip', useThumbs=True,

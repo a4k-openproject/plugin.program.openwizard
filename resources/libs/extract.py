@@ -106,6 +106,8 @@ def all_with_progress(_in, _out, dp, ignore, title):
             skip = True
         elif item.filename == 'userdata/profiles.xml' and CONFIG.KEEPPROFILES == 'true':
             skip = True
+        elif item.filename == 'userdata/guisettings.xml' and CONFIG.KEEPGUISETTINGS == 'true':
+            skip = True
         elif item.filename == 'userdata/playercorefactory.xml' and CONFIG.KEEPPLAYERCORE == 'true':
             skip = True
         elif item.filename == 'userdata/advancedsettings.xml' and CONFIG.KEEPADVANCED == 'true':

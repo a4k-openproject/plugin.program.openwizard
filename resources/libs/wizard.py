@@ -24,12 +24,13 @@ import os
 
 from resources.libs import check
 from resources.libs import db
-from resources.libs.downloader import Downloader
 from resources.libs import extract
-from resources.libs.common import logging
+from resources.libs import install
 from resources.libs import skin
+from resources.libs.common import logging
 from resources.libs.common import tools
 from resources.libs.common.config import CONFIG
+from resources.libs.downloader import Downloader
 
 
 class Wizard:
@@ -42,30 +43,28 @@ class Wizard:
 
     def _prompt_for_wipe(self):
         # Should we wipe first?
-        yes = self.dialog.yesno(CONFIG.ADDONTITLE,
+        if self.dialog.yesno(CONFIG.ADDONTITLE,
                            "[COLOR {0}]Do you wish to restore your".format(CONFIG.COLOR2),
                            "Kodi configuration to default settings",
                            "Before installing the build backup?[/COLOR]",
                            nolabel='[B][COLOR red]No[/COLOR][/B]',
-                           yeslabel='[B][COLOR springgreen]Yes[/COLOR][/B]')
-        if yes:
-            from resources.libs import install
+                           yeslabel='[B][COLOR springgreen]Yes[/COLOR][/B]'):
             install.wipe()
 
-    def build(self, action, name, over=False):
-        if action == 'normal':
-            if CONFIG.KEEPTRAKT == 'true':
-                from resources.libs import traktit
-                traktit.auto_update('all')
-                CONFIG.set_setting('traktnextsave', tools.get_date(days=3, formatted=True))
-            if CONFIG.KEEPDEBRID == 'true':
-                from resources.libs import debridit
-                debridit.auto_update('all')
-                CONFIG.set_setting('debridnextsave', tools.get_date(days=3, formatted=True))
-            if CONFIG.KEEPLOGIN == 'true':
-                from resources.libs import loginit
-                loginit.auto_update('all')
-                CONFIG.set_setting('loginnextsave', tools.get_date(days=3, formatted=True))
+    def build(self, name, over=False):
+        # if action == 'normal':
+            # if CONFIG.KEEPTRAKT == 'true':
+                # from resources.libs import traktit
+                # traktit.auto_update('all')
+                # CONFIG.set_setting('traktnextsave', tools.get_date(days=3, formatted=True))
+            # if CONFIG.KEEPDEBRID == 'true':
+                # from resources.libs import debridit
+                # debridit.auto_update('all')
+                # CONFIG.set_setting('debridnextsave', tools.get_date(days=3, formatted=True))
+            # if CONFIG.KEEPLOGIN == 'true':
+                # from resources.libs import loginit
+                # loginit.auto_update('all')
+                # CONFIG.set_setting('loginnextsave', tools.get_date(days=3, formatted=True))
 
         temp_kodiv = int(CONFIG.KODIV)
         buildv = int(float(check.check_build(name, 'kodi')))
@@ -122,18 +121,15 @@ class Wizard:
                     
                 return
                 
-            if action == 'normal':
-                self._prompt_for_wipe()
-            else:
-                from resources.libs import install
-                install.wipe()
+            install.wipe()
                 
             skin.look_and_feel_data('save')
-            skin.skin_to_default('Build Install')
             
             title = '[COLOR {0}][B]Installing:[/B][/COLOR] [COLOR {1}]{2} v{3}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name, check.check_build(name, 'version'))
             self.dialogProgress.update(0, title, '', 'Please Wait')
             percent, errors, error = extract.all(lib, CONFIG.HOME, title=title)
+            
+            skin.skin_to_default('Build Install')
 
             if int(float(percent)) > 0:
                 db.fix_metas()

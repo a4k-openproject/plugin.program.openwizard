@@ -108,7 +108,7 @@ def look_and_feel_data(do='save'):
                 match = re.compile('{"value":(.+?)}').findall(str(response))
                 CONFIG.set_setting(item.replace('lookandfeel', 'default'), match[0])
                 logging.log("%s saved to %s" % (item, match[0]))
-    else:
+    elif do == 'restore':
         for item in scan:
             value = CONFIG.get_setting(item.replace('lookandfeel', 'default'))
             query = '{{"jsonrpc":"2.0", "method":"Settings.SetSettingValue","params":{{"setting":"{0}","value":{1}}}, "id":1}}'.format(item, value)

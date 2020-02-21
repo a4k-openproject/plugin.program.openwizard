@@ -193,9 +193,7 @@ class BuildMenu:
                     fanart=fanart, icon=icon, themeit=CONFIG.THEME3)
                     
             directory.add_separator('INSTALL')
-            directory.add_file('Fresh Install', {'mode': 'install', 'action': 'fresh', 'name': name}, description=description, fanart=fanart,
-                               icon=icon, themeit=CONFIG.THEME1)
-            directory.add_file('Standard Install', {'mode': 'install', 'action': 'normal', 'name': name}, description=description, fanart=fanart,
+            directory.add_file('Install', {'mode': 'install', 'action': 'build', 'name': name}, description=description, fanart=fanart,
                                icon=icon, themeit=CONFIG.THEME1)
                                
             if guicheck:

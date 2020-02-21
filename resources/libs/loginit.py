@@ -29,7 +29,26 @@ from resources.libs.common.config import CONFIG
 from resources.libs.common import logging
 from resources.libs.common import tools
 
-ORDER = ['fanart-exodusredux', 'fanart-gaia', 'fanart-numbers', 'fanart-metadatautils', 'fanart-premiumizer', 'fanart-realizer', 'fanart-scrubs', 'fanart-thecrew', 'fanart-venom', 'imdb-exodusredux', 'imdb-gaia', 'imdb-numbers', 'imdb-premiumizer', 'imdb-realizer', 'imdb-scrubs', 'imdb-thecrew', 'imdb-venom', 'kitsu-wonderfulsubs', 'login-iagl', 'login-netflix', 'mal-wonderfulsubs', 'omdb-metadatautils', 'omdb-metahandler', 'omdb-tmdbhelper', 'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion', 'tmdb-exodusredux', 'login-eis', 'tmdb-gaia', 'tmdb-metadatautils', 'tmdb-numbers', 'tmdb-eis', 'tmdb-openmeta', 'tmdb-premiumizer', 'tmdb-realizer', 'tmdb-scrubs', 'tmdb-seren', 'tmdb-thecrew', 'tmdb-tmdbhelper', 'tmdb-venom', 'trakt-openmeta', 'trakt-seren', 'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-premiumizer', 'tvdb-realizer', 'tvdb-seren', 'location-yahoo', 'ws-wonderfulsubs']
+ORDER = ['fanart-exodusredux', 'fanart-gaia', 'fanart-numbers',
+         'fanart-metadatautils', 'fanart-premiumizer', 'fanart-realizer',
+         'fanart-scrubs', 'fanart-seren', 'fanart-thecrew', 'fanart-tmdbhelper',
+         'fanart-venom',
+         'imdb-exodusredux', 'imdb-gaia', 'imdb-numbers', 'imdb-premiumizer',
+         'imdb-realizer', 'imdb-scrubs', 'imdb-thecrew', 'imdb-venom',
+         'kitsu-wonderfulsubs',
+         'login-iagl', 'login-netflix',
+         'mal-wonderfulsubs',
+         'omdb-metadatautils', 'omdb-metahandler', 'omdb-tmdbhelper',
+         'login-opensubtitles', 'login-opensubsbyopensubs', 'login-orion',
+         'login-eis', 'tmdb-gaia',
+         'tmdb-exodusredux', 'tmdb-metadatautils', 'tmdb-numbers', 'tmdb-openinfo',
+         'tmdb-openmeta', 'tmdb-premiumizer', 'tmdb-realizer', 'tmdb-scrubs',
+         'tmdb-seren', 'tmdb-thecrew', 'tmdb-tmdbhelper', 'tmdb-venom',
+         'trakt-openmeta', 'trakt-seren',
+         'tvdb-metahandler', 'tvdb-openmeta', 'tvdb-premiumizer',
+         'tvdb-realizer', 'tvdb-seren',
+         'location-yahoo', 'login-youtube',
+         'ws-wonderfulsubs']
 
 LOGINID = {
     'login-opensubtitles': {
@@ -164,14 +183,14 @@ LOGINID = {
         'default'  : 'tmdb_username',
         'data'     : ['tmdb_username', 'tmdb_password'],
         'activate' : ''},
-    'tmdb-eis': {
+    'tmdb-openinfo': {
         'name'     : 'TMDb - OpenInfo',
         'plugin'   : 'script.extendedinfo',
-        'saved'    : 'tmdb-eis',
+        'saved'    : 'tmdb-openinfo',
         'path'     : os.path.join(CONFIG.ADDONS, 'script.extendedinfo'),
         'icon'     : os.path.join(CONFIG.ADDONS, 'script.extendedinfo', 'resources/icon.png'),
         'fanart'   : os.path.join(CONFIG.ADDONS, 'script.extendedinfo', 'resources/fanart.jpg'),
-        'file'     : os.path.join(CONFIG.LOGINFOLD, 'eis_tmdb'),
+        'file'     : os.path.join(CONFIG.LOGINFOLD, 'openinfo_tmdb'),
         'settings' : os.path.join(CONFIG.ADDON_DATA, 'script.extendedinfo', 'settings.xml'),
         'default'  : 'tmdb_api',
         'data'     : ['tmdb_api'],
@@ -435,7 +454,7 @@ LOGINID = {
         'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.wonderfulsubs'),
         'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.wonderfulsubs', 'icon.png'),
         'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.wonderfulsubs', 'fanart.jpg'),
-        'file'     : os.path.join(CONFIG.LOGINFOLD, 'wonderfulsubs-kitsu'),
+        'file'     : os.path.join(CONFIG.LOGINFOLD, 'wonderfulsubs_kitsu'),
         'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.wonderfulsubs', 'settings.xml'),
         'default'  : 'kitsu.name',
         'data'     : ['kitsu.name', 'kitsu.password'],
@@ -447,7 +466,7 @@ LOGINID = {
         'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.wonderfulsubs'),
         'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.wonderfulsubs', 'icon.png'),
         'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.wonderfulsubs', 'fanart.jpg'),
-        'file'     : os.path.join(CONFIG.LOGINFOLD, 'wonderfulsubs-mal'),
+        'file'     : os.path.join(CONFIG.LOGINFOLD, 'wonderfulsubs_mal'),
         'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.wonderfulsubs', 'settings.xml'),
         'default'  : 'mal.name',
         'data'     : ['mal.name', 'mal.password'],
@@ -459,7 +478,7 @@ LOGINID = {
         'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.wonderfulsubs'),
         'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.wonderfulsubs', 'icon.png'),
         'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.wonderfulsubs', 'fanart.jpg'),
-        'file'     : os.path.join(CONFIG.LOGINFOLD, 'wonderfulsubs-ws'),
+        'file'     : os.path.join(CONFIG.LOGINFOLD, 'wonderfulsubs_ws'),
         'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.wonderfulsubs', 'settings.xml'),
         'default'  : 'wonderfulsubs.name',
         'data'     : ['wonderfulsubs.name', 'wonderfulsubs.password'],
@@ -652,9 +671,33 @@ LOGINID = {
         'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.themoviedb.helper', 'icon.png'),
         'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.themoviedb.helper', 'fanart.jpg'),
         'file'     : os.path.join(CONFIG.LOGINFOLD, 'tmdbhelper_omdb'),
-        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.numbersbynumbers', 'settings.xml'),
+        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.themoviedb.helper', 'settings.xml'),
         'default'  : 'omdb_apikey',
         'data'     : ['omdb_apikey'],
+        'activate' : ''},
+    'fanart-tmdbhelper': {
+        'name'     : 'Fanart.tv - TheMovieDb Helper',
+        'saved'    : 'fanart-tmdbhelper',
+        'plugin'   : 'plugin.video.themoviedb.helper',
+        'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.themoviedb.helper'),
+        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.themoviedb.helper', 'icon.png'),
+        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.themoviedb.helper', 'fanart.jpg'),
+        'file'     : os.path.join(CONFIG.LOGINFOLD, 'tmdbhelper_fanart'),
+        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.themoviedb.helper', 'settings.xml'),
+        'default'  : 'fanarttv_clientkey',
+        'data'     : ['fanarttv_clientkey'],
+        'activate' : ''},
+    'login-youtube': {
+        'name'     : 'Personal API - YouTube',
+        'saved'    : 'login-youtube',
+        'plugin'   : 'plugin.video.youtube',
+        'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.youtube'),
+        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.youtube', 'icon.png'),
+        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.youtube', 'fanart.jpg'),
+        'file'     : os.path.join(CONFIG.LOGINFOLD, 'youtube_login'),
+        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.youtube', 'settings.xml'),
+        'default'  : 'youtube.api.key',
+        'data'     : ['youtube.api.enable', 'youtube.api.key', 'youtube.api.id', 'youtube.api.secret']
         'activate' : ''}
 }
 
@@ -733,10 +776,10 @@ def update_login(do, who):
                 root = ElementTree.Element(saved)
                 
                 for setting in data:
-                    debrid = ElementTree.SubElement(root, 'login')
-                    id = ElementTree.SubElement(debrid, 'id')
+                    login = ElementTree.SubElement(root, 'login')
+                    id = ElementTree.SubElement(login, 'id')
                     id.text = setting
-                    value = ElementTree.SubElement(debrid, 'value')
+                    value = ElementTree.SubElement(login, 'value')
                     value.text = addonid.getSetting(setting)
                   
                 tree = ElementTree.ElementTree(root)
@@ -756,7 +799,7 @@ def update_login(do, who):
             root = tree.getroot()
             
             try:
-                for setting in root.iter('login'):
+                for setting in root.findall('login'):
                     id = setting.find('id').text
                     value = setting.find('value').text
                     addonid.setSetting(id, value)
@@ -775,7 +818,7 @@ def update_login(do, who):
                 tree = ElementTree.parse(settings)
                 root = tree.getroot()
                 
-                for setting in root.iter('setting'):
+                for setting in root.findall('setting'):
                     if setting.attrib['id'] in data:
                         logging.log('Removing Setting: {0}'.format(setting.attrib))
                         root.remove(setting)
@@ -836,7 +879,7 @@ def import_list(who):
             tree = ElementTree.parse(file)
             root = tree.getroot()
             
-            for setting in root.iter('login'):
+            for setting in root.findall('login'):
                 id = setting.find('id').text
                 value = setting.find('value').text
             

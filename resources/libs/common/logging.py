@@ -24,6 +24,7 @@ import xbmcvfs
 import os
 import re
 
+from resources.libs.common import tools
 from resources.libs.common.config import CONFIG
 
 try:  # Python 3
@@ -41,8 +42,6 @@ REPLACES = (('//.+?:.+?@', '//USER:PASSWORD@'), ('<user>.+?</user>', '<user>USER
 
 
 def log(msg, level=xbmc.LOGNOTICE):
-    from resources.libs.common import tools
-
     if not os.path.exists(CONFIG.PLUGIN_DATA):
         os.makedirs(CONFIG.PLUGIN_DATA)
     if not os.path.exists(CONFIG.WIZLOG):
@@ -77,8 +76,6 @@ def log(msg, level=xbmc.LOGNOTICE):
 
 
 def check_log():
-    from resources.libs.common import tools
-
     next = tools.get_date(days=1, formatted=True)
     lines = tools.read_from_file(CONFIG.WIZLOG).split('\n')
 
@@ -112,24 +109,18 @@ def log_notify(title, message, times=2000, icon=CONFIG.ADDON_ICON, sound=False):
 
 
 def grab_log(file=False, old=False, wizard=False):
-    from resources.libs.common import tools
     if wizard:
-        if not os.path.exists(CONFIG.WIZLOG):
-            return False
+        if os.path.exists(CONFIG.WIZLOG):
+            return CONFIG.WIZLOG if file else tools.read_from_file(CONFIG.WIZLOG)
         else:
-            if file:
-                return CONFIG.WIZLOG
-            else:
-                return tools.read_from_file(CONFIG.WIZLOG)
-    finalfile = 0
-    logfilepath = os.listdir(CONFIG.LOGPATH)
+            return False
+                
     logsfound = []
 
-    for item in logfilepath:
-        if old and item.endswith('.old.log'):
-            logsfound.append(os.path.join(CONFIG.LOGPATH, item))
-        elif not old and item.endswith('.log') and not item.endswith('.old.log'):
-            logsfound.append(os.path.join(CONFIG.LOGPATH, item))
+    for item in [file for file in os.listdir(CONFIG.LOGPATH) if os.path.basename(file).startswith('kodi')]:
+        if item.endswith('.log'):
+            if (old and 'old' in item) or (not old and 'old' not in item):
+                logsfound.append(os.path.join(CONFIG.LOGPATH, item))
 
     if len(logsfound) > 0:
         logsfound.sort(key=lambda f: os.path.getmtime(f))
@@ -208,7 +199,6 @@ def get_files():
         else:
             show_result("No wizard log file found")
     if CONFIG.KEEPCRASHLOG:
-        from resources.libs.common import tools
         crashlog_path = ''
         items = []
         if xbmc.getCondVisibility('system.platform.osx'):
@@ -282,7 +272,6 @@ def post_log(data, name):
 
 # CURRENTLY NOT IN USE
 def copy_to_clipboard(txt):
-    from resources.libs.common import tools
     import subprocess
 
     platform = tools.platform()
@@ -455,8 +444,6 @@ def _dialog_watch():
 
 
 def error_list(file):
-    from resources.libs.common import tools
-
     errors = []
     b = tools.read_from_file(file).replace('\n', '[CR]').replace('\r', '')
 

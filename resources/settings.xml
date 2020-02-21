@@ -99,6 +99,7 @@
         <setting id="fanart-scrubs" type="text" default="" visible="false"/>
         <setting id="fanart-venom" type="text" default="" visible="false"/>
         <setting id="fanart-seren" type="text" default="" visible="false"/>
+        <setting id="fanart-tmdbhelper" type="text" default="" visible="false"/>
         <setting id="imdb-exodusredux" type="text" default="" visible="false"/>
         <setting id="imdb-gaia" type="text" default="" visible="false"/>
         <setting id="imdb-numbers" type="text" default="" visible="false"/>
@@ -139,6 +140,7 @@
         <setting id="tvdb-realizer" type="text" default="" visible="false"/>
         <setting id="tvdb-seren" type="text" default="" visible="false"/>
         <setting id="location-yahoo" type="text" default="" visible="false"/>
+        <setting id="login-youtube" type="text" default="" visible="false"/>
         <setting id="ws-wonderfulsubs" type="text" default="" visible="false"/>
     </category>
 
@@ -155,6 +157,7 @@
         <setting id="keepsources" type="bool" label="Keep My Sources" default="true"/>
         <setting id="keepprofiles" type="bool" label="Keep My Profiles" default="false"/>
         <setting id="keepplayercore" type="bool" label="Keep My playercorefactory.xml" default="false"/>
+        <setting id="keepguisettings" type="bool" label="Keep My guisettings.xml" default="false"/>
         <setting id="keepadvanced" type="bool" label="Keep My AdvancedSettings.xml" default="true"/>
         <setting id="keeprepos" type="bool" label="Keep Installed Repositories" default="false"/>
         <setting id="keepsuper" type="bool" label="Keep Super Favourites" default="false"/>

@@ -393,6 +393,7 @@ def save_menu():
     advanced = 'true' if CONFIG.KEEPADVANCED == 'true' else 'false'
     profiles = 'true' if CONFIG.KEEPPROFILES == 'true' else 'false'
     playercore = 'true' if CONFIG.KEEPPLAYERCORE == 'true' else 'false'
+    guisettings = 'true' if CONFIG.KEEPGUISETTINGS == 'true' else 'false'
     favourites = 'true' if CONFIG.KEEPFAVS == 'true' else 'false'
     repos = 'true' if CONFIG.KEEPREPOS == 'true' else 'false'
     super = 'true' if CONFIG.KEEPSUPER == 'true' else 'false'
@@ -410,6 +411,7 @@ def save_menu():
     directory.add_file('Keep \'Sources.xml\': {0}'.format(sources.replace('true', on).replace('false', off)), {'mode': 'togglesetting', 'name': 'keepsources'}, icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME1)
     directory.add_file('Keep \'Profiles.xml\': {0}'.format(profiles.replace('true', on).replace('false', off)), {'mode': 'togglesetting', 'name': 'keepprofiles'}, icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME1)
     directory.add_file('Keep \'playercorefactory.xml\': {0}'.format(playercore.replace('true', on).replace('false', off)), {'mode': 'togglesetting', 'name': 'keepplayercore'}, icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME1)
+    directory.add_file('Keep \'guisettings.xml\': {0}'.format(guisettings.replace('true', on).replace('false', off)), {'mode': 'togglesetting', 'name': 'keepguiseettings'}, icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME1)
     directory.add_file('Keep \'Advancedsettings.xml\': {0}'.format(advanced.replace('true', on).replace('false', off)), {'mode': 'togglesetting', 'name': 'keepadvanced'}, icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME1)
     directory.add_file('Keep \'Favourites.xml\': {0}'.format(favourites.replace('true', on).replace('false', off)), {'mode': 'togglesetting', 'name': 'keepfavourites'}, icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME1)
     directory.add_file('Keep Super Favourites: {0}'.format(super.replace('true', on).replace('false', off)), {'mode': 'togglesetting', 'name': 'keepsuper'}, icon=CONFIG.ICONSAVE, themeit=CONFIG.THEME1)

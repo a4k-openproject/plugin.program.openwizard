@@ -265,10 +265,10 @@ def update_trakt(do, who):
                 root = ElementTree.Element(saved)
                 
                 for setting in data:
-                    debrid = ElementTree.SubElement(root, 'debrid')
-                    id = ElementTree.SubElement(debrid, 'id')
+                    trakt = ElementTree.SubElement(root, 'trakt')
+                    id = ElementTree.SubElement(trakt, 'id')
                     id.text = setting
-                    value = ElementTree.SubElement(debrid, 'value')
+                    value = ElementTree.SubElement(trakt, 'value')
                     value.text = addonid.getSetting(setting)
                   
                 tree = ElementTree.ElementTree(root)
@@ -287,7 +287,7 @@ def update_trakt(do, who):
             root = tree.getroot()
             
             try:
-                for setting in root.iter('debrid'):
+                for setting in root.findall('trakt'):
                     id = setting.find('id').text
                     value = setting.find('value').text
                     addonid.setSetting(id, value)
@@ -306,7 +306,7 @@ def update_trakt(do, who):
                 tree = ElementTree.parse(settings)
                 root = tree.getroot()
                 
-                for setting in root.iter('setting'):
+                for setting in root.findall('setting'):
                     if setting.attrib['id'] in data:
                         logging.log('Removing Setting: {0}'.format(setting.attrib))
                         root.remove(setting)
@@ -367,7 +367,7 @@ def import_list(who):
             tree = ElementTree.parse(file)
             root = tree.getroot()
             
-            for setting in root.iter('trakt'):
+            for setting in root.findall('trakt'):
                 id = setting.find('id').text
                 value = setting.find('value').text
             

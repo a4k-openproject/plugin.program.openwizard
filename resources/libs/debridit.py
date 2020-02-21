@@ -316,7 +316,7 @@ def update_debrid(do, who):
             root = tree.getroot()
             
             try:
-                for setting in root.iter('debrid'):
+                for setting in root.findall('debrid'):
                     id = setting.find('id').text
                     value = setting.find('value').text
                     addonid.setSetting(id, value)
@@ -335,7 +335,7 @@ def update_debrid(do, who):
                 tree = ElementTree.parse(settings)
                 root = tree.getroot()
                 
-                for setting in root.iter('setting'):
+                for setting in root.findall('setting'):
                     if setting.attrib['id'] in data:
                         logging.log('Removing Setting: {0}'.format(setting.attrib))
                         root.remove(setting)
@@ -396,7 +396,7 @@ def import_list(who):
             tree = ElementTree.parse(file)
             root = tree.getroot()
             
-            for setting in root.iter('debrid'):
+            for setting in root.findall('debrid'):
                 id = setting.find('id').text
                 value = setting.find('value').text
             

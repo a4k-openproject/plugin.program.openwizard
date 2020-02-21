@@ -255,6 +255,7 @@ def show_save_data_settings():
             self.sources = 304
             self.profiles = 305
             self.playercore = 314
+            self.guisettings = 315
             self.advanced = 306
             self.favourites = 307
             self.superfav = 308
@@ -265,12 +266,12 @@ def show_save_data_settings():
             self.thumbs = 313
             self.show_dialog()
             self.controllist = [self.trakt, self.debrid, self.login,
-                                    self.sources, self.profiles, self.playercore, self.advanced,
+                                    self.sources, self.profiles, self.playercore, self.guisettings, self.advanced,
                                     self.favourites, self.superfav, self.repo,
                                     self.whitelist, self.cache, self.packages,
                                     self.thumbs]
             self.controlsettings = ['keeptrakt', 'keepdebrid', 'keeplogin',
-                                    'keepsources', 'keepprofiles', 'keepplayercore', 'keepadvanced',
+                                    'keepsources', 'keepprofiles', 'keepplayercore', 'keepguisettings', 'keepadvanced',
                                     'keepfavourites', 'keeprepos', 'keepsuper',
                                     'keepwhitelist', 'clearcache', 'clearpackages',
                                     'clearthumbs']
@@ -440,9 +441,23 @@ def show_update_window(name='Testing Window', current='1.0', new='1.1', icon=CON
             elif controlid == self.ignore:
                 self.do_ignore()
 
-    update = UpdateWindow("build_update_prompt.xml", CONFIG.ADDON_PATH, 'Default', name=name, current=current, new=new, icon=icon, fanart=fanart)
-    update.doModal()
-    del update
+    # update = UpdateWindow("build_update_prompt.xml", CONFIG.ADDON_PATH, 'Default', name=name, current=current, new=new, icon=icon, fanart=fanart)
+    # update.doModal()
+    # del update
+    msgcurrent = 'Running latest version of installed build: '
+    msgupdate = 'Update available for installed build: '
+    build_name = '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, name)
+    current_version = 'Current Version: v[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, current)
+    latest_version = 'Latest Version: v[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, new)
+    
+    final_msg = '{0}{1}\n{2}\n{3}\n'.format(msgcurrent if current >= new else msgupdate,
+                                        build_name, current_version, latest_version)
+    
+    install = xbmcgui.Dialog().yesno(CONFIG.ADDONTITLE, final_msg,
+                                     yeslabel='Install', nolabel='Ignore')
+    if install:
+        from resources.libs.wizard import Wizard
+        Wizard().build(CONFIG.BUILDNAME)    
 
 
 def split_notify(notify):
