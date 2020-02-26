@@ -168,7 +168,7 @@ class Restore:
         from resources.libs import skin
 
         skin.look_and_feel_data('restore')
-        location = 'External' if self.external else 'Local'
+        external = 'External' if self.external else 'Local'
 
         file = self.dialog.browseSingle(1, '[COLOR {0}]Select the backup file you want to restore[/COLOR]'.format(
             CONFIG.COLOR2), '' if self.external else 'files', mask='.zip', useThumbs=True,
