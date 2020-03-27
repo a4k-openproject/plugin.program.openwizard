@@ -63,15 +63,15 @@ SPACER = '='
 COLOR1 = 'limegreen'
 COLOR2 = 'white'
 # Primary menu items   / {0} is the menu item and is required
-THEME1 = '[COLOR '+COLOR1+'][I]([COLOR '+COLOR1+'][B]Open[/B][/COLOR][COLOR ' + COLOR2 + ']Wizard[COLOR ' + COLOR1 + '])[/I][/COLOR] [COLOR '+COLOR2+']{0}[/COLOR]'
+THEME1 = u'[COLOR {color1}][I]([COLOR {color1}][B]Open[/B][/COLOR][COLOR {color2}]Wizard[COLOR {color1}])[/I][/COLOR] [COLOR {color2}]{{}}[/COLOR]'.format(color1=COLOR1, color2=COLOR2)
 # Build Names          / {0} is the menu item and is required
-THEME2 = '[COLOR '+COLOR2+']{0}[/COLOR]'
+THEME2 = u'[COLOR {color1}]{{}}[/COLOR]'.format(color1=COLOR1)
 # Alternate items      / {0} is the menu item and is required
-THEME3 = '[COLOR '+COLOR1+']{0}[/COLOR]'
+THEME3 = u'[COLOR {color1}]{{}}[/COLOR]'.format(color1=COLOR1)
 # Current Build Header / {0} is the menu item and is required
-THEME4 = '[COLOR '+COLOR1+']Current Build:[/COLOR] [COLOR '+COLOR2+']{0}[/COLOR]'
+THEME4 = u'[COLOR {color1}]Current Build:[/COLOR] [COLOR {color2}]{{}}[/COLOR]'.format(color1=COLOR1, color2=COLOR2)
 # Current Theme Header / {0} is the menu item and is required
-THEME5 = '[COLOR '+COLOR1+']Current Theme:[/COLOR] [COLOR '+COLOR2+']{0}[/COLOR]'
+THEME5 = u'[COLOR {color1}]Current Theme:[/COLOR] [COLOR {color2}]{{}}[/COLOR]'.format(color1=COLOR1, color2=COLOR2)
 
 # Message for Contact Page
 # Enable 'Contact' menu item 'Yes' hide or 'No' dont hide
