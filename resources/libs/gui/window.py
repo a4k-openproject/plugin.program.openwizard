@@ -449,13 +449,22 @@ def split_notify(notify):
     response = tools.open_url(notify)
 
     if response:
-        link = response.text.replace('\r', '').replace('\t', '').replace('\n', '[CR]')
+        link = response.text
+        
+        try:
+            link = response.text.decode('utf-8')
+        except:
+            pass
+        
+        link = link.replace('\r', '').replace('\t', '    ').replace('\n', '[CR]')
         if link.find('|||') == -1:
             return False, False
         id, msg = link.split('|||')
+        id.replace('[CR]', '')
         if msg.startswith('[CR]'):
             msg = msg[4:]
-        return id.replace('[CR]', ''), msg
+            
+        return id, msg
     else:
         return False, False
 
@@ -465,7 +474,7 @@ def show_notification(msg='', test=False):
 
         def __init__(self, *args, **kwargs):
             self.test = kwargs['test']
-            self.message = CONFIG.THEME2.format(kwargs['msg'])
+            self.msg = kwargs['msg']
 
         def onInit(self):
             self.image = 101
@@ -481,7 +490,8 @@ def show_notification(msg='', test=False):
             self.testimage = os.path.join(CONFIG.ART, 'text.png')
             self.getControl(self.image).setImage(CONFIG.BACKGROUND)
             self.getControl(self.image).setColorDiffuse('9FFFFFFF')
-            self.getControl(self.textbox).setText(self.message)
+            msg_text = CONFIG.THEME2.format(self.msg)
+            self.getControl(self.textbox).setText(msg_text)
             self.setFocusId(self.remindme)
             if CONFIG.HEADERTYPE == 'Text':
                 self.getControl(self.titlebox).setLabel(CONFIG.THEME3.format(CONFIG.HEADERMESSAGE))
