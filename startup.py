@@ -349,7 +349,7 @@ else:
     logging.log("[First Run] Skipping Save Data Settings", level=xbmc.LOGNOTICE)
 
 # BUILD INSTALL PROMPT
-if tools.open_url(CONFIG.BUILDFILE, check=True) and CONFIG.get_setting('installed') in ['false', 'ignored']:
+if tools.open_url(CONFIG.BUILDFILE, check=True) and CONFIG.get_setting('installed') == 'false':
     logging.log("[Current Build Check] Build Not Installed", level=xbmc.LOGNOTICE)
     window.show_build_prompt()
 else:
