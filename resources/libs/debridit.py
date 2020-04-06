@@ -246,7 +246,7 @@ DEBRIDID = {
         'data'     : ['ad.account_id', 'ad.token'],
         'activate' : 'RunPlugin(plugin://plugin.video.fen/?mode=alldebrid.authenticate)'},
     'shadowrd': {
-        'name'     : 'Fen RD',
+        'name'     : 'Shadow RD',
         'plugin'   : 'plugin.video.shadow',
         'saved'    : 'shadowrd',
         'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.shadow'),
@@ -258,7 +258,7 @@ DEBRIDID = {
         'data'     : ['rd.expiry', 'rd.auth', 'rd.client_id', 'rd.refresh', 'rd.secret'],
         'activate' : 'RunPlugin(plugin://plugin.video.shadow?mode=138&url=www)'},
     'shadowpm': {
-        'name'     : 'Fen PM',
+        'name'     : 'Shadow PM',
         'plugin'   : 'plugin.video.shadow',
         'saved'    : 'shadowpm',
         'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.shadow'),
@@ -270,7 +270,7 @@ DEBRIDID = {
         'data'     : ['premiumize.token'],
         'activate' : 'RunPlugin(plugin://plugin.video.shadow?mode=140&url=www)'},
     'shadowad': {
-        'name'     : 'Fen AD',
+        'name'     : 'Shadow AD',
         'plugin'   : 'plugin.video.shadow',
         'saved'    : 'shadowad',
         'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.shadow'),
