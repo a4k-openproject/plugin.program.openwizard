@@ -29,7 +29,8 @@ from resources.libs.common.config import CONFIG
 from resources.libs.common import logging
 from resources.libs.common import tools
 
-ORDER = ['exodusredux', 'gaia', 'numbers', 'openmeta', 'premiumizer', 'realizer', 'scrubs', 'seren', 'thecrew', 'trakt', 'venom']
+ORDER = ['exodusredux', 'fen', 'gaia', 'numbers', 'openmeta', 'premiumizer',
+         'realizer', 'scrubs', 'seren', 'shadow', 'thecrew', 'trakt', 'venom']
 
 TRAKTID = {
     'gaia': {
@@ -148,10 +149,22 @@ TRAKTID = {
         'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.scrubsv2', 'icon.jpg'),
         'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.scrubsv2', 'fanart.png'),
         'file'     : os.path.join(CONFIG.TRAKTFOLD, 'scrubs_trakt'),
-        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.scrubs', 'settings.xml'),
+        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.scrubsv2', 'settings.xml'),
         'default'  : 'trakt.user',
         'data'     : ['trakt.user', 'trakt.user2', 'trakt.token', 'trakt.refresh', 'trakt.auth'],
         'activate' : 'RunPlugin(plugin://plugin.video.scrubsv2/?action=authTrakt)'},
+    'shadow': {
+        'name'     : 'Shadow',
+        'plugin'   : 'plugin.video.shadow',
+        'saved'    : 'shadow',
+        'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.shadow'),
+        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.shadow', 'icon.jpg'),
+        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.shadow', 'fanart.png'),
+        'file'     : os.path.join(CONFIG.TRAKTFOLD, 'shadow_trakt'),
+        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.shadow', 'settings.xml'),
+        'default'  : 'trakt_access_token',
+        'data'     : ['trakt_access_token', 'trakt_refresh_token', 'trakt_expires_at'],
+        'activate' : ''},
     'premiumizer': {
         'name'     : 'Premiumizer',
         'plugin'   : 'plugin.video.premiumizer',
@@ -187,7 +200,19 @@ TRAKTID = {
         'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.themoviedb.helper', 'settings.xml'),
         'default'  : 'trakt.management',
         'data'     : ['trakt.token', 'trakt.management'],
-        'activate' : 'RunScript(plugin.video.themoviedb.helper, authenticate_trakt)'}
+        'activate' : 'RunScript(plugin.video.themoviedb.helper, authenticate_trakt)'},
+    'fen': {
+        'name'     : 'Fen',
+        'plugin'   : 'plugin.video.fen',
+        'saved'    : 'fen',
+        'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.fen'),
+        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.fen', 'icon.png'),
+        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.fen', 'fanart.png'),
+        'file'     : os.path.join(CONFIG.TRAKTFOLD, 'fen_trakt'),
+        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.fen', 'settings.xml'),
+        'default'  : 'trakt_user',
+        'data'     : ['trakt_user', 'trakt_access_token', 'trakt_refresh_token',  'trakt_expires_at'],
+        'activate' : 'RunPlugin(plugin://plugin.video.fen/?mode=trakt_authenticate)'}
 }
 
 

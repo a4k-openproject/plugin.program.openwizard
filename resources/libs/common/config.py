@@ -293,7 +293,7 @@ class Config:
     def clear_setting(self, type):
         build = {'buildname': '', 'buildversion': '', 'buildtheme': '',
                  'latestversion': '', 'nextbuildcheck': '2019-01-01 00:00:00'}
-        install = {'extract': '', 'errors': ''}
+        install = {'extract': '', 'errors': '', 'installed': ''}
         default = {'defaultskinignore': 'false', 'defaultskin': '',
                    'defaultskinname': ''}
         lookfeel = ['default.enablerssfeeds', 'default.font', 'default.rssedit',
@@ -320,6 +320,8 @@ class Config:
         elif type == 'lookfeel':
             for element in lookfeel:
                 self.set_setting(element, '')
+        else:
+            self.set_setting(type, '')
 
 
 CONFIG = Config()

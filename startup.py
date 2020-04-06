@@ -209,7 +209,7 @@ def installed_build_check():
             logging.log('[Build Installed Check] Restoring Login Data', level=xbmc.LOGNOTICE)
             loginit.login_it('restore', 'all')
 
-        CONFIG.clear_setting('installed')
+        CONFIG.clear_setting('install')
 
 
 def build_update_check():
@@ -349,7 +349,7 @@ else:
     logging.log("[First Run] Skipping Save Data Settings", level=xbmc.LOGNOTICE)
 
 # BUILD INSTALL PROMPT
-if tools.open_url(CONFIG.BUILDFILE, check=True) and not CONFIG.get_setting('installed'):
+if tools.open_url(CONFIG.BUILDFILE, check=True) and CONFIG.get_setting('installed') == 'false':
     logging.log("[Current Build Check] Build Not Installed", level=xbmc.LOGNOTICE)
     window.show_build_prompt()
 else:
