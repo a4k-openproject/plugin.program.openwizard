@@ -29,7 +29,13 @@ from resources.libs.common.config import CONFIG
 from resources.libs.common import logging
 from resources.libs.common import tools
 
-ORDER = ['gaiaad', 'gaiard', 'gaiapm', 'pmzer', 'serenad', 'serenrd', 'serenpm', 'serenpm-oauth', 'rurlad', 'rurlrd', 'rurlpm', 'urlad', 'urlrd', 'urlpm']
+ORDER = ['fenad', 'fenpm', 'fenrd',
+         'gaiaad', 'gaiard', 'gaiapm',
+         'pmzer',
+         'serenad', 'serenpm', 'serenpm-oauth', 'serenrd', 
+         'shadowad', 'shadowpm', 'shadowrd',
+         'rurlad', 'rurlpm', 'rurlrd',
+         'urlad', 'urlpm', 'urlrd',]
 
 DEBRIDID = {
     'gaiaad': {
@@ -202,7 +208,79 @@ DEBRIDID = {
         'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.premiumizer', 'settings.xml'),
         'default'  : 'premiumize.token',
         'data'     : ['premiumize.status', 'premiumize.token', 'premiumize.refresh'],
-        'activate' : 'RunPlugin(plugin://plugin.video.premiumizer/?action=authPremiumize)'}
+        'activate' : 'RunPlugin(plugin://plugin.video.premiumizer/?action=authPremiumize)'},
+    'fenrd': {
+        'name'     : 'Fen RD',
+        'plugin'   : 'plugin.video.fen',
+        'saved'    : 'fenrd',
+        'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.fen'),
+        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.fen', 'icon.png'),
+        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.fen', 'fanart.png'),
+        'file'     : os.path.join(CONFIG.DEBRIDFOLD, 'fen_rd'),
+        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.fen', 'settings.xml'),
+        'default'  : 'rd.username',
+        'data'     : ['rd.username', 'rd.token', 'rd.auth', 'rd.client_id', 'rd.refresh', 'rd.secret'],
+        'activate' : 'RunPlugin(plugin://plugin.video.fen/?mode=real_debrid.authenticate)'},
+    'fenpm': {
+        'name'     : 'Fen PM',
+        'plugin'   : 'plugin.video.fen',
+        'saved'    : 'fenpm',
+        'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.fen'),
+        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.fen', 'icon.png'),
+        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.fen', 'fanart.png'),
+        'file'     : os.path.join(CONFIG.DEBRIDFOLD, 'fen_pm'),
+        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.fen', 'settings.xml'),
+        'default'  : 'pm.account_id',
+        'data'     : ['pm.account_id', 'pm.token'],
+        'activate' : 'RunPlugin(plugin://plugin.video.fen/?mode=premiumize.authenticate)'},
+    'fenad': {
+        'name'     : 'Fen AD',
+        'plugin'   : 'plugin.video.fen',
+        'saved'    : 'fenad',
+        'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.fen'),
+        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.fen', 'icon.png'),
+        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.fen', 'fanart.png'),
+        'file'     : os.path.join(CONFIG.DEBRIDFOLD, 'fen_ad'),
+        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.fen', 'settings.xml'),
+        'default'  : 'ad.account_id',
+        'data'     : ['ad.account_id', 'ad.token'],
+        'activate' : 'RunPlugin(plugin://plugin.video.fen/?mode=alldebrid.authenticate)'},
+    'shadowrd': {
+        'name'     : 'Shadow RD',
+        'plugin'   : 'plugin.video.shadow',
+        'saved'    : 'shadowrd',
+        'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.shadow'),
+        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.shadow', 'icon.png'),
+        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.shadow', 'fanart.jpg'),
+        'file'     : os.path.join(CONFIG.DEBRIDFOLD, 'shadow_rd'),
+        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.shadow', 'settings.xml'),
+        'default'  : 'rd.auth',
+        'data'     : ['rd.expiry', 'rd.auth', 'rd.client_id', 'rd.refresh', 'rd.secret'],
+        'activate' : 'RunPlugin(plugin://plugin.video.shadow?mode=138&url=www)'},
+    'shadowpm': {
+        'name'     : 'Shadow PM',
+        'plugin'   : 'plugin.video.shadow',
+        'saved'    : 'shadowpm',
+        'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.shadow'),
+        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.shadow', 'icon.png'),
+        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.shadow', 'fanart.jpg'),
+        'file'     : os.path.join(CONFIG.DEBRIDFOLD, 'shadow_pm'),
+        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.shadow', 'settings.xml'),
+        'default'  : 'premiumize.token',
+        'data'     : ['premiumize.token'],
+        'activate' : 'RunPlugin(plugin://plugin.video.shadow?mode=140&url=www)'},
+    'shadowad': {
+        'name'     : 'Shadow AD',
+        'plugin'   : 'plugin.video.shadow',
+        'saved'    : 'shadowad',
+        'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.shadow'),
+        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.shadow', 'icon.png'),
+        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.shadow', 'fanart.jpg'),
+        'file'     : os.path.join(CONFIG.DEBRIDFOLD, 'shadow_ad'),
+        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.shadow', 'settings.xml'),
+        'default'  : 'alldebrid.username',
+        'data'     : ['alldebrid.username', 'alldebrid.token'],
+        'activate' : 'RunPlugin(plugin://plugin.video.shadow?mode=142&url=www)'}
 # need to save rdauth.json :(
 #	'realizer': {
 #		'name'     : 'Realizer',
