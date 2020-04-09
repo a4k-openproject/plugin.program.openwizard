@@ -459,17 +459,18 @@ def split_notify(notify):
         link = link.replace('\r', '').replace('\t', '    ').replace('\n', '[CR]')
         if link.find('|||') == -1:
             return False, False
-        id, msg = link.split('|||')
-        id.replace('[CR]', '')
+
+        _id, msg = link.split('|||')
+        _id = _id.replace('[CR]', '')
         if msg.startswith('[CR]'):
             msg = msg[4:]
             
-        return id, msg
+        return _id, msg
     else:
         return False, False
 
 
-def show_notification(msg='', test=False):
+def show_notification(msg, test=False):
     class Notification(xbmcgui.WindowXMLDialog):
 
         def __init__(self, *args, **kwargs):
@@ -500,16 +501,14 @@ def show_notification(msg='', test=False):
 
         def do_remind(self):
             if not test:
-                CONFIG.set_setting("notedismiss", "false")
-            logging.log("[Notification] NotifyID {0} Remind Me Later".format(CONFIG.get_setting('noteid')),
-                        level=xbmc.LOGNOTICE)
+                CONFIG.set_setting('notedismiss', 'false')
+            logging.log('[Notifications] Notification {0} Remind Me Later'.format(CONFIG.get_setting('noteid')))
             self.close()
 
         def do_dismiss(self):
             if not test:
-                CONFIG.set_setting("notedismiss", "true")
-            logging.log("[Notification] NotifyID {0} Dismissed".format(CONFIG.get_setting('noteid')),
-                        level=xbmc.LOGNOTICE)
+                CONFIG.set_setting('notedismiss', 'true')
+            logging.log('[Notifications] Notification {0} Dismissed'.format(CONFIG.get_setting('noteid')))
             self.close()
 
         def onAction(self, action):

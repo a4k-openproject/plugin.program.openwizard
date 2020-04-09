@@ -111,32 +111,24 @@ def auto_install_repo():
 
 
 def show_notification():
-    if not CONFIG.NOTIFY == 'true':
-        response = tools.open_url(CONFIG.NOTIFICATION)
-        if response:
-            note_id, msg = window.split_notify(CONFIG.NOTIFICATION)
-            if note_id:
-                try:
-                    note_id = int(note_id)
-                    if note_id == CONFIG.NOTEID:
-                        if CONFIG.NOTEDISMISS == 'false':
-                            window.show_notification(msg)
-                        else:
-                            logging.log("[Notifications] id[{0}] Dismissed".format(note_id), level=xbmc.LOGNOTICE)
-                    elif note_id > CONFIG.NOTEID:
-                        logging.log("[Notifications] id: {0}".format(note_id), level=xbmc.LOGNOTICE)
-                        CONFIG.set_setting('noteid', '{0}'.format(note_id))
-                        CONFIG.set_setting('notedismiss', 'false')
-                        window.show_notification(msg=msg)
-                        logging.log("[Notifications] Complete", level=xbmc.LOGNOTICE)
-                except Exception as e:
-                    logging.log("Error on Notifications Window: {0}".format(e), level=xbmc.LOGERROR)
+    note_id, msg = window.split_notify(CONFIG.NOTIFICATION)
+    
+    if note_id:
+        if note_id == CONFIG.NOTEID:
+            if CONFIG.NOTEDISMISS == 'false':
+                window.show_notification(msg)
             else:
-                logging.log("[Notifications] Text File not formatted Correctly")
-        else:
-            logging.log("[Notifications] URL({0}): {1}".format(CONFIG.NOTIFICATION, response), level=xbmc.LOGNOTICE)
+                logging.log('[Notifications] No new notifications.', level=xbmc.LOGNOTICE)
+        elif note_id > CONFIG.NOTEID:
+            logging.log('[Notifications] Showing notification {0}'
+                        .format(note_id))
+            CONFIG.set_setting('noteid', note_id)
+            CONFIG.set_setting('notedismiss', 'false')
+            window.show_notification(msg)
     else:
-        logging.log("[Notifications] Turned Off", level=xbmc.LOGNOTICE)
+        logging.log('[Notifications] Notifications file at {0} not formatted correctly.'
+                    .format(CONFIG.NOTIFICATION),
+                    level=xbmc.LOGNOTICE)
 
 
 def installed_build_check():
@@ -392,10 +384,9 @@ else:
 
 # SHOW NOTIFICATIONS
 if CONFIG.ENABLE_NOTIFICATION == 'Yes':
-    logging.log("[Notifications] Started", level=xbmc.LOGNOTICE)
     show_notification()
 else:
-    logging.log("[Notifications] Not Enabled", level=xbmc.LOGNOTICE)
+    logging.log('[Notifications] Not Enabled', level=xbmc.LOGNOTICE)
 
 # INSTALLED BUILD CHECK
 if CONFIG.get_setting('installed') == 'true':
