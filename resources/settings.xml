@@ -188,14 +188,13 @@
 
     <category label="Logging Settings">
         <setting type="lsep" label="Event Logging in the Wizard:"/>
-        <setting id="addon_debug" type="bool" label="Enable Wizard Logging:" default="true"/>
-        <setting id="debuglevel" type="enum" label="What level would you like the wizard to log?" enable="!eq(-1,false)" values="No Logging|Normal Logging|Full Logging" default="2"/>
-        <setting id="wizardlog" type="bool" label="Enable Writing to Wizard.Log:" visible="false" default="true"/>
-        <setting id="autocleanwiz" type="bool" label="Automatically Clean up Wizard Log: " enable="!eq(-3,false)" default="true"/>
-        <setting id="wizlogcleanby" type="enum" label="How would you like to clean up wizard.log?" enabled="!eq(-4, false)" values="By Days|By Size|By Lines" default="1"/>
-        <setting id="wizlogcleandays" type="enum" subsetting="true" label="Keep how many days of wizard.log?" enable="!eq(-5,false)" visible="eq(-1,0)+!eq(-2,false)" values="1 Day|2 Days|3 Days|7 Days" default="2"/>
-        <setting id="wizlogcleansize" type="enum" subsetting="true" label="Max file size for wizard.log?" enable="!eq(-6,false)" visible="eq(-2,1)+!eq(-3,false)" values="100 KB|200 KB|300 KB|400 KB|500 KB|1 MB" default="1"/>
-        <setting id="wizlogcleanlines" type="enum" subsetting="true" label="Keep how many lines of wizard.log?" enable="!eq(-7,false)" visible="eq(-3,2)+!eq(-4,false)" values="100|200|300|400|500" default="2"/>
+        <setting id="debuglevel" type="enum" label="What level would you like the wizard to log?" values="No Logging|Normal Logging|Full Logging" default="1"/>
+        <setting id="wizardlog" type="bool" label="Enable Wizard Logging:" default="true"/>
+        <setting id="autocleanwiz" type="bool" label="Automatically Clean up Wizard Log: " visible="!eq(-1,false)" default="true"/>
+        <setting id="wizlogcleanby" type="enum" label="How would you like to clean up wizard.log?" visible="!eq(-2,false)+!eq(-1,false)" values="By Days|By Size|By Lines" default="1"/>
+        <setting id="wizlogcleandays" type="enum" subsetting="true" label="Keep how many days of wizard.log?" enable="!eq(-2,false)" visible="eq(-1,0)+!eq(-2,false)+!eq(-3,false)" values="1 Day|2 Days|3 Days|7 Days" default="2"/>
+        <setting id="wizlogcleansize" type="enum" subsetting="true" label="Max file size for wizard.log?" enable="!eq(-3,false)" visible="eq(-2,1)+!eq(-3,false)+!eq(-4,false)" values="100 KB|200 KB|300 KB|400 KB|500 KB|1 MB" default="1"/>
+        <setting id="wizlogcleanlines" type="enum" subsetting="true" label="Keep how many lines of wizard.log?" enable="!eq(-4,false)" visible="eq(-3,2)+!eq(-4,false)+!eq(-5,false)" values="100|200|300|400|500" default="2"/>
         <setting id="nextwizcleandate" type="text" label="Next Time Wizard Log Cleaned:" visible="false" default="2019-01-01 00:00:00"/>
     </category>
 </settings>

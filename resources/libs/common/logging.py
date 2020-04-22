@@ -23,6 +23,7 @@ import xbmcvfs
 
 import os
 import re
+import time
 
 from resources.libs.common import tools
 from resources.libs.common.config import CONFIG
@@ -41,30 +42,19 @@ REPLACES = (('//.+?:.+?@', '//USER:PASSWORD@'), ('<user>.+?</user>', '<user>USER
                                                                                             '<pass>PASSWORD</pass>'),)
 
 
-def log(msg, level=xbmc.LOGNOTICE):
-    if not os.path.exists(CONFIG.PLUGIN_DATA):
-        os.makedirs(CONFIG.PLUGIN_DATA)
-    if not os.path.exists(CONFIG.WIZLOG):
-        f = open(CONFIG.WIZLOG, 'w+')
-        f.close()
-    if CONFIG.WIZDEBUGGING == 'false':
-        return False
+def log(msg, level=xbmc.LOGDEBUG):
     if CONFIG.DEBUGLEVEL == '0':  # No Logging
         return False
     if CONFIG.DEBUGLEVEL == '1':  # Normal Logging
-        if level not in [xbmc.LOGNOTICE, xbmc.LOGERROR, xbmc.LOGSEVERE, xbmc.LOGFATAL]:
-            return False
+        pass
     if CONFIG.DEBUGLEVEL == '2':  # Full Logging
         level = xbmc.LOGNOTICE
-    try:
-        xbmc.log('{0}: {1}'.format(CONFIG.ADDONTITLE, msg), level)
-    except Exception as e:
-        try:
-            xbmc.log('Logging Failure: {0}'.format(e), level)
-        except:
-            pass
+    
+    xbmc.log('{0}: {1}'.format(CONFIG.ADDONTITLE, msg), level)
     if CONFIG.ENABLEWIZLOG == 'true':
-        import time
+        if not os.path.exists(CONFIG.WIZLOG):
+            with open(CONFIG.WIZLOG, 'w+') as f:
+                f.close()
 
         lastcheck = CONFIG.NEXTCLEANDATE if not CONFIG.NEXTCLEANDATE == 0 else tools.get_date()
         if CONFIG.CLEANWIZLOG == 'true' and time.mktime(time.strptime(lastcheck, "%Y-%m-%d %H:%M:%S")) <= tools.get_date():

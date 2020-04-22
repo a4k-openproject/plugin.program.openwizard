@@ -192,7 +192,8 @@ def ensure_folders(folder=None):
     import xbmcvfs
 
     name = ''
-    folders = [CONFIG.BACKUPLOCATION, CONFIG.MYBUILDS, CONFIG.USERDATA, CONFIG.ADDON_DATA, CONFIG.PACKAGES]
+    folders = [CONFIG.BACKUPLOCATION, CONFIG.MYBUILDS, CONFIG.PLUGIN_DATA,
+               CONFIG.USERDATA, CONFIG.ADDON_DATA, CONFIG.PACKAGES]
 
     try:
         if folder is not None and not os.path.exists(folder):

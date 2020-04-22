@@ -303,7 +303,7 @@ def stop_if_duplicate():
     
     if temp:
         if temp > NOW - (60 * 2):
-            logging.log("Killing Start Up Script", xbmc.LOGDEBUG)
+            logging.log('Killing Start Up Script')
             sys.exit()
             
     logging.log("{0}".format(NOW))
@@ -311,10 +311,10 @@ def stop_if_duplicate():
     xbmc.sleep(1000)
     
     if not CONFIG.get_setting('time_started') == NOW:
-        logging.log("Killing Start Up Script", xbmc.LOGDEBUG)
+        logging.log('Killing Start Up Script')
         sys.exit()
     else:
-        logging.log("Continuing Start Up Script", xbmc.LOGDEBUG)
+        logging.log('Continuing Start Up Script')
 
 
 def check_for_video():
@@ -324,13 +324,13 @@ def check_for_video():
 
 # Don't run the script while video is playing :)
 check_for_video()
-# Stop this script if it's been run more than once
-if CONFIG.KODIV < 18:
-    stop_if_duplicate()
-# Ensure that the wizard's name matches its folder
-check.check_paths()
 # Ensure that any needed folders are created
 tools.ensure_folders()
+# Stop this script if it's been run more than once
+# if CONFIG.KODIV < 18:
+    # stop_if_duplicate()
+# Ensure that the wizard's name matches its folder
+check.check_paths()
 
 
 # FIRST RUN SETTINGS
