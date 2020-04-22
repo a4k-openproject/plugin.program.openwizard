@@ -255,7 +255,6 @@ class Config:
         self.MYBUILDS = os.path.join(self.BACKUPLOCATION, 'My_Builds')
 
         # Logging variables
-        self.WIZDEBUGGING = self.get_setting('addon_debug')
         self.DEBUGLEVEL = self.get_setting('debuglevel')
         self.ENABLEWIZLOG = self.get_setting('wizardlog')
         self.CLEANWIZLOG = self.get_setting('autocleanwiz')
