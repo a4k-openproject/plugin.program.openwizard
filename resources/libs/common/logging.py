@@ -25,6 +25,8 @@ import os
 import re
 import time
 
+import _strptime
+
 from resources.libs.common import tools
 from resources.libs.common.config import CONFIG
 
