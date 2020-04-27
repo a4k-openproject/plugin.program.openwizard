@@ -157,7 +157,7 @@ def apk_menu(url=None):
         TEMPAPKFILE = url_response.text if url else response.text
 
         if TEMPAPKFILE:
-            match = re.compile('name="(.+?)".+?ection="(.+?)".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"').findall(TEMPAPKFILE)
+            match = re.compile('name="(.+?)".+?ection="(.+?)".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"', re.S).findall(TEMPAPKFILE)
             if len(match) > 0:
                 x = 0
                 for aname, section, url, icon, fanart, adult, description in match:
