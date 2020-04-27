@@ -45,18 +45,32 @@
                 <label>Since this is your First Run of the Wizard, Would you like to Enable any of the following Settings?</label>
             </control>
         </control>
+	    <!-- Scrollbar  -->
+	    <control type="scrollbar" id="17">
+	      <left>630</left>
+	      <top>139</top>
+	      <width>15</width>
+	      <height>560</height>
+	      <visible>true</visible>
+	      <texturesliderbarfocus colordiffuse="99ffffff" border="4">scrollbar.png</texturesliderbarfocus>
+	      <pulseonselect>True</pulseonselect>
+	      <orientation>vertical</orientation>
+	      <showonepage>False</showonepage>
+	      <onleft>9000</onleft>
+	    </control>
         <control type="grouplist" id="9000">
             <left>20</left>
             <top>140</top>
             <width>610</width>
-            <height>520</height>
+            <height>570</height>
             <itemgap>-3</itemgap>
             <align>top</align>
+            <pagecontrol>17</pagecontrol>
             <orientation>vertical</orientation>
             <onup>201</onup>
             <ondown>201</ondown>
             <onleft>201</onleft>
-            <onright>201</onright>
+            <onright>17</onright>
             <control type="radiobutton" id="301">
                 <width>610</width>
                 <height>40</height>
@@ -145,6 +159,22 @@
                 <radioheight>45</radioheight>
                 <radioposx>530</radioposx>
                 <label>Keep My playercorefactory.xml</label>
+                <font>font12</font>
+                <texturefocus colordiffuse="FF12B2E7">RadioButton/MenuItemFO.png</texturefocus>
+                <texturenofocus>RadioButton/MenuItemNF.png</texturenofocus>
+                <textureradioonfocus colordiffuse="FF12B2E7">RadioButton/radiobutton-focus.png</textureradioonfocus>
+                <textureradioonnofocus colordiffuse="FF12B2E7">RadioButton/radiobutton-focus.png</textureradioonnofocus>
+                <textureradioofffocus colordiffuse="FF12B2E7">RadioButton/radiobutton-focus.png</textureradioofffocus>
+                <textureradiooffnofocus>RadioButton/radiobutton-nofocus.png</textureradiooffnofocus>
+            </control>
+            <control type="radiobutton" id="315">
+                <width>610</width>
+                <height>40</height>
+                <textwidth>565</textwidth>
+                <textoffsetx>10</textoffsetx>
+                <radioheight>45</radioheight>
+                <radioposx>530</radioposx>
+                <label>Keep My guisettings.xml</label>
                 <font>font12</font>
                 <texturefocus colordiffuse="FF12B2E7">RadioButton/MenuItemFO.png</texturefocus>
                 <texturenofocus>RadioButton/MenuItemNF.png</texturenofocus>
@@ -285,7 +315,7 @@
         <control type="group" id="9001">
             <control type="button" id="201">
                 <left>350</left>
-                <top>675</top>
+                <top>690</top>
                 <width>300</width>
                 <height>90</height>
                 <font>font13</font>
