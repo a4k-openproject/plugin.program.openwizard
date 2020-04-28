@@ -146,9 +146,11 @@ class Router:
         elif mode == 'apk':  # APK Installer
             menu.apk_menu(url)
             self._finish(handle)
-        elif mode == 'apkscrape':  # APK Installer -> Official Kodi APK's
-            menu.apk_scraper()
-            self._finish(handle)
+        elif mode == 'kodiapk':  # APK Installer -> Official Kodi APK's
+            xbmc.executebuiltin('RunScript(script.kodi.android.update)')
+        elif mode == 'fmchoose':
+            from resources.libs import install
+            install.choose_file_manager()
         elif mode == 'apkinstall':
             from resources.libs import install
             install.install_apk(name, url)

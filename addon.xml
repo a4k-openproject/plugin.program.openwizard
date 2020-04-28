@@ -4,6 +4,7 @@
         <import addon="xbmc.python" version="2.1.0" />
         <import addon="script.module.requests" />
         <import addon="script.module.six" />
+        <import addon="script.kodi.android.update"/>
     </requires>
     
     <extension point="xbmc.python.pluginsource" library="default.py">
