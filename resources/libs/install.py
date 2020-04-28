@@ -19,6 +19,7 @@
 
 import xbmc
 import xbmcgui
+import xbmcvfs
 
 import glob
 import os
@@ -232,6 +233,17 @@ def fresh_start(install=None, over=False):
             xbmc.executebuiltin('Container.Refresh()')
 
 
+def choose_file_manager():
+    dialog = xbmcgui.Dialog()
+    apps = xbmcvfs.listdir('androidapp://sources/apps/')[1]
+    
+    choice = dialog.select('Select a File Manager', apps)
+    if choice < 0:
+        return
+        
+    CONFIG.set_setting('custom_manager', apps[choice])
+    
+
 def install_apk(apk, url):
     from resources.libs.downloader import Downloader
     from resources.libs.common import logging
@@ -273,8 +285,12 @@ def install_apk(apk, url):
         Downloader().download(url, lib)
         xbmc.sleep(100)
         progress_dialog.close()
-        window.show_apk_warning(apk)
-        xbmc.executebuiltin('StartAndroidActivity("","android.intent.action.VIEW","application/vnd.android.package-archive","file:{0}")'.format(lib))
+        # window.show_apk_warning(apk)
+        file_manager = int(CONFIG.get_setting('file_manager'))
+        custom_manager = CONFIG.get_setting('custom_manager')
+        use_manager = {0: 'com.androiod.documentsui', 1: custom_manager}[file_manager]
+        
+        xbmc.executebuiltin('StartAndroidActivity({},,,"content://{}")'.format(use_manager, lib))
     else:
         logging.log_notify(CONFIG.ADDONTITLE,
                            '[COLOR {0}]ERROR: None Android Device[/COLOR]'.format(CONFIG.COLOR2))
