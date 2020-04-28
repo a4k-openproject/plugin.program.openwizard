@@ -250,45 +250,53 @@ def install_apk(apk, url):
     dialog = xbmcgui.Dialog()
     progress_dialog = xbmcgui.DialogProgress()
     
-    logging.log(apk)
-    logging.log(url)
+    path = os.path.join('storage', 'emulated', '0', 'Download')
+    lib = os.path.join(path, "{0}.apk".format(apk))
+    apk = apk.replace('\\', '').replace('/', '').replace(':', '').replace('*', '').replace('?', '').replace('"', '').replace('<', '').replace('>', '').replace('|', '')
+    
+    updater = xbmcaddon.Addon('script.kodi.android.update')
+    file_manager = int(updater.getSetting('File_Manager'))
+    custom_manager = updater.getSetting('Custom_Manager')
+    use_manager = {0: 'com.android.documentsui', 1: custom_manager}[file_manager]
+    
     if tools.platform() == 'android':
-        yes = dialog.yesno(CONFIG.ADDONTITLE,
-                               "[COLOR {0}]Would you like to download and install: ".format(CONFIG.COLOR2),
-                               "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, apk),
-                               yeslabel="[B][COLOR springgreen]Download[/COLOR][/B]",
-                               nolabel="[B][COLOR red]Cancel[/COLOR][/B]")
-        if not yes:
+        if os.path.exists(lib)):
+            redownload = dialog.yesno(CONFIG.ADDONTITLE, '[COLOR {}]{}.apk[/COLOR] already exists. Would you like to redownload it?'.format(CONFIG.COLOR2, apk),
+                               yeslabel="[B][COLOR springgreen]Redownload[/COLOR][/B]",
+                               nolabel="[B][COLOR red]Install[/COLOR][/B]")
+        else:
+            yes = dialog.yesno(CONFIG.ADDONTITLE,
+                                   "[COLOR {0}]Would you like to download and install: ".format(CONFIG.COLOR2),
+                                   "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, apk),
+                                   yeslabel="[B][COLOR springgreen]Download[/COLOR][/B]",
+                                   nolabel="[B][COLOR red]Cancel[/COLOR][/B]")
+                                   
+        if not yes and not redownload:
             logging.log_notify(CONFIG.ADDONTITLE,
                                '[COLOR {0}]ERROR: Install Cancelled[/COLOR]'.format(CONFIG.COLOR2))
             return
-        display = apk
         
-        updater = xbmcaddon.Addon('script.kodi.android.update')
-        path = os.path.join('storage', 'emulated', '0', 'Download')
-        file_manager = int(updater.getSetting('File_Manager'))
-        custom_manager = updater.getSetting('Custom_Manager')
-        use_manager = {0: 'com.android.documentsui', 1: custom_manager}[file_manager]
-
-        response = tools.open_url(url, check=True)
-        if not response:
-            logging.log_notify(CONFIG.ADDONTITLE,
-                               '[COLOR {0}]APK Installer: Invalid Apk Url![/COLOR]'.format(CONFIG.COLOR2))
-            return
-        progress_dialog.create(CONFIG.ADDONTITLE,
-                      '[COLOR {0}][B]Downloading:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, display),
-                      '', 'Please Wait')
-        apk = apk.replace('\\', '').replace('/', '').replace(':', '').replace('*', '').replace('?', '').replace('"', '').replace('<', '').replace('>', '').replace('|', '')
-        lib = os.path.join(path, "{0}.apk".format(apk))
-        try:
-            os.remove(lib)
-        except:
-            pass
-        Downloader().download(url, lib)
-        xbmc.sleep(100)
-        progress_dialog.close()
-        dialog.ok(CONFIG.ADDONTITLE, '[COLOR {}]{}.apk[/COLOR] downloaded to [COLOR {}]{}[/COLOR]. If installation doesn\'t start by itself, navigate to that location to install the APK.'.format(CONFIG.COLOR2, apk, CONFIG.COLOR2, path))
-        logging.log('Opening {}.apk with {}'.format(os.path.join(path, apk), use_manager), level=xbmc.LOGNOTICE)
+        if redownload or yes:
+            response = tools.open_url(url, check=True)
+            if not response:
+                logging.log_notify(CONFIG.ADDONTITLE,
+                                   '[COLOR {0}]APK Installer: Invalid Apk Url![/COLOR]'.format(CONFIG.COLOR2))
+                return
+            progress_dialog.create(CONFIG.ADDONTITLE,
+                          '[COLOR {0}][B]Downloading:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, display),
+                          '', 'Please Wait')
+            
+            if redownload or yes:
+            try:
+                os.remove(lib)
+            except:
+                pass
+            Downloader().download(url, lib)
+            xbmc.sleep(100)
+            progress_dialog.close()
+            dialog.ok(CONFIG.ADDONTITLE, '[COLOR {}]{}.apk[/COLOR] downloaded to [COLOR {}]{}[/COLOR]. If installation doesn\'t start by itself, navigate to that location to install the APK.'.format(CONFIG.COLOR2, apk, CONFIG.COLOR2, path))
+            
+        logging.log('Opening {}.apk with {}'.format(lib, use_manager), level=xbmc.LOGNOTICE)
         xbmc.executebuiltin('StartAndroidActivity({},,,"content://{}")'.format(use_manager, lib))
     else:
         logging.log_notify(CONFIG.ADDONTITLE,
