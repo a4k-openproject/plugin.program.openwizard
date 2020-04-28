@@ -18,6 +18,7 @@
 ################################################################################
 
 import xbmc
+import xbmcaddon
 import xbmcgui
 import xbmcvfs
 
@@ -234,14 +235,13 @@ def fresh_start(install=None, over=False):
 
 
 def choose_file_manager():
-    dialog = xbmcgui.Dialog()
-    apps = xbmcvfs.listdir('androidapp://sources/apps/')[1]
+    updater = xbmcaddon.Addon('script.kodi.android.update')
+    updater.setSetting('File_Manager', '1')
     
-    choice = dialog.select('Select a File Manager', apps)
-    if choice < 0:
-        return
-        
-    CONFIG.set_setting('custom_manager', apps[choice])
+    xbmc.executebuiltin('Addon.OpenSettings(script.kodi.android.update)')
+    # xbmc.executebuiltin('SetFocus(100)')
+    # xbmc.executebuiltin('SetFocus(204)')
+    # xbmc.executebuiltin('SendClick()')
     
 
 def install_apk(apk, url):
@@ -268,6 +268,10 @@ def install_apk(apk, url):
         display = apk
         if not os.path.exists(CONFIG.PACKAGES):
             os.makedirs(CONFIG.PACKAGES)
+        file_manager = int(updater.getSetting('File_Manager'))
+        custom_manager = updater.getSetting('Custom_Manager')
+        use_manager = {0: 'com.android.documentsui', 1: custom_manager}[file_manager]
+        logging.log('Opening APK with {}'.format(use_manager), level=xbmc.LOGNOTICE)
 
         response = tools.open_url(url, check=True)
         if not response:
@@ -285,10 +289,6 @@ def install_apk(apk, url):
         Downloader().download(url, lib)
         xbmc.sleep(100)
         progress_dialog.close()
-        # window.show_apk_warning(apk)
-        file_manager = int(CONFIG.get_setting('file_manager'))
-        custom_manager = CONFIG.get_setting('custom_manager')
-        use_manager = {0: 'com.androiod.documentsui', 1: custom_manager}[file_manager]
         
         xbmc.executebuiltin('StartAndroidActivity({},,,"content://{}")'.format(use_manager, lib))
     else:

@@ -20,6 +20,7 @@
 import xbmc
 import xbmcaddon
 import xbmcgui
+import xbmcvfs
 
 import glob
 import os
@@ -40,10 +41,26 @@ from resources.libs.common.config import CONFIG
 #      Menu Items         #
 ###########################
 
+def check_for_fm():
+    updater = xbmcaddon.Addon('script.kodi.android.update')
+    fm = int(updater.getSetting('File_Manager'))
+    apps = xbmcvfs.listdir('androidapp://sources/apps/')[1]
+    
+    if fm == 0 and 'com.android.documentsui' not in apps:
+        dialog = xbmcgui.Dialog()
+        choose = dialog.yesno(CONFIG.ADDONTITLE, 'It appears your device has no default file manager. Would you like to set one now?')
+        if not choose:
+            dialog.ok(CONFIG.ADDONTITLE, 'If an APK downloads, but doesn\'t open for installation, try changing your file manager in {}\'s "Install Settings".'.format(CONFIG.ADDONTITLE))
+        else:
+            from resources.libs import install
+            install.choose_file_manager()
+
 
 def apk_menu(url=None):
     from resources.libs.common import logging
     from resources.libs.common import tools
+
+    check_for_fm()
 
     directory.add_dir('Official Kodi APK\'s', {'mode': 'kodiapk'}, icon=CONFIG.ICONAPK, themeit=CONFIG.THEME1)
     directory.add_separator()
