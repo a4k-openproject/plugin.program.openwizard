@@ -260,7 +260,7 @@ def install_apk(apk, url):
     use_manager = {0: 'com.android.documentsui', 1: custom_manager}[file_manager]
     
     if tools.platform() == 'android':
-        if os.path.exists(lib)):
+        if os.path.exists(lib):
             redownload = dialog.yesno(CONFIG.ADDONTITLE, '[COLOR {}]{}.apk[/COLOR] already exists. Would you like to redownload it?'.format(CONFIG.COLOR2, apk),
                                yeslabel="[B][COLOR springgreen]Redownload[/COLOR][/B]",
                                nolabel="[B][COLOR red]Install[/COLOR][/B]")
