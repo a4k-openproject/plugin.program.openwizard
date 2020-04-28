@@ -238,10 +238,7 @@ def choose_file_manager():
     updater = xbmcaddon.Addon('script.kodi.android.update')
     updater.setSetting('File_Manager', '1')
     
-    xbmc.executebuiltin('Addon.OpenSettings(script.kodi.android.update)')
-    # xbmc.executebuiltin('SetFocus(100)')
-    # xbmc.executebuiltin('SetFocus(204)')
-    # xbmc.executebuiltin('SendClick()')
+    CONFIG.open_settings('script.kodi.android.update', 0, 4, True)
     
 
 def install_apk(apk, url):
