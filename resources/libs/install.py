@@ -263,12 +263,12 @@ def install_apk(apk, url):
                                '[COLOR {0}]ERROR: Install Cancelled[/COLOR]'.format(CONFIG.COLOR2))
             return
         display = apk
-        if not os.path.exists(CONFIG.PACKAGES):
-            os.makedirs(CONFIG.PACKAGES)
+        
+        updater = xbmcaddon.Addon('script.kodi.android.update')
+        path = os.path.join('storage', 'emulated', '0', 'Download')
         file_manager = int(updater.getSetting('File_Manager'))
         custom_manager = updater.getSetting('Custom_Manager')
         use_manager = {0: 'com.android.documentsui', 1: custom_manager}[file_manager]
-        logging.log('Opening APK with {}'.format(use_manager), level=xbmc.LOGNOTICE)
 
         response = tools.open_url(url, check=True)
         if not response:
@@ -278,7 +278,8 @@ def install_apk(apk, url):
         progress_dialog.create(CONFIG.ADDONTITLE,
                       '[COLOR {0}][B]Downloading:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, display),
                       '', 'Please Wait')
-        lib = os.path.join(CONFIG.PACKAGES, "{0}.apk".format(apk.replace('\\', '').replace('/', '').replace(':', '').replace('*', '').replace('?', '').replace('"', '').replace('<', '').replace('>', '').replace('|', '')))
+        apk = apk.replace('\\', '').replace('/', '').replace(':', '').replace('*', '').replace('?', '').replace('"', '').replace('<', '').replace('>', '').replace('|', '')
+        lib = os.path.join(path, "{0}.apk".format(apk))
         try:
             os.remove(lib)
         except:
@@ -286,7 +287,8 @@ def install_apk(apk, url):
         Downloader().download(url, lib)
         xbmc.sleep(100)
         progress_dialog.close()
-        
+        dialog.ok(CONFIG.ADDONTITLE, '{}.apk downloaded to {}. If installation doesn\'t start by itself, navigate to that location to install the APK.'.format(apk, path))
+        logging.log('Opening {}.apk with {}'.format(os.path.join(path, apk), use_manager), level=xbmc.LOGNOTICE)
         xbmc.executebuiltin('StartAndroidActivity({},,,"content://{}")'.format(use_manager, lib))
     else:
         logging.log_notify(CONFIG.ADDONTITLE,
