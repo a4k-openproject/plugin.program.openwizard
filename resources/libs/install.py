@@ -263,9 +263,9 @@ def install_apk(apk, url):
         redownload = False
         yes = False
         if os.path.exists(lib):
-            redownload = dialog.yesno(CONFIG.ADDONTITLE, '[COLOR {}]{}.apk[/COLOR] already exists. Would you like to redownload it?'.format(CONFIG.COLOR2, apk),
-                               yeslabel="[B][COLOR springgreen]Redownload[/COLOR][/B]",
-                               nolabel="[B][COLOR red]Install[/COLOR][/B]")
+            redownload = dialog.yesno(CONFIG.ADDONTITLE, '[COLOR {}]{}.apk[/COLOR] already exists. Would you like to redownload it?'.format(CONFIG.COLOR1, apk),
+                               yeslabel="[B]Redownload[/B]",
+                               nolabel="[B]Install[/B]")
         else:
             yes = dialog.yesno(CONFIG.ADDONTITLE,
                                    "[COLOR {0}]Would you like to download and install: ".format(CONFIG.COLOR2),
@@ -273,31 +273,32 @@ def install_apk(apk, url):
                                    yeslabel="[B][COLOR springgreen]Download[/COLOR][/B]",
                                    nolabel="[B][COLOR red]Cancel[/COLOR][/B]")
                                    
-        if not yes and not redownload:
+        if not yes:
             logging.log_notify(CONFIG.ADDONTITLE,
                                '[COLOR {0}]ERROR: Install Cancelled[/COLOR]'.format(CONFIG.COLOR2))
             return
         
-        if redownload or yes:
+        if yes or redownload:
             response = tools.open_url(url, check=True)
             if not response:
                 logging.log_notify(CONFIG.ADDONTITLE,
                                    '[COLOR {0}]APK Installer: Invalid Apk Url![/COLOR]'.format(CONFIG.COLOR2))
                 return
+                
             progress_dialog.create(CONFIG.ADDONTITLE,
                           '[COLOR {0}][B]Downloading:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, apk),
                           '', 'Please Wait')
             
-            if redownload or yes:
-                try:
-                    os.remove(lib)
-                except:
-                    pass
-                Downloader().download(url, lib)
-                xbmc.sleep(100)
-                progress_dialog.close()
-            dialog.ok(CONFIG.ADDONTITLE, '[COLOR {}]{}.apk[/COLOR] downloaded to [COLOR {}]{}[/COLOR]. If installation doesn\'t start by itself, navigate to that location to install the APK.'.format(CONFIG.COLOR2, apk, CONFIG.COLOR2, path))
-            
+            try:
+                os.remove(lib)
+            except:
+                pass
+            Downloader().download(url, lib)
+            xbmc.sleep(100)
+            progress_dialog.close()
+                
+        dialog.ok(CONFIG.ADDONTITLE, '[COLOR {}]{}.apk[/COLOR] downloaded to [COLOR {}]{}[/COLOR]. If installation doesn\'t start by itself, navigate to that location to install the APK.'.format(CONFIG.COLOR1, apk, CONFIG.COLOR1, path))
+        
         logging.log('Opening {}.apk with {}'.format(lib, use_manager), level=xbmc.LOGNOTICE)
         xbmc.executebuiltin('StartAndroidActivity({},,,"content://{}")'.format(use_manager, lib))
     else:
