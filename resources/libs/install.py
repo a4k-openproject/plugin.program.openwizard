@@ -260,12 +260,13 @@ def install_apk(apk, url):
     use_manager = {0: 'com.android.documentsui', 1: custom_manager}[file_manager]
     
     if tools.platform() == 'android':
-        redownload = False
-        yes = False
+        redownload = True
+        yes = True
         if os.path.exists(lib):
             redownload = dialog.yesno(CONFIG.ADDONTITLE, '[COLOR {}]{}.apk[/COLOR] already exists. Would you like to redownload it?'.format(CONFIG.COLOR1, apk),
                                yeslabel="[B]Redownload[/B]",
                                nolabel="[B]Install[/B]")
+            yes = False
         else:
             yes = dialog.yesno(CONFIG.ADDONTITLE,
                                    "[COLOR {0}]Would you like to download and install: ".format(CONFIG.COLOR2),
@@ -273,10 +274,10 @@ def install_apk(apk, url):
                                    yeslabel="[B][COLOR springgreen]Download[/COLOR][/B]",
                                    nolabel="[B][COLOR red]Cancel[/COLOR][/B]")
                                    
-        if not yes:
-            logging.log_notify(CONFIG.ADDONTITLE,
+            if not yes:
+                logging.log_notify(CONFIG.ADDONTITLE,
                                '[COLOR {0}]ERROR: Install Cancelled[/COLOR]'.format(CONFIG.COLOR2))
-            return
+                return
         
         if yes or redownload:
             response = tools.open_url(url, check=True)
