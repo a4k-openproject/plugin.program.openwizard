@@ -287,13 +287,13 @@ def install_apk(apk, url):
                           '', 'Please Wait')
             
             if redownload or yes:
-            try:
-                os.remove(lib)
-            except:
-                pass
-            Downloader().download(url, lib)
-            xbmc.sleep(100)
-            progress_dialog.close()
+                try:
+                    os.remove(lib)
+                except:
+                    pass
+                Downloader().download(url, lib)
+                xbmc.sleep(100)
+                progress_dialog.close()
             dialog.ok(CONFIG.ADDONTITLE, '[COLOR {}]{}.apk[/COLOR] downloaded to [COLOR {}]{}[/COLOR]. If installation doesn\'t start by itself, navigate to that location to install the APK.'.format(CONFIG.COLOR2, apk, CONFIG.COLOR2, path))
             
         logging.log('Opening {}.apk with {}'.format(lib, use_manager), level=xbmc.LOGNOTICE)
