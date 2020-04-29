@@ -241,72 +241,47 @@ def show_speed_test(img):
 
 
 def show_save_data_settings():
-    class FirstRun(xbmcgui.WindowXMLDialog):
+    dialog = xbmcgui.Dialog()
+    settings = ['keeptrakt', 'keepdebrid', 'keeplogin',
+                'keepsources', 'keepprofiles', 'keepplayercore',
+                'keepguisettings', 'keepadvanced',
+                'keepfavourites', 'keeprepos', 'keepsuper',
+                'keepwhitelist', 'clearcache', 'clearpackages',
+                'clearthumbs']
+    labels = ['Keep My Trakt', 'Keep My Debrid', 'Keep My Login Info',
+              'Keep sources.xml', 'Keep profiles.xml', 'Keep playercorefactory.xml',
+              'Keep guisettings.xml', 'Keep advancedsettings.xml', 'Keep favorites.xml',
+              'Keep Installed Repositories', 'Keep Super Favorites', 'Keep Whitelist',
+              'Clear Cache on Startup', 'Clear Packages on Startup', 'Clear Thumbnails on Startup']
+    preselect = []
+    
+    for idx, setting in enumerate(settings):
+        if bool(CONFIG.get_setting(setting)):
+            preselect.append(idx)
+            
+    dialog.multiselect('Which Data Should {} Save?'.format(CONFIG.ADDONTITLE), labels, preselect)
+    
+    
+    # def onClick(self, controlid):
+            # if controlid == self.okbutton:
 
-        def __init__(self, *args, **kwargs):
-            self.whitelistcurrent = kwargs['current']
+                # for item in self.controllist:
+                    # at = self.controllist.index(item)
+                    # if self.getControl(item).isSelected():
+                        # CONFIG.set_setting(self.controlsettings[at], 'true')
+                    # else:
+                        # CONFIG.set_setting(self.controlsettings[at], 'false')
 
-        def onInit(self):
-            self.title = 101
-            self.okbutton = 201
-            self.trakt = 301
-            self.debrid = 302
-            self.login = 303
-            self.sources = 304
-            self.profiles = 305
-            self.playercore = 314
-            self.guisettings = 315
-            self.advanced = 306
-            self.favourites = 307
-            self.superfav = 308
-            self.repo = 309
-            self.whitelist = 310
-            self.cache = 311
-            self.packages = 312
-            self.thumbs = 313
-            self.show_dialog()
-            self.controllist = [self.trakt, self.debrid, self.login,
-                                    self.sources, self.profiles, self.playercore, self.guisettings, self.advanced,
-                                    self.favourites, self.superfav, self.repo,
-                                    self.whitelist, self.cache, self.packages,
-                                    self.thumbs]
-            self.controlsettings = ['keeptrakt', 'keepdebrid', 'keeplogin',
-                                    'keepsources', 'keepprofiles', 'keepplayercore', 'keepguisettings', 'keepadvanced',
-                                    'keepfavourites', 'keeprepos', 'keepsuper',
-                                    'keepwhitelist', 'clearcache', 'clearpackages',
-                                    'clearthumbs']
-            for item in self.controllist:
-                if CONFIG.get_setting(self.controlsettings[self.controllist.index(item)]) == 'true':
-                    self.getControl(item).setSelected(True)
-
-        def show_dialog(self):
-            self.getControl(self.title).setLabel(CONFIG.ADDONTITLE)
-            self.setFocus(self.getControl(self.okbutton))
-
-        def onClick(self, controlid):
-            if controlid == self.okbutton:
-
-                for item in self.controllist:
-                    at = self.controllist.index(item)
-                    if self.getControl(item).isSelected():
-                        CONFIG.set_setting(self.controlsettings[at], 'true')
-                    else:
-                        CONFIG.set_setting(self.controlsettings[at], 'false')
-
-                if self.getControl(self.whitelist).isSelected() and not self.whitelistcurrent == 'true':
-                    from resources.libs import whitelist
-                    whitelist.whitelist('edit')
+                # if self.getControl(self.whitelist).isSelected() and not self.whitelistcurrent == 'true':
+                    # from resources.libs import whitelist
+                    # whitelist.whitelist('edit')
                 
-                self.close()
+                # self.close()
 
-        def onAction(self, action):
-            if action.getId() in BACK_ACTIONS:
-                self.close()
-
-    fr = FirstRun("FirstRunSaveData.xml", CONFIG.ADDON_PATH, 'Default', current=CONFIG.KEEPWHITELIST)
-    fr.doModal()
-    CONFIG.set_setting('first_install', 'false')
-    del fr
+    # fr = FirstRun("FirstRunSaveData.xml", CONFIG.ADDON_PATH, 'Default', current=CONFIG.KEEPWHITELIST)
+    # fr.doModal()
+    # CONFIG.set_setting('first_install', 'false')
+    # del fr
 
 
 def show_build_prompt():

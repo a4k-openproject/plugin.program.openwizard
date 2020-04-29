@@ -260,6 +260,8 @@ def install_apk(apk, url):
     use_manager = {0: 'com.android.documentsui', 1: custom_manager}[file_manager]
     
     if tools.platform() == 'android':
+        redownload = False
+        yes = False
         if os.path.exists(lib):
             redownload = dialog.yesno(CONFIG.ADDONTITLE, '[COLOR {}]{}.apk[/COLOR] already exists. Would you like to redownload it?'.format(CONFIG.COLOR2, apk),
                                yeslabel="[B][COLOR springgreen]Redownload[/COLOR][/B]",
@@ -283,7 +285,7 @@ def install_apk(apk, url):
                                    '[COLOR {0}]APK Installer: Invalid Apk Url![/COLOR]'.format(CONFIG.COLOR2))
                 return
             progress_dialog.create(CONFIG.ADDONTITLE,
-                          '[COLOR {0}][B]Downloading:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, display),
+                          '[COLOR {0}][B]Downloading:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, apk),
                           '', 'Please Wait')
             
             if redownload or yes:
