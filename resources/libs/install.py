@@ -235,7 +235,15 @@ def fresh_start(install=None, over=False):
 
 
 def choose_file_manager():
-    updater = xbmcaddon.Addon('script.kodi.android.update')
+    if not xbmc.getCondVisibility('System.HasAddon(script.kodi.android.update)'):
+        from resources.libs.gui import addon_menu
+        addon_menu.install_from_kodi('script.kodi.android.update')
+    
+    try:
+        updater = xbmcaddon.Addon('script.kodi.android.update')
+    except RuntimeError as e:
+        return False
+        
     updater.setSetting('File_Manager', '1')
     
     CONFIG.open_settings('script.kodi.android.update', 0, 4, True)
@@ -256,7 +264,15 @@ def install_apk(name, url):
     apk = apk if apk.endswith('.apk') else '{}.apk'.format(apk)
     lib = os.path.join(path, apk)
     
-    updater = xbmcaddon.Addon('script.kodi.android.update')
+    if not xbmc.getCondVisibility('System.HasAddon(script.kodi.android.update)'):
+        from resources.libs.gui import addon_menu
+        addon_menu.install_from_kodi('script.kodi.android.update')
+        
+    try:
+        updater = xbmcaddon.Addon('script.kodi.android.update')
+    except RuntimeError as e:
+        return False
+        
     file_manager = int(updater.getSetting('File_Manager'))
     custom_manager = updater.getSetting('Custom_Manager')
     use_manager = {0: 'com.android.documentsui', 1: custom_manager}[file_manager]

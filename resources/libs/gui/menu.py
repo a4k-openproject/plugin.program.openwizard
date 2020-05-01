@@ -42,7 +42,15 @@ from resources.libs.common.config import CONFIG
 ###########################
 
 def check_for_fm():
-    updater = xbmcaddon.Addon('script.kodi.android.update')
+    if not xbmc.getCondVisibility('System.HasAddon(script.kodi.android.update)'):
+        from resources.libs.gui import addon_menu
+        addon_menu.install_from_kodi('script.kodi.android.update')
+    
+    try:
+        updater = xbmcaddon.Addon('script.kodi.android.update')
+    except RuntimeError as e:
+        return False
+        
     fm = int(updater.getSetting('File_Manager'))
     apps = xbmcvfs.listdir('androidapp://sources/apps/')[1]
     
@@ -54,16 +62,17 @@ def check_for_fm():
         else:
             from resources.libs import install
             install.choose_file_manager()
+            
+    return True
 
 
 def apk_menu(url=None):
     from resources.libs.common import logging
     from resources.libs.common import tools
 
-    check_for_fm()
-
-    directory.add_dir('Official Kodi APK\'s', {'mode': 'kodiapk'}, icon=CONFIG.ICONAPK, themeit=CONFIG.THEME1)
-    directory.add_separator()
+    if check_for_fm():
+        directory.add_dir('Official Kodi APK\'s', {'mode': 'kodiapk'}, icon=CONFIG.ICONAPK, themeit=CONFIG.THEME1)
+        directory.add_separator()
 
     response = tools.open_url(CONFIG.APKFILE)
     url_response = tools.open_url(url)
