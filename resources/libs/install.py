@@ -241,7 +241,7 @@ def choose_file_manager():
     CONFIG.open_settings('script.kodi.android.update', 0, 4, True)
     
 
-def install_apk(apk, url):
+def install_apk(name, url):
     from resources.libs.downloader import Downloader
     from resources.libs.common import logging
     from resources.libs.common import tools
@@ -250,9 +250,11 @@ def install_apk(apk, url):
     dialog = xbmcgui.Dialog()
     progress_dialog = xbmcgui.DialogProgress()
     
-    path = os.path.join('storage', 'emulated', '0', 'Download')
-    lib = os.path.join(path, "{0}.apk".format(apk))
-    apk = apk.replace('\\', '').replace('/', '').replace(':', '').replace('*', '').replace('?', '').replace('"', '').replace('<', '').replace('>', '').replace('|', '')
+    addon = xbmcaddon.Addon()
+    path = addon.getSetting('apk_path')
+    apk = os.path.basename(url).replace('\\', '').replace('/', '').replace(':', '').replace('*', '').replace('?', '').replace('"', '').replace('<', '').replace('>', '').replace('|', '')
+    apk = apk if apk.endswith('.apk') else '{}.apk'.format(apk)
+    lib = os.path.join(path, apk)
     
     updater = xbmcaddon.Addon('script.kodi.android.update')
     file_manager = int(updater.getSetting('File_Manager'))
@@ -263,14 +265,14 @@ def install_apk(apk, url):
         redownload = True
         yes = True
         if os.path.exists(lib):
-            redownload = dialog.yesno(CONFIG.ADDONTITLE, '[COLOR {}]{}.apk[/COLOR] already exists. Would you like to redownload it?'.format(CONFIG.COLOR1, apk),
+            redownload = dialog.yesno(CONFIG.ADDONTITLE, '[COLOR {}]{}[/COLOR] already exists. Would you like to redownload it?'.format(CONFIG.COLOR1, apk),
                                yeslabel="[B]Redownload[/B]",
                                nolabel="[B]Install[/B]")
             yes = False
         else:
             yes = dialog.yesno(CONFIG.ADDONTITLE,
                                    "[COLOR {0}]Would you like to download and install: ".format(CONFIG.COLOR2),
-                                   "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, apk),
+                                   "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name),
                                    yeslabel="[B][COLOR springgreen]Download[/COLOR][/B]",
                                    nolabel="[B][COLOR red]Cancel[/COLOR][/B]")
                                    
@@ -298,9 +300,9 @@ def install_apk(apk, url):
             xbmc.sleep(100)
             progress_dialog.close()
                 
-        dialog.ok(CONFIG.ADDONTITLE, '[COLOR {}]{}.apk[/COLOR] downloaded to [COLOR {}]{}[/COLOR]. If installation doesn\'t start by itself, navigate to that location to install the APK.'.format(CONFIG.COLOR1, apk, CONFIG.COLOR1, path))
+        dialog.ok(CONFIG.ADDONTITLE, '[COLOR {}]{}[/COLOR] downloaded to [COLOR {}]{}[/COLOR]. If installation doesn\'t start by itself, navigate to that location to install the APK.'.format(CONFIG.COLOR1, apk, CONFIG.COLOR1, path))
         
-        logging.log('Opening {}.apk with {}'.format(lib, use_manager), level=xbmc.LOGNOTICE)
+        logging.log('Opening {} with {}'.format(lib, use_manager), level=xbmc.LOGNOTICE)
         xbmc.executebuiltin('StartAndroidActivity({},,,"content://{}")'.format(use_manager, lib))
     else:
         logging.log_notify(CONFIG.ADDONTITLE,
