@@ -18,7 +18,9 @@
 ################################################################################
 
 import xbmc
+import xbmcaddon
 import xbmcgui
+import xbmcvfs
 
 import glob
 import os
@@ -232,7 +234,22 @@ def fresh_start(install=None, over=False):
             xbmc.executebuiltin('Container.Refresh()')
 
 
-def install_apk(apk, url):
+def choose_file_manager():
+    if not xbmc.getCondVisibility('System.HasAddon(script.kodi.android.update)'):
+        from resources.libs.gui import addon_menu
+        addon_menu.install_from_kodi('script.kodi.android.update')
+    
+    try:
+        updater = xbmcaddon.Addon('script.kodi.android.update')
+    except RuntimeError as e:
+        return False
+        
+    updater.setSetting('File_Manager', '1')
+    
+    CONFIG.open_settings('script.kodi.android.update', 0, 4, True)
+    
+
+def install_apk(name, url):
     from resources.libs.downloader import Downloader
     from resources.libs.common import logging
     from resources.libs.common import tools
@@ -241,40 +258,68 @@ def install_apk(apk, url):
     dialog = xbmcgui.Dialog()
     progress_dialog = xbmcgui.DialogProgress()
     
-    logging.log(apk)
-    logging.log(url)
+    addon = xbmcaddon.Addon()
+    path = addon.getSetting('apk_path')
+    apk = os.path.basename(url).replace('\\', '').replace('/', '').replace(':', '').replace('*', '').replace('?', '').replace('"', '').replace('<', '').replace('>', '').replace('|', '')
+    apk = apk if apk.endswith('.apk') else '{}.apk'.format(apk)
+    lib = os.path.join(path, apk)
+    
+    if not xbmc.getCondVisibility('System.HasAddon(script.kodi.android.update)'):
+        from resources.libs.gui import addon_menu
+        addon_menu.install_from_kodi('script.kodi.android.update')
+        
+    try:
+        updater = xbmcaddon.Addon('script.kodi.android.update')
+    except RuntimeError as e:
+        return False
+        
+    file_manager = int(updater.getSetting('File_Manager'))
+    custom_manager = updater.getSetting('Custom_Manager')
+    use_manager = {0: 'com.android.documentsui', 1: custom_manager}[file_manager]
+    
     if tools.platform() == 'android':
-        yes = dialog.yesno(CONFIG.ADDONTITLE,
-                               "[COLOR {0}]Would you like to download and install: ".format(CONFIG.COLOR2),
-                               "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, apk),
-                               yeslabel="[B][COLOR springgreen]Download[/COLOR][/B]",
-                               nolabel="[B][COLOR red]Cancel[/COLOR][/B]")
-        if not yes:
-            logging.log_notify(CONFIG.ADDONTITLE,
+        redownload = True
+        yes = True
+        if os.path.exists(lib):
+            redownload = dialog.yesno(CONFIG.ADDONTITLE, '[COLOR {}]{}[/COLOR] already exists. Would you like to redownload it?'.format(CONFIG.COLOR1, apk),
+                               yeslabel="[B]Redownload[/B]",
+                               nolabel="[B]Install[/B]")
+            yes = False
+        else:
+            yes = dialog.yesno(CONFIG.ADDONTITLE,
+                                   "[COLOR {0}]Would you like to download and install: ".format(CONFIG.COLOR2),
+                                   "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name),
+                                   yeslabel="[B][COLOR springgreen]Download[/COLOR][/B]",
+                                   nolabel="[B][COLOR red]Cancel[/COLOR][/B]")
+                                   
+            if not yes:
+                logging.log_notify(CONFIG.ADDONTITLE,
                                '[COLOR {0}]ERROR: Install Cancelled[/COLOR]'.format(CONFIG.COLOR2))
-            return
-        display = apk
-        if not os.path.exists(CONFIG.PACKAGES):
-            os.makedirs(CONFIG.PACKAGES)
-
-        response = tools.open_url(url, check=True)
-        if not response:
-            logging.log_notify(CONFIG.ADDONTITLE,
-                               '[COLOR {0}]APK Installer: Invalid Apk Url![/COLOR]'.format(CONFIG.COLOR2))
-            return
-        progress_dialog.create(CONFIG.ADDONTITLE,
-                      '[COLOR {0}][B]Downloading:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, display),
-                      '', 'Please Wait')
-        lib = os.path.join(CONFIG.PACKAGES, "{0}.apk".format(apk.replace('\\', '').replace('/', '').replace(':', '').replace('*', '').replace('?', '').replace('"', '').replace('<', '').replace('>', '').replace('|', '')))
-        try:
-            os.remove(lib)
-        except:
-            pass
-        Downloader().download(url, lib)
-        xbmc.sleep(100)
-        progress_dialog.close()
-        window.show_apk_warning(apk)
-        xbmc.executebuiltin('StartAndroidActivity("","android.intent.action.VIEW","application/vnd.android.package-archive","file:{0}")'.format(lib))
+                return
+        
+        if yes or redownload:
+            response = tools.open_url(url, check=True)
+            if not response:
+                logging.log_notify(CONFIG.ADDONTITLE,
+                                   '[COLOR {0}]APK Installer: Invalid Apk Url![/COLOR]'.format(CONFIG.COLOR2))
+                return
+                
+            progress_dialog.create(CONFIG.ADDONTITLE,
+                          '[COLOR {0}][B]Downloading:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, apk),
+                          '', 'Please Wait')
+            
+            try:
+                os.remove(lib)
+            except:
+                pass
+            Downloader().download(url, lib)
+            xbmc.sleep(100)
+            progress_dialog.close()
+                
+        dialog.ok(CONFIG.ADDONTITLE, '[COLOR {}]{}[/COLOR] downloaded to [COLOR {}]{}[/COLOR]. If installation doesn\'t start by itself, navigate to that location to install the APK.'.format(CONFIG.COLOR1, apk, CONFIG.COLOR1, path))
+        
+        logging.log('Opening {} with {}'.format(lib, use_manager), level=xbmc.LOGNOTICE)
+        xbmc.executebuiltin('StartAndroidActivity({},,,"content://{}")'.format(use_manager, lib))
     else:
         logging.log_notify(CONFIG.ADDONTITLE,
                            '[COLOR {0}]ERROR: None Android Device[/COLOR]'.format(CONFIG.COLOR2))

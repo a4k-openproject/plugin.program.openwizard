@@ -69,7 +69,7 @@ class MainMenu:
         directory.add_separator()
         directory.add_dir('Builds', {'mode': 'builds'}, icon=CONFIG.ICONBUILDS, themeit=CONFIG.THEME1)
         directory.add_dir('Maintenance', {'mode': 'maint'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME1)
-        if (tools.platform() == 'android' or CONFIG.DEVELOPER == 'true') and CONFIG.KODIV < 18:
+        if (tools.platform() == 'android' or CONFIG.DEVELOPER == 'true'):
             directory.add_dir('APK Installer', {'mode': 'apk'}, icon=CONFIG.ICONAPK, themeit=CONFIG.THEME1)
         if tools.open_url(CONFIG.ADDONFILE, check=True) or os.path.exists(os.path.join(CONFIG.ADDON_PATH, 'resources', 'text', 'addons.json')):
             directory.add_dir('Addon Installer', {'mode': 'addons'}, icon=CONFIG.ICONADDONS, themeit=CONFIG.THEME1)

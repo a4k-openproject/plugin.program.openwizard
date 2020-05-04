@@ -20,6 +20,7 @@
 import xbmc
 import xbmcaddon
 import xbmcgui
+import xbmcvfs
 
 import glob
 import os
@@ -27,12 +28,10 @@ import re
 
 try:  # Python 3
     from urllib.parse import quote_plus
-    from urllib.parse import urljoin
     from urllib.request import urlretrieve
 except ImportError:  # Python 2
     from urllib import quote_plus
     from urllib import urlretrieve
-    from urlparse import urljoin
 
 from resources.libs.common import directory
 from resources.libs.common.config import CONFIG
@@ -42,119 +41,44 @@ from resources.libs.common.config import CONFIG
 #      Menu Items         #
 ###########################
 
-
-# commented lines in this method are for x64 apks
-def apk_scraper():
-    from resources.libs.common import logging
-    from resources.libs.common import tools
-
-    kodiurl1 = 'https://mirrors.kodi.tv/releases/android/arm/'
-    # kodiurl2 = 'https://mirrors.kodi.tv/releases/android/arm/old/'
-    # kodiurl3 = 'https://mirrors.kodi.tv/releases/android/arm64-v8a/'
-    # kodiurl4 = 'https://mirrors.kodi.tv/releases/android/arm64-v8a/old/'
-
-    response = tools.open_url(kodiurl1)
-
-    url1 = response.text.replace('\n', '').replace('\r', '').replace('\t', '')
-    # url2 = tools.open_url(kodiurl2).replace('\n', '').replace('\r', '').replace('\t', '')
-    # url3 = tools.open_url(kodiurl3).replace('\n', '').replace('\r', '').replace('\t', '')
-    # url4 = tools.open_url(kodiurl4).replace('\n', '').replace('\r', '').replace('\t', '')
-
-    x = 0
-    match1 = re.compile('<tr><td><a href="(.+?)".+?>(.+?)</a></td><td>(.+?)</td><td>(.+?)</td></tr>').findall(url1)
-    # match2 = re.compile('<tr><td><a href="(.+?)".+?>(.+?)</a></td><td>(.+?)</td><td>(.+?)</td></tr>').findall(url2)
-    # match3 = re.compile('<tr><td><a href="(.+?)".+?>(.+?)</a></td><td>(.+?)</td><td>(.+?)</td></tr>').findall(url3)
-    # match4 = re.compile('<tr><td><a href="(.+?)".+?>(.+?)</a></td><td>(.+?)</td><td>(.+?)</td></tr>').findall(url4)
-
-    directory.add_file("Official Kodi Apk\'s", themeit=CONFIG.THEME1)
-    rc = False
-    for url, name, size, date in match1:
-        if url in ['../', 'old/']:
-            continue
-        if not url.endswith('.apk'):
-            continue
-        if not url.find('_') == -1 and rc:
-            continue
-        try:
-            tempname = name.split('-')
-            if not url.find('_') == -1:
-                rc = True
-                name2, v2 = tempname[2].split('_')
-            else:
-                name2 = tempname[2]
-                v2 = ''
-            title = "[COLOR {0}]{1} v{2}{3} {4}[/COLOR] [COLOR {5}]{6}[/COLOR] [COLOR {7}]{8}[/COLOR]".format(CONFIG.COLOR1, tempname[0].title(), tempname[1], v2.upper(), name2, CONFIG.COLOR2, size.replace(' ', ''), CONFIG.COLOR1, date)
-            download = urljoin(kodiurl1, url)
-            directory.add_file(title, {'mode': 'apkinstall', 'name': "{0} v{1}{2} {3}".format(tempname[0].title(), tempname[1], v2.upper(), name2), 'url': download})
-            x += 1
-        except Exception as e:
-            logging.log("Error on APK scraping: {0}".format(str(e)))
-
-    # for url, name, size, date in match2:
-    #     if url in ['../', 'old/']:
-    #         continue
-    #     if not url.endswith('.apk'):
-    #         continue
-    #     if not url.find('_') == -1:
-    #         continue
-    #     try:
-    #         tempname = name.split('-')
-    #         title = "[COLOR {0}]{1} v{2} {3}[/COLOR] [COLOR {4}]{5}[/COLOR] [COLOR {6}]{7}[/COLOR]".format(CONFIG.COLOR1, tempname[0].title(), tempname[1], tempname[2], CONFIG.COLOR2, size.replace(' ', ''), CONFIG.COLOR1, date)
-    #         download = urljoin(kodiurl2, url)
-    #         directory.add_file(title, {'mode': 'apkinstall', 'name': "{0} v{1} {2}".format(tempname[0].title(), tempname[1], tempname[2]), 'url': download})
-    #         x += 1
-    #     except Exception as e:
-    #         logging.log("Error on APK  scraping: {0}".format(str(e)))
-
-    # for url, name, size, date in match3:
-    #     if url in ['../', 'old/']:
-    #         continue
-    #     if not url.endswith('.apk'):
-    #         continue
-    #     if not url.find('_') == -1:
-    #         continue
-    #     try:
-    #         tempname = name.split('-')
-    #         title = "[COLOR {0}]{1} v{2} {3}[/COLOR] [COLOR {4}]{5}[/COLOR] [COLOR {6}]{7}[/COLOR]".format(CONFIG.COLOR1, tempname[0].title(), tempname[1], tempname[2], CONFIG.COLOR2, size.replace(' ', ''), CONFIG.COLOR1, date)
-    #         download = urljoin(kodiurl2, url)
-    #         directory.add_file(title, 'apkinstall', "{0} v{1} {2}".format(tempname[0].title(), tempname[1], tempname[2]), download)
-    #         x += 1
-    #     except Exception as e:
-    #         logging.log("Error on APK  scraping: {0}".format(str(e)))
-    #
-    # for url, name, size, date in match4:
-    #     if url in ['../', 'old/']:
-    #         continue
-    #     if not url.endswith('.apk'):
-    #         continue
-    #     if not url.find('_') == -1:
-    #         continue
-    #     try:
-    #         tempname = name.split('-')
-    #         title = "[COLOR {0}]{1} v{2} {3}[/COLOR] [COLOR {4}]{5}[/COLOR] [COLOR {6}]{7}[/COLOR]".format(CONFIG.COLOR1, tempname[0].title(), tempname[1], tempname[2], CONFIG.COLOR2, size.replace(' ', ''), CONFIG.COLOR1, date)
-    #         download = urljoin(kodiurl2, url)
-    #         directory.add_file(title, 'apkinstall', "{0} v{1} {2}".format(tempname[0].title(), tempname[1], tempname[2]), download)
-    #         x += 1
-    #     except Exception as e:
-    #         logging.log("Error on APK  scraping: {0}".format(str(e)))
-
-    if x == 0:
-        directory.add_file("Error Kodi Scraper Is Currently Down.")
+def check_for_fm():
+    if not xbmc.getCondVisibility('System.HasAddon(script.kodi.android.update)'):
+        from resources.libs.gui import addon_menu
+        addon_menu.install_from_kodi('script.kodi.android.update')
+    
+    try:
+        updater = xbmcaddon.Addon('script.kodi.android.update')
+    except RuntimeError as e:
+        return False
+        
+    fm = int(updater.getSetting('File_Manager'))
+    apps = xbmcvfs.listdir('androidapp://sources/apps/')[1]
+    
+    if fm == 0 and 'com.android.documentsui' not in apps:
+        dialog = xbmcgui.Dialog()
+        choose = dialog.yesno(CONFIG.ADDONTITLE, 'It appears your device has no default file manager. Would you like to set one now?')
+        if not choose:
+            dialog.ok(CONFIG.ADDONTITLE, 'If an APK downloads, but doesn\'t open for installation, try changing your file manager in {}\'s "Install Settings".'.format(CONFIG.ADDONTITLE))
+        else:
+            from resources.libs import install
+            install.choose_file_manager()
+            
+    return True
 
 
 def apk_menu(url=None):
     from resources.libs.common import logging
     from resources.libs.common import tools
 
-    if not url:
-        directory.add_dir('Official Kodi APK\'s', {'mode': 'apkscrape', 'name': 'kodi'}, icon=CONFIG.ICONAPK, themeit=CONFIG.THEME1)
+    if check_for_fm():
+        directory.add_dir('Official Kodi APK\'s', {'mode': 'kodiapk'}, icon=CONFIG.ICONAPK, themeit=CONFIG.THEME1)
         directory.add_separator()
 
     response = tools.open_url(CONFIG.APKFILE)
     url_response = tools.open_url(url)
 
     if response:
-        TEMPAPKFILE = url_response.text if url else response.text
+        TEMPAPKFILE = tools.clean_text(url_response.text if url else response.text)
 
         if TEMPAPKFILE:
             match = re.compile('name="(.+?)".+?ection="(.+?)".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"').findall(TEMPAPKFILE)
@@ -177,7 +101,6 @@ def apk_menu(url=None):
             logging.log("[APK Menu] ERROR: URL for apk list not working.", level=xbmc.LOGERROR)
             directory.add_file('Url for txt file not valid', themeit=CONFIG.THEME3)
             directory.add_file('{0}'.format(CONFIG.APKFILE), themeit=CONFIG.THEME3)
-        return
     else:
         logging.log("[APK Menu] No APK list added.")
 

@@ -461,12 +461,17 @@ class Backup:
         backup_zip = os.path.join(backup_path, zipname)
         temp_txt = os.path.join(CONFIG.PACKAGES, txtname)
         info_txt = os.path.join(backup_path, txtname)
+        
+        _skin_root = xbmc.translatePath('special://skin/')
+        _skin_id = os.path.basename(os.path.normpath(_skin_root))
+        _skin = xbmcaddon.Addon(_skin_id)
+        _skin_name = xbmc.translatePath(_skin.getAddonInfo('name'))
 
         with open(temp_txt, 'w') as f:
             f.write('name="{0}"\n'.format(name))
             f.write('extracted="{0}"\n'.format(extractsize))
             f.write('zipsize="{0}"\n'.format(os.path.getsize(backup_zip)))
-            f.write('skin="{0}"\n'.format(CONFIG.SKIN))
+            f.write('skin="{0}"\n'.format(_skin_name))
             f.write('created="{0}"\n'.format(tools.get_date(formatted=True)))
             f.write('programs="{0}"\n'.format(', '.join(programs)) if len(programs) > 0 else 'programs="none"\n')
             f.write('video="{0}"\n'.format(', '.join(video)) if len(video) > 0 else 'video="none"\n')
