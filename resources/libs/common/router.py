@@ -10,6 +10,7 @@ except ImportError:  # Python 2
 
 from resources.libs.common.config import CONFIG
 from resources.libs.common import logging
+from resources.libs.common import tools
 from resources.libs.gui import menu
 
 advanced_settings_mode = 'advanced_settings'
@@ -20,6 +21,7 @@ class Router:
     def __init__(self):
         self.route = None
         self.params = {}
+        tools.ensure_folders()
 
     def _log_params(self, paramstring):
         _url = sys.argv[0]
