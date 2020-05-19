@@ -378,7 +378,7 @@ else:
 # AUTO UPDATE WIZARD
 if CONFIG.AUTOUPDATE == 'Yes':
     logging.log("[Auto Update Wizard] Started", level=xbmc.LOGNOTICE)
-    update.wizard_update('startup')
+    update.wizard_update()
 else:
     logging.log("[Auto Update Wizard] Not Enabled", level=xbmc.LOGNOTICE)
 
