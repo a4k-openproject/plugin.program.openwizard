@@ -78,9 +78,6 @@ def wizard_update():
             else:
                 logging.log("[Auto Update Wizard] Install New Wizard Ignored: {0}".format(ver))
         else:
-            if not startup:
-                logging.log_notify(CONFIG.ADDONTITLE,
-                                   "[COLOR {0}]No New Version of Wizard[/COLOR]".format(CONFIG.COLOR2))
             logging.log("[Auto Update Wizard] No New Version v{0}".format(ver))
     else:
         logging.log("[Auto Update Wizard] Url for wizard file not valid: {0}".format(CONFIG.BUILDFILE))
