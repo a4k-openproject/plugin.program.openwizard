@@ -452,7 +452,7 @@ def fix_update():
 
 
 def grab_addons(path):
-    zfile = zipfile.ZipFile(path)
+    zfile = zipfile.ZipFile(path, allowZip64=True)
     addonlist = []
     for item in zfile.infolist():
         if str(item.filename).find('addon.xml') == -1:
