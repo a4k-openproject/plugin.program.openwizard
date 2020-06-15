@@ -167,12 +167,12 @@ def upload_log():
 
 def get_files():
     logfiles = []
-    log = grab_log(file=True)
+    kodilog = grab_log(file=True)
     old = grab_log(file=True, old=True)
     wizard = False if not os.path.exists(CONFIG.WIZLOG) else CONFIG.WIZLOG
-    if log:
-        if os.path.exists(log):
-            logfiles.append(['log', log])
+    if kodilog:
+        if os.path.exists(kodilog):
+            logfiles.append(['log', kodilog])
         else:
             show_result("No log file found")
     else:
