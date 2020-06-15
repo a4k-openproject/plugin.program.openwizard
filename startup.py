@@ -139,7 +139,7 @@ def installed_build_check():
                                                                                                     CONFIG.EXTERROR),
                     level=xbmc.LOGNOTICE)
         yes = dialog.yesno(CONFIG.ADDONTITLE,
-                           '[COLOR {0}]{1}[/COLOR] [COLOR {2}]was not installed correctly!'.format(CONFIG.COLOR1,
+                           '[COLOR {0}]{2}[/COLOR] [COLOR {1}]was not installed correctly![/COLOR]'.format(CONFIG.COLOR1,
                                                                                                    CONFIG.COLOR2,
                                                                                                    CONFIG.BUILDNAME),
                            ('Installed: [COLOR {0}]{1}[/COLOR] / '
