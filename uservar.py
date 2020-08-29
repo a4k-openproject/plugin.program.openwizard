@@ -17,7 +17,7 @@ ADDONTITLE = '[COLOR purple][B]Varadero[/B][/COLOR]Wizard'
 BUILDERNAME = 'OpenWizard'
 EXCLUDES = [ADDON_ID, 'repository.openwizard']
 # Text File with build info in it.
-BUILDFILE = 'http://'
+BUILDFILE = 'https://raw.githubusercontent.com/nikisb/plugin.program.openwizard/test/builds/builds.txt'
 # How often you would like it to check for build updates in days
 # 0 being every startup of kodi
 UPDATECHECK = 0
