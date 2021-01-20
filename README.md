@@ -1,3 +1,6 @@
+Small fixes i have found to port to v19. I am no coder. Anyone else with some knowledge willing to help appreciated 
+
+
 # plugin.program.openwizard
 OpenWizard
 
