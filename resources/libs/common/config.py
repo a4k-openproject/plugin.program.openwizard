@@ -128,9 +128,6 @@ class Config:
                               'commoncache.db', 'access.log', 'trakt.db',
                               'video_cache.db', '.gitignore', '.DS_Store',
                               'Textures13.db', 'Thumbs.db']
-        self.EXCLUDE_DIRS = [self.ADDON_ID, 'cache', 'system', 'packages',
-                             'Thumbnails', 'peripheral_data', 'temp',
-                             'My_Builds', 'library', 'cdm', 'archive_cache']
         self.XMLS = ['advancedsettings.xml', 'sources.xml', 'favourites.xml',
                      'profiles.xml', 'playercorefactory.xml', 'guisettings.xml']
         self.MODURL = 'http://tribeca.tvaddons.ag/tools/maintenance/modules/'
@@ -181,6 +178,19 @@ class Config:
         self.PROFILES = os.path.join(self.USERDATA, 'profiles.xml')
         self.WIZLOG = os.path.join(self.PLUGIN_DATA, 'wizard.log')
         self.WHITELIST = os.path.join(self.PLUGIN_DATA, 'whitelist.txt')
+        
+        self.EXCLUDE_DIRS = [self.ADDON_PATH,
+                             os.path.join(self.HOME, 'cache'),
+                             os.path.join(self.HOME, 'system'),
+                             os.path.join(self.HOME, 'temp'),
+                             os.path.join(self.HOME, 'My_Builds'),
+                             os.path.join(self.HOME, 'cdm'),
+                             os.path.join(self.ADDONS, 'temp'),
+                             os.path.join(self.ADDONS, 'packages'),
+                             os.path.join(self.ADDONS, 'archive_cache'),
+                             os.path.join(self.USERDATA, 'Thumbnails'),
+                             os.path.join(self.USERDATA, 'peripheral_data'),
+                             os.path.join(self.USERDATA, 'library')]
 
     def init_settings(self):
         self.FIRSTRUN = self.get_setting('first_install')
