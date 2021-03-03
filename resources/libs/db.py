@@ -130,8 +130,7 @@ def force_check_updates(auto=False, over=False):
                 
                 if lastcheck:
                     checked_time = lastcheck.fetchone()[0]
-                    if checked_time:
-                        checked_time = time.mktime(time.strptime(checked_time, '%Y-%m-%d %H:%M:%S'))
+                    checked_time = time.mktime(time.strptime(checked_time, '%Y-%m-%d %H:%M:%S')) if checked_time else 0
                     
                 xbmc.sleep(1000)
             checked_time = 0
