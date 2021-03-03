@@ -33,7 +33,7 @@ from resources.libs.common import tools
 
 def all(_in, _out, ignore=None, title=None):
     progress_dialog = xbmcgui.DialogProgress()
-    progress_dialog.create(CONFIG.ADDONTITLE, "Extracting Content", '', '')
+    progress_dialog.create(CONFIG.ADDONTITLE, "Extracting Content")
     
     return all_with_progress(_in, _out, progress_dialog, ignore, title)
 
@@ -147,7 +147,7 @@ def all_with_progress(_in, _out, dp, ignore, title):
                 error += errormsg
                 logging.log('Error Extracting: {0}({1})'.format(item.filename, str(e)), level=xbmc.LOGERROR)
                 pass
-        dp.update(prog, line1, line2, line3)
+        dp.update(prog, line1 + '\n' + line2 + '\n' + line3)
         if dp.iscanceled():
             break
             

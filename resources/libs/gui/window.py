@@ -334,7 +334,7 @@ def show_build_prompt():
 
         def do_build_menu(self):
             logging.log("[Current Build Check] [User Selected: Open Build Menu] [Next Check: {0}]".format(CONFIG.BUILDCHECK),
-                        level=xbmc.LOGNOTICE)
+                        level=xbmc.LOGINFO)
             CONFIG.set_setting('nextbuildcheck', tools.get_date(days=CONFIG.UPDATECHECK, formatted=True))
             CONFIG.set_setting('installed', 'ignored')
             
@@ -346,7 +346,7 @@ def show_build_prompt():
 
         def do_ignore(self):
             logging.log("[Current Build Check] [User Selected: Ignore Build Menu] [Next Check: {0}]".format(CONFIG.BUILDCHECK),
-                        level=xbmc.LOGNOTICE)
+                        level=xbmc.LOGINFO)
             CONFIG.set_setting('nextbuildcheck', tools.get_date(days=CONFIG.UPDATECHECK, formatted=True))
             CONFIG.set_setting('installed', 'ignored')
             

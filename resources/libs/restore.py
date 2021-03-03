@@ -91,10 +91,7 @@ class Restore:
     def _prompt_for_wipe(self):
         # Should we wipe first?
         wipe = self.dialog.yesno(CONFIG.ADDONTITLE,
-                                 "[COLOR {0}]Do you wish to restore your".format(CONFIG.COLOR2),
-                                 "Kodi configuration to default settings",
-                                 "Before installing the {0} backup?[/COLOR]".format(
-                                     'local' if not self.external else 'external'),
+                                 "[COLOR {0}]Do you wish to restore your".format(CONFIG.COLOR2) + '\n' + "Kodi configuration to default settings" + '\n' + "Before installing the {0} backup?[/COLOR]".format('local' if not self.external else 'external'),
                                  nolabel='[B][COLOR red]No[/COLOR][/B]',
                                  yeslabel='[B][COLOR springgreen]Yes[/COLOR][/B]')
 
@@ -116,11 +113,10 @@ class Restore:
             except zipfile.BadZipFile as e:
                 from resources.libs.common import logging
                 logging.log(e, level=xbmc.LOGERROR)
-                self.progress_dialog.update(0, '[COLOR {0}]Unable to read zip file from current location.'.format(
-                    CONFIG.COLOR2), 'Copying file to packages')
+                self.progress_dialog.update(0, '[COLOR {0}]Unable to read zip file from current location.'.format(CONFIG.COLOR2) + '\n' + 'Copying file to packages')
                 xbmcvfs.copy(file, packages)
-                file = xbmc.translatePath(packages)
-                self.progress_dialog.update(0, '', 'Copying file to packages: Complete')
+                file = xbmcvfs.translatePath(packages)
+                self.progress_dialog.update(0, '\n' + 'Copying file to packages: Complete')
                 zipfile.ZipFile(file, 'r', allowZip64=True)
         else:
             from resources.libs.downloader import Downloader
@@ -128,7 +124,7 @@ class Restore:
 
         self._prompt_for_wipe()
 
-        self.progress_dialog.update(0, 'Installing External Backup', '', 'Please Wait')
+        self.progress_dialog.update(0, 'Installing External Backup' + '\n' + 'Please Wait')
         percent, errors, error = extract.all(file, loc)
         self._view_errors(percent, errors, error, file)
 
@@ -150,14 +146,7 @@ class Restore:
 
     def _view_errors(self, percent, errors, error, file):
         if int(errors) >= 1:
-            if self.dialog.yesno(CONFIG.ADDONTITLE,
-                                 '[COLOR {0}][COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, file),
-                                 'Completed: [COLOR {0}]{1}{2}[/COLOR] [Errors: [COLOR {3}]{4}[/COLOR]]'.format(
-                                     CONFIG.COLOR1,
-                                     percent, '%',
-                                     CONFIG.COLOR1,
-                                     errors),
-                                 'Would you like to view the errors?[/COLOR]',
+            if self.dialog.yesno(CONFIG.ADDONTITLE, '[COLOR {0}][COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, file) + '\n' + 'Completed: [COLOR {0}]{1}{2}[/COLOR] [Errors: [COLOR {3}]{4}[/COLOR]]'.format(CONFIG.COLOR1, percent, '%',CONFIG.COLOR1, errors) + '\n' + 'Would you like to view the errors?[/COLOR]',
                                  nolabel='[B][COLOR red]No Thanks[/COLOR][/B]',
                                  yeslabel='[B][COLOR springgreen]View Errors[/COLOR][/B]'):
 
@@ -190,8 +179,7 @@ class Restore:
                 return
 
         skin.skin_to_default("Restore")
-        self.progress_dialog.create(CONFIG.ADDONTITLE, '[COLOR {0}]Installing {1} Backup'.format(
-            CONFIG.COLOR2, external), '', 'Please Wait[/COLOR]')
+        self.progress_dialog.create(CONFIG.ADDONTITLE, '[COLOR {0}]Installing {1} Backup'.format(CONFIG.COLOR2, external) + '\n' + 'Please Wait[/COLOR]')
 
         self._from_file(file, location)
 

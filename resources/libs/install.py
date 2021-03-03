@@ -66,8 +66,7 @@ def wipe():
     
     update.addon_updates('set')
     xbmcPath = os.path.abspath(CONFIG.HOME)
-    progress_dialog.create(CONFIG.ADDONTITLE,
-                  "[COLOR {0}]Calculating files and folders".format(CONFIG.COLOR2), '', 'Please Wait![/COLOR]')
+    progress_dialog.create(CONFIG.ADDONTITLE, "[COLOR {0}]Calculating files and folders".format(CONFIG.COLOR2) + '\n' + '\n' + 'Please Wait![/COLOR]')
     total_files = sum([len(files) for r, d, files in os.walk(xbmcPath)])
     del_file = 0
     progress_dialog.update(0, "[COLOR {0}]Gathering Excludes list.[/COLOR]".format(CONFIG.COLOR2))
@@ -138,8 +137,7 @@ def wipe():
                         logging.log("-> {0}".format(str(e)))
                         db.purge_db_file(os.path.join(root, name))
             else:
-                progress_dialog.update(int(tools.percentage(del_file, total_files)), '',
-                              '[COLOR {0}]File: [/COLOR][COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name), '')
+                progress_dialog.update(int(tools.percentage(del_file, total_files)), '\n' + '[COLOR {0}]File: [/COLOR][COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name))
                 try:
                     os.remove(os.path.join(root, name))
                 except Exception as e:
@@ -153,8 +151,7 @@ def wipe():
     for root, dirs, files in os.walk(xbmcPath, topdown=True):
         dirs[:] = [d for d in dirs if d not in exclude_dirs]
         for name in dirs:
-            progress_dialog.update(100, '',
-                          'Cleaning Up Empty Folder: [COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, name), '')
+            progress_dialog.update(100, '\n' + 'Cleaning Up Empty Folder: [COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, name))
             if name not in ["Database", "userdata", "temp", "addons", "addon_data"]:
                 shutil.rmtree(os.path.join(root, name), ignore_errors=True, onerror=None)
         if progress_dialog.iscanceled():
@@ -206,11 +203,7 @@ def fresh_start(install=None, over=False):
                                        nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
                                        yeslabel='[B][COLOR springgreen]Continue[/COLOR][/B]')
     else:
-        yes_pressed = dialog.yesno(CONFIG.ADDONTITLE,
-                                       "[COLOR {0}]Do you wish to restore your".format(CONFIG.COLOR2),
-                                       "Kodi configuration to default settings?[/COLOR]",
-                                       nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]',
-                                       yeslabel='[B][COLOR springgreen]Continue[/COLOR][/B]')
+        yes_pressed = dialog.yesno(CONFIG.ADDONTITLE, "[COLOR {0}]Do you wish to restore your".format(CONFIG.COLOR2) +' \n' + "Kodi configuration to default settings?[/COLOR]", nolabel='[B][COLOR red]No, Cancel[/COLOR][/B]', yeslabel='[B][COLOR springgreen]Continue[/COLOR][/B]')
     if yes_pressed:
         wipe()
         

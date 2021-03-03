@@ -73,8 +73,7 @@ def switch_to_skin(goto, title="Error"):
     result = _swap_skins(goto)
 
     if result:
-        logging.log_notify(CONFIG.ADDONTITLE,
-                           '[COLOR {0}]{1}: Skin Swap Success![/COLOR]'.format(CONFIG.COLOR2, title))
+        logging.log('[COLOR {0}]{1}: Skin Swap Success![/COLOR]'.format(CONFIG.COLOR2, title))
     else:
         logging.log_notify(CONFIG.ADDONTITLE,
                            '[COLOR {0}]{1}: Skin Swap Failed![/COLOR]'.format(CONFIG.COLOR2, title))
@@ -88,8 +87,7 @@ def skin_to_default(title):
         return switch_to_skin(skin, title)
     else:
         from resources.libs.common import logging
-        logging.log_notify(CONFIG.ADDONTITLE,
-                           '[COLOR {0}]{1}: Skipping Skin Swap[/COLOR]'.format(CONFIG.COLOR2, title))
+        logging.log('[COLOR {0}]{1}: Skipping Skin Swap[/COLOR]'.format(CONFIG.COLOR2, title))
         return False
 
 

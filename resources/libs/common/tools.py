@@ -36,7 +36,7 @@ else:
     import codecs
     import warnings
 
-    def open(file, mode='r', buffering=-1, encoding=None, errors=None, newline=None, closefd=True, opener=None):
+    def open(file, mode='r', buffering=-1, encoding='utf-8', errors=None, newline=None, closefd=True, opener=None):
         if newline is not None:
             warnings.warn('newline is not supported in py2')
         if not closefd:
@@ -65,14 +65,20 @@ from resources.libs.common.config import CONFIG
 
 
 def read_from_file(file, mode='r'):
-    f = open(file, mode)
+    f = open(file, mode, encoding='utf-8')
+    a = f.read()
+    f.close()
+    return a
+
+def read_from_file_old(file, mode='r'):
+    f = open(file, mode, encoding=None)
     a = f.read()
     f.close()
     return a
 
 
 def write_to_file(file, content, mode='w'):
-    f = open(file, mode)
+    f = open(file, mode, encoding='utf-8')
     f.write(content)
     f.close()
 
@@ -444,19 +450,13 @@ def convert_special(url, over=False):
     
     total = file_count(url)
     start = 0
-    progress_dialog.create(CONFIG.ADDONTITLE,
-                  "[COLOR {0}]Changing Physical Paths To Special".format(CONFIG.COLOR2),
-                  "",
-                  "Please Wait[/COLOR]")
+    progress_dialog.create(CONFIG.ADDONTITLE, "[COLOR {0}]Changing Physical Paths To Special".format(CONFIG.COLOR2) + "\n" + "Please Wait[/COLOR]")
     for root, dirs, files in os.walk(url):
         for file in files:
             start += 1
             perc = int(percentage(start, total))
             if file.endswith(".xml") or file.endswith(".hash") or file.endswith("properies"):
-                progress_dialog.update(perc,
-                              "[COLOR {0}]Scanning: [COLOR {1}]{2}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, root.replace(CONFIG.HOME, '')),
-                              "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, file),
-                              "Please Wait[/COLOR]")
+                progress_dialog.update(perc, "[COLOR {0}]Scanning: [COLOR {1}]{2}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, root.replace(CONFIG.HOME, '')) + '\n' + "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, file) + '\n' + "Please Wait[/COLOR]")
                 a = read_from_file(os.path.join(root, file))
                 encodedpath = quote(CONFIG.HOME)
                 encodedpath2 = quote(CONFIG.HOME).replace('%3A', '%3a').replace('%5C', '%5c')
@@ -581,8 +581,7 @@ def ascii_check(use=None, over=False):
         for file in files:
             prog.append(file)
             prog2 = int(len(prog) / float(items) * 100)
-            progress_dialog.update(prog2, "[COLOR {0}]Checking for non ASCII files".format(CONFIG.COLOR2),
-                          '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, file), 'Please Wait[/COLOR]')
+            progress_dialog.update(prog2, "[COLOR {0}]Checking for non ASCII files".format(CONFIG.COLOR2) + '\n' + '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, file) + '\n' + 'Please Wait[/COLOR]')
             try:
                 file.encode('ascii')
             except UnicodeEncodeError:

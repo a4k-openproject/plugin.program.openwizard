@@ -45,13 +45,13 @@ def import_save_data():
         logging.log_notify(CONFIG.ADDONTITLE,
                            "[COLOR {0}]Import Data Error![/COLOR]".format(CONFIG.COLOR2))
         return
-    source = xbmc.translatePath(source)
-    tempfile = xbmc.translatePath(os.path.join(CONFIG.MYBUILDS, 'SaveData.zip'))
+    source = xbmcvfs.translatePath(source)
+    tempfile = xbmcvfs.translatePath(os.path.join(CONFIG.MYBUILDS, 'SaveData.zip'))
     if not tempfile == source:
         goto = xbmcvfs.copy(source, tempfile)
 
     from resources.libs import extract
-    if not extract.all(xbmc.translatePath(tempfile), TEMP):
+    if not extract.all(xbmcvfs.translatePath(tempfile), TEMP):
         logging.log("Error trying to extract the zip file!")
         logging.log_notify(CONFIG.ADDONTITLE,
                            "[COLOR {0}]Import Data Error![/COLOR]".format(CONFIG.COLOR2))
@@ -197,7 +197,7 @@ def export_save_data():
     debridit.debrid_it('update', 'all')
     source = dialog.browse(3, '[COLOR {0}]Select where you wish to export the SaveData zip?[/COLOR]'.format(CONFIG.COLOR2),
                                'files', '', False, True, CONFIG.HOME)
-    source = xbmc.translatePath(source)
+    source = xbmcvfs.translatePath(source)
     tempzip = os.path.join(source, 'SaveData.zip')
     superfold = os.path.join(CONFIG.ADDON_DATA, 'plugin.program.super.favourites')
     zipf = zipfile.ZipFile(tempzip, mode='w', allowZip64=True)

@@ -21,28 +21,28 @@
             </control>
             <control type="label" id="102">
                 <description>header label</description>
-                <posx>0</posx>
-                <posy>20</posy>
+                <posx>60</posx>
+                <posy>35</posy>
                 <width>950</width>
                 <height>40</height>
-                <font>font13</font>
+                <font>font15</font>
                 <label></label>
                 <align>center</align>
                 <aligny>center</aligny>
             </control>
             <control type="image" id="103">
-                <left>20</left>
-                <top>70</top>
-                <width>300</width>
-                <height>300</height>
+                <left>10</left>
+                <top>20</top>
+                <width>350</width>
+                <height>350</height>
                 <aspectratio aligny="center" align="center">keep</aspectratio>
             </control>
             <control type="textbox" id="104">
-                <left>340</left>
-                <top>70</top>
-                <width>570</width>
+                <left>350</left>
+                <top>100</top>
+                <width>575</width>
                 <height>300</height>
-                <font>font10</font>
+                <font>font12</font>
                 <align>left</align>
                 <aligny>top</aligny>
                 <pagecontrol>105</pagecontrol>

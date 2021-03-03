@@ -41,16 +41,12 @@ def check_paths():
     dialog = xbmcgui.Dialog()
     
     logging.log("[Path Check] Started")
-
-    path = os.path.split(CONFIG.ADDON_PATH)
-    if not CONFIG.ADDON_ID == path[1]:
+    path = CONFIG.ADDON_PATH
+    pathclean = CONFIG.ADDON_PATH.replace('\\','/')
+    folderpath = pathclean.split('/')[-2]
+    if not CONFIG.ADDON_ID == folderpath:
         dialog.ok(CONFIG.ADDONTITLE,
-                      '[COLOR {0}]Please make sure that the plugin folder is the same as the add-on id.[/COLOR]'.format(
-                          CONFIG.COLOR2),
-                      '[COLOR {0}]Plugin ID:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1,
-                                                                                    CONFIG.ADDON_ID),
-                      '[COLOR {0}]Plugin Folder:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1,
-                                                                                        path))
+                      '[COLOR {0}]Please make sure that the plugin folder is the same as the add-on id.[/COLOR]'.format(CONFIG.COLOR2) + '\n' + '[COLOR {0}]Plugin ID:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.ADDON_ID) + '\n' + '[COLOR {0}]Plugin Folder:[/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, path))
         logging.log("[Path Check] ADDON_ID and plugin folder doesnt match. {0} / {1} ".format(CONFIG.ADDON_ID, path))
     else:
         logging.log("[Path Check] Good!")
@@ -201,9 +197,7 @@ def check_skin():
     if not CONFIG.DEFAULTSKIN == '':
         if os.path.exists(os.path.join(CONFIG.ADDONS, CONFIG.DEFAULTSKIN)):
             if dialog.yesno(CONFIG.ADDONTITLE,
-                                "[COLOR {0}]It seems that the skin has been set back to [COLOR {1}]{2}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.SKIN[5:].title()),
-                                "Would you like to set the skin back to:[/COLOR]",
-                                '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.DEFAULTNAME)):
+                                "[COLOR {0}]It seems that the skin has been set back to [COLOR {1}]{2}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.SKIN[5:].title()) + '\n' + "Would you like to set the skin back to:[/COLOR]" + '\n' + '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, CONFIG.DEFAULTNAME)):
                 gotoskin = CONFIG.DEFAULTSKIN
                 gotoname = CONFIG.DEFAULTNAME
             else:
@@ -235,8 +229,7 @@ def check_skin():
         if len(skinlist) > 0:
             if len(skinlist) > 1:
                 if dialog.yesno(CONFIG.ADDONTITLE,
-                                    "[COLOR {0}]It seems that the skin has been set back to [COLOR {1}]{2}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.SKIN[5:].title()),
-                                    "Would you like to view a list of avaliable skins?[/COLOR]"):
+                                    "[COLOR {0}]It seems that the skin has been set back to [COLOR {1}]{2}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.SKIN[5:].title()) + '\n' + "Would you like to view a list of avaliable skins?[/COLOR]"):
                     choice = dialog.select("Select skin to switch to!", skinname)
                     if choice == -1:
                         logging.log("Skin was not reset")
@@ -249,9 +242,7 @@ def check_skin():
                     CONFIG.set_setting('defaultskinignore', 'true')
             else:
                 if dialog.yesno(CONFIG.ADDONTITLE,
-                                    "[COLOR {0}]It seems that the skin has been set back to [COLOR {1}]{2}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.SKIN[5:].title()),
-                                    "Would you like to set the skin back to:[/COLOR]",
-                                    '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, skinname[0])):
+                                    "[COLOR {0}]It seems that the skin has been set back to [COLOR {1}]{2}[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.SKIN[5:].title()) + '\n' + "Would you like to set the skin back to:[/COLOR]" + '\n' + '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, skinname[0])):
                     gotoskin = skinlist[0]
                     gotoname = skinname[0]
                 else:
@@ -294,9 +285,7 @@ def check_sources():
             x += 1
             perc = int(tools.percentage(x, len(match2)))
             progress_dialog.update(perc,
-                          '',
-                          "[COLOR {0}]Checking [COLOR {1}]{2}[/COLOR]:[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, name),
-                          "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, path))
+                          '' + '\n' + "[COLOR {0}]Checking [COLOR {1}]{2}[/COLOR]:[/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, name) + '\n' + "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, path))
                           
             working = tools.open_url(path, check=True)
             if not working:
@@ -304,9 +293,7 @@ def check_sources():
 
         logging.log("Bad Sources: {0}".format(len(bad)))
         if len(bad) > 0:
-            choice = dialog.yesno(CONFIG.ADDONTITLE,
-                                      "[COLOR {0}]{1}[/COLOR][COLOR {2}] Source(s) have been found Broken".format(CONFIG.COLOR1, len(bad), CONFIG.COLOR2),
-                                      "Would you like to Remove all or choose one by one?[/COLOR]",
+            choice = dialog.yesno(CONFIG.ADDONTITLE, "[COLOR {0}]{1}[/COLOR][COLOR {2}] Source(s) have been found Broken".format(CONFIG.COLOR1, len(bad), CONFIG.COLOR2) + '\n' + "Would you like to Remove all or choose one by one?[/COLOR]",
                                       yeslabel="[B][COLOR springgreen]Remove All[/COLOR][/B]",
                                       nolabel="[B][COLOR red]Choose to Delete[/COLOR][/B]")
             if choice == 1:
@@ -315,9 +302,7 @@ def check_sources():
                 for name, path, sharing, working in bad:
                     logging.log("{0} sources: {1}, {2}".format(name, path, working))
                     if dialog.yesno(CONFIG.ADDONTITLE,
-                                        "[COLOR {0}]{1}[/COLOR][COLOR {2}] was reported as non working".format(CONFIG.COLOR1, name, CONFIG.COLOR2),
-                                        "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, path),
-                                        "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, working),
+                                        "[COLOR {0}]{1}[/COLOR][COLOR {2}] was reported as non working".format(CONFIG.COLOR1, name, CONFIG.COLOR2) + '\n' + "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, path) + '\n' + "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, working),
                                         yeslabel="[B][COLOR springgreen]Remove Source[/COLOR][/B]",
                                         nolabel="[B][COLOR red]Keep Source[/COLOR][/B]"):
                         remove.append([name, path, sharing, working])
@@ -334,8 +319,7 @@ def check_sources():
                 kept = len(bad) - len(remove)
                 removed = len(remove)
                 dialog.ok(CONFIG.ADDONTITLE,
-                              "[COLOR {0}]Checking sources for broken paths has been completed".format(CONFIG.COLOR2),
-                              "Working: [COLOR {0}]{1}[/COLOR] | Kept: [COLOR {2}]{3}[/COLOR] | Removed: [COLOR {4}]{5}[/COLOR][/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, alive, CONFIG.COLOR1, kept, CONFIG.COLOR1, removed))
+                              "[COLOR {0}]Checking sources for broken paths has been completed".format(CONFIG.COLOR2) + '\n' + "Working: [COLOR {0}]{1}[/COLOR] | Kept: [COLOR {2}]{3}[/COLOR] | Removed: [COLOR {4}]{5}[/COLOR][/COLOR]".format(CONFIG.COLOR2, CONFIG.COLOR1, alive, CONFIG.COLOR1, kept, CONFIG.COLOR1, removed))
             else:
                 logging.log("No Bad Sources to be removed.")
         else:
@@ -368,8 +352,7 @@ def check_repos():
             break
         perc = int(tools.percentage(start, sleeptime))
         progress_dialog.update(perc,
-                      '',
-                      '[COLOR {0}]Checking: [/COLOR][COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, repolist[start-1].replace(CONFIG.ADDONS, '')[1:]))
+                      '\n' + '[COLOR {0}]Checking: [/COLOR][COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, repolist[start-1].replace(CONFIG.ADDONS, '')[1:]))
         xbmc.sleep(1000)
     if progress_dialog.iscanceled():
         progress_dialog.close()

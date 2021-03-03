@@ -155,12 +155,7 @@ def clear_packages(over=None):
                     else:
                         dialog = xbmcgui.Dialog()
                     
-                        yes = dialog.yesno("[COLOR {0}]Delete Package Files".format(CONFIG.COLOR2),
-                                           "[COLOR {0}]{1}[/COLOR] files found / [COLOR {2}]{3}[/COLOR] in size.".format(
-                                           CONFIG.COLOR1, str(file_count), CONFIG.COLOR1, size),
-                                           "Do you want to delete them?[/COLOR]",
-                                           nolabel='[B][COLOR red]Don\'t Clear[/COLOR][/B]',
-                                           yeslabel='[B][COLOR springgreen]Clear Packages[/COLOR][/B]')
+                        yes = dialog.yesno("[COLOR {0}]Delete Package Files[/COLOR]".format(CONFIG.COLOR2), "[COLOR {0}]{1}[/COLOR] files found / [COLOR {2}]{3}[/COLOR] in size.".format(CONFIG.COLOR1, str(file_count),CONFIG.COLOR1, size) + '\n' + "Do you want to delete them?", nolabel='[B][COLOR red]Don\'t Clear[/COLOR][/B]', yeslabel='[B][COLOR springgreen]Clear Packages[/COLOR][/B]')
                     if yes:
                         for f in files:
                             os.unlink(os.path.join(root, f))
@@ -320,10 +315,10 @@ def clear_cache(over=None):
                             shutil.rmtree(os.path.join(root, d))
                             delfiles += 1
                             logging.log("[Success] cleared {0} files from {1}".format(str(file_count), os.path.join(item, d)),
-                                        level=xbmc.LOGNOTICE)
+                                        level=xbmc.LOGINFO)
                         except:
                             logging.log("[Failed] to wipe cache in: {0}".format(os.path.join(item, d)),
-                                        level=xbmc.LOGNOTICE)
+                                        level=xbmc.LOGINFO)
         else:
             for root, dirs, files in os.walk(item):
                 dirs[:] = [d for d in dirs if d not in excludes]
@@ -538,11 +533,7 @@ def clear_thumbs(type=None):
     if type is not None:
         choice = 1
     else:
-        choice = dialog.yesno(CONFIG.ADDONTITLE,
-                                  '[COLOR {0}]Would you like to delete the {1} and related thumbnail folders?'.format(CONFIG.COLOR2, latest),
-                                  "They will repopulate on the next startup[/COLOR]",
-                                  nolabel='[B][COLOR red]Don\'t Delete[/COLOR][/B]',
-                                  yeslabel='[B][COLOR springgreen]Delete Thumbs[/COLOR][/B]')
+        choice = dialog.yesno(CONFIG.ADDONTITLE, '[COLOR {0}]Would you like to delete the {1} and related thumbnail folders?'.format(CONFIG.COLOR2, latest) + '\n' + "They will repopulate on the next startup[/COLOR]", nolabel='[B][COLOR red]Don\'t Delete[/COLOR][/B]', yeslabel='[B][COLOR springgreen]Delete Thumbs[/COLOR][/B]')
     if choice == 1:
         try:
             tools.remove_file(os.path.join(CONFIG.DATABASE, latest))
@@ -657,11 +648,7 @@ def remove_addon_data(addon):
             logging.log_notify("[COLOR {0}]Protected Plugin[/COLOR]".format(CONFIG.COLOR1),
                                "[COLOR {0}]Not allowed to remove add-on data[/COLOR]".format(CONFIG.COLOR2))
         elif os.path.exists(addon_data):
-            if dialog.yesno(CONFIG.ADDONTITLE,
-                                '[COLOR {0}]Would you also like to remove the add-on data for:[/COLOR]'.format(CONFIG.COLOR2),
-                                '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, addon),
-                                yeslabel='[B][COLOR springgreen]Remove Data[/COLOR][/B]',
-                                nolabel='[B][COLOR red]Don\'t Remove[/COLOR][/B]'):
+            if dialog.yesno(CONFIG.ADDONTITLE, '[COLOR {0}]Would you also like to remove the add-on data for:[/COLOR]'.format(CONFIG.COLOR2) + '\n' + '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, addon), yeslabel='[B][COLOR springgreen]Remove Data[/COLOR][/B]', nolabel='[B][COLOR red]Don\'t Remove[/COLOR][/B]'):
                 tools.clean_house(addon_data)
                 try:
                     shutil.rmtree(addon_data)

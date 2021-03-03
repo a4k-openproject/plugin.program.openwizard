@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.program.openwizard" name="[COLOR limegreen]Open[/COLOR]Wizard" version="1.4.5" provider-name="drinfernoo">
+<addon id="plugin.program.openwizard" name="[COLOR limegreen]Open[/COLOR]Wizard" version="2.0.0" provider-name="drinfernoo">
     <requires>
-        <import addon="xbmc.python" version="2.1.0" />
+        <import addon="xbmc.python" version="3.0.0" />
         <import addon="script.module.requests" />
         <import addon="script.module.six" />
         <import addon="script.kodi.android.update" optional="true" version="1.1.7" />
@@ -18,10 +18,12 @@
         <description lang="en">[COLOR limegreen]Open[/COLOR]Wizard offers many maintenance features, selective add-on data saving, and automated build installs.</description>
         <platform>all</platform>
         <reuselanguageinvoker>false</reuselanguageinvoker>
-        <source>https://www.github.com/drinfernoo/plugin.program.openwizard/</source>
+        <source>https://www.github.com/a4k-openproject/plugin.program.openwizard/</source>
         <news>
+2.0.0
+ - Initial Matrix support
 1.4.5
- - Fix bugs with unintended files being cleared
+ - Fix bugs with unintended files being cleared`
 1.4.4
  - Transfer ownership
 1.4.3
