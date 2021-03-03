@@ -145,7 +145,8 @@ class Router:
             menu.view_ip()
             self._finish(handle)
         elif mode == 'speedtest': 
-        	xbmc.executebuiltin('RunAddon("script.speedtester")')
+            xbmc.executebuiltin('InstallAddon("script.speedtester")')
+            xbmc.executebuiltin('RunAddon("script.speedtester")')
         elif mode == 'apk':  # APK Installer
             menu.apk_menu(url)
             self._finish(handle)
