@@ -827,7 +827,7 @@ def update_login(do, who):
                 user = addonid.getSetting(default)
                 CONFIG.set_setting(saved, user)
                 
-                logging.log('Login Data Saved for {0}'.format(name), level=xbmc.LOGNOTICE)
+                logging.log('Login Data Saved for {0}'.format(name), level=xbmc.LOGINFO)
             except Exception as e:
                 logging.log("[Login Data] Unable to Update {0} ({1})".format(who, str(e)), level=xbmc.LOGERROR)
         else:
@@ -845,7 +845,7 @@ def update_login(do, who):
                     
                 user = addonid.getSetting(default)
                 CONFIG.set_setting(saved, user)
-                logging.log('Login Data Restored for {0}'.format(name), level=xbmc.LOGNOTICE)
+                logging.log('Login Data Restored for {0}'.format(name), level=xbmc.LOGINFO)
             except Exception as e:
                 logging.log("[Login Info] Unable to Restore {0} ({1})".format(who, str(e)), level=xbmc.LOGERROR)
         else:

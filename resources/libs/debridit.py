@@ -383,7 +383,7 @@ def update_debrid(do, who):
                 user = addonid.getSetting(default)
                 CONFIG.set_setting(saved, user)
                 
-                logging.log('Debrid Info Saved for {0}'.format(name), level=xbmc.LOGNOTICE)
+                logging.log('Debrid Info Saved for {0}'.format(name), level=xbmc.LOGINFO)
             except Exception as e:
                 logging.log("[Debrid Info] Unable to Update {0} ({1})".format(who, str(e)), level=xbmc.LOGERROR)
         else:
@@ -401,7 +401,7 @@ def update_debrid(do, who):
                 
                 user = addonid.getSetting(default)
                 CONFIG.set_setting(saved, user)
-                logging.log('Debrid Info Restored for {0}'.format(name), level=xbmc.LOGNOTICE)
+                logging.log('Debrid Info Restored for {0}'.format(name), level=xbmc.LOGINFO)
             except Exception as e:
                 logging.log("[Debrid Info] Unable to Restore {0} ({1})".format(who, str(e)), level=xbmc.LOGERROR)
         else:

@@ -311,7 +311,7 @@ def install_apk(name, url):
                 
         dialog.ok(CONFIG.ADDONTITLE, '[COLOR {}]{}[/COLOR] downloaded to [COLOR {}]{}[/COLOR]. If installation doesn\'t start by itself, navigate to that location to install the APK.'.format(CONFIG.COLOR1, apk, CONFIG.COLOR1, path))
         
-        logging.log('Opening {} with {}'.format(lib, use_manager), level=xbmc.LOGNOTICE)
+        logging.log('Opening {} with {}'.format(lib, use_manager), level=xbmc.LOGINFO)
         xbmc.executebuiltin('StartAndroidActivity({},,,"content://{}")'.format(use_manager, lib))
     else:
         logging.log_notify(CONFIG.ADDONTITLE,
