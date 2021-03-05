@@ -159,7 +159,7 @@ def view_ip():
 def speed_test():
     from datetime import date
 
-    directory.add_file('Run Speed Test', {'mode': 'runspeedtest'}, icon=CONFIG.ICONSPEED, themeit=CONFIG.THEME3)
+    directory.add_file('Run Speed Test', {'mode': 'speedtest'}, icon=CONFIG.ICONSPEED, themeit=CONFIG.THEME3)
     if os.path.exists(CONFIG.SPEEDTEST):
         speedimg = glob.glob(os.path.join(CONFIG.SPEEDTEST, '*.png'))
         speedimg.sort(key=lambda f: os.path.getmtime(f), reverse=True)
