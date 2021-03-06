@@ -346,7 +346,16 @@ if tools.open_url(CONFIG.BUILDFILE, check=True) and CONFIG.get_setting('installe
     window.show_build_prompt()
 else:
     logging.log("[Current Build Check] Build Installed: {0}".format(CONFIG.BUILDNAME), level=xbmc.LOGINFO)
-    
+
+# POST-INSTALL FIRST RUN CHECK (ENABLE DISABLED ADDONS)
+if CONFIG.get_setting('first_postinstall') == 'true':
+	from resources.libs.common import addonsEnable
+	addonsEnable.enable_addons()
+	xbmc.executebuiltin('UpdateLocalAddons')
+	xbmc.executebuiltin('UpdateAddonRepos')
+	xbmc.executebuiltin("ReloadSkin()")
+	tools.reload_profile(xbmc.getInfoLabel('System.ProfileName'))
+
 # BUILD UPDATE CHECK
 buildcheck = CONFIG.get_setting('nextbuildcheck')
 if CONFIG.get_setting('buildname'):
