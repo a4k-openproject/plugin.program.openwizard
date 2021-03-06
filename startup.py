@@ -346,7 +346,13 @@ if tools.open_url(CONFIG.BUILDFILE, check=True) and CONFIG.get_setting('installe
     window.show_build_prompt()
 else:
     logging.log("[Current Build Check] Build Installed: {0}".format(CONFIG.BUILDNAME), level=xbmc.LOGINFO)
-    
+
+# ENABLE ALL ADDONS AFTER INSTALL
+if CONFIG.get_setting('enable_all') == 'true':
+    logging.log("[Post Install] Enabling all Add-ons", level=xbmc.LOGINFO)
+    from resources.libs.gui import menu
+    menu.enable_addons(all=True)
+
 # BUILD UPDATE CHECK
 buildcheck = CONFIG.get_setting('nextbuildcheck')
 if CONFIG.get_setting('buildname'):

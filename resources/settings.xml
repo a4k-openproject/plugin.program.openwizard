@@ -167,6 +167,7 @@
         <setting id="keeplogin" type="bool" label="Keep My Login Data" default="true"/>
         <setting id="loginnextsave" type="text" label="Last Time Login Data Saved:" visible="!eq(-1, false)" enable="false" default="2019-01-01 00:00:00"/>
         <setting type="lsep" label="Keep Settings When Installing Build:"/>
+        <setting id="enable_all" type="bool" label="Enable all Add-ons on Start" default="false" />
         <setting id="keepfavourites" type="bool" label="Keep My Favourites" default="true"/>
         <setting id="keepsources" type="bool" label="Keep My Sources" default="true"/>
         <setting id="keepprofiles" type="bool" label="Keep My Profiles" default="false"/>
