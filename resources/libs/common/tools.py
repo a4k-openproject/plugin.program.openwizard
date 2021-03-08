@@ -395,8 +395,6 @@ def kodi_version():
         vername = 'Krypton'
     elif 18.0 <= CONFIG.KODIV <= 18.9:
         vername = 'Leia'
-    elif 19.0 <= CONFIG.KODIV <= 19.9:
-        vername = 'Matrix'
     else:
         vername = "Unknown"
     return vername
