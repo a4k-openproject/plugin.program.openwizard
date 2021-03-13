@@ -352,6 +352,15 @@ if CONFIG.get_setting('enable_all') == 'true':
     logging.log("[Post Install] Enabling all Add-ons", level=xbmc.LOGINFO)
     from resources.libs.gui import menu
     menu.enable_addons(all=True)
+    if os.path.exists(os.path.join(CONFIG.USERDATA, '.enableall')):
+    	logging.log("[Post Install] .enableall file found in userdata. Deleting..", level=xbmc.LOGINFO)
+    	import xbmcvfs
+    	xbmcvfs.delete(os.path.join(CONFIG.USERDATA, '.enableall'))
+    xbmc.executebuiltin('UpdateLocalAddons')
+    xbmc.executebuiltin('UpdateAddonRepos')
+    CONFIG.set_setting('enable_all', 'false')
+    xbmc.executebuiltin("ReloadSkin()")
+    tools.reload_profile(xbmc.getInfoLabel('System.ProfileName'))
 
 # BUILD UPDATE CHECK
 buildcheck = CONFIG.get_setting('nextbuildcheck')
