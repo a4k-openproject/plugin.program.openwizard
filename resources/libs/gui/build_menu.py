@@ -91,7 +91,7 @@ class BuildMenu:
             directory.add_file('{0}'.format(CONFIG.BUILDFILE), icon=CONFIG.ICONBUILDS, themeit=CONFIG.THEME3)
             return
 
-        total, count17, count18, count19, adultcount, hidden = check.build_count()
+        total, count19, adultcount, hidden = check.build_count()
 
         match = re.compile('name="(.+?)".+?ersion="(.+?)".+?rl="(.+?)".+?ui="(.+?)".+?odi="(.+?)".+?heme="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult="(.+?)".+?escription="(.+?)"').findall(link)
         
@@ -119,18 +119,6 @@ class BuildMenu:
                                        'name': 'show19'}, themeit=CONFIG.THEME3)
                     if CONFIG.SHOW19 == 'true':
                         self._list_all(match, kodiv=19)
-                if count18 > 0:
-                    state = '+' if CONFIG.SHOW18 == 'false' else '-'
-                    directory.add_file('[B]{0} Leia Builds ({1})[/B]'.format(state, count18), {'mode': 'togglesetting', 'name': 'show18'},
-                                       themeit=CONFIG.THEME3)
-                    if CONFIG.SHOW18 == 'true':
-                        self._list_all(match, kodiv=18)
-                if count17 > 0:
-                    state = '+' if CONFIG.SHOW17 == 'false' else '-'
-                    directory.add_file('[B]{0} Krypton Builds ({1})[/B]'.format(state, count17), {'mode': 'togglesetting',
-                                       'name': 'show17'}, themeit=CONFIG.THEME3)
-                    if CONFIG.SHOW17 == 'true':
-                        self._list_all(match, kodiv=17)
 
         elif hidden > 0:
             if adultcount > 0:
