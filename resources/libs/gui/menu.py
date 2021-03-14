@@ -527,9 +527,9 @@ def enable_addons(all=False):
                 icon = os.path.join(folder, 'icon.png') if os.path.exists(os.path.join(folder, 'icon.png')) else CONFIG.ADDON_ICON
                 fanart = os.path.join(folder, 'fanart.jpg') if os.path.exists(os.path.join(folder, 'fanart.jpg')) else CONFIG.ADDON_FANART
                 if tools.get_addon_info(addonids[i], 'name'):
-                state = "[COLOR springgreen][Enabled][/COLOR]"
-                goto = "false"
-            else:
+                    state = "[COLOR springgreen][Enabled][/COLOR]"
+                    goto = "false"
+                else:
                     state = "[COLOR red][Disabled][/COLOR]"
                     goto = "true"
 
