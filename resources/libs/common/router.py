@@ -112,6 +112,8 @@ class Router:
         elif mode == 'enableaddons':  # Maintenance - > Addon Tools -> Enable/Disable Addons
             menu.enable_addons()
             self._finish(handle)
+        elif mode == 'enableall':
+            menu.enable_addons(all=True)
         elif mode == 'toggleaddon':
             from resources.libs import db
             db.toggle_addon(name, url)
