@@ -358,6 +358,7 @@ if CONFIG.get_setting('enable_all') == 'true':
     	xbmcvfs.delete(os.path.join(CONFIG.USERDATA, '.enableall'))
     xbmc.executebuiltin('UpdateLocalAddons')
     xbmc.executebuiltin('UpdateAddonRepos')
+    db.force_check_updates(auto=True)
     CONFIG.set_setting('enable_all', 'false')
     xbmc.executebuiltin("ReloadSkin()")
     tools.reload_profile(xbmc.getInfoLabel('System.ProfileName'))
