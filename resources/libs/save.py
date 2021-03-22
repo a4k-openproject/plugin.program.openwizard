@@ -219,5 +219,5 @@ def export_save_data():
     zipf.close()
     
     dialog.ok(CONFIG.ADDONTITLE,
-                  "[COLOR {0}]Save data has been backed up to:[/COLOR]".format(CONFIG.COLOR2),
-                  "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, os.path.join(source, 'SaveData.zip')))
+                  "[COLOR {0}]Save data has been backed up to:[/COLOR]".format(CONFIG.COLOR2)
+                  +'\n'+"[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, os.path.join(source, 'SaveData.zip')))

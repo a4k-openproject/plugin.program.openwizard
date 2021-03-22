@@ -44,8 +44,8 @@ def wizard_update():
             return
         if ver > CONFIG.ADDON_VERSION:
             yes = dialog.yesno(CONFIG.ADDONTITLE,
-                                   '[COLOR {0}]There is a new version of the {1}!'.format(CONFIG.COLOR2, CONFIG.ADDONTITLE),
-                                   'Would you like to download [COLOR {0}]v{1}[/COLOR]?[/COLOR]'.format(CONFIG.COLOR1, ver),
+                                   '[COLOR {0}]There is a new version of the {1}!'.format(CONFIG.COLOR2, CONFIG.ADDONTITLE)
+                                   +'\n'+'Would you like to download [COLOR {0}]v{1}[/COLOR]?[/COLOR]'.format(CONFIG.COLOR1, ver),
                                    nolabel='[B][COLOR red]Remind Me Later[/COLOR][/B]',
                                    yeslabel="[B][COLOR springgreen]Update Wizard[/COLOR][/B]")
             if yes:
@@ -53,8 +53,9 @@ def wizard_update():
                 from resources.libs.common import tools
 
                 logging.log("[Auto Update Wizard] Installing wizard v{0}".format(ver))
-                progress_dialog.create(CONFIG.ADDONTITLE, '[COLOR {0}]Downloading Update...'.format(CONFIG.COLOR2), '',
-                              'Please Wait[/COLOR]')
+                progress_dialog.create(CONFIG.ADDONTITLE, '[COLOR {0}]Downloading Update...'.format(CONFIG.COLOR2)
+                                        +'\n'+''
+                                        +'\n'+'Please Wait[/COLOR]')
                 lib = os.path.join(CONFIG.PACKAGES, '{0}-{1}.zip'.format(CONFIG.ADDON_ID, ver))
                 try:
                     os.remove(lib)
@@ -64,7 +65,7 @@ def wizard_update():
                 from resources.libs import extract
                 Downloader().download(zip, lib)
                 xbmc.sleep(2000)
-                progress_dialog.update(0, "", "Installing {0} update".format(CONFIG.ADDONTITLE))
+                progress_dialog.update(0, '\n'+"Installing {0} update".format(CONFIG.ADDONTITLE))
                 percent, errors, error = extract.all(lib, CONFIG.ADDONS, True)
                 progress_dialog.close()
                 xbmc.sleep(1000)
