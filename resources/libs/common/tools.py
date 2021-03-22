@@ -216,8 +216,8 @@ def ensure_folders(folder=None):
         dialog = xbmcgui.Dialog()
 
         dialog.ok(CONFIG.ADDONTITLE,
-                      "[COLOR {0}]Error creating add-on directories:[/COLOR]".format(CONFIG.COLOR2),
-                      "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name))
+                      "[COLOR {0}]Error creating add-on directories:[/COLOR]".format(CONFIG.COLOR2)
+                      +'\n'+"[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, name))
 
 #########################
 #  Utility Functions    #

@@ -141,11 +141,11 @@ def installed_build_check():
         yes = dialog.yesno(CONFIG.ADDONTITLE,
                            '[COLOR {0}]{2}[/COLOR] [COLOR {1}]was not installed correctly![/COLOR]'.format(CONFIG.COLOR1,
                                                                                                    CONFIG.COLOR2,
-                                                                                                   CONFIG.BUILDNAME),
-                           ('Installed: [COLOR {0}]{1}[/COLOR] / '
+                                                                                                   CONFIG.BUILDNAME)
+                           +'\n'+('Installed: [COLOR {0}]{1}[/COLOR] / '
                             'Error Count: [COLOR {2}]{3}[/COLOR]').format(CONFIG.COLOR1, CONFIG.EXTRACT, CONFIG.COLOR1,
-                                                                          CONFIG.EXTERROR),
-                           'Would you like to try again?[/COLOR]', nolabel='[B]No Thanks![/B]',
+                                                                          CONFIG.EXTERROR)
+                           +'\n'+'Would you like to try again?[/COLOR]', nolabel='[B]No Thanks![/B]',
                            yeslabel='[B]Retry Install[/B]')
         CONFIG.clear_setting('build')
         if yes:
@@ -168,14 +168,14 @@ def installed_build_check():
             if not response:
                 logging.log("[Build Installed Check] Guifix was set to http://", level=xbmc.LOGINFO)
                 dialog.ok(CONFIG.ADDONTITLE,
-                          "[COLOR {0}]It looks like the skin settings was not applied to the build.".format(CONFIG.COLOR2),
-                          "Sadly no gui fix was attached to the build",
-                          "You will need to reinstall the build and make sure to do a force close[/COLOR]")
+                          "[COLOR {0}]It looks like the skin settings was not applied to the build.".format(CONFIG.COLOR2)
+                          +'\n'+"Sadly no gui fix was attached to the build"
+                          +'\n'+"You will need to reinstall the build and make sure to do a force close[/COLOR]")
             else:
                 yes = dialog.yesno(CONFIG.ADDONTITLE,
-                                       '{0} was not installed correctly!'.format(CONFIG.BUILDNAME),
-                                       'It looks like the skin settings was not applied to the build.',
-                                       'Would you like to apply the GuiFix?',
+                                       '{0} was not installed correctly!'.format(CONFIG.BUILDNAME)
+                                       +'\n'+'It looks like the skin settings was not applied to the build.'
+                                       +'\n'+'Would you like to apply the GuiFix?',
                                        nolabel='[B]No, Cancel[/B]', yeslabel='[B]Apply Fix[/B]')
                 if yes:
                     xbmc.executebuiltin("PlayMedia(plugin://{0}/?mode=install&name={1}&url=gui)".format(CONFIG.ADDON_ID,

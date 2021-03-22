@@ -194,8 +194,8 @@ def whitelist(do):
         try:
             xbmcvfs.copy(CONFIG.WHITELIST, os.path.join(source, 'whitelist.txt'))
             dialog.ok(CONFIG.ADDONTITLE,
-                          "[COLOR {0}]Whitelist has been exported to:[/COLOR]".format(CONFIG.COLOR2),
-                          "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, os.path.join(source, 'whitelist.txt')))
+                          "[COLOR {0}]Whitelist has been exported to:[/COLOR]".format(CONFIG.COLOR2)
+                          +'\n'+"[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, os.path.join(source, 'whitelist.txt')))
             logging.log_notify(CONFIG.ADDONTITLE,
                                "[COLOR {0}]Whitelist Exported[/COLOR]".format(CONFIG.COLOR2))
         except Exception as e:
@@ -210,8 +210,8 @@ def whitelist(do):
                 whitelist(do='export')
     elif do == 'clear':
         if not dialog.yesno(CONFIG.ADDONTITLE,
-                                "[COLOR {0}]Are you sure you want to clear your whitelist?".format(CONFIG.COLOR2),
-                                "This process can't be undone.[/COLOR]",
+                                "[COLOR {0}]Are you sure you want to clear your whitelist?".format(CONFIG.COLOR2)
+                                +'\n'+"This process can't be undone.[/COLOR]",
                                 yeslabel="[B][COLOR springgreen]Yes Remove[/COLOR][/B]",
                                 nolabel="[B][COLOR red]No Cancel[/COLOR][/B]"):
             logging.log_notify(CONFIG.ADDONTITLE,

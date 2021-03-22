@@ -196,7 +196,7 @@ class AddonMenu:
             match = tools.parse_dom(tools.read_from_file(dep), 'import', ret='addon')
             for depends in match:
                 if 'xbmc.python' not in depends:
-                    self.progress_dialog.update(0, '', '[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, depends))
+                    self.progress_dialog.update(0, '\n'+'[COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, depends))
 
                     try:
                         add = tools.get_addon_by_id(id=depends)
@@ -225,8 +225,9 @@ class AddonMenu:
         self.progress_dialog.create(CONFIG.ADDONTITLE,
                                '[COLOR {0}][B]Downloading:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2,
                                                                                                       CONFIG.COLOR1,
-                                                                                                      plugin),
-                               '', '[COLOR {0}]Please Wait[/COLOR]'.format(CONFIG.COLOR2))
+                                                                                                      plugin)
+                               +'\n'+''
+                               +'\n'+'[COLOR {0}]Please Wait[/COLOR]'.format(CONFIG.COLOR2))
         urlsplits = url.split('/')
         lib = os.path.join(CONFIG.PACKAGES, urlsplits[-1])
 
@@ -238,9 +239,13 @@ class AddonMenu:
         Downloader().download(url, lib)
         title = '[COLOR {0}][B]Installing:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1,
                                                                                       plugin)
-        self.progress_dialog.update(0, title, '', '[COLOR {0}]Please Wait[/COLOR]'.format(CONFIG.COLOR2))
+        self.progress_dialog.update(0, title
+                                    +'\n'+''
+                                    +'\n'+'[COLOR {0}]Please Wait[/COLOR]'.format(CONFIG.COLOR2))
         percent, errors, error = extract.all(lib, CONFIG.ADDONS, title=title)
-        self.progress_dialog.update(0, title, '', '[COLOR {0}]Installing Dependencies[/COLOR]'.format(CONFIG.COLOR2))
+        self.progress_dialog.update(0, title
+                                    +'\n'+''
+                                    +'\n'+'[COLOR {0}]Installing Dependencies[/COLOR]'.format(CONFIG.COLOR2))
         installed(plugin)
         installlist = db.grab_addons(lib)
         logging.log(str(installlist))
@@ -359,8 +364,9 @@ class AddonMenu:
             os.makedirs(CONFIG.PACKAGES)
         
         progress_dialog.create(CONFIG.ADDONTITLE,
-                      '[COLOR {0}][B]Downloading:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name),
-                      '', '[COLOR {0}]Please Wait[/COLOR]'.format(CONFIG.COLOR2))
+                      '[COLOR {0}][B]Downloading:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name)
+                      +'\n'+''
+                      +'\n'+'[COLOR {0}]Please Wait[/COLOR]'.format(CONFIG.COLOR2))
         urlsplits = url.split('/')
         lib = xbmc.makeLegalFilename(os.path.join(CONFIG.PACKAGES, urlsplits[-1]))
         try:
@@ -369,7 +375,9 @@ class AddonMenu:
             pass
         Downloader().download(url, lib)
         title = '[COLOR {0}][B]Installing:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name)
-        progress_dialog.update(0, title, '', '[COLOR {0}]Please Wait[/COLOR]'.format(CONFIG.COLOR2))
+        progress_dialog.update(0, title
+                                +'\n'+''
+                                +'\n'+'[COLOR {0}]Please Wait[/COLOR]'.format(CONFIG.COLOR2))
         percent, errors, error = extract.all(lib, CONFIG.ADDONS, title=title)
         installed = db.grab_addons(lib)
         db.addon_database(installed, 1, True)
@@ -402,8 +410,9 @@ class AddonMenu:
             os.makedirs(CONFIG.PACKAGES)
         
         progress_dialog.create(CONFIG.ADDONTITLE,
-                      '[COLOR {0}][B]Downloading:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name),
-                      '', '[COLOR {0}]Please Wait[/COLOR]'.format(CONFIG.COLOR2))
+                      '[COLOR {0}][B]Downloading:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name)
+                      +'\n'+''
+                      +'\n'+'[COLOR {0}]Please Wait[/COLOR]'.format(CONFIG.COLOR2))
 
         urlsplits = url.split('/')
         lib = xbmc.makeLegalFilename(os.path.join(CONFIG.PACKAGES, urlsplits[-1]))
@@ -413,7 +422,9 @@ class AddonMenu:
             pass
         Downloader().download(url, lib)
         title = '[COLOR {0}][B]Installing:[/B][/COLOR] [COLOR {1}]{2}[/COLOR]'.format(CONFIG.COLOR2, CONFIG.COLOR1, name)
-        progress_dialog.update(0, title, '', '[COLOR {0}]Please Wait[/COLOR]'.format(CONFIG.COLOR2))
+        progress_dialog.update(0, title
+                                    +'\n'+''
+                                    +'\n'+'[COLOR {0}]Please Wait[/COLOR]'.format(CONFIG.COLOR2))
         percent, errors, error = extract.all(lib, CONFIG.HOME, title=title)
         installed = db.grab_addons(lib)
         db.addon_database(installed, 1, True)

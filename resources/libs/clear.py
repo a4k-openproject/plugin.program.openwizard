@@ -462,8 +462,8 @@ def clear_crash():
         dialog = xbmcgui.Dialog()
 
         if dialog.yesno(CONFIG.ADDONTITLE,
-                            '[COLOR {0}]Would you like to delete the Crash logs?'.format(CONFIG.COLOR2),
-                            '[COLOR {0}]{1}[/COLOR] Files Found[/COLOR]'.format(CONFIG.COLOR1, len(files)),
+                            '[COLOR {0}]Would you like to delete the Crash logs?'.format(CONFIG.COLOR2)
+                            +'\n'+'[COLOR {0}]{1}[/COLOR] Files Found[/COLOR]'.format(CONFIG.COLOR1, len(files)),
                             yeslabel="[B][COLOR springgreen]Remove Logs[/COLOR][/B]",
                             nolabel="[B][COLOR red]Keep Logs[/COLOR][/B]"):
             for f in files:
@@ -558,9 +558,9 @@ def remove_addon(addon, name, over=False, data=True):
         dialog = xbmcgui.Dialog()
         
         yes = dialog.yesno(CONFIG.ADDONTITLE,
-                               '[COLOR {0}]Are you sure you want to delete the add-on:'.format(CONFIG.COLOR2),
-                               'Name: [COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, name),
-                               'ID: [COLOR {0}]{1}[/COLOR][/COLOR]'.format(CONFIG.COLOR1, addon),
+                               '[COLOR {0}]Are you sure you want to delete the add-on:'.format(CONFIG.COLOR2)
+                               +'\n'+'Name: [COLOR {0}]{1}[/COLOR]'.format(CONFIG.COLOR1, name)
+                               +'\n'+'ID: [COLOR {0}]{1}[/COLOR][/COLOR]'.format(CONFIG.COLOR1, addon),
                                yeslabel='[B][COLOR springgreen]Remove Add-on[/COLOR][/B]',
                                nolabel='[B][COLOR red]Don\'t Remove[/COLOR][/B]')
     if yes == 1:

@@ -45,8 +45,8 @@ def create_code():
     
     if not response:
         if not dialog.yesno(CONFIG.ADDONTITLE,
-                                "[COLOR {0}]It seems the URL you entered either isn't valid or isn\'t working, Would you like to create it anyways?[/COLOR]".format(CONFIG.COLOR2),
-                                "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, url),
+                                "[COLOR {0}]It seems the URL you entered either isn't valid or isn\'t working, Would you like to create it anyways?[/COLOR]".format(CONFIG.COLOR2)
+                                +'\n'+"[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, url),
                                 yeslabel="[B][COLOR red]Yes Create[/COLOR][/B]",
                                 nolabel="[B][COLOR springgreen]No Cancel[/COLOR][/B]"):
             return
@@ -54,5 +54,5 @@ def create_code():
     name = "QR_Code_{0}".format(tools.id_generator(6)) if name == "" else name
     image = generate_code(url, name)
     dialog.ok(CONFIG.ADDONTITLE,
-                  "[COLOR {0}]The QR Code image has been created and is located in the addon_data directory:[/COLOR]".format(CONFIG.COLOR2),
-                  "[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, image.replace(CONFIG.HOME, '')))
+                  "[COLOR {0}]The QR Code image has been created and is located in the addon_data directory:[/COLOR]".format(CONFIG.COLOR2)
+                  +'\n'+"[COLOR {0}]{1}[/COLOR]".format(CONFIG.COLOR1, image.replace(CONFIG.HOME, '')))
