@@ -14,6 +14,7 @@
         
         <!-- Hidden Settings -->
         <setting id="first_install" type="bool" label="First Install" visible="false" default="true" />
+        <setting id="enable_all" type="bool" label="Enable all Add-ons on Start" visible="false" default="false" />
         <setting id="time_started" type="number" label="Time Startup Script Last Run" visible="false" default="0" />
         <setting id="installed" type="text" label="Build Installed" visible="false" default="false" />
         <setting id="extract" type="number" label="Extract Build %" visible="false" default="100" />

@@ -493,12 +493,11 @@ def login_menu():
     directory.add_file('Clear All Saved Login Info', {'mode': 'clearlogin', 'name': 'all'}, icon=CONFIG.ICONLOGIN, themeit=CONFIG.THEME3)
 
 
-def enable_addons():
+def enable_addons(all=False):
     from resources.libs.common import tools
     
     from xml.etree import ElementTree
 
-    directory.add_file("[I][B][COLOR red]!!Notice: Disabling Some Addons Can Cause Issues!![/COLOR][/B][/I]", icon=CONFIG.ICONMAINT)
     fold = glob.glob(os.path.join(CONFIG.ADDONS, '*/'))
     addonnames = []
     addonids = []
@@ -515,25 +514,31 @@ def enable_addons():
             root = ElementTree.parse(xml).getroot()
             addonid = root.get('id')
             addonname = root.get('name')
-           
-            try:
-                addonnames.append(tools.get_addon_info(addonid, 'name'))
-                addonids.append(addonid)
-            except:                
-                pass
-                
-            if xbmc.getCondVisibility('System.HasAddon({0})'.format(addonid)):
-                state = "[COLOR springgreen][Enabled][/COLOR]"
-                goto = "false"
-            else:
-                state = "[COLOR red][Disabled][/COLOR]"
-                goto = "true"
-                
-            icon = os.path.join(folder, 'icon.png') if os.path.exists(os.path.join(folder, 'icon.png')) else CONFIG.ADDON_ICON
-            fanart = os.path.join(folder, 'fanart.jpg') if os.path.exists(os.path.join(folder, 'fanart.jpg')) else CONFIG.ADDON_FANART
-            directory.add_file("{0} {1}".format(state, addonname), {'mode': 'toggleaddon', 'name': addonid, 'url': goto}, icon=icon, fanart=fanart)
-    if len(addonnames) == 0:
-        directory.add_file("No Addons Found to Enable or Disable.", icon=CONFIG.ICONMAINT)
+            addonids.append(addonid)
+            addonnames.append(addonname)
+    if not all:
+        if len(addonids) == 0:
+            directory.add_file("No Addons Found to Enable or Disable.", icon=CONFIG.ICONMAINT)
+        else:
+            directory.add_file("[I][B][COLOR red]!!Notice: Disabling Some Addons Can Cause Issues!![/COLOR][/B][/I]", icon=CONFIG.ICONMAINT)
+            directory.add_dir('Enable All Addons', {'mode': 'enableall'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+            for i in range(0, len(addonids)):
+                folder = os.path.join(CONFIG.ADDONS, addonids[i])
+                icon = os.path.join(folder, 'icon.png') if os.path.exists(os.path.join(folder, 'icon.png')) else CONFIG.ADDON_ICON
+                fanart = os.path.join(folder, 'fanart.jpg') if os.path.exists(os.path.join(folder, 'fanart.jpg')) else CONFIG.ADDON_FANART
+                if tools.get_addon_info(addonids[i], 'name'):
+                    state = "[COLOR springgreen][Enabled][/COLOR]"
+                    goto = "false"
+                else:
+                    state = "[COLOR red][Disabled][/COLOR]"
+                    goto = "true"
+
+                directory.add_file("{0} {1}".format(state, addonnames[i]), {'mode': 'toggleaddon', 'name': addonids[i], 'url': goto}, icon=icon, fanart=fanart)
+    else:
+        from resources.libs import db
+        for addonid in addonids:
+            db.toggle_addon(addonid, 'true')
+        xbmc.executebuiltin('Container.Refresh()')
 
 
 def remove_addon_data_menu():

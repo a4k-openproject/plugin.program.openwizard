@@ -346,7 +346,23 @@ if tools.open_url(CONFIG.BUILDFILE, check=True) and CONFIG.get_setting('installe
     window.show_build_prompt()
 else:
     logging.log("[Current Build Check] Build Installed: {0}".format(CONFIG.BUILDNAME), level=xbmc.LOGINFO)
-    
+
+# ENABLE ALL ADDONS AFTER INSTALL
+if CONFIG.get_setting('enable_all') == 'true':
+    logging.log("[Post Install] Enabling all Add-ons", level=xbmc.LOGINFO)
+    from resources.libs.gui import menu
+    menu.enable_addons(all=True)
+    if os.path.exists(os.path.join(CONFIG.USERDATA, '.enableall')):
+    	logging.log("[Post Install] .enableall file found in userdata. Deleting..", level=xbmc.LOGINFO)
+    	import xbmcvfs
+    	xbmcvfs.delete(os.path.join(CONFIG.USERDATA, '.enableall'))
+    xbmc.executebuiltin('UpdateLocalAddons')
+    xbmc.executebuiltin('UpdateAddonRepos')
+    db.force_check_updates(auto=True)
+    CONFIG.set_setting('enable_all', 'false')
+    xbmc.executebuiltin("ReloadSkin()")
+    tools.reload_profile(xbmc.getInfoLabel('System.ProfileName'))
+
 # BUILD UPDATE CHECK
 buildcheck = CONFIG.get_setting('nextbuildcheck')
 if CONFIG.get_setting('buildname'):
