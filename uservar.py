@@ -16,7 +16,7 @@ ART = os.path.join(PATH, 'resources', 'media')
 ADDONTITLE = '[COLOR limegreen][B]Open[/B][/COLOR]Wizard'
 BUILDERNAME = 'OpenWizard'
 EXCLUDES = [ADDON_ID, 'repository.openwizard']
-# Text File with build info in it.
+# Text File with build info in it. Please read https://github.com/a4k-openproject/plugin.program.openwizard/wiki/Installing-Builds
 BUILDFILE = 'http://'
 # How often you would like it to check for build updates in days
 # 0 being every startup of kodi
