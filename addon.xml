@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.program.openwizard" name="[COLOR limegreen]Open[/COLOR]Wizard" version="2.0.6" provider-name="drinfernoo, slamious">
+<addon id="plugin.program.openwizard" name="[COLOR limegreen]Open[/COLOR]Wizard" version="2.0.7" provider-name="drinfernoo, slamious">
     <requires>
         <import addon="xbmc.python" version="3.0.0" />
         <import addon="script.module.requests" />
@@ -21,6 +21,8 @@
         <reuselanguageinvoker>false</reuselanguageinvoker>
         <source>https://www.github.com/a4k-openproject/plugin.program.openwizard/</source>
         <news>
+2.0.7
+ - Fix Error when using default log settings
 2.0.6
  - Fix regex for formatting tags
  - Fix theme selection after build install
