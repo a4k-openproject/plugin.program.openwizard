@@ -104,7 +104,7 @@ class MaintenanceMenu:
 
         if includeall == 'true':
             includegaia = 'true'
-            includeexodusredux = 'true'
+            includeincursion = 'true'
             includethecrew = 'true'
             includeyoda = 'true'
             includevenom = 'true'
@@ -112,7 +112,7 @@ class MaintenanceMenu:
             includescrubs = 'true'
             includeseren = 'true'
         else:
-            includeexodusredux = 'true' if CONFIG.INCLUDEEXODUSREDUX == 'true' else 'false'
+            includeincursion = 'true' if CONFIG.INCLUDEINCURSION == 'true' else 'false'
             includegaia = 'true' if CONFIG.INCLUDEGAIA == 'true' else 'false'
             includethecrew = 'true' if CONFIG.INCLUDETHECREW == 'true' else 'false'
             includeyoda = 'true' if CONFIG.INCLUDEYODA == 'true' else 'false'
@@ -125,11 +125,11 @@ class MaintenanceMenu:
             directory.add_file(
                 '--- Include All Video Addons: {0}'.format(includeall.replace('true', on).replace('false', off)),
                 {'mode': 'togglecache', 'name': 'includeall'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
-            if xbmc.getCondVisibility('System.HasAddon(plugin.video.exodusredux)'):
+            if xbmc.getCondVisibility('System.HasAddon(plugin.video.incursion)'):
                 directory.add_file(
-                    '--- Include Exodus Redux: {0}'.format(
-                        includeexodusredux.replace('true', on).replace('false', off)),
-                    {'mode': 'togglecache', 'name': 'includeexodusredux'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
+                    '--- Include Incursion: {0}'.format(
+                        includeincursion.replace('true', on).replace('false', off)),
+                    {'mode': 'togglecache', 'name': 'includeincursion'}, icon=CONFIG.ICONMAINT, themeit=CONFIG.THEME3)
             if xbmc.getCondVisibility('System.HasAddon(plugin.video.gaia)'):
                 directory.add_file(
                     '--- Include Gaia: {0}'.format(includegaia.replace('true', on).replace('false', off)),
