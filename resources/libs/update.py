@@ -26,7 +26,7 @@ import re
 from resources.libs.common.config import CONFIG
 
 
-def wizard_update(startup=None):
+def wizard_update():
     from resources.libs import check
     from resources.libs.common import logging
     from resources.libs.common import tools
@@ -75,15 +75,9 @@ def wizard_update(startup=None):
                 logging.log("[Auto Update Wizard] Wizard updated to v{0}".format(ver))
                 tools.remove_file(os.path.join(CONFIG.ADDON_DATA, 'settings.xml'))
                 window.show_save_data_settings()
-                if startup:
-                    xbmc.executebuiltin('RunScript({0}/startup.py)'.format(CONFIG.PLUGIN))
-                return
             else:
                 logging.log("[Auto Update Wizard] Install New Wizard Ignored: {0}".format(ver))
         else:
-            if not startup:
-                logging.log_notify(CONFIG.ADDONTITLE,
-                                   "[COLOR {0}]No New Version of Wizard[/COLOR]".format(CONFIG.COLOR2))
             logging.log("[Auto Update Wizard] No New Version v{0}".format(ver))
     else:
         logging.log("[Auto Update Wizard] Url for wizard file not valid: {0}".format(CONFIG.BUILDFILE))

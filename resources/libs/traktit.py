@@ -29,7 +29,7 @@ from resources.libs.common.config import CONFIG
 from resources.libs.common import logging
 from resources.libs.common import tools
 
-ORDER = ['exodusredux', 'fen', 'gaia', 'numbers', 'openmeta', 'premiumizer',
+ORDER = ['incursion', 'fen', 'gaia', 'numbers', 'openmeta', 'premiumizer',
          'realizer', 'scrubs', 'seren', 'shadow', 'thecrew', 'trakt', 'venom']
 
 TRAKTID = {
@@ -81,18 +81,18 @@ TRAKTID = {
         'default'  : 'user',
         'data'     : ['authorization', 'user'],
         'activate' : 'RunScript(script.trakt, action=auth_info)'},
-    'exodusredux': {
-        'name'     : 'Exodus Redux',
-        'plugin'   : 'plugin.video.exodusredux',
-        'saved'    : 'exodusredux',
-        'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.exodusredux'),
-        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.exodusredux', 'icon.png'),
-        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.exodusredux', 'fanart.jpg'),
-        'file'     : os.path.join(CONFIG.TRAKTFOLD, 'exodusredux_trakt'),
-        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'settings.xml'),
+    'incursion': {
+        'name'     : 'Incursion',
+        'plugin'   : 'plugin.video.incursion',
+        'saved'    : 'incursion',
+        'path'     : os.path.join(CONFIG.ADDONS, 'plugin.video.incursion'),
+        'icon'     : os.path.join(CONFIG.ADDONS, 'plugin.video.incursion', 'icon.png'),
+        'fanart'   : os.path.join(CONFIG.ADDONS, 'plugin.video.incursion', 'fanart.jpg'),
+        'file'     : os.path.join(CONFIG.TRAKTFOLD, 'incursion_trakt'),
+        'settings' : os.path.join(CONFIG.ADDON_DATA, 'plugin.video.incursion', 'settings.xml'),
         'default'  : 'trakt.user',
         'data'     : ['trakt.user', 'trakt.refresh', 'trakt.token'],
-        'activate' : 'RunPlugin(plugin://plugin.video.exodusredux/?action=authTrakt)'},
+        'activate' : 'RunPlugin(plugin://plugin.video.incursion/?action=authTrakt)'},
     'openmeta': {
         'name'     : 'OpenMeta',
         'plugin'   : 'plugin.video.openmeta',
@@ -365,7 +365,7 @@ def auto_update(who):
                 dialog = xbmcgui.Dialog()
 
                 if dialog.yesno(CONFIG.ADDONTITLE,
-                                    "[COLOR {0}]Would you like to save the [COLOR {1}]Trakt Data[/COLOR] for [COLOR {2}]{3}[/COLOR]?".format(CONFIG.COLOR2, CONFIG.COLOR1, CONFIG.COLOR1, n),
+                                    "Would you like to save the [COLOR {0}]Trakt Data[/COLOR] for [COLOR {1}]{2}[/COLOR]?".format(CONFIG.COLOR2, CONFIG.COLOR1, n),
                                     "Addon: [COLOR springgreen][B]{0}[/B][/COLOR]".format(u),
                                     "Saved:[/COLOR] [COLOR red][B]{0}[/B][/COLOR]".format(su) if not su == '' else 'Saved:[/COLOR] [COLOR red][B]None[/B][/COLOR]',
                                     yeslabel="[B][COLOR springgreen]Save Data[/COLOR][/B]",

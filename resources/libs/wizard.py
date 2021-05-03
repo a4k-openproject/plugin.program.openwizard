@@ -166,7 +166,7 @@ class Wizard:
                 themecount = BuildMenu().theme_count(name)
 
                 if themecount > 0:
-                    self.theme(name, 'theme')
+                    self.theme(name)
 
                 db.addon_database(CONFIG.ADDON_ID, 1)
                 db.force_check_updates(over=True)
@@ -242,7 +242,7 @@ class Wizard:
             logging.log_notify(CONFIG.ADDONTITLE,
                                '[COLOR {0}]GuiFix: Cancelled![/COLOR]'.format(CONFIG.COLOR2))
 
-    def theme(self, name, theme, over=False):
+    def theme(self, name, theme='', over=False):
         installtheme = False
 
         if not theme:
