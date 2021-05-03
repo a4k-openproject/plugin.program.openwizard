@@ -10,6 +10,7 @@ except ImportError:  # Python 2
 
 from resources.libs.common.config import CONFIG
 from resources.libs.common import logging
+from resources.libs.common import tools
 from resources.libs.gui import menu
 
 advanced_settings_mode = 'advanced_settings'
@@ -20,6 +21,7 @@ class Router:
     def __init__(self):
         self.route = None
         self.params = {}
+        tools.ensure_folders()
 
     def _log_params(self, paramstring):
         _url = sys.argv[0]
@@ -141,8 +143,8 @@ class Router:
             menu.view_ip()
             self._finish(handle)
         elif mode == 'speedtest':  # Maintenance -> Misc Maintenance -> Network Tools -> Speed Test
-            menu.speed_test()
-            self._finish(handle)
+            xbmc.executebuiltin('InstallAddon("script.speedtester")') 
+            xbmc.executebuiltin('RunAddon("script.speedtester")')
         elif mode == 'apk':  # APK Installer
             menu.apk_menu(url)
             self._finish(handle)
