@@ -200,7 +200,7 @@ def export_save_data():
     source = xbmc.translatePath(source)
     tempzip = os.path.join(source, 'SaveData.zip')
     superfold = os.path.join(CONFIG.ADDON_DATA, 'plugin.program.super.favourites')
-    zipf = zipfile.ZipFile(tempzip, mode='w')
+    zipf = zipfile.ZipFile(tempzip, mode='w', allowZip64=True)
     for fold in dir:
         path = os.path.join(CONFIG.PLUGIN_DATA, fold)
         if os.path.exists(path):

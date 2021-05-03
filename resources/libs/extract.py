@@ -49,7 +49,7 @@ def all_with_progress(_in, _out, dp, ignore, title):
     excludes = []
 
     try:
-        zin = zipfile.ZipFile(_in,  'r')
+        zin = zipfile.ZipFile(_in,  'r', allowZip64=True)
     except Exception as e:
         errors += 1
         error += '%s\n' % e

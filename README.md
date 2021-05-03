@@ -1,6 +1,8 @@
 # plugin.program.openwizard
 OpenWizard
 
+# THIS PROJECT IS NO LONGER IN DEVELOPMENT.
+
 OpenWizard was created to help the Kodi community out and help get rid of the broken personal wizards that are floating around. As this is a work in progress, a repository is highly recommended, but if you prefer not to, there is a built-in auto-updater.
 
 For more information on how to edit/customize this wizard for your own usage, please read [the wiki](https://github.com/drinfernoo/plugin.program.openwizard/wiki).

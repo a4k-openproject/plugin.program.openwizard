@@ -112,7 +112,7 @@ class Restore:
 
         if not self.external:
             try:
-                zipfile.ZipFile(file, 'r')
+                zipfile.ZipFile(file, 'r', allowZip64=True)
             except zipfile.BadZipFile as e:
                 from resources.libs.common import logging
                 logging.log(e, level=xbmc.LOGERROR)
@@ -121,7 +121,7 @@ class Restore:
                 xbmcvfs.copy(file, packages)
                 file = xbmc.translatePath(packages)
                 self.progress_dialog.update(0, '', 'Copying file to packages: Complete')
-                zipfile.ZipFile(file, 'r')
+                zipfile.ZipFile(file, 'r', allowZip64=True)
         else:
             from resources.libs.downloader import Downloader
             Downloader().download(file, packages)

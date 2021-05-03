@@ -83,7 +83,7 @@ def check_log():
     elif CONFIG.CLEANWIZLOGBY == '1':  # By Size
         maxsize = CONFIG.MAXWIZSIZE[int(float(CONFIG.CLEANSIZE))]*1024
         if os.path.getsize(CONFIG.WIZLOG) >= maxsize:
-            start = len(lines)/2
+            start = int(len(lines)/2)
             newfile = lines[start:]
             tools.write_to_file(CONFIG.WIZLOG, '\n'.join(newfile))
     elif CONFIG.CLEANWIZLOGBY == '2':  # By Lines
@@ -167,12 +167,12 @@ def upload_log():
 
 def get_files():
     logfiles = []
-    log = grab_log(file=True)
+    kodilog = grab_log(file=True)
     old = grab_log(file=True, old=True)
     wizard = False if not os.path.exists(CONFIG.WIZLOG) else CONFIG.WIZLOG
-    if log:
-        if os.path.exists(log):
-            logfiles.append(['log', log])
+    if kodilog:
+        if os.path.exists(kodilog):
+            logfiles.append(['log', kodilog])
         else:
             show_result("No log file found")
     else:

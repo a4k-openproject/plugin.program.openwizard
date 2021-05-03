@@ -136,11 +136,11 @@ class Backup:
             tempzipname = ''
             zipname = os.path.join(CONFIG.MYBUILDS, name)
             try:
-                zipf = zipfile.ZipFile(xbmc.translatePath(zipname), mode='w')
+                zipf = zipfile.ZipFile(xbmc.translatePath(zipname), mode='w', allowZip64=True)
             except:
                 try:
                     tempzipname = os.path.join(CONFIG.PACKAGES, '{0}.zip'.format(name))
-                    zipf = zipfile.ZipFile(tempzipname, mode='w')
+                    zipf = zipfile.ZipFile(tempzipname, mode='w', allowZip64=True)
                 except:
                     logging.log("Unable to create {0}.zip".format(name), level=xbmc.LOGERROR)
                     if self.dialog.yesno(CONFIG.ADDONTITLE,
@@ -250,16 +250,16 @@ class Backup:
                                                                                                    CONFIG.ADDON_ID),
                                      yeslabel='[B][COLOR springgreen]Include data[/COLOR][/B]',
                                      nolabel='[B][COLOR red]Don\'t Include[/COLOR][/B]'):
-                exclude_dirs.append('addon_data')
+                exclude_dirs.append(CONFIG.ADDON_DATA)
 
             tools.convert_special(CONFIG.HOME, True)
             extractsize = 0
             try:
-                zipf = zipfile.ZipFile(xbmc.translatePath(zipname), mode='w')
+                zipf = zipfile.ZipFile(xbmc.translatePath(zipname), mode='w', allowZip64=True)
             except:
                 try:
                     tempzipname = os.path.join(CONFIG.PACKAGES, '{0}.zip'.format(name))
-                    zipf = zipfile.ZipFile(tempzipname, mode='w')
+                    zipf = zipfile.ZipFile(tempzipname, mode='w', allowZip64=True)
                 except:
                     logging.log("Unable to create {0}.zip".format(name), level=xbmc.LOGERROR)
                     if self.dialog.yesno(CONFIG.ADDONTITLE,
@@ -276,7 +276,7 @@ class Backup:
                                         "Please Wait...[/COLOR]")
 
             for base, dirs, files in os.walk(CONFIG.HOME):
-                dirs[:] = [d for d in dirs if d not in exclude_dirs]
+                dirs[:] = [d for d in dirs if os.path.join(base, d) not in exclude_dirs]
                 files[:] = [f for f in files if f not in CONFIG.EXCLUDE_FILES]
                 for file in files:
                     ITEM.append(file)
@@ -344,7 +344,7 @@ class Backup:
             binarytxt = self._backup_binaries(binidlist)
 
             for base, dirs, files in os.walk(CONFIG.HOME):
-                dirs[:] = [d for d in dirs if d not in exclude_dirs]
+                dirs[:] = [d for d in dirs if os.path.join(base, d) not in exclude_dirs]
                 files[:] = [f for f in files if f not in CONFIG.EXCLUDE_FILES]
                 for file in files:
                     try:
@@ -515,11 +515,11 @@ class Backup:
         guizipname = os.path.join(CONFIG.MYBUILDS, '{0}_guisettings.zip'.format(guiname))
         if os.path.exists(CONFIG.GUISETTINGS):
             try:
-                zipf = zipfile.ZipFile(guizipname, mode='w')
+                zipf = zipfile.ZipFile(guizipname, mode='w', allowZip64=True)
             except:
                 try:
                     tempguizipname = os.path.join(CONFIG.PACKAGES, '{0}_guisettings.zip'.format(guiname))
-                    zipf = zipfile.ZipFile(tempguizipname, mode='w')
+                    zipf = zipfile.ZipFile(tempguizipname, mode='w', allowZip64=True)
                 except:
                     logging.log("Unable to create {0}_guisettings.zip".format(guiname), level=xbmc.LOGERROR)
                     if self.dialog.yesno(CONFIG.ADDONTITLE,
@@ -593,11 +593,11 @@ class Backup:
         tempzipname = ''
         zipname = os.path.join(CONFIG.MYBUILDS, '{0}.zip'.format(themename))
         try:
-            zipf = zipfile.ZipFile(zipname, mode='w')
+            zipf = zipfile.ZipFile(zipname, mode='w', allowZip64=True)
         except:
             try:
                 tempzipname = os.path.join(CONFIG.PACKAGES, '{0}.zip'.format(themename))
-                zipf = zipfile.ZipFile(tempzipname, mode='w')
+                zipf = zipfile.ZipFile(tempzipname, mode='w', allowZip64=True)
             except:
                 logging.log("Unable to create {0}.zip".format(themename), level=xbmc.LOGERROR)
                 if self.dialog.yesno(CONFIG.ADDONTITLE,
@@ -677,7 +677,7 @@ class Backup:
                                         False)
                 if not fn == CONFIG.HOME:
                     for base, dirs, files in os.walk(fn):
-                        dirs[:] = [d for d in dirs if d not in CONFIG.EXCLUDE_DIRS]
+                        dirs[:] = [d for d in dirs if os.path.join(base, d) not in CONFIG.EXCLUDE_DIRS]
                         files[:] = [f for f in files if f not in CONFIG.EXCLUDE_FILES]
                         for file in files:
                             try:
@@ -801,11 +801,11 @@ class Backup:
             tempzipname = ''
             zipname = os.path.join(CONFIG.MYBUILDS, name)
             try:
-                zipf = zipfile.ZipFile(xbmc.translatePath(zipname), mode='w')
+                zipf = zipfile.ZipFile(xbmc.translatePath(zipname), mode='w', allowZip64=True)
             except:
                 try:
                     tempzipname = os.path.join(CONFIG.PACKAGES, '{0}.zip'.format(name))
-                    zipf = zipfile.ZipFile(tempzipname, mode='w')
+                    zipf = zipfile.ZipFile(tempzipname, mode='w', allowZip64=True)
                 except:
                     logging.log("Unable to create {0}_addondata.zip".format(name), level=xbmc.LOGERROR)
                     if self.dialog.yesno(CONFIG.ADDONTITLE,
@@ -825,16 +825,16 @@ class Backup:
                                         "[COLOR {0}]Creating back up zip".format(CONFIG.COLOR2), "",
                                         "Please Wait...[/COLOR]")
             for base, dirs, files in os.walk(CONFIG.ADDON_DATA):
-                dirs[:] = [d for d in dirs if d not in CONFIG.EXCLUDE_DIRS]
+                dirs[:] = [d for d in dirs if os.path.join(base, d) not in CONFIG.EXCLUDE_DIRS]
                 files[:] = [f for f in files if f not in CONFIG.EXCLUDE_FILES]
                 for file in files:
                     ITEM.append(file)
             N_ITEM = len(ITEM)
 
             bad_files = [
-                (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.db')),
-                (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.meta.5.db')),
-                (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.providers.13.db')),
+                (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.incursion', 'cache.db')),
+                (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.incursion', 'cache.meta.5.db')),
+                (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.incursion', 'cache.providers.13.db')),
                 (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.thecrew', 'cache.db')),
                 (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.thecrew', 'cache.meta.5.db')),
                 (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.thecrew', 'cache.providers.13.db')),
@@ -854,7 +854,7 @@ class Backup:
                 (os.path.join(CONFIG.ADDON_DATA, 'script.module.simplecache', 'simplecache.db'))]
 
             for base, dirs, files in os.walk(CONFIG.ADDON_DATA):
-                dirs[:] = [d for d in dirs if d not in CONFIG.EXCLUDE_DIRS]
+                dirs[:] = [d for d in dirs if os.path.join(base, d) not in CONFIG.EXCLUDE_DIRS]
                 files[:] = [f for f in files if f not in CONFIG.EXCLUDE_FILES]
                 for file in files:
                     try:

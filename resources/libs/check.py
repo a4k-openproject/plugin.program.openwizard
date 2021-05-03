@@ -66,7 +66,7 @@ def check_build(name, ret):
 
     link = response.text.replace('\n', '').replace('\r', '').replace('\t', '')\
         .replace('gui=""', 'gui="http://"').replace('theme=""', 'theme="http://"')
-    match = re.compile('name="%s".+?ersion="(.+?)".+?rl="(.+?)".+?inor="(.+?)".+?ui="(.+?)".+?odi="(.+?)".+?heme="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?review="(.+?)".+?dult="(.+?)".+?nfo="(.+?)".+?escription="(.+?)"' % name).findall(link)
+    match = re.compile('name="%s".+?ersion="(.+?)".+?rl="(.+?)".+?inor="(.+?)".+?ui="(.+?)".+?odi="(.+?)".+?heme="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?review="(.+?)".+?dult="(.+?)".+?nfo="(.+?)".+?escription="(.+?)"' % name.replace('[', '\[').replace(']', '\]')).findall(link)
     if len(match) > 0:
         for version, url, minor, gui, kodi, theme, icon, fanart, preview, adult, info, description in match:
             if ret == 'version':
@@ -121,7 +121,7 @@ def check_theme(name, theme, ret):
         return False
 
     link = response.text.replace('\n', '').replace('\r', '').replace('\t', '')
-    match = re.compile('name="{0}".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult=(.+?).+?escription="(.+?)"'.format(theme)).findall(link)
+    match = re.compile('name="{0}".+?rl="(.+?)".+?con="(.+?)".+?anart="(.+?)".+?dult=(.+?).+?escription="(.+?)"'.format(theme.replace('[', '\[').replace(']', '\]'))).findall(link)
     if len(match) > 0:
         for url, icon, fanart, adult, description in match:
             if ret == 'url':
@@ -171,7 +171,7 @@ def check_build_update():
         return
 
     link = response.text.replace('\n', '').replace('\r', '').replace('\t', '')
-    match = re.compile('name="%s".+?ersion="(.+?)".+?con="(.+?)".+?anart="(.+?)"' % CONFIG.BUILDNAME).findall(link)
+    match = re.compile('name="%s".+?ersion="(.+?)".+?con="(.+?)".+?anart="(.+?)"' % CONFIG.BUILDNAME.replace('[', '\[').replace(']', '\]')).findall(link)
     if len(match) > 0:
         version = match[0][0]
         icon = match[0][1]
@@ -403,12 +403,11 @@ def build_count():
     total = 0
     count17 = 0
     count18 = 0
-    count19 = 0
     hidden = 0
     adultcount = 0
 
     if not response:
-        return total, count17, count18, count19, adultcount, hidden
+        return total, count17, count18, adultcount, hidden
 
     link = response.text.replace('\n', '').replace('\r', '').replace('\t', '')
     match = re.compile('name="(.+?)".+?odi="(.+?)".+?dult="(.+?)"').findall(link)
@@ -424,12 +423,10 @@ def build_count():
                 continue
             kodi = int(float(kodi))
             total += 1
-            if kodi == 19:
-                count19 += 1
-            elif kodi == 18:
+            if kodi == 18:
                 count18 += 1
             elif kodi == 17:
                 count17 += 1
-    return total, count17, count18, count19, adultcount, hidden
+    return total, count17, count18, adultcount, hidden
 
 

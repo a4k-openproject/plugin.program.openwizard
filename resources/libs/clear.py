@@ -40,9 +40,9 @@ def get_cache_size():
     PROFILEADDONDATA = os.path.join(CONFIG.PROFILE, 'addon_data')
 
     dbfiles = [
-        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.db')),
-        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.meta.5.db')),
-        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.providers.13.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.incursion', 'cache.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.incursion', 'cache.meta.5.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.incursion', 'cache.providers.13.db')),
         (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.scrubsv2', 'cache.db')),
         (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.scrubsv2', 'cache.meta.5.db')),
         (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.scrubsv2', 'cache.providers.13.db')),
@@ -103,10 +103,10 @@ def get_cache_size():
         if CONFIG.INCLUDEALL == 'true':
             files = dbfiles
         else:
-            if CONFIG.INCLUDEEXODUSREDUX == 'true':
-                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.db'))
-                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'meta.5.db'))
-                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'providers.13.db'))
+            if CONFIG.INCLUDEINCURSION == 'true':
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.incursion', 'cache.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.incursion', 'meta.5.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.incursion', 'providers.13.db'))
             if CONFIG.INCLUDEVENOM == 'true':
                 files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.venom', 'cache.db'))
                 files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.venom', 'meta.5.db'))
@@ -257,9 +257,9 @@ def clear_cache(over=None):
     dbfiles = [
         (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.gaia', 'cache.db')),
         (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.gaia', 'meta.db')),
-        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.db')),
-        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'meta.5.db')),
-        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.providers.13.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.incursion', 'cache.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.incursion', 'meta.5.db')),
+        (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.incursion', 'cache.providers.13.db')),
         (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.thecrew', 'cache.db')),
         (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.thecrew', 'meta.5.db')),
         (os.path.join(CONFIG.ADDON_DATA, 'plugin.video.thecrew', 'cache.providers.13.db')),
@@ -341,10 +341,10 @@ def clear_cache(over=None):
         if CONFIG.INCLUDEALL == 'true':
             files = dbfiles
         else:
-            if CONFIG.INCLUDEEXODUSREDUX == 'true':
-                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'cache.db'))
-                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'meta.5.db'))
-                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.exodusredux', 'providers.13.db'))
+            if CONFIG.INCLUDEINCURSION == 'true':
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.incursion', 'cache.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.incursion', 'meta.5.db'))
+                files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.incursion', 'providers.13.db'))
             if CONFIG.INCLUDEVENOM == 'true':
                 files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.venom', 'cache.db'))
                 files.append(os.path.join(CONFIG.ADDON_DATA, 'plugin.video.venom', 'meta.5.db'))
@@ -490,8 +490,8 @@ def force_text():
 
 
 def toggle_cache(state):
-    cachelist = ['includevideo', 'includeall', 'includeexodusredux', 'includegaia', 'includenumbers', 'includescrubs', 'includeseren', 'includethecrew', 'includevenom']
-    titlelist = ['Include Video Addons', 'Include All Addons', 'Include Exodus Redux', 'Include Gaia', 'Include NuMb3r5', 'Include Scrubs v2', 'Include Seren', 'Include THE CREW', 'Include Venom']
+    cachelist = ['includevideo', 'includeall', 'includeincursion', 'includegaia', 'includenumbers', 'includescrubs', 'includeseren', 'includethecrew', 'includevenom']
+    titlelist = ['Include Video Addons', 'Include All Addons', 'Include Incursion', 'Include Gaia', 'Include NuMb3r5', 'Include Scrubs v2', 'Include Seren', 'Include THE CREW', 'Include Venom']
     if state in ['true', 'false']:
         for item in cachelist:
             CONFIG.set_setting(item, state)

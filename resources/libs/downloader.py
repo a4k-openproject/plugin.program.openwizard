@@ -22,6 +22,7 @@ import xbmcgui
 
 import requests
 import sys
+import os
 import time
 
 from resources.libs.common import logging
@@ -37,7 +38,10 @@ class Downloader:
     def download(self, url, dest):
         self.progress_dialog.create(CONFIG.ADDONTITLE, "Downloading Content", ' ', ' ')
         self.progress_dialog.update(0)
-
+        
+        path = os.path.split(dest)[0]
+        if not os.path.exists(path):
+            os.makedirs(path)
         with open(dest, 'wb') as f:
             response = tools.open_url(url, stream=True)
             
