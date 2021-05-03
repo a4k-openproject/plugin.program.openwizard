@@ -11,7 +11,6 @@
         <setting type="lsep" label="Show Builds:"/>
         <setting id="show17" type="bool" label="Show Krypton (v17.0) Builds" default="true"/>
         <setting id="show18" type="bool" label="Show Leia (v18.0) Builds" default="true"/>
-        <setting id="show19" type="bool" label="Show Matrix (v19.0) Builds" default="true"/>
         <setting id="separate" type="bool" label="Do not separate based off version" default="false"/>
         
         <!-- Hidden Settings -->
@@ -52,7 +51,7 @@
         <setting type="lsep" label="Clearing Video Cache:"/>
         <setting id="includevideo" type="bool" label="Include Video Addons in Clear Cache: " default="true"/>
         <setting id="includeall" type="bool" label="Include All Addons: " default="true" enable="!eq(-1,false)"/>
-        <setting id="includeexodusredux" type="bool" label="Include Exodus Redux DB: " default="true" enable="eq(-1,false)" visible="System.HasAddon(plugin.video.exodusredux)"/>
+        <setting id="includeincursion" type="bool" label="Include Incursion DB: " default="true" enable="eq(-1,false)" visible="System.HasAddon(plugin.video.incursion)"/>
         <setting id="includegaia" type="bool" label="Include Gaia Cache DB: " default="true" enable="eq(-2,false)" visible="System.HasAddon(plugin.video.gaia)"/>
         <setting id="includenumbers" type="bool" label="Include NuMb3r5 Cache DB: " default="true" enable="eq(-3,false)" visible="System.HasAddon(plugin.video.numbersbynumbers)"/>
         <setting id="includescrubs" type="bool" label="Include Scrubs v2 Cache DB: " default="true" enable="eq(-4,false)" visible="System.HasAddon(plugin.video.scrubsv2)"/>
@@ -61,7 +60,7 @@
         <setting id="includevenom" type="bool" label="Include Venom Cache DB: " default="true" enable="eq(-7,false)" visible="System.HasAddon(plugin.video.venom)"/>
 
         <!-- Default settings for Save Data entries -->
-        <setting id="exodusredux" type="text" default="" visible="false"/>
+        <setting id="incursion" type="text" default="" visible="false"/>
         <setting id="fen" type="text" default="" visible="false"/>
         <setting id="gaia" type="text" default="" visible="false"/>
         <setting id="numbers" type="text" default="" visible="false"/>
@@ -99,7 +98,7 @@
 
         <setting id="easynews-fen" type="text" default="" visible="false"/>
         <setting id="furk-fen" type="text" default="" visible="false"/>
-        <setting id="fanart-exodusredux" type="text" default="" visible="false"/>
+        <setting id="fanart-incursion" type="text" default="" visible="false"/>
         <setting id="fanart-gaia" type="text" default="" visible="false"/>
         <setting id="fanart-numbers" type="text" default="" visible="false"/>
         <setting id="fanart-thecrew" type="text" default="" visible="false"/>
@@ -110,7 +109,7 @@
         <setting id="fanart-venom" type="text" default="" visible="false"/>
         <setting id="fanart-seren" type="text" default="" visible="false"/>
         <setting id="fanart-tmdbhelper" type="text" default="" visible="false"/>
-        <setting id="imdb-exodusredux" type="text" default="" visible="false"/>
+        <setting id="imdb-incursion" type="text" default="" visible="false"/>
         <setting id="imdb-gaia" type="text" default="" visible="false"/>
         <setting id="imdb-numbers" type="text" default="" visible="false"/>
         <setting id="imdb-thecrew" type="text" default="" visible="false"/>
@@ -128,7 +127,7 @@
         <setting id="login-opensubtitles" type="text" default="" visible="false"/>
         <setting id="login-opensubsbyopensubs" type="text" default="" visible="false"/>
         <setting id="login-orion" type="text" default="" visible="false"/>
-        <setting id="tmdb-exodusredux" type="text" default="" visible="false"/>
+        <setting id="tmdb-incursion" type="text" default="" visible="false"/>
         <setting id="tmdb-fen" type="text" default="" visible="false"/>
         <setting id="login-eis" type="text" default="" visible="false"/>
         <setting id="tmdb-gaia" type="text" default="" visible="false"/>
