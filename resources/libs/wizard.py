@@ -170,9 +170,12 @@ class Wizard:
 
                 db.addon_database(CONFIG.ADDON_ID, 1)
                 db.force_check_updates(over=True)
+                
+                binarytxt = os.path.join(CONFIG.USERDATA, 'build_binaries.txt')
+                if os.path.exists(binarytxt):
+                    self.dialog.ok(CONFIG.ADDONTITLE, '[COLOR {0}]The restored build contains platform-specific addons, which will be automatically installed the next time Kodi boots. A number of dialogs may pop up during this process. Cancelling them may cause the restored build to function incorrectly.[/COLOR]'.format(CONFIG.COLOR2))
 
-                self.dialog.ok(CONFIG.ADDONTITLE, "[COLOR {0}]To save changes you now need to force close Kodi, Press OK to force close Kodi[/COLOR]".format(CONFIG.COLOR2))
-                tools.kill_kodi(over=True)
+                tools.kill_kodi(msg='[COLOR {0}]To save changes, Kodi needs to be force closed. Would you like to continue?[/COLOR]'.format(CONFIG.COLOR2))
             else:
                 from resources.libs.gui import window
                 window.show_text_box("Viewing Build Install Errors", error)
