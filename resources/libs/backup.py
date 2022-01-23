@@ -430,7 +430,7 @@ class Backup:
         _skin = xbmcaddon.Addon(_skin_id)
         _skin_name = xbmcvfs.translatePath(_skin.getAddonInfo('name'))
 
-        with open(temp_txt, 'w') as f:
+        with open(temp_txt, 'w', encoding="utf-8") as f:
             f.write('name="{0}"\n'.format(name))
             f.write('extracted="{0}"\n'.format(extractsize))
             f.write('zipsize="{0}"\n'.format(os.path.getsize(backup_zip)))
