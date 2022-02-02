@@ -294,7 +294,7 @@ class Config:
 
     def open_settings(self, id=None, cat=None, set=None, activate=False):
         offset = [(100,  200), (-100, -80)]
-        if not id:
+        if id is not None:
             id = self.ADDON_ID
 
         try:
